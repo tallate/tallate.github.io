@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">79</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">180</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">79</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">182</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-count">182</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -175,6 +175,302 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/466d4e65.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/466d4e65.html" class="post-title-link" itemprop="url">分布式一致性协议</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-19 18:13:15" itemprop="dateCreated datePublished" datetime="2020-08-19T18:13:15+08:00">2020-08-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-10-09 16:58:44" itemprop="dateModified" datetime="2022-10-09T16:58:44+08:00">2022-10-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E7%82%B9%E6%80%BB%E7%BB%93/" itemprop="url" rel="index"><span itemprop="name">技术点总结</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+<p> </p>
+<h1 id="分布式一致性协议的演化"><a href="#分布式一致性协议的演化" class="headerlink" title="分布式一致性协议的演化 "></a>分布式一致性协议的演化 </h1><h1 id="2PC"><a href="#2PC" class="headerlink" title="2PC "></a>2PC </h1><h1 id="3PC"><a href="#3PC" class="headerlink" title="3PC"></a>3PC</h1><p>与 2PC 的区别是：</p>
+<ol>
+<li>将 2PC 的 prepare 阶段拆为 CanCommit 和 PreCommit 两个阶段，其中：<ul>
+<li>CanCommit 阶段：参与者需要判断是否可以执行事务提交操作<br> 这个阶段如果出现超时、某个参与者返回 No 等情况，事务直接失败；<br> 在所有参与者 CanCommit 阶段都返回 Yes 响应后可以进入 PreCommit 阶段；</li>
+<li>PreCommit 阶段：预提交即执行事务操作，并记录 undo 和 redo 日志，这时本地事务还未 commit<br> 这个阶段如果有任何一个参与者向协调者返回了 No 响应或超时协调者还未接收到参与者的响应，则协调者会开始执行事务的 abort；<br> 如果所有参与者都返回了 ACK 响应，则可以进入最终的 doCommit 阶段；</li>
+<li>abort：上一步，如果要开始执行中断事务，协调者会向所有参与者发送 abort 请求，参与者接收</li>
+<li>doCommit 阶段： </li>
+</ul>
+</li>
+</ol>
+<h1 id="Paxos"><a href="#Paxos" class="headerlink" title="Paxos"></a>Paxos</h1><h2 id="与-2PC（及其衍生协议）区别"><a href="#与-2PC（及其衍生协议）区别" class="headerlink" title="与 2PC（及其衍生协议）区别"></a>与 2PC（及其衍生协议）区别</h2><p>Paxos 协议和 2PC 协议在分布式系统中所起的作用并不相同。Paxos 协议用于保证同一个数据分片的多个副本之间的数据一致性。当这些副本分布到不同的数据中心时，这个需求尤其强烈。2PC 协议用于保证属于多个数据分片上的操作的原子性。这些数据分片可能分布在不同的服务器上，2PC 协议保证多台服务器上的操作要么全部成功，要么全部失败。<br>Paxos 协议有两种用法：一种用法是用它来实现全局的锁服务或者命名和配置服务，例如 Google Chubby 以及 Apache Zookeeper。另外一种用法是用它来将用户数据复制到多个数据中心，例如 Google Megastore 以及 Google Spanner。<br>2PC 协议最大的缺陷在于无法处理协调者宕机问题。如果协调者宕机，那么，2PC 协议中的每个参与者可能都不知道事务应该提交还是回滚，整个协议被阻塞，执行过程中申请的资源都无法释放。因此，常见的做法是将 2PC 和 Paxos 协议结合起来，通过 2PC 保证多个数据分片上的操作的原子性，通过 Paxos 协议实现同一个数据分片的多个副本之间的一致性（一般）。另外，通过 Paxos 协议解决 2PC 协议中协调者宕机问题。当 2PC 协议中的协调者出现故障时，通过 Paxos 协议选举出新的协调者继续提供服务，可以解决<strong>单点故障</strong>问题（但是你确定服务参与者足够多能够发起一次选举吗？）。</p>
+<h2 id="Paxos-1"><a href="#Paxos-1" class="headerlink" title="Paxos"></a>Paxos</h2><h3 id="Basic-Paxos（单值Paxos）"><a href="#Basic-Paxos（单值Paxos）" class="headerlink" title="Basic Paxos（单值Paxos）"></a>Basic Paxos（单值Paxos）</h3><p>目前在多个proposer可以同时发起提议的情况下，满足P1、P2a即能做到确定并只确定一个值。如果再加上节点宕机恢复、消息丢包的考量呢？<br>假设acceptor c 宕机一段时间后恢复，c 宕机期间其他acceptor已经确定了一项值为v的决议但c 因为宕机并不知晓；c 恢复后如果有proposer马上发起一项值不是v的提议，由于条件P1，c 会接受该提议，这与P2a矛盾。为了避免这样的情况出现，进一步地我们对proposer作约束：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">P2b. 如果一项值为v的提议被确定，那么proposer后续只发起值为v的提议</span><br></pre></td></tr></table></figure>
+<p>满足P2b则P2a成立 (P2b &#x3D;&gt; P2a &#x3D;&gt; P2)。<br>P2b约束的是提议被确定(chosen)后proposer的行为，我们更关心提议被确定前proposer应该怎么做：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">P2c. 对于提议(n,v)，acceptor的多数派S中，如果存在acceptor最近一次(即ID值最大)接受的提议的值为v&#x27;，那么要求v = v&#x27;；否则v可为任意值</span><br></pre></td></tr></table></figure>
+<p>满足P2c则P2b成立 (P2c &#x3D;&gt; P2b &#x3D;&gt; P2a &#x3D;&gt; P2)。</p>
+<p>条件P2c是Basic Paxos的核心，光看P2c的描述可能会觉得一头雾水，我们通过 <a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/publication/part-time-parliament/?from=http://research.microsoft.com/en-us/um/people/lamport/pubs/lamport-paxos.pdf">The Part-Time Parliament</a>中的例子加深理解：<br><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/BasicPaxos%E4%BE%8B%E5%AD%90.jpg" alt="BasicPaxos例子" title="BasicPaxos例子"><br>假设有A~E 5个acceptor，- 表示acceptor因宕机等原因缺席当次决议，x 表示acceptor不接受提议，o 表示接受提议；多数派acceptor接受提议后提议被确定，以上表格对应的决议过程如下：<br>ID为2的提议最早提出，根据P2c其提议值可为任意值，这里假设为a<br>acceptor A&#x2F;B&#x2F;C&#x2F;E 在之前的决议中没有接受(accept)任何提议，因而ID为5的提议的值也可以为任意值，这里假设为b<br>acceptor B&#x2F;D&#x2F;E，其中D曾接受ID为2的提议，根据P2c，该轮ID为14的提议的值必须与ID为2的提议的值相同，为a<br>acceptor A&#x2F;C&#x2F;D，其中D曾接受ID为2的提议、C曾接受ID为5的提议，相比之下ID 5较ID 2大，根据P2c，该轮ID为27的提议的值必须与ID为5的提议的值相同，为b；该轮决议被多数派acceptor接受，因此该轮决议得以确定<br>acceptor B&#x2F;C&#x2F;D，3个acceptor之前都接受过提议，相比之下C、D曾接受的ID 27的ID号最大，该轮ID为29的提议的值必须与ID为27的提议的值相同，为b<br>以上提到的各项约束条件可以归纳为3点，如果proposer&#x2F;acceptor满足下面3点，那么在少数节点宕机、网络分化隔离的情况下，在“确定并只确定一个值”这件事情上可以保证一致性(consistency)：<br>B1(ß): ß中每一轮决议都有唯一的ID标识<br>B2(ß): 如果决议B被acceptor多数派接受，则确定决议B<br>B3(ß): 对于ß中的任意提议B(n,v)，acceptor的多数派中如果存在acceptor最近一次(即ID值最大)接受的提议的值为v’，那么要求v &#x3D; v’；否则v可为任意值<br>(注: 希腊字母ß表示多轮决议的集合，字母B表示一轮决议)<br>另外为保证P2c，我们对acceptor作两个要求：</p>
+<ol>
+<li>记录曾接受的ID最大的提议，因proposer需要问询该信息以决定提议值</li>
+<li>在回应提议ID为n的proposer自己曾接受过ID最大的提议时，acceptor同时保证(promise)不再接受ID小于n的提议<br>至此，proposer&#x2F;acceptor完成一轮决议可归纳为prepare和accept两个阶段。prepare阶段proposer发起提议问询提议值、acceptor回应问询并进行promise；accept阶段完成决议，图示如下：<br><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/accept%E6%B5%81%E7%A8%8B.jpg" alt="accept流程" title="accept流程"><br>还有一个问题需要考量，假如proposer A发起ID为n的提议，在提议未完成前proposer B又发起ID为n+1的提议，在n+1提议未完成前proposer C又发起ID为n+2的提议…… 如此acceptor不能完成决议、形成活锁(livelock)，虽然这不影响一致性，但我们一般不想让这样的情况发生。解决的方法是从proposer中选出一个leader，提议统一由leader发起。<br>最后我们再引入一个新的角色：learner，learner依附于acceptor，用于习得已确定的决议。以上决议过程都只要求acceptor多数派参与，而我们希望尽量所有acceptor的状态一致。如果部分acceptor因宕机等原因未知晓已确定决议，宕机恢复后可经本机learner采用pull的方式从其他acceptor习得。</li>
+</ol>
+<h3 id="Multi-Paxos（多值Paxos）"><a href="#Multi-Paxos（多值Paxos）" class="headerlink" title="Multi Paxos（多值Paxos）"></a>Multi Paxos（多值Paxos）</h3><p>通过以上步骤分布式系统已经能确定一个值，“只确定一个值有什么用？这可解决不了我面临的问题。” 你心中可能有这样的疑问。<br>其实不断地进行“确定一个值”的过程、再为每个过程编上序号，就能得到具有全序关系(total order)的系列值，进而能应用在数据库副本存储等很多场景。我们把单次“确定一个值”的过程称为实例(instance)，它由proposer&#x2F;acceptor&#x2F;learner组成，下图说明了A&#x2F;B&#x2F;C三机上的实例：<br><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/MultiPaxos.jpg" alt="MultiPaxos" title="MultiPaxos"><br>不同序号的实例之间互相不影响，A&#x2F;B&#x2F;C三机输入相同、过程实质等同于执行相同序列的状态机(state machine)指令 ，因而将得到一致的结果。<br>proposer leader在Multi Paxos中还有助于提升性能，常态下统一由leader发起提议，可节省prepare步骤(leader不用问询acceptor曾接受过的ID最大的提议、只有leader提议也不需要acceptor进行promise)直至发生leader宕机、重新选主。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>以上介绍了Paxos的推演过程、如何在Basic Paxos的基础上通过状态机构建Multi Paxos。<br>微信后台开发同学实现并开源了一套基于Paxos协议的多机状态拷贝类库<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/23279058">PhxPaxos</a>，PhxPaxos用于将单机服务扩展到多机，其经过线上系统验证并在一致性保证、性能等方面作了很多考量。</p>
+<h2 id="Paxos变种和优化"><a href="#Paxos变种和优化" class="headerlink" title="Paxos变种和优化"></a>Paxos变种和优化</h2><p>如果想把Paxos应用于工程实践，了解基本原理还不够。<br>有很多基于Paxos的优化，在保证一致性协议正确(safety)的前提下，减少Paxos决议通信步骤、避免单点故障、实现节点负载均衡，从而降低时延、增加吞吐量、提升可用性，下面我们就来了解这些Paxos变种。</p>
+<h3 id="Multi-Paxos"><a href="#Multi-Paxos" class="headerlink" title="Multi Paxos"></a>Multi Paxos</h3><p>首先我们来回顾一下Multi Paxos，Multi Paxos在Basic Paxos的基础上确定一系列值，其决议过程如下：<br><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/MultiPaxos%E4%BE%8B%E5%AD%90.jpg" alt="MultiPaxos例子" title="MultiPaxos例子"><br>phase1a: leader提交提议给acceptor<br>phase1b: acceptor返回最近一次接受的提议(即曾接受的最大的提议ID和对应的value)，未接受过提议则返回空<br>phase2a: leader收集acceptor的应答，分两种情况处理<br>phase2a.1: 如果应答内容都为空，则自由选择一个提议value<br>phase2a.2: 如果应答内容不为空，则选择应答里面ID最大的提议的value<br>phase2b: acceptor将决议同步给learner<br>Multi Paxos中leader用于避免活锁，但leader的存在会带来其他问题，一是如何选举和保持唯一leader(虽然无leader或多leader不影响一致性，但影响决议进程progress)，二是充当leader的节点会承担更多压力，如何均衡节点的负载。Mencius[1]提出节点轮流担任leader，以达到均衡负载的目的；租约(lease)可以帮助实现唯一leader，但leader故障情况下可导致服务短期不可用。</p>
+<h3 id="Fast-Paxos"><a href="#Fast-Paxos" class="headerlink" title="Fast Paxos"></a>Fast Paxos</h3><p>在Multi Paxos中，proposer -&gt; leader -&gt; acceptor -&gt; learner，从提议到完成决议共经过3次通信，能不能减少通信步骤？<br>对Multi Paxos phase2a，如果可以自由提议value，则可以让proposer直接发起提议、leader退出通信过程，变为proposer -&gt; acceptor -&gt; learner，这就是Fast Paxos[2]的由来。<br><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/FastPaxos%E4%BE%8B%E5%AD%90.jpg" alt="FastPaxos例子" title="FastPaxos例子"><br>Multi Paxos里提议都由leader提出，因而不存在一次决议出现多个value，Fast Paxos里由proposer直接提议，一次决议里可能有多个proposer提议、出现多个value，即出现提议冲突(collision)。leader起到初始化决议进程(progress)和解决冲突的作用，当冲突发生时leader重新参与决议过程、回退到3次通信步骤。<br>Paxos自身隐含的一个特性也可以达到减少通信步骤的目标，如果acceptor上一次确定(chosen)的提议来自proposerA，则当次决议proposerA可以直接提议减少一次通信步骤。如果想实现这样的效果，需要在proposer、acceptor记录上一次决议确定(chosen)的历史，用以在提议前知道哪个proposer的提议上一次被确定、当次决议能不能节省一次通信步骤。</p>
+<h3 id="EPaxos"><a href="#EPaxos" class="headerlink" title="EPaxos"></a>EPaxos</h3><p>除了从减少通信步骤的角度提高Paxos决议效率外，还有其他方面可以降低Paxos决议时延，比如Generalized Paxos[3]提出不冲突的提议(例如对不同key的写请求)可以同时决议、以降低Paxos时延。<br>更进一步地，EPaxos[4](Egalitarian Paxos)提出一种既支持不冲突提议同时提交降低时延、还均衡各节点负载、同时将通信步骤减少到最少的Paxos优化方法。<br>为达到这些目标，EPaxos的实现有几个要点。一是EPaxos中没有全局的leader，而是每一次提议发起提议的proposer作为当次提议的leader(command leader)；二是不相互影响(interfere)的提议可以同时提交；三是跳过prepare，直接进入accept阶段。EPaxos决议的过程如下：<br><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/EPaxos%E7%9A%84accept%E8%BF%87%E7%A8%8B.jpg" alt="EPaxos的accept过程" title="EPaxos的accept过程"></p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>以上介绍了几个基于Paxos的变种，Mencius中节点轮流做leader、均衡节点负载，Fast Paxos减少一次通信步骤，Generalized Paxos允许互不影响的决议同时进行，EPaxos无全局leader、各节点平等分担负载。</p>
+<h1 id="Raft"><a href="#Raft" class="headerlink" title="Raft"></a>Raft</h1><p>Paxos 偏向于理论、对如何应用到工程实践提及较少。理解的难度加上现实的骨感，在生产环境中基于 Paxos 实现一个正确的分布式系统非常难。<br>Raft 在 2013 年提出，提出的时间虽然不长，但已经有很多系统基于 Raft 实现。相比 Paxos，Raft 的优点就是更利于理解、更易于实行。<br>为达到更容易理解和实行的目的，Raft 将问题分解和具体化：Leader 统一处理变更操作请求，一致性协议的作用具化为保证节点间操作日志副本(log replication)一致，以 term 作为逻辑时钟(logical clock)保证时序，节点运行相同状态机(state machine)得到一致结果。Raft 协议具体过程如下：</p>
+<p><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Raft%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.jpg" alt="Raft执行流程" title="Raft执行流程"></p>
+<ol>
+<li>Client 发起请求，每一条请求包含操作指令</li>
+<li>请求交由 Leader 处理，Leader 将操作指令(entry)追加(append)至操作日志，紧接着对 Follower 发起 AppendEntries 请求、尝试让操作日志副本在 Follower 落地</li>
+<li>如果 Follower 多数派(quorum)同意 AppendEntries 请求，Leader 进行 commit 操作、把指令交由状态机处理</li>
+<li>状态机处理完成后将结果返回给 Client</li>
+</ol>
+<p>指令通过 log index(指令 id)和 term number 保证时序，正常情况下 Leader、Follower 状态机按相同顺序执行指令，得出相同结果、状态一致。<br>宕机、网络分化等情况可引起 Leader 重新选举(每次选举产生新 Leader 的同时，产生新的 term)、Leader&#x2F;Follower 间状态不一致。Raft 中 Leader 为自己和所有 Follower 各维护一个 nextIndex 值，其表示 Leader 紧接下来要处理的指令 id 以及将要发给 Follower 的指令 id，LnextIndex 不等于 FnextIndex 时代表 Leader 操作日志和 Follower 操作日志存在不一致，这时将从 Follower 操作日志中最初不一致的地方开始，由 Leader 操作日志覆盖 Follower，直到 LnextIndex、FnextIndex 相等。<br>Paxos 中 Leader 的存在是为了提升决议效率，Leader 的有无和数目并不影响决议一致性，Raft 要求具备唯一 Leader，并把一致性问题具体化为保持日志副本的一致性，以此实现相较 Paxos 而言更容易理解、更容易实现的目标。</p>
+<h1 id="Zab"><a href="#Zab" class="headerlink" title="Zab"></a>Zab</h1><p>Zab 的全称是 Zookeeper atomic broadcast protocol，是 Zookeeper 内部用到的一致性协议。相比 Paxos，Zab 最大的特点是保证强一致性(strong consistency，或叫线性一致性 linearizable consistency)。<br>和 Raft 一样，Zab 要求唯一 Leader 参与决议，Zab 可以分解成 discovery、sync、broadcast 三个阶段：<br><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Zab%E5%8E%9F%E7%90%86.png" alt="Zab原理" title="Zab原理"></p>
+<ul>
+<li>discovery<br><strong>选举</strong>产生<strong>PL(prospective leader)<strong>，PL 收集</strong>Follower epoch(cepoch)<strong>，根据</strong>Follower</strong>的反馈 PL 产生<strong>newepoch</strong>(每次选举产生新 Leader 的同时产生新 epoch，类似 Raft 的 term)。</li>
+<li>sync<br>PL 补齐相比 Follower 多数派缺失的状态、之后各 Follower 再补齐相比 PL 缺失的状态，PL 和 Follower 完成状态同步后 PL 变为**正式 Leader(established leader)**。</li>
+<li>broadcast<br>Leader 处理 Client 的写操作，并将状态变更广播至 Follower，Follower<strong>多数派</strong>通过之后 Leader 发起将状态变更**提交(deliver&#x2F;commit)**。</li>
+</ul>
+<p>Leader 和 Follower 之间通过<strong>心跳</strong>判别健康状态，正常情况下 Zab 处在 broadcast 阶段，出现 Leader 宕机、网络隔离等异常情况时 Zab 重新回到 discovery 阶段。</p>
+<h2 id="Zookeeper介绍"><a href="#Zookeeper介绍" class="headerlink" title="Zookeeper介绍"></a>Zookeeper介绍</h2><p>Zookeeper是一个开源的分布式协调服务，其设计目标是将那些复杂的且容易出错的分布式一致性服务封装起来，构成一个高效可靠的原语集，并以一些列简单的接口提供给用户使用。其是一个典型的分布式数据一致性的解决方案，分布式应用程序可以基于它实现诸如数据发布&#x2F;发布、负载均衡、命名服务、分布式协调&#x2F;通知、集群管理、Master选举、分布式锁和分布式队列等功能。其可以保证如下分布式一致性特性。</p>
+<ol>
+<li>顺序一致性，从同一个客户端发起的事务请求，最终将会严格地按照其发起顺序被应用到Zookeeper中去。</li>
+<li>原子性，所有事务请求的处理结果在整个集群中所有机器上的应用情况是一致的，即整个集群要么都成功应用了某个事务，要么都没有应用。</li>
+<li>单一视图，无论客户端连接的是哪个Zookeeper服务器，其看到的服务端数据模型都是一致的。</li>
+<li>可靠性，一旦服务端成功地应用了一个事务，并完成对客户端的响应，那么该事务所引起的服务端状态变更将会一直被保留，除非有另一个事务对其进行了变更。</li>
+<li>实时性，Zookeeper保证在一定的时间段内，客户端最终一定能够从服务端上读取到最新的数据状态。</li>
+</ol>
+<h4 id="设计目标"><a href="#设计目标" class="headerlink" title="设计目标"></a>设计目标</h4><p>Zookeeper致力于提供一个高性能、高可用、且具有严格的顺序访问控制能力（主要是写操作的严格顺序性）的分布式协调服务，其具有如下的设计目标。</p>
+<ol>
+<li>简单的数据模型，Zookeeper使得分布式程序能够通过一个共享的树形结构的名字空间来进行相互协调，即Zookeeper服务器内存中的数据模型由一系列被称为ZNode的数据节点组成，Zookeeper将全量的数据存储在内存中，以此来提高服务器吞吐、减少延迟的目的。</li>
+<li>可构建集群，一个Zookeeper集群通常由一组机器构成，组成Zookeeper集群的而每台机器都会在内存中维护当前服务器状态，并且每台机器之间都相互通信。</li>
+<li>顺序访问，对于来自客户端的每个更新请求，Zookeeper都会分配一个全局唯一的递增编号，这个编号反映了所有事务操作的先后顺序。</li>
+<li>高性能，Zookeeper将全量数据存储在内存中，并直接服务于客户端的所有非事务请求，因此它尤其适用于以读操作为主的应用场景。</li>
+</ol>
+<h4 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h4><ol>
+<li>集群角色，最典型的集群就是Master&#x2F;Slave模式（主备模式），此情况下把所有能够处理写操作的机器称为Master机器，把所有通过异步复制方式获取最新数据，并提供读服务的机器为Slave机器。Zookeeper引入了Leader、Follower、Observer三种角色，Zookeeper集群中的所有机器通过Leader选举过程来选定一台被称为Leader的机器，Leader服务器为客户端提供写服务，Follower和Observer提供读服务，但是Observer不参与Leader选举过程，不参与写操作的过半写成功策略，Observer可以在不影响写性能的情况下提升集群的性能。</li>
+<li>会话，指客户端会话，一个客户端连接是指客户端和服务端之间的一个TCP长连接，Zookeeper对外的服务端口默认为2181，客户端启动的时候，首先会与服务器建立一个TCP连接，从第一次连接建立开始，客户端会话的生命周期也开始了，通过这个连接，客户端能够心跳检测与服务器保持有效的会话，也能够向Zookeeper服务器发送请求并接受响应，同时还能够通过该连接接受来自服务器的Watch事件通知。</li>
+<li>数据节点，第一类指构成集群的机器，称为机器节点，第二类是指数据模型中的数据单元，称为数据节点-Znode，Zookeeper将所有数据存储在内存中，数据模型是一棵树，由斜杠&#x2F;进行分割的路径，就是一个ZNode，如&#x2F;foo&#x2F;path1，每个ZNode都会保存自己的数据内存，同时还会保存一些列属性信息。ZNode分为持久节点和临时节点两类，持久节点是指一旦这个ZNode被创建了，除非主动进行ZNode的移除操作，否则这个ZNode将一直保存在Zookeeper上，而临时节点的生命周期和客户端会话绑定，一旦客户端会话失效，那么这个客户端创建的所有临时节点都会被移除。另外，Zookeeper还允许用户为每个节点添加一个特殊的属性：SEQUENTIAL。一旦节点被标记上这个属性，那么在这个节点被创建的时候，Zookeeper会自动在其节点后面追加一个整形数字，其是由父节点维护的自增数字。</li>
+<li>版本，对于每个ZNode，Zookeeper都会为其维护一个叫作Stat的数据结构，Stat记录了这个ZNode的三个数据版本，分别是version（当前ZNode的版本）、cversion（当前ZNode子节点的版本）、aversion（当前ZNode的ACL版本）。</li>
+<li>Watcher，Zookeeper允许用户在指定节点上注册一些Watcher，并且在一些特定事件触发的时候，Zookeeper服务端会将事件通知到感兴趣的客户端。</li>
+<li>ACL，Zookeeper采用ACL（Access Control Lists）策略来进行权限控制，其定义了如下五种权限：<br>· CREATE：创建子节点的权限。<br>· READ：获取节点数据和子节点列表的权限。<br>· WRITE：更新节点数据的权限。<br>· DELETE：删除子节点的权限。<br>· ADMIN：设置节点ACL的权限。</li>
+</ol>
+<h2 id="ZAB协议"><a href="#ZAB协议" class="headerlink" title="ZAB协议"></a>ZAB协议</h2><p>Zookeeper使用了Zookeeper Atomic Broadcast（ZAB，Zookeeper原子消息广播协议）的协议作为其数据一致性的核心算法。ZAB协议是为Zookeeper专门设计的一种支持崩溃恢复的原子广播协议。<br>Zookeeper依赖ZAB协议来实现分布式数据的一致性，基于该协议，Zookeeper实现了一种主备模式的系统架构来保持集群中各副本之间的数据的一致性，即其使用一个单一的主进程来接收并处理客户端的所有事务请求，并采用ZAB的原子广播协议，将服务器数据的状态变更以事务Proposal的形式广播到所有的副本进程中，ZAB协议的主备模型架构保证了同一时刻集群中只能够有一个主进程来广播服务器的状态变更，因此能够很好地处理客户端大量的并发请求。<br>ZAB协议的核心是定义了对于那些会改变Zookeeper服务器数据状态的事务请求的处理方式，即：所有事务请求必须由一个全局唯一的服务器来协调处理，这样的服务器被称为Leader服务器，余下的服务器则称为Follower服务器，Leader服务器负责将一个客户端事务请求转化成一个事务Proposal（提议），并将该Proposal分发给集群中所有的Follower服务器，之后Leader服务器需要等待所有Follower服务器的反馈，一旦<strong>超过半数</strong>的Follower服务器进行了正确的反馈后，那么Leader就会再次向所有的Follower服务器分发Commit消息，要求其将前一个Proposal进行提交。<br>ZAB协议包括两种基本的模式：崩溃恢复和消息广播。<br>当整个服务框架启动过程中或Leader服务器出现网络中断、崩溃退出与重启等异常情况时，ZAB协议就会进入恢复模式并选举产生新的Leader服务器。当选举产生了新的Leader服务器，同时集群中已经有过半的机器与该Leader服务器完成了状态同步之后，ZAB协议就会退出恢复模式，状态同步时指数据同步，用来保证集群在过半的机器能够和Leader服务器的数据状态保持一致。<br>当集群中已经有过半的Follower服务器完成了和Leader服务器的状态同步，那么整个服务框架就可以进入消息广播模式，当一台同样遵守ZAB协议的服务器启动后加入到集群中，如果此时集群中已经存在一个Leader服务器在负责进行消息广播，那么加入的服务器就会自觉地进入数据恢复模式：找到Leader所在的服务器，并与其进行数据同步，然后一起参与到消息广播流程中去。Zookeeper只允许唯一的一个Leader服务器来进行事务请求的处理，Leader服务器在接收到客户端的事务请求后，会生成对应的事务提议并发起一轮广播协议，而如果集群中的其他机器收到客户端的事务请求后，那么这些非Leader服务器会首先将这个事务请求转发给Leader服务器。<br>当Leader服务器出现崩溃或者机器重启、集群中已经不存在过半的服务器与Leader服务器保持正常通信时，那么在重新开始新的一轮的原子广播事务操作之前，所有进程首先会使用崩溃恢复协议来使彼此到达一致状态，于是整个ZAB流程就会从消息广播模式进入到崩溃恢复模式。一个机器要成为新的Leader，必须获得过半机器的支持，同时由于每个机器都有可能会崩溃，因此，ZAB协议运行过程中，前后会出现多个Leader，并且每台机器也有可能会多次成为Leader，进入崩溃恢复模式后，只要集群中存在过半的服务器能够彼此进行正常通信，那么就可以产生一个新的Leader并再次进入消息广播模式。如一个由三台机器组成的ZAB服务，通常由一个Leader、2个Follower服务器组成，某一个时刻，加入其中一个Follower挂了，整个ZAB集群是不会中断服务的。</p>
+<ol>
+<li>消息广播，ZAB协议的消息广播过程使用原子广播协议，类似于一个二阶段提交过程，针对客户端的事务请求，Leader服务器会为其生成对应的事务Proposal，并将其发送给集群中其余所有的机器，然后再分别收集各自的选票，最后进行事务提交。</li>
+</ol>
+<p>在ZAB的二阶段提交过程中，移除了中断逻辑，所有的Follower服务器要么正常反馈Leader提出的事务Proposal，要么就抛弃Leader服务器，同时，ZAB协议将二阶段提交中的中断逻辑移除意味着我们可以在过半的Follower服务器已经反馈Ack之后就开始提交事务Proposal，而不需要等待集群中所有的Follower服务器都反馈响应，但是，在这种简化的二阶段提交模型下，无法处理Leader服务器崩溃退出而带来的数据不一致问题，因此ZAB采用了崩溃恢复模式来解决此问题，另外，整个消息广播协议是基于具有FIFO特性的TCP协议来进行网络通信的，因此能够很容易保证消息广播过程中消息接受与发送的顺序性。再整个消息广播过程中，Leader服务器会为每个事务请求生成对应的Proposal来进行广播，并且在广播事务Proposal之前，Leader服务器会首先为这个事务Proposal分配一个全局单调递增的唯一ID，称之为事务ID（ZXID），由于ZAB协议需要保证每个消息严格的因果关系（顺序一致性&gt;因果一致性），因此必须将每个事务Proposal按照其ZXID的先后顺序来进行排序和处理。</p>
+<ol>
+<li>崩溃恢复，在Leader服务器出现崩溃，或者由于网络原因导致Leader服务器失去了与过半Follower的联系，那么就会进入崩溃恢复模式，在ZAB协议中，为了保证程序的正确运行，整个恢复过程结束后需要选举出一个新的Leader服务器，因此，ZAB协议需要一个高效且可靠的Leader选举算法，从而保证能够快速地选举出新的Leader，同时，Leader选举算法不仅仅需要让Leader自身知道已经被选举为Leader，同时还需要让集群中的所有其他机器也能够快速地感知到选举产生的新的Leader服务器。</li>
+<li>基本特性，ZAB协议规定了如果一个事务Proposal在一台机器上被处理成功，那么应该在所有的机器上都被处理成功，哪怕机器出现故障崩溃。ZAB协议需要确保那些已经在Leader服务器上提交的事务最终被所有服务器都提交，假设一个事务在Leader服务器上被提交了，并且已经得到了过半Follower服务器的Ack反馈，但是在它Commit消息发送给所有Follower机器之前，Leader服务挂了。如下图所示</li>
+</ol>
+<p>在集群正常运行过程中的某一个时刻，Server1是Leader服务器，其先后广播了P1、P2、C1、P3、C2（C2是Commit Of Proposal2的缩写），其中，当Leader服务器发出C2后就立即崩溃退出了，针对这种情况，ZAB协议就需要确保事务Proposal2最终能够在所有的服务器上都被提交成功，否则将出现不一致。<br>ZAB协议需要确保丢弃那些只在Leader服务器上被提出的事务。如果在崩溃恢复过程中出现一个需要被丢弃的提议，那么在崩溃恢复结束后需要跳过该事务Proposal，如下图所示<br>假设初始的Leader服务器Server1在提出一个事务Proposal3之后就崩溃退出了，从而导致集群中的其他服务器都没有收到这个事务Proposal，于是，当Server1恢复过来再次加入到集群中的时候，ZAB协议需要确保丢弃Proposal3这个事务。<br>在上述的崩溃恢复过程中需要处理的特殊情况，就决定了ZAB协议必须设计这样的Leader选举算法：能够确保提交已经被Leader提交的事务的Proposal，同时丢弃已经被跳过的事务Proposal。如果让Leader选举算法能够保证新选举出来的Leader服务器拥有集群中所有机器最高编号（ZXID最大）的事务Proposal，那么就可以保证这个新选举出来的Leader一定具有所有已经提交的提议，更为重要的是如果让具有最高编号事务的Proposal机器称为Leader，就可以省去Leader服务器查询Proposal的提交和丢弃工作这一步骤了。</p>
+<ol>
+<li>数据同步，完成Leader选举后，在正式开始工作前，Leader服务器首先会确认日志中的所有Proposal是否都已经被集群中的过半机器提交了，即是否完成了数据同步。Leader服务器需要确所有的Follower服务器都能够接收到每一条事务Proposal，并且能够正确地将所有已经提交了的事务Proposal应用到内存数据库中。Leader服务器会为每个Follower服务器维护一个队列，并将那些没有被各Follower服务器同步的事务以Proposal消息的形式逐个发送给Follower服务器，并在每一个Proposal消息后面紧接着再发送一个Commit消息，以表示该事务已经被提交，等到Follower服务器将所有其尚未同步的事务Proposal都从Leader服务器上同步过来并成功应用到本地数据库后，Leader服务器就会将该Follower服务器加入到真正的可用Follower列表并开始之后的其他流程。<br>下面分析ZAB协议如何处理需要丢弃的事务Proposal的，ZXID是一个64位的数字，其中32位可以看做是一个简单的单调递增的计数器，针对客户端的每一个事务请求，Leader服务器在产生一个新的事务Proposal时，都会对该计数器进行加1操作，而高32位则代表了Leader周期epoch的编号，每当选举产生一个新的Leader时，就会从这个Leader上取出其本地日志中最大事务Proposal的ZXID，并解析出epoch值，然后加1，之后以该编号作为新的epoch，低32位则置为0来开始生成新的ZXID，ZAB协议通过epoch号来区分Leader周期变化的策略，能够有效地避免不同的Leader服务器错误地使用不同的ZXID编号提出不一样的事务Proposal的异常情况。当一个包含了上一个Leader周期中尚未提交过的事务Proposal的服务器启动时，其肯定无法成为Leader，因为当前集群中一定包含了一个Quorum（过半）集合，该集合中的机器一定包含了更高epoch的事务的Proposal，因此这台机器的事务Proposal并非最高，也就无法成为Leader。<br>2.4 ZAB协议原理<br>ZAB主要包括消息广播和崩溃恢复两个过程，进一步可以分为三个阶段，分别是发现（Discovery）、同步（Synchronization）、广播（Broadcast）阶段。ZAB的每一个分布式进程会循环执行这三个阶段，称为主进程周期。<br>· 发现，选举产生PL(prospective leader)，PL收集Follower epoch(cepoch)，根据Follower的反馈，PL产生newepoch(每次选举产生新Leader的同时产生新epoch)。<br>· 同步，PL补齐相比Follower多数派缺失的状态、之后各Follower再补齐相比PL缺失的状态，PL和Follower完成状态同步后PL变为正式Leader(established leader)。<br>· 广播，Leader处理客户端的写操作，并将状态变更广播至Follower，Follower多数派通过之后Leader发起将状态变更落地(deliver&#x2F;commit)。<br>在正常运行过程中，ZAB协议会一直运行于阶段三来反复进行消息广播流程，如果出现崩溃或其他原因导致Leader缺失，那么此时ZAB协议会再次进入发现阶段，选举新的Leader。<br>2.4.1 运行分析<br>每个进程都有可能处于如下三种状态之一<br>· LOOKING：Leader选举阶段。<br>· FOLLOWING：Follower服务器和Leader服务器保持同步状态。<br>· LEADING：Leader服务器作为主进程领导状态。<br>所有进程初始状态都是LOOKING状态，此时不存在Leader，此时，进程会试图选举出一个新的Leader，之后，如果进程发现已经选举出新的Leader了，那么它就会切换到FOLLOWING状态，并开始和Leader保持同步，处于FOLLOWING状态的进程称为Follower，LEADING状态的进程称为Leader，当Leader崩溃或放弃领导地位时，其余的Follower进程就会转换到LOOKING状态开始新一轮的Leader选举。<br>一个Follower只能和一个Leader保持同步，Leader进程和所有与所有的Follower进程之间都通过心跳检测机制来感知彼此的情况。若Leader能够在超时时间内正常收到心跳检测，那么Follower就会一直与该Leader保持连接，而如果在指定时间内Leader无法从过半的Follower进程那里接收到心跳检测，或者TCP连接断开，那么Leader会放弃当前周期的领导，比你转换到LOOKING状态，其他的Follower也会选择放弃这个Leader，同时转换到LOOKING状态，之后会进行新一轮的Leader选举，并在选举产生新的Leader之后开始新的一轮主进程周期。<br>2.5 ZAB与Paxos的联系和区别<br>联系：</li>
+<li>都存在一个类似于Leader进程的角色，由其负责协调多个Follower进程的运行。</li>
+<li>Leader进程都会等待超过半数的Follower做出正确的反馈后，才会将一个提议进行提交。</li>
+<li>在ZAB协议中，每个Proposal中都包含了一个epoch值，用来代表当前的Leader周期，在Paxos算法中，同样存在这样的一个标识，名字为Ballot。<br>区别：<br>Paxos算法中，新选举产生的主进程会进行两个阶段的工作，第一阶段称为读阶段，新的主进程和其他进程通信来收集主进程提出的提议，并将它们提交。第二阶段称为写阶段，当前主进程开始提出自己的提议。<br>ZAB协议在Paxos基础上添加了同步阶段，此时，新的Leader会确保存在过半的Follower已经提交了之前的Leader周期中的所有事务Proposal。<br>ZAB协议主要用于构建一个高可用的分布式数据主备系统，而Paxos算法则用于构建一个分布式的一致性状态机系统。</li>
+</ol>
+<h2 id="Zab-如何保证强一致"><a href="#Zab-如何保证强一致" class="headerlink" title="Zab 如何保证强一致"></a>Zab 如何保证强一致</h2><p>Zab 通过约束事务先后顺序达到强一致性，先广播的事务先 commit、FIFO，Zab 称之为**primary order(以下简称 PO)**。实现 PO 的核心是<code>zxid</code>。<br>Zab 中每个事务对应一个 zxid，它由两部分组成：<code>&lt;e, c&gt;</code>，e 即 Leader 选举时生成的 epoch，c 表示当次 epoch 内事务的编号、依次递增。假设有两个事务的 zxid 分别是 z、z’，当满足 <code>z.e &lt; z&#39;.e</code> 或者 <code>z.e = z&#39;.e &amp;&amp; z.c &lt; z&#39;.c</code> 时，定义 z 先于 z’发生(<code>z &lt; z&#39;</code>)。<br>为实现 PO，Zab 对 Follower、Leader 有以下约束：</p>
+<ol>
+<li>有事务 z 和 z’，如果 Leader 先广播 z，则 Follower 需保证先 commit z 对应的事务</li>
+<li>有事务 z 和 z’，z 由 Leader p 广播，z’由 Leader q 广播，Leader p 先于 Leader q，则 Follower 需保证先 commit z 对应的事务</li>
+<li>有事务 z 和 z’，z 由 Leader p 广播，z’由 Leader q 广播，Leader p 先于 Leader q，如果 Follower 已经 commit z，则 q 需保证已 commit z 才能广播 z’</li>
+</ol>
+<p>第 1、2 点保证事务 FIFO，第 3 点保证 Leader 上具备所有已 commit 的事务。<br>相比 Paxos，Zab 约束了事务顺序、适用于有强一致性需求的场景。</p>
+<h1 id="Paxos、Raft、Zab-比较"><a href="#Paxos、Raft、Zab-比较" class="headerlink" title="Paxos、Raft、Zab 比较"></a>Paxos、Raft、Zab 比较</h1><p>除 Paxos、Raft 和 Zab 外，Viewstamped Replication(简称 VR)也是讨论比较多的一致性协议。这些协议包含很多共同的内容(Leader、quorum、state machine 等)，因而我们不禁要问：Paxos、Raft、Zab 和 VR 等分布式一致性协议区别到底在哪，还是根本就是一回事？<br>Paxos、Raft、Zab 和 VR 都是解决一致性问题的协议，Paxos 协议原文倾向于理论，Raft、Zab、VR 倾向于实践，一致性保证程度等的不同也导致这些协议间存在差异。下图帮助我们理解这些协议的相似点和区别<br><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Paxos%E3%80%81Raft%E3%80%81Zab%E6%AF%94%E8%BE%83.jpg" alt="Paxos、Raft、Zab比较" title="Paxos、Raft、Zab比较"></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><h2 id="Paxos-2"><a href="#Paxos-2" class="headerlink" title="Paxos "></a>Paxos </h2><ol>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/23279058">分布式系统理论进阶 - Paxos</a> </li>
+<li><a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/publication/paxos-made-simple/?from=http://research.microsoft.com/en-us/um/people/lamport/pubs/paxos-simple.pdf">Paxos Made Simple</a> </li>
+<li><a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/publication/part-time-parliament/?from=http://research.microsoft.com/en-us/um/people/lamport/pubs/lamport-paxos.pdf">The Part-Time Parliament</a> </li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/23279058">Tencent&#x2F;phxpaxos</a> </li>
+</ol>
+<h2 id="Raft-1"><a href="#Raft-1" class="headerlink" title="Raft "></a>Raft </h2><ol>
+<li><a target="_blank" rel="noopener" href="http://www.cs.utexas.edu/users/lorenzo/corsi/cs380d/papers/paper2-1.pdf">[1] Paxos made live - An engineering perspective, Tushar Chandra, Robert Griesemer and Joshua Redstone, 2007</a></li>
+<li><a target="_blank" rel="noopener" href="http://files.catwell.info/misc/mirror/raft/raft.pdf">[2] In Search of an Understandable Consensus Algorithm, Diego Ongaro and John Ousterhout, 2013</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.baidu.com/link?url=59S8Pf5DhEUcoYrNaNCLLF9d-rKeHrakboBuYcNcn86jxgxEIH-LzSzP_isdeyhTA3hkn7AYn64x1KCNAvSy22SJEMKGlqG5Ypum8iTcd9AT2QQwHoHAwVuTR7yBFc4n&wd=&eqid=8c4a598b000007f000000006580cec0c">[3] In Search of an Understandable Consensus Algorithm (Extended Version), Diego Ongaro and John Ousterhout, 2013</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.infosys.tuwien.ac.at/teaching/courses/AdvancedDistributedSystems/download/1990_Schneider_Implementing%20fault-tolerant%20services%20using%20the%20state%20machine%20approach.pdf">[4] Implementing Fault-Tolerant Services Using the State Machine, Fred B. Schneider, 1990</a> </li>
+</ol>
+<h2 id="Zab-1"><a href="#Zab-1" class="headerlink" title="Zab "></a>Zab </h2><ol>
+<li><a target="_blank" rel="noopener" href="http://www.cs.cornell.edu/courses/cs6452/2012sp/papers/zab-ieee.pdf">[5] Zab:High-performance broadcast for primary-backup systems, FlavioP.Junqueira,BenjaminC.Reed,andMarcoSeraﬁni, 2011</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.tcs.hut.fi/Studies/T-79.5001/reports/2012-deSouzaMedeiros.pdf">[6] ZooKeeper’s atomic broadcast protocol: Theory and practice, Andr´e Medeiros, 2012</a></li>
+<li><a target="_blank" rel="noopener" href="http://pmg.csail.mit.edu/papers/vr.pdf">[7] Viewstamped Replication A New Primary Copy Method to Support Highly-Available Distributed Systems, Brian M.Oki and Barbar H.Liskov, 1988</a></li>
+<li><a target="_blank" rel="noopener" href="http://pmg.csail.mit.edu/papers/vr-revisited.pdf">[8] Viewstamped Replication Revisited, Barbara Liskov and James Cowling, Barbara Liskov and James Cowling ,2012</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.acolyer.org/2015/03/01/cant-we-all-just-agree/">[9] Can’t we all just agree? The morning paper, 2015</a></li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1309.5671.pdf">[10] Vive La Difference: Paxos vs. Viewstamped Replication vs. Zab, Robbert van Renesse, Nicolas Schiper and Fred B. Schneider, 2014</a> </li>
+</ol>
+<h2 id="Paxos-变种和优化"><a href="#Paxos-变种和优化" class="headerlink" title="Paxos 变种和优化 "></a>Paxos 变种和优化 </h2><ol>
+<li><a target="_blank" rel="noopener" href="http://cseweb.ucsd.edu/classes/wi09/cse223a/mencius.pdf">[1] Mencius: Building Efficient Replicated State Machines for WANs, Yanhua Mao,Flavio P. Junqueira,Keith Marzullo, 2018</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-2005-112.pdf">[2] Fast Paxos, Leslie Lamport, 2005</a></li>
+<li><a target="_blank" rel="noopener" href="http://diyhpl.us/~bryan/papers2/distributed/distributed-systems/generalized-consensus-and-paxos.2004.pdf">[3] Generalized Consensus and Paxos, Leslie Lamport, 2004</a></li>
+<li><a target="_blank" rel="noopener" href="http://sigops.org/sosp/sosp13/papers/p358-moraru.pdf">[4] There Is More Consensus in Egalitarian Parliaments, Iulian Moraru, David G. Andersen, Michael Kaminsky, 2013</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/b5a259aa.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/b5a259aa.html" class="post-title-link" itemprop="url">QMQ 总结</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-16 20:52:48" itemprop="dateCreated datePublished" datetime="2020-08-16T20:52:48+08:00">2020-08-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="总体架构"><a href="#总体架构" class="headerlink" title="总体架构"></a>总体架构</h1><p><img src="/imgs/QMQ/QMQ-%E6%B6%88%E6%81%AF%E7%9A%84%E5%8F%91%E9%80%81%E5%92%8C%E6%B6%88%E8%B4%B9%E6%B5%81%E7%A8%8B.png" alt="QMQ-消息的发送和消费流程" title="QMQ-消息的发送和消费流程"></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/b5a259aa.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -669,7 +965,7 @@
 <li><a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/43348.html?spm=5176.doc43490.6.566.Zd5Bl7">事务消息</a></li>
 <li><a target="_blank" rel="noopener" href="http://www.iocoder.cn/categories/RocketMQ/">RocketMQ 源码分析</a></li>
 </ol>
-
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
     </div>
 
@@ -880,7 +1176,7 @@
 <li>提交给用户的目标主题消息可能会失败，目前这依日志的记录而定。它的高可用性通过 RocketMQ 本身的高可用性机制来保证，如果希望确保事务消息不丢失、并且事务完整性得到保证，建议使用同步的双重写入机制。</li>
 <li>事务消息的生产者 ID 不能与其他类型消息的生产者 ID 共享。与其他类型的消息不同，事务消息允许反向查询、MQ 服务器能通过它们的生产者 ID 查询到消费者。</li>
 </ul>
-<h1 id="RocketMQ的运维"><a href="#RocketMQ的运维" class="headerlink" title="RocketMQ的运维"></a>RocketMQ的运维</h1>
+<h1 id="RocketMQ的运维"><a href="#RocketMQ的运维" class="headerlink" title="RocketMQ的运维"></a>RocketMQ的运维</h1><script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
     </div>
 
@@ -1112,7 +1408,7 @@
 <li>为什么不推荐使用 MyBatis 中的缓存？<br>一级缓存会产生脏数据。因为作用范围是会话，如果有俩会话，会话 1 加载数据到缓存，会话 2 修改该条数据，之后会话 1 读到的是缓存里的老数据。<br>二级缓存同样会产生脏数据。二级缓存作用范围是语句，需要手动刷新或在 xml 中配置需要刷新，一般在写入操作和事务提交后都需要刷新一下。但是如果表 A 的 Amapper.xml 中关联了表 B，即使表 B 的数据有变更，我们在 Amapper.xml 中执行查询语句仍然会读到缓存中的脏数据。</li>
 <li>MyBatis 与 JDBC 对象之前的关联？<br>ParameterStatement - ParameterStatementHandler<br>SimpleStatement - SimpleStatementHandler<br>ResultSet - ResultSetHandler</li>
 </ol>
-
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
     </div>
 
@@ -1222,412 +1518,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/4eb3381c.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/4eb3381c.html" class="post-title-link" itemprop="url">分布式锁</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-07-06 16:32:14" itemprop="dateCreated datePublished" datetime="2020-07-06T16:32:14+08:00">2020-07-06</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-10-09 16:58:44" itemprop="dateModified" datetime="2022-10-09T16:58:44+08:00">2022-10-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<h1 id="单机环境下的锁"><a href="#单机环境下的锁" class="headerlink" title="单机环境下的锁"></a>单机环境下的锁</h1><p>单机环境下，资源竞争者都是来自机器内部(进程&#x2F;线程)，那么实现锁的方案只需要借助单机资源就可以了，比如借助磁盘、内存、寄存器来实现。</p>
-<h2 id="竞态条件（Race-Condition）"><a href="#竞态条件（Race-Condition）" class="headerlink" title="竞态条件（Race Condition）"></a>竞态条件（Race Condition）</h2><p>计算的正确性取决于多个线程的交替执行时序时，就会发生竞态条件。比如：</p>
-<ol>
-<li>先检测（查询）后执行。执行依赖于检测的结果，而检测结果依赖于多个线程的执行时序，而多个线程的执行时序通常情况下是不固定不可判断的，从而导致执行结果出现各种问题。</li>
-<li>延迟初始化（如单例的实例化） <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class ObjFactory &#123;  </span><br><span class="line">    private Obj instance;  </span><br><span class="line"></span><br><span class="line">    public Obj getInstance()&#123;  </span><br><span class="line">        if(instance == null)&#123;  </span><br><span class="line">            instance = new Obj();  </span><br><span class="line">        &#125;  </span><br><span class="line">        return instance;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
-如果两个线程同时调用 getInstance()就有可能出现：一个线程 A 创建了一个新对象 instance &#x3D; obj1，立马被另一个线程 B 覆盖 instance &#x3D; obj2，线程 A 返回了 obj1，线程 B 返回 obj2，于是 Obj 就相当于被实例化了两次。</li>
-</ol>
-<h2 id="锁的分类"><a href="#锁的分类" class="headerlink" title="锁的分类"></a>锁的分类</h2><ol>
-<li>悲观锁，前提是，一定会有并发抢占资源，强行独占资源，在整个数据处理过程中将数据处于锁定状态。</li>
-<li>乐观锁，前提是，不会发生并发抢占资源，只有在<strong>执行修改时</strong>检查是否违反数据完整性。<strong>只能防止脏读后数据的提交，不能解决脏读</strong>。</li>
-</ol>
-<h2 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h2><h2 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h2><p>乐观锁一般有以下两种实现方法：</p>
-<ol>
-<li>版本号：使用<strong>版本标识</strong>来确定读到的数据与提交时的数据是否一致。提交后修改版本标识，不一致时可以采取<strong>丢弃</strong>或<strong>再次尝试</strong>的策略。</li>
-<li>CAS：java 中的 compareandswap 即 cas，解决多线程并行情况下使用锁造成性能损耗的一种机制。CAS 操作包含三个操作数，内存位置（V）,预期原值（A）和新值（B）。如果内存位置的值与预期原值相匹配，那么处理器会西东将该位置值更新为新值。否则，处理器不做任何操作。</li>
-</ol>
-<h1 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h1><p>目前几乎很多大型网站及应用都是分布式部署的，分布式场景中的数据一致性问题一直是一个比较重要的话题。分布式的<strong>CAP 理论</strong>告诉我们“任何一个分布式系统都无法同时满足<strong>一致性（Consistency）</strong>、<strong>可用性（Availability）</strong>和<strong>分区容错性（Partition tolerance）</strong>，最多只能同时满足其中两项。”所以，很多系统在设计之初就要对这三者做出取舍。在互联网领域的绝大多数的场景中，都需要牺牲强一致性来换取系统的高可用性，系统往往只需要保证“最终一致性”，只要这个最终时间是在用户可以接受的范围内即可。<br>有的时候，我们需要保证一个方法在同一时间内只能被同一个线程执行。在单机环境中，Java 中其实提供了很多并发处理相关的 API，但是这些 API 在分布式场景中就无能为力了。也就是说单纯的 Java Api 并不能提供分布式锁的能力。<br>对于分布式环境下，资源竞争者生存环境更复杂了，原有依赖单机的方案不再发挥作用，这时候就需要一个大家都认可的协调者出来，帮助解决竞争问题，那这个协调者称之为分布式锁。</p>
-<h2 id="实现分布式锁的需求（方法锁，以方法作为临界区，资源锁是类似的）"><a href="#实现分布式锁的需求（方法锁，以方法作为临界区，资源锁是类似的）" class="headerlink" title="实现分布式锁的需求（方法锁，以方法作为临界区，资源锁是类似的）"></a>实现分布式锁的需求（方法锁，以方法作为临界区，资源锁是类似的）</h2><ol>
-<li>可以保证在分布式部署的应用集群中，同一个方法在同一时间只能被一台机器上的一个线程执行。</li>
-<li>这把锁要是一把可重入锁（单线程可重复获取同一把锁，避免死锁）</li>
-<li>这把锁最好是一把阻塞锁（根据业务需求考虑要不要这条）</li>
-<li>有高可用的获取锁和释放锁功能</li>
-<li>获取锁和释放锁的性能要好</li>
-</ol>
-<h2 id="基于数据库表"><a href="#基于数据库表" class="headerlink" title="基于数据库表"></a>基于数据库表</h2><p>要实现分布式锁，最简单的方式可能就是直接创建一张锁表，然后通过操作该表中的数据来实现了。<br>当我们要锁住某个方法或资源时，我们就在该表中增加一条记录，想要释放锁的时候就删除这条记录。<br>创建这样一张数据库表：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `methodLock` (</span><br><span class="line">  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT &#x27;主键&#x27;,</span><br><span class="line">  `method_name` varchar(64) NOT NULL DEFAULT &#x27;&#x27; COMMENT &#x27;锁定的方法名&#x27;,</span><br><span class="line">  `desc` varchar(1024) NOT NULL DEFAULT &#x27;备注信息&#x27;,</span><br><span class="line">  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT &#x27;保存数据时间，自动生成&#x27;,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  UNIQUE KEY `uidx_method_name` (`method_name `) USING BTREE</span><br><span class="line">) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT=&#x27;锁定中的方法&#x27;;</span><br></pre></td></tr></table></figure>
-<h3 id="使用锁表实现方法锁"><a href="#使用锁表实现方法锁" class="headerlink" title="使用锁表实现方法锁"></a>使用锁表实现方法锁</h3><p>执行 SQL：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into methodLock(method_name,desc) values (‘method_name’,‘desc’)</span><br></pre></td></tr></table></figure>
-<p>因为我们对 method_name 做了唯一性约束，这里如果有多个请求同时提交到数据库的话，数据库会保证只有一个操作可以成功，那么我们就可以认为操作成功的那个线程获得了该方法的锁，可以执行方法体内容。<br>当方法执行完毕之后，想要释放锁的话，需要执行以下 Sql:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete from methodLock where method_name =&#x27;method_name&#x27;</span><br></pre></td></tr></table></figure>
-<p>上面这种简单的实现有以下几个问题：</p>
-<ul>
-<li>这把锁强依赖数据库的可用性，数据库是一个单点，一旦数据库挂掉，会导致业务系统不可用。</li>
-<li>这把锁没有失效时间，一旦解锁操作失败，就会导致锁记录一直在数据库中，其他线程无法再获得到锁。</li>
-<li>这把锁只能是非阻塞的，因为数据的 insert 操作，一旦插入失败就会直接报错。没有获得锁的线程并不会进入排队队列，要想再次获得锁就要再次触发获得锁操作。</li>
-<li>这把锁是非重入的，同一个线程在没有释放锁之前无法再次获得该锁。因为数据库中数据已经存在了。</li>
-</ul>
-<p>当然，我们也可以有其他方式解决上面的问题。</p>
-<ul>
-<li>数据库是单点？搞两个数据库，数据之前双向同步。一旦挂掉快速切换到备库上。</li>
-<li>没有失效时间？只要做一个定时任务，每隔一定时间把数据库中的超时数据清理一遍。</li>
-<li>非阻塞的？搞一个 while 循环，直到 insert 成功再返回成功。</li>
-<li>非重入的？在数据库表中加个字段，记录当前获得锁的机器的主机信息和线程信息，那么下次再获取锁的时候先查询数据库，如果当前机器的主机信息和线程信息在数据库可以查到的话，直接把锁分配给他就可以了。</li>
-</ul>
-<h3 id="使用数据库-X-锁（排他锁）实现分布式锁"><a href="#使用数据库-X-锁（排他锁）实现分布式锁" class="headerlink" title="使用数据库 X 锁（排他锁）实现分布式锁"></a>使用数据库 X 锁（排他锁）实现分布式锁</h3><p>除了可以通过增删操作数据表中的记录以外，其实还可以借助数据中自带的锁来实现分布式的锁。<br>我们还用刚刚创建的那张数据库表。可以通过数据库的排他锁来实现分布式锁。<br>基于 MySQL 的 InnoDB 引擎，可以使用以下方法来实现加锁操作：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public boolean lock()&#123;</span><br><span class="line">    connection.setAutoCommit(false)</span><br><span class="line">    while(true)&#123;</span><br><span class="line">        try&#123;</span><br><span class="line">            result = select * from methodLock where method_name = xxx for update;</span><br><span class="line">            if(result==null)&#123;</span><br><span class="line">                return true;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;catch(Exception e)&#123;</span><br><span class="line">            log.warn(&quot;加锁失败&quot;, e);</span><br><span class="line">        &#125;</span><br><span class="line">        sleep(1000);</span><br><span class="line">    &#125;</span><br><span class="line">    return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在查询语句后面增加 for update，数据库会在查询过程中给数据库表增加排他锁。当某条记录被加上排他锁之后，其他线程无法再在该行记录上增加排他锁。<br>我们可以认为获得排它锁的线程即可获得分布式锁，当获取到锁之后，可以执行方法的业务逻辑，执行完方法之后，再通过以下方法解锁：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public void unlock()&#123;</span><br><span class="line">    connection.commit();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>通过 connection.commit()操作来释放锁。<br>这种方法可以有效的解决上面提到的无法释放锁和阻塞锁的问题。</p>
-<ul>
-<li>阻塞锁？ for update 语句会在执行成功后立即返回，在执行失败时一直处于阻塞状态，直到成功。</li>
-<li>锁定之后服务宕机，无法释放？使用这种方式，服务宕机之后数据库会自己把锁释放掉。<br>但是还是无法直接解决数据库单点和可重入问题。</li>
-</ul>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总结一下使用数据库来实现分布式锁的方式，这两种方式都是依赖数据库的一张表，一种是通过表中的记录的存在情况确定当前是否有锁存在，另外一种是通过数据库的排他锁来实现分布式锁。<br>数据库实现分布式锁的优点：</p>
-<ol>
-<li>直接借助数据库，容易理解。</li>
-</ol>
-<p>数据库实现分布式锁的缺点</p>
-<ol>
-<li>会有各种各样的问题，在解决问题的过程中会使整个方案变得越来越复杂。</li>
-<li>操作数据库需要一定的开销，性能问题需要考虑。</li>
-</ol>
-<h2 id="基于缓存"><a href="#基于缓存" class="headerlink" title="基于缓存"></a>基于缓存</h2><p>使用缓存中间件实现分布式锁的方法我已经在<a href="https://tallate.github.io/d3d5fdbf.html#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81">Redis 客户端</a>中有过分析。</p>
-<h2 id="基于-ZooKeeper"><a href="#基于-ZooKeeper" class="headerlink" title="基于 ZooKeeper"></a>基于 ZooKeeper</h2><p>基于 zookeeper 临时有序节点可以实现的分布式锁。<br>大致思想即为：每个客户端对某个方法加锁时，在 zookeeper 上的与该方法对应的指定节点的目录下，生成一个唯一的<strong>瞬时有序节点</strong>。<br>判断是否获取锁的方式很简单，只需要判断有序节点中序号最小的一个。<br>当释放锁的时候，只需将这个瞬时节点删除即可。同时，其可以避免服务宕机导致的锁无法释放，而产生的死锁问题。<br>来看下 Zookeeper 能不能解决前面提到的问题。</p>
-<ul>
-<li>锁无法释放？使用 Zookeeper 可以有效的解决锁无法释放的问题，因为在创建锁的时候，客户端会在 ZK 中创建一个临时节点，一旦客户端获取到锁之后突然挂掉（Session 连接断开），那么这个临时节点就会自动删除掉。其他客户端就可以再次获得锁。</li>
-<li>非阻塞锁？使用 Zookeeper 可以实现阻塞的锁，客户端可以通过在 ZK 中创建顺序节点，并且在节点上绑定监听器，一旦节点有变化，Zookeeper 会通知客户端，客户端可以检查自己创建的节点是不是当前所有节点中序号最小的，如果是，那么自己就获取到锁，便可以执行业务逻辑了。</li>
-<li>不可重入？使用 Zookeeper 也可以有效的解决不可重入的问题，客户端在创建节点的时候，把当前客户端的主机信息和线程信息直接写入到节点中，下次想要获取锁的时候和当前最小的节点中的数据比对一下就可以了。如果和自己的信息一样，那么自己直接获取到锁，如果不一样就再创建一个临时的顺序节点，参与排队。</li>
-<li>单点问题？使用 Zookeeper 可以有效的解决单点问题，ZK 是集群部署的，只要集群中有半数以上的机器存活，就可以对外提供服务。</li>
-</ul>
-<h3 id="使用-Curator-实现分布式锁"><a href="#使用-Curator-实现分布式锁" class="headerlink" title="使用 Curator 实现分布式锁"></a>使用 Curator 实现分布式锁</h3><p>可以直接使用 zookeeper 第三方库 Curator 客户端，这个客户端中封装了一个可重入的锁服务。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public boolean tryLock(long timeout, TimeUnit unit) throws InterruptedException &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        return interProcessMutex.acquire(timeout, unit);</span><br><span class="line">    &#125; catch (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br><span class="line">public boolean unlock() &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        interProcessMutex.release();</span><br><span class="line">    &#125; catch (Throwable e) &#123;</span><br><span class="line">        log.error(e.getMessage(), e);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        executorService.schedule(new Cleaner(client, path), delayTimeForClean, TimeUnit.MILLISECONDS);</span><br><span class="line">    &#125;</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Curator 提供的 InterProcessMutex 是分布式锁的实现。acquire 方法用户获取锁，release 方法用于释放锁。<br>使用 ZK 实现的分布式锁好像完全符合了本文开头我们对一个分布式锁的所有期望。但是，其实并不是，Zookeeper 实现的分布式锁其实存在一个缺点，那就是性能上可能并没有缓存服务那么高。因为每次在创建锁和释放锁的过程中，都要动态创建、销毁瞬时节点来实现锁功能。ZK 中创建和删除节点只能通过<strong>Leader</strong>服务器来执行，然后将数据同步到所有的 Follower 机器上。</p>
-<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h3><p>使用 Zookeeper 实现分布式锁的优点</p>
-<ol>
-<li>有效的解决单点问题，不可重入问题，非阻塞问题以及锁无法释放的问题。</li>
-<li>实现起来较为简单。</li>
-</ol>
-<p>使用 Zookeeper 实现分布式锁的缺点</p>
-<ol>
-<li>性能上不如使用缓存实现分布式锁。</li>
-<li>需要对 ZK 的原理有所了解。</li>
-</ol>
-<p>分布式锁实现需要根据实际需要来选择，比如红锁是AP的，而ZooKeeper是CP的。</p>
-<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><ol>
-<li>怎么使用 Redis 实现分布式锁？<br>set 命令带上 nx 和 ex 参数。</li>
-<li>怎么使用 zk 实现分布式锁？<br>先建一个代表锁的持久节点，然后每个线程要加锁就在该持久节点下创建临时有序节点，如果当前线程创建的节点是最小的，则说明可以获取到该锁，否则阻塞等待；释放锁就是将这个临时节点删除。</li>
-</ol>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/garfieldcgf/p/6380816.html">分布式锁的几种实现方式</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/dennyzhangdd/p/7133653.html#_label0">终极锁实战：单 JVM 锁+分布式锁</a></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/a87bf883.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/a87bf883.html" class="post-title-link" itemprop="url">MySQL6_1其他主题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-05-30 10:18:28" itemprop="dateCreated datePublished" datetime="2020-05-30T10:18:28+08:00">2020-05-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-
-<h1 id="常用服务器配置"><a href="#常用服务器配置" class="headerlink" title="常用服务器配置"></a>常用服务器配置</h1><ul>
-<li>启动选项和系统变量<br>启动选项是运维启动 MySQL 时传入的一些参数，包括命令行启动选项和配置文件 my.cnf<br>系统变量会影响 MySQL 进程的运行行为，大部分是由启动选项初始化的，有些是运行时自动生成的</li>
-<li>查看系统变量<br><code>show [GLOBAL|SESSION] variables [like 匹配的模式];</code></li>
-<li>配置文件中配置组的概念</li>
-<li>配置作用范围<br>1、GLOBAL 指配置文件或命令行启动选项设置的系统变量<br>2、SESSION（LOCAL）刚连接时会被初始化为 GLOBAL 的变量，可以通过以下命令来设置<br><code>SET [GLOBAL|SESSION] 系统变量名 = 值;</code></li>
-<li>状态变量<br>指关于程序运行状态的变量，是只读的，不能手动修改<br>比方说 Threads_connected 表示当前有多少客户端与服务器建立了连接，Handler_update 表示已经更新了多少行记录<br>SHOW [GLOBAL|SESSION] STATUS [LIKE 匹配的模式];</li>
-</ul>
-<h1 id="InnoDB-统计数据"><a href="#InnoDB-统计数据" class="headerlink" title="InnoDB 统计数据"></a>InnoDB 统计数据</h1><h2 id="两种统计数据"><a href="#两种统计数据" class="headerlink" title="两种统计数据"></a>两种统计数据</h2><p>InnoDB 中有两种统计数据：<br>1、永久性：服务器重启也不会消失，这些数据被存储到了<code>innodb_table_stats</code>和<code>innodb_index_stats</code>这两张表中；<br>2、非永久性：重启即消失。<br>可以通过服务器的<code>innodb_stats_persistent</code>变量来查看这个统计数据的方式。</p>
-<h2 id="innodb-table-stats-统计方式"><a href="#innodb-table-stats-统计方式" class="headerlink" title="innodb_table_stats 统计方式"></a>innodb_table_stats 统计方式</h2><p>1、n_rows(一个表中的记录行数)统计项的收集<br>按照一定算法选取几个叶子节点页面，计算每个页面中主键值记录数量，然后计算平均一个页面中主键值的记录数量乘以全部叶子节点的数量就算是该表的 n_rows 值<br>2、clustered_index_size 和 sum_of_other_index_sizes</p>
-<ul>
-<li>从数据字典里找到表的各个索引对应的根页面位置。<br>系统表 SYS_INDEXES 里存储了各个索引对应的根页面信息。</li>
-<li>从根页面的 Page Header 里找到叶子节点段和非叶子节点段对应的 Segment Header。<br>在每个索引的根页面的 Page Header 部分都有两个字段：<br>PAGE_BTR_SEG_LEAF：表示 B+树叶子段的 Segment Header 信息。<br>PAGE_BTR_SEG_TOP：表示 B+树非叶子段的 Segment Header 信息。</li>
-<li>从叶子节点段和非叶子节点段的 Segment Header 中找到这两个段对应的 INODE Entry 结构。<br>这个是 Segment Header 结构：<br><img src="https://user-gold-cdn.xitu.io/2018/12/26/167e94d5b165a91f?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"></li>
-<li>从对应的 INODE Entry 结构中可以找到该段对应所有零散的页面地址以及 FREE、NOT_FULL、FULL 链表的基节点。<br>这个是 INODE Entry 结构：<br><img src="https://user-gold-cdn.xitu.io/2018/12/26/167e94d5b1e44524?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"></li>
-<li>直接统计零散的页面有多少个，然后从那三个链表的 List Length 字段中读出该段占用的区的大小，每个区占用 64 个页，所以就可以统计出整个段占用的页面。<br>这个是链表基节点的示意图：<br><img src="https://user-gold-cdn.xitu.io/2018/12/26/167e94d5b17c24e3?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"></li>
-<li>分别计算聚簇索引的叶子结点段和非叶子节点段占用的页面数，它们的和就是 clustered_index_size 的值，按照同样的套路把其余索引占用的页面数都算出来，加起来之后就是 sum_of_other_index_sizes 的值。</li>
-</ul>
-<h2 id="innodb-index-stats-统计方式"><a href="#innodb-index-stats-统计方式" class="headerlink" title="innodb_index_stats 统计方式"></a>innodb_index_stats 统计方式</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM mysql.innodb_index_stats WHERE table_name = &#x27;single_table&#x27;;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>n_leaf_pages：表示该索引的叶子节点占用多少页面。</li>
-<li>size：表示该索引共占用多少页面。</li>
-<li>n_diff_pfxNN：表示对应的索引列不重复的值有多少。其中的 NN 长得有点儿怪呀，啥意思呢？<br>其实 NN 可以被替换为 01、02、03… 这样的数字。比如对于 idx_key_part 来说：<br>n_diff_pfx01 表示的是统计 key_part1 这单单一个列不重复的值有多少。<br>n_diff_pfx02 表示的是统计 key_part1、key_part2 这两个列组合起来不重复的值有多少。<br>n_diff_pfx03 表示的是统计 key_part1、key_part2、key_part3 这三个列组合起来不重复的值有多少。<br>n_diff_pfx04 表示的是统计 key_part1、key_part2、key_part3、id 这四个列组合起来不重复的值有多少。</li>
-<li>在计算某些索引列中包含多少不重复值时，需要对一些叶子节点页面进行采样，sample_size 列就表明了采样的页面数量是多少。</li>
-</ul>
-<h2 id="基于内存的非永久性统计数据"><a href="#基于内存的非永久性统计数据" class="headerlink" title="基于内存的非永久性统计数据"></a>基于内存的非永久性统计数据</h2><p>开启非永久性统计数据的方法：<br>1、将<code>innodb_stats_persistent</code>的值设置为 OFF；<br>2、直接在创建表或修改表时设置<code>STATS_PERSISTENT</code>属性的值为 0；</p>
-<h1 id="MySQL-Server-统计数据"><a href="#MySQL-Server-统计数据" class="headerlink" title="MySQL Server 统计数据"></a>MySQL Server 统计数据</h1><p>Server 层而不是 InnoDB（存储引擎层）统计数据。<br>1、查看连接数配置</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables like &#x27;%max_connections%&#x27;</span><br></pre></td></tr></table></figure>
-<p>2、查看当前连接数</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show full processlist;</span><br></pre></td></tr></table></figure>
-
-
-<h1 id="数据恢复"><a href="#数据恢复" class="headerlink" title="数据恢复"></a>数据恢复</h1><p>数据的误删基本分以下几种情况：</p>
-<ol>
-<li>使用 delete 语句误删数据行；</li>
-<li>使用 drop table 或 truncate table 误删表；</li>
-<li>使用 drop database 误删数据库；</li>
-<li>使用 rm 命令误删整个 MySQL 实例。</li>
-</ol>
-<h2 id="误删行"><a href="#误删行" class="headerlink" title="误删行"></a>误删行</h2><p>使用 Flashback 工具通过闪回把数据恢复。<br>Flashback 恢复数据的原理，是<strong>修改 binlog 的内容</strong>（事务里的语句顺序颠倒、语句的语义颠倒比如 insert 变成 delete），拿回原库重放。而能够使用这个方案的前提是，需要确保 binlog_format&#x3D;row 和 binlog_row_image&#x3D;FULL。</p>
-<h2 id="误删库-表"><a href="#误删库-表" class="headerlink" title="误删库 &#x2F; 表"></a>误删库 &#x2F; 表</h2><p>误删库表的情况不能使用 Flashback 恢复，因为即使配置 binlog_format&#x3D;row，truncate&#x2F;drop 语句在 binlog 中也只会记录一条对应的语句，而用这些信息是无法恢复数据的。<br>这种情况下，恢复需要使用全量备份，加增量日志。这个方案要求线上有定期的全量备份，并且实时备份 binlog。</p>
-<h2 id="rm-删除数据"><a href="#rm-删除数据" class="headerlink" title="rm 删除数据"></a>rm 删除数据</h2><p>仅仅删除某个节点的数据的情况，HA 系统可以选出新的主库，从而保证整个集群的正常工作。<br>之后，我们可以在这个被删节点上把数据恢复回来，再接入整个集群。</p>
-<h1 id="中断查询"><a href="#中断查询" class="headerlink" title="中断查询"></a>中断查询</h1><p>有时候因为查询耗时过长，或出现死锁等待，我们不得不提早终止执行 SQL 的线程，可以通过<code>information_schema.processlist</code> 和 <code>performance_schema.threads</code>这两张表来查看正在执行的线程：</p>
-<ul>
-<li>processlist 表中每一行对应一个客户端连接，也对应一个线程；</li>
-<li>threads 每一行对应一个线程。</li>
-</ul>
-<p><code>kill query pid</code>可以杀死线程，但是客户端的连接还在，可以看到被 kill 后该连接进入了 Sleep 状态：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># Id, User, Host, db, Command, Time, State, Info</span><br><span class="line">&#x27;494633&#x27;, &#x27;beta&#x27;, &#x27;192.168.19.142:56193&#x27;, &#x27;ds_0&#x27;, &#x27;Sleep&#x27;, &#x27;26&#x27;, &#x27;&#x27;, NULL</span><br></pre></td></tr></table></figure>
-
-<p><code>kill pid</code>可以中断连接，执行后再用<code>processlist</code>就找不到那个 pid 了。</p>
-<p>在客户端 Ctrl + C 并不能中断服务器线程，只能中断客户端进程，</p>
-<h1 id="大表查询"><a href="#大表查询" class="headerlink" title="大表查询"></a>大表查询</h1><h2 id="Server-层"><a href="#Server-层" class="headerlink" title="Server 层"></a>Server 层</h2><p>MySQL 使用缓存来保证一次性查询大量数据的情况下不会把服务器内存打满，服务器并不需要保存一个完整的结果集。取数据和发数据的流程如下：<br><img src="/imgs/MySQL/MySQL-%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C%E5%8F%91%E9%80%81%E6%B5%81%E7%A8%8B.png" alt="MySQL-查询结果发送流程" title="MySQL-查询结果发送流程"></p>
-<ol>
-<li>获取一行，写到 <strong>net_buffer</strong> 中。这块内存的大小是由参数 net_buffer_length 定义的，默认是 16k。</li>
-<li>重复获取行，直到 net_buffer 写满，调用网络接口发出去。</li>
-<li>如果发送成功，就清空 net_buffer，然后继续取下一行，并写入 net_buffer。</li>
-<li>如果发送函数返回 EAGAIN 或 WSAEWOULDBLOCK，就表示<strong>本地网络栈（socket send buffer）</strong>写满了，进入等待。直到网络栈重新可写，再继续发送。</li>
-</ol>
-<p>从上面的流程可知，MySQL 一次查询占用的内存是有限的，最大是**min(net_buffer_length, socket send buffer)**，即不能超过 net_buffer_length 和 socket send buffer；</p>
-<h2 id="存储引擎层（InnoDB）"><a href="#存储引擎层（InnoDB）" class="headerlink" title="存储引擎层（InnoDB）"></a>存储引擎层（InnoDB）</h2><p>InnoDB 使用 Buffer Pool 管理内存数据页，如果 Buffer Pool 命中率足够高，那么大部分时候是不需要读磁盘的，直接从内存拿结果，可以加快查询速度。<br>执行 <code>show engine innodb status</code> ，可以看到“<code>Buffer pool hit rate</code>”字样，显示的就是当前的命中率，一般一个稳定服务的线上系统，要保证响应时间符合要求的话，内存命中率要在 99% 以上。<br>Buffer Pool 的空间是有限的，新旧页面的更替是通过 LRU 算法控制的，但 InnoDB 中的 LRU 并不是单纯的新页面替换老页面（因为这样相当于每次大查询都会把整个 Buffer Pool 都刷新一遍），而是将 LRU 链表分成了 young 区和 old 区，页面第一次被访问时会被添加到 old 区，old 区的页面如果是短期内被多次访问，则其不会被移动到链表的头部（young 区），会很快被淘汰掉。</p>
-<h1 id="临时表"><a href="#临时表" class="headerlink" title="临时表"></a>临时表</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">create temporary table temp_t like t1;</span><br><span class="line">alter table temp_t add index(b);</span><br><span class="line">insert into temp_t select * from t2 where b&gt;=1 and b&lt;=2000;</span><br><span class="line">select * from t1 join temp_t on (t1.b=temp_t.b);</span><br></pre></td></tr></table></figure>
-
-<p>临时表特性：</p>
-<ol>
-<li>不同 session 的临时表是可以重名的，常被用在复杂查询的优化过程中，比如有多个 session 同时执行 join 优化，不需要担心表名重复导致建表失败的问题。</li>
-<li>不需要担心数据删除问题。如果使用普通表，在流程执行过程中客户端发生了异常断开，或者数据库发生异常重启，还需要专门来清理中间过程中生成的数据表。而临时表由于会自动回收，所以不需要这个额外的操作。</li>
-</ol>
-<h2 id="临时表的使用场景"><a href="#临时表的使用场景" class="headerlink" title="临时表的使用场景"></a>临时表的使用场景</h2><h3 id="union-语句"><a href="#union-语句" class="headerlink" title="union 语句"></a>union 语句</h3><p>表 t1 在执行前已初始化插入了 1~1000 的数据。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(select 1000 as f) union (select id from t1 order by id desc limit 2);</span><br></pre></td></tr></table></figure>
-<p><img src="/imgs/MySQL/MySQL-union%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png" alt="MySQL-union执行流程" title="MySQL-union执行流程"><br>上面语句将两个子查询的结果合并去重，union 合并时会生成临时表，这可以通过 explain 来验证。</p>
-<h3 id="group-by"><a href="#group-by" class="headerlink" title="group by"></a>group by</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select id%10 as m, count(*) as c from t1 group by m;</span><br></pre></td></tr></table></figure>
-<p><img src="/imgs/MySQL/MySQL-groupby%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png" alt="MySQL-groupby执行流程" title="MySQL-groupby执行流程"><br>上面语句先创建内存临时表，表里有 m 和 c 两个字段，主键是 m，扫描 t1 索引 a，将<code>id%10</code>的结果插入临时表，如果出现主键冲突则计算 c 值+1。</p>
-<ol>
-<li>加索引<br>默认情况下<code>id%10</code>是无序的，所以需要先在临时表中统计排序后再返回，但是如果原表本身就是有序的，则不需要临时表、也不需要额外排序了，实际上只要引入索引就可以解决这个问题，因为<strong>索引是有序的</strong>。</li>
-<li>如果不能加索引，也可以加一列 generated column<br>MySQL5.7 支持 generated column 机制，并可以在该列上创建索引：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter table t1 add column z int generated always as(id % 100), add index(z);</span><br></pre></td></tr></table></figure>
-上面的 group by 语句可以改成如下的形式：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select z, count(*) as c from t1 group by z;</span><br></pre></td></tr></table></figure></li>
-<li>如果不需要排序，可以显式声明忽略排序<br>如果对 group by 语句的结果没有排序要求，要在语句后面加 order by null</li>
-<li>数据量小时使用内存临时表<br>如果 group by 需要统计的数据量不大，尽量只使用内存临时表；也可以通过适当调大 tmp_table_size 参数，来避免用到磁盘临时表；</li>
-<li>数据量大时使用磁盘临时表<br>如果数据量较大，因为内存临时表的空间是有限的，当达到上限后就会转到磁盘内存表，与其这样转一下，不如直接使用磁盘内存表。<br>因此，如果数据量实在太大，使用 <code>SQL_BIG_RESULT</code> 这个提示，来告诉优化器直接使用排序算法得到 group by 的结果。</li>
-</ol>
-<h1 id="Memory-引擎"><a href="#Memory-引擎" class="headerlink" title="Memory 引擎"></a>Memory 引擎</h1><h2 id="Memory-引擎与-InnoDB-引擎区别"><a href="#Memory-引擎与-InnoDB-引擎区别" class="headerlink" title="Memory 引擎与 InnoDB 引擎区别"></a>Memory 引擎与 InnoDB 引擎区别</h2><ol>
-<li>数据组织方式<br>InnoDB 引擎采用 B+树来组织数据，主键是有序存储的。InnoDB 引擎把数据放在主键索引上，其他索引上保存的是主键 id。这种方式，我们称之为<strong>索引组织表（Index Organizied Table）</strong>。<br>Memory 引擎的数据和索引是分开的，数据以数组的方式单独存放，而主键索引是 hash 索引，存的是每个数据的位置，索引上的 key 并不是有序的：<br><img src="/imgs/MySQL/MySQL-Memory%E5%BC%95%E6%93%8E%E6%95%B0%E6%8D%AE%E7%BB%84%E7%BB%87.png" alt="MySQL-Memory引擎数据组织" title="MySQL-Memory引擎数据组织"><br>Memory 引擎采用的是把数据单独存放，索引上保存数据位置的数据组织形式，我们称之为<strong>堆组织表（Heap Organizied Table）</strong>。</li>
-<li>存放顺序<br>InnoDB 表的数据总是有序存放的，而内存表的数据就是按照写入顺序存放的；</li>
-<li>当数据文件有空洞的时候，InnoDB 表在插入新数据的时候，为了保证数据有序性，只能在固定的位置写入新值，而内存表找到空位就可以插入新值；</li>
-<li>数据位置发生变化的时候，InnoDB 表只需要修改主键索引，而内存表需要修改所有索引；</li>
-<li>InnoDB 表用主键索引查询时需要走一次索引查找，用普通索引查询的时候，需要走两次索引查找。而内存表没有这个区别，所有索引的“地位”都是相同的。</li>
-<li>InnoDB 支持变长数据类型，不同记录的长度可能不同；内存表不支持 Blob 和 Text 字段，并且即使定义了 varchar(N)，实际也当作 char(N)，也就是固定长度字符串来存储，因此内存表的每行数据长度相同。</li>
-</ol>
-<h2 id="hash-索引和-B-Tree-索引"><a href="#hash-索引和-B-Tree-索引" class="headerlink" title="hash 索引和 B-Tree 索引"></a>hash 索引和 B-Tree 索引</h2><p>内存表也支持 B-Tree 索引：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter table t1 add index a_btree_index using btree (id);</span><br></pre></td></tr></table></figure>
-<p><img src="/imgs/MySQL/MySQL-%E5%86%85%E5%AD%98%E8%A1%A8B-Tree%E7%B4%A2%E5%BC%95.png" alt="MySQL-内存表B-Tree索引" title="MySQL-内存表B-Tree索引"><br>可以查看以下两个语句的输出：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-- 命中索引a_btree_index，因此输出结果是有序的</span><br><span class="line">select * from t1 where id &lt; 5;</span><br><span class="line">-- 强制使用主键id索引，因此是无序的</span><br><span class="line">select * from t1 force index (primary) where id &lt; 5;</span><br></pre></td></tr></table></figure>
-
-<h2 id="不推荐在生产环境使用-Memory-引擎"><a href="#不推荐在生产环境使用-Memory-引擎" class="headerlink" title="不推荐在生产环境使用 Memory 引擎"></a>不推荐在生产环境使用 Memory 引擎</h2><ol>
-<li>锁粒度问题<br>内存表不支持行锁，只支持表锁，只要这张表上有更新，就会堵住所有其他在这张表上的读写操作，因此在处理并发事务时性能也不会太好。</li>
-<li>数据持久化问题<br>因为数据被存放在内存中，数据库重启时所有的内存表都会被清空。</li>
-</ol>
-<p>虽然一般情况下不适合使用内存表，但是还有一种情况可以考虑使用内存表：用户临时表，只是临时数据，如果数据可控，不会消耗过多内存的情况下，可以考虑使用内存表。<br>内存临时表（通过 create temporary table 语句创建）刚好可以无视内存表的两个不足，主要是下面的三个原因：</p>
-<ol>
-<li>临时表不会被其他线程访问，没有并发性的问题；</li>
-<li>临时表重启后也是需要删除的，清空数据这个问题不存在；</li>
-<li>备库的临时表也不会影响主库的用户线程。</li>
-</ol>
-<h1 id="备份"><a href="#备份" class="headerlink" title="备份"></a>备份</h1><ul>
-<li>将数据导出成一组 insert 语句<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump -h$host -P$port -u$user --add-locks=0 --no-create-info --single-transaction  --set-gtid-purged=OFF db1 t --where=&quot;a&gt;900&quot; --result-file=/client_tmp/t.sql</span><br></pre></td></tr></table></figure>
-恢复：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -h127.0.0.1 -P13000  -uroot db2 -e &quot;source /client_tmp/t.sql&quot;</span><br></pre></td></tr></table></figure></li>
-<li>导出 CSV 文件<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from db1.t where a&gt;900 into outfile &#x27;/server_tmp/t.csv&#x27;;</span><br></pre></td></tr></table></figure>
-恢复，将数据导入到目标表 db2.t 中：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">load data infile &#x27;/server_tmp/t.csv&#x27; into table db2.t;</span><br></pre></td></tr></table></figure></li>
-<li>物理拷贝<br>不能通过直接拷贝表的.frm 文件和.ibd 文件来实现物理拷贝，因为一个 InnoDB 表除了包含这两个物理文件外，还需要在数据字典中注册，直接拷贝的情况下系统不会识别。<br>在 MySQL 5.6 版本引入了<strong>可传输表空间(transportable tablespace)</strong> 的方法，可以通过导出 + 导入表空间的方式，实现物理拷贝表的功能。<ol>
-<li>执行 create table r like t，创建一个相同表结构的空表；</li>
-<li>执行 alter table r discard tablespace，这时候 r.ibd 文件会被删除；</li>
-<li>执行 flush table t for export，这时候 db1 目录下会生成一个 t.cfg 文件；</li>
-<li>在 db1 目录下执行 cp t.cfg r.cfg; cp t.ibd r.ibd；</li>
-<li>这两个命令（这里需要注意的是，拷贝得到的两个文件，MySQL 进程要有读写权限）；</li>
-<li>执行 unlock tables，这时候 t.cfg 文件会被删除；</li>
-<li>执行 alter table r import tablespace，将这个 r.ibd 文件作为表 r 的新的表空间，由于这个文件的数据内容和 t.ibd 是相同的，所以表 r 中就有了和表 t 相同的数据。</li>
-</ol>
-</li>
-</ul>
-<p>这三种方法各有优劣：</p>
-<ol>
-<li>物理拷贝的方式速度最快，尤其对于大表拷贝来说是最快的方法。如果出现误删表的情况，用备份恢复出误删之前的临时库，然后再把临时库中的表拷贝到生产库上，是恢复数据最快的方法。但是，这种方法的使用也有一定的局限性：<ul>
-<li>必须是全表拷贝，不能只拷贝部分数据；</li>
-<li>需要到服务器上拷贝数据，在用户无法登录数据库主机的场景下无法使用；……</li>
-<li>由于是通过拷贝物理文件实现的，源表和目标表都是使用 InnoDB 引擎时才能使用。</li>
-</ul>
-</li>
-<li>用 mysqldump 生成包含 INSERT 语句文件的方法，可以在 where 参数增加过滤条件，来实现只导出部分数据。这个方式的不足之一是，不能使用 join 这种比较复杂的 where 条件写法。</li>
-<li>用 select … into outfile 的方法是最灵活的，支持所有的 SQL 写法。但，这个方法的缺点之一就是，每次只能导出一张表的数据，而且表结构也需要另外的语句单独备份。</li>
-</ol>
-<h1 id="MySQL-中的自增-ID"><a href="#MySQL-中的自增-ID" class="headerlink" title="MySQL 中的自增 ID"></a>MySQL 中的自增 ID</h1><h2 id="表的自增-id"><a href="#表的自增-id" class="headerlink" title="表的自增 id"></a>表的自增 id</h2><p>我们经常给表的主键加上自增属性，用于唯一标识一条记录，但是因为自增值达到上限后再申请得到的值不变，因此自增字段的范围应该略大一些，尽可能创建成<code>bigint unsigned</code>。</p>
-<h2 id="row-id"><a href="#row-id" class="headerlink" title="row_id"></a>row_id</h2><p>如果没有指定主键，InnoDB 会创建一个不可见的、长度为 6 字节的 row_id，超过上限后再申请时会得到 0，<strong>如果新写入的行的 row_id 在表中已存在，则会直接覆盖原有的行</strong>，因此，最好优先使用自增 ID 而不是 row_id。</p>
-<h2 id="Xid"><a href="#Xid" class="headerlink" title="Xid"></a>Xid</h2><p>Xid 用于唯一标识一个事务。Xid 的值由一个内存变量 global_query_id 给出，重启后清零，但是因为每次重启时 binlog 都会重新生成，所以 binlog 中的 Xid 也不会重复。global_query_id 的长度为 8 个字节，除非 MySQL 实例一直执行了<code>2^64 - 1</code>次查询且期间没有重启，不然不会出现 Xid 重复的情况。</p>
-<h2 id="max-trx-id"><a href="#max-trx-id" class="headerlink" title="max_trx_id"></a>max_trx_id</h2><p>Xid 由 server 层维护。InnoDB 内部使用 Xid，就是为了能够在 InnoDB 事务和 server 之间做关联。但是，InnoDB 自己的 trx_id，是另外维护的。<br>InnoDB 内部维护了一个 max_trx_id 全局变量，每次需要申请一个新的 trx_id 时，就获得 max_trx_id 的当前值，然后并将 max_trx_id 加 1。</p>
-<blockquote>
-<p>InnoDB 事务在读操作时不会申请 trx_id，trx_id 的值就是 0，只有在加锁或执行写操作时才会申请。<br>只读事务不申请 trx_id 的原因是只读事务不影响事务的可见性判断，且能减少 trx_id 的申请次数、减少并发事务申请 trx_id 的锁冲突。</p>
-</blockquote>
-<p>MVCC 判断数据可见性的核心思想：每一行数据都记录了更新它的 trx_id，当一个事务读到一行数据的时候，判断这个数据是否可见的方法，就是通过事务的一致性视图与这行数据的 trx_id 做对比。</p>
-<h2 id="thread-id"><a href="#thread-id" class="headerlink" title="thread_id"></a>thread_id</h2><p>系统保存一个全局变量 thread_id_counter，每新建一个连接就将 thread_id_counter 赋值给这个新连接的线程变量。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/7/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/7/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

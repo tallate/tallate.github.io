@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">79</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">180</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">79</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">182</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-count">182</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -175,6 +175,216 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/40fca579.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/40fca579.html" class="post-title-link" itemprop="url">并发和线程任务编排</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-02-20 21:07:49" itemprop="dateCreated datePublished" datetime="2022-02-20T21:07:49+08:00">2022-02-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="Future-好莱坞原则的应用"><a href="#Future-好莱坞原则的应用" class="headerlink" title="Future - 好莱坞原则的应用"></a>Future - 好莱坞原则的应用</h2><p>Future</p>
+<h3 id="FutureTask"><a href="#FutureTask" class="headerlink" title="FutureTask"></a>FutureTask</h3><h4 id="并行化"><a href="#并行化" class="headerlink" title="并行化"></a>并行化</h4><p>刚开始接触并发编程，容易写出下面的代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">long startTime = System.currentTimeMillis();</span><br><span class="line">ExecutorService threadPool = Executors.newCachedThreadPool();</span><br><span class="line">List&lt;Future&gt; futures = new ArrayList&lt;&gt;();</span><br><span class="line">for (int i = 0; i &lt; 3; i++) &#123;</span><br><span class="line">    Future&lt;?&gt; future = threadPool.submit(() -&gt; &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            // 假设这里是一个一直阻塞着的调用</span><br><span class="line">            Thread.sleep(1000000);</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    futures.add(future);</span><br><span class="line">&#125;</span><br><span class="line">futures.forEach(future -&gt; &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        future.get(1000, TimeUnit.MILLISECONDS);</span><br><span class="line">    &#125; catch (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">System.out.println((System.currentTimeMillis() - startTime));</span><br></pre></td></tr></table></figure>
+<p>此时开发很有可能会误以为结果是 1s 左右，毕竟 3 个<code>FutureTask</code>同时执行、每个只等待 1s，结果确实应该是 1s，但是这里并没有实现并行化，因为<code>future.get</code>是轮询调用的，第一个执行完毕后，第二个仍然需要等待 1s，因此结果是 3s。<br>虽然每个 FutureTask 是同时开始执行的，但是<code>future.get</code>并不是同时开始等待的，如果想要达到并行执行的效果，一定是在上一个执行完毕的时候，下一个就已经执行完毕了，此时就可以直接获取结果了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">long startTime = System.currentTimeMillis();</span><br><span class="line">ExecutorService threadPool = Executors.newCachedThreadPool();</span><br><span class="line">ExecutorService innerThreadPool = Executors.newCachedThreadPool();</span><br><span class="line">List&lt;Future&gt; futures = new ArrayList&lt;&gt;();</span><br><span class="line">for (int i = 0; i &lt; 3; i++) &#123;</span><br><span class="line">    Future&lt;?&gt; future = threadPool.submit(() -&gt; &#123;</span><br><span class="line">        // 假设这里是一个一直阻塞着的调用</span><br><span class="line">        Future&lt;?&gt; innerFuture = innerThreadPool.submit(() -&gt; &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                Thread.sleep(1000000);</span><br><span class="line">            &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        try &#123;</span><br><span class="line">            innerFuture.get(800, TimeUnit.MILLISECONDS);</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">    futures.add(future);</span><br><span class="line">&#125;</span><br><span class="line">futures.forEach(future -&gt; &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        future.get(1000, TimeUnit.MILLISECONDS);</span><br><span class="line">    &#125; catch (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">System.out.println((System.currentTimeMillis() - startTime));</span><br></pre></td></tr></table></figure>
+
+<h4 id="阻塞还是轮询"><a href="#阻塞还是轮询" class="headerlink" title="阻塞还是轮询"></a>阻塞还是轮询</h4><p>阻塞虽然看起来很廉价，似乎线程阻塞后就不占用资源了，实际上很多阻塞都是通过轮询标志位实现的，比如 FutureTask 内部实现了这样的一种状态机：<br><img src="/imgs/%E5%B9%B6%E5%8F%91/FutureTask%E7%8A%B6%E6%80%81%E6%9C%BA.png" alt="FutureTask状态机" title="FutureTask状态机"><br>每次状态的变更都是通过<code>CAS</code>（<code>UNSAFE</code>）实现线程安全的，比如<code>set</code>方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">protected void set(V v) &#123;</span><br><span class="line">    if (UNSAFE.compareAndSwapInt(this, stateOffset, NEW, COMPLETING)) &#123;</span><br><span class="line">        outcome = v;</span><br><span class="line">        UNSAFE.putOrderedInt(this, stateOffset, NORMAL); // final state</span><br><span class="line">        finishCompletion();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Guava-ListenableFuture"><a href="#Guava-ListenableFuture" class="headerlink" title="Guava - ListenableFuture"></a>Guava - ListenableFuture</h2><p>ListenableFuture 是在 JDK1.8 之前出现的，现在 CompletableFuture 一般是更好的选择。</p>
+<h3 id="CompletionService"><a href="#CompletionService" class="headerlink" title="CompletionService"></a>CompletionService</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">long start = System.currentTimeMillis();</span><br><span class="line">CompletionService&lt;String&gt; cs = new ExecutorCompletionService&lt;&gt;(Executors.newFixedThreadPool(3));</span><br><span class="line">cs.submit(() -&gt; &#123;</span><br><span class="line">    Thread.sleep(1000);</span><br><span class="line">    return &quot;x&quot;;</span><br><span class="line">&#125;);</span><br><span class="line">cs.submit(() -&gt; &#123;</span><br><span class="line">    Thread.sleep(1000);</span><br><span class="line">    return &quot;x&quot;;</span><br><span class="line">&#125;);</span><br><span class="line">for (int i = 0; i &lt; 2; i++) &#123;</span><br><span class="line">    String s = cs.take().get();</span><br><span class="line">    System.out.println(s);</span><br><span class="line">&#125;</span><br><span class="line">System.out.println(System.currentTimeMillis() - start);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>将线程任务提交到线程池执行，并将 Future 提交到阻塞队列供客户端获取，阻塞队列默认是<code>LinkedBlockingQueue</code>；</li>
+<li>CompletionService 内部只有在任务完成的时候才会把 Future 丢到队列中，因此如果任务特别耗时，会导致<code>take</code>调用一直不返回，注意下面源码中的<code>done</code>方法：  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">private class QueueingFuture extends FutureTask&lt;Void&gt; &#123;</span><br><span class="line">    QueueingFuture(RunnableFuture&lt;V&gt; task) &#123;</span><br><span class="line">        super(task, null);</span><br><span class="line">        this.task = task;</span><br><span class="line">    &#125;</span><br><span class="line">    protected void done() &#123; completionQueue.add(task); &#125;</span><br><span class="line">    private final Future&lt;V&gt; task;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="CompletableFuture"><a href="#CompletableFuture" class="headerlink" title="CompletableFuture"></a>CompletableFuture</h2><p><code>CompletableFuture</code>是对Future的加强，<br><code>CompletableFuture</code>实现了 Future 接口，这意味着它本身也提供了通过阻塞或轮询获取结果的方式，相对 Future 来说，它的相对优势在于任务的编排，相对 CompletionService 来说，<code>CompletableFuture</code>又有接口更灵活的优势。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">long start = System.currentTimeMillis();</span><br><span class="line">List&lt;String&gt; items = Lists.newArrayList(&quot;a&quot;, &quot;b&quot;);</span><br><span class="line">List&lt;CompletableFuture&lt;String&gt;&gt; futures = items.stream().map(</span><br><span class="line">        item -&gt; CompletableFuture.supplyAsync(() -&gt; &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                Thread.sleep(1000);</span><br><span class="line">            &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            return item + &quot;x&quot;;</span><br><span class="line">        &#125;))</span><br><span class="line">        .collect(Collectors.toList());</span><br><span class="line">List&lt;String&gt; strs = futures.stream().map(CompletableFuture::join)</span><br><span class="line">        .collect(Collectors.toList());</span><br><span class="line">strs.forEach(System.out::println);</span><br><span class="line">System.out.println(System.currentTimeMillis() - start);</span><br></pre></td></tr></table></figure>
+<p>注意上面的<code>CompletableFuture.supplyAsync</code>和<code>CompletableFuture.join</code></p>
+<ol>
+<li>提交异步执行任务 <code>CompletableFuture.supplyAsync</code>，有2个方法，其中有个需要用户指定Executor，如果没有指定则使用JDK内置的线程池<code>ForkJoinPool.commonPool()</code><ol>
+<li>提交任务到CompletableFuture和直接提交到ExecutorService的区别是线程任务提交前会用<code>AsyncSupply</code>封装</li>
+</ol>
+</li>
+<li>线程池执行任务<ol>
+<li>任务经过AsyncSupply封装，会调用重写的<code>AsyncSupply.exec()</code></li>
+<li>执行完毕后，回调<code>CompletableFuture.internalComplete</code></li>
+</ol>
+</li>
+<li>任务结果聚合<code>CompletableFuture::join</code><ol>
+<li>如果结果已经计算出来，则直接取result</li>
+<li>否则<code>CompletableFuture.waitingGet</code><br> 创建等待队列<code>q = new WaitNode(interruptible, 0L, 0L);</code><br> 排队<code>queued = UNSAFE.compareAndSwapObject(this, WAITERS, q.next = waiters, q);</code><br> 调<code>ForkJoinPool.managedBlock(q);</code>阻塞，会调<code>WaitNode.block()</code>来判断是否还阻塞着</li>
+<li>回头看<code>CompletableFuture.internalComplete</code>里的代码，会调<code>LockSupport.unpark(t);</code>唤醒等待的线程</li>
+</ol>
+</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://colobu.com/2018/03/12/20-Examples-of-Using-Java%E2%80%99s-CompletableFuture/">[译]20 个使用 Java CompletableFuture 的例子</a></li>
+<li><a target="_blank" rel="noopener" href="https://colobu.com/2016/02/29/Java-CompletableFuture/">Java CompletableFuture 详解</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/ca633abe.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/ca633abe.html" class="post-title-link" itemprop="url">长长的回廊</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-11-29 19:09:30" itemprop="dateCreated datePublished" datetime="2021-11-29T19:09:30+08:00">2021-11-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-10-09 16:58:44" itemprop="dateModified" datetime="2022-10-09T16:58:44+08:00">2022-10-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AF%BB%E4%B9%A6/" itemprop="url" rel="index"><span itemprop="name">读书</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>桐生枝梨子（高显秘书、相貌平平、认真、火灾毁容）<br>里中二郎（死者、高显亲生骨肉）<br>克子<br>一原高显（社长、癌症）<br>一原苍介（高显弟弟、大学教授）<br>一原直之（苍介弟弟、精明）<br>一原纪代美（苍介另一哥哥的太太）<br>由香（纪代美女儿）<br>一原曜子（苍介妹妹）<br>加奈江（曜子女儿）<br>本间重太郎（高显朋友）<br>本间菊代（重太郎太太、现假扮）<br>一原健彦（苍介儿子、喜欢由香）<br>小林真穗（店长、高显情人）<br>矢崎警部<br>古木律师<br>鲹泽弘美（古木助理）</p>
+<p>尹之壹<br>火灾<br>车祸逃逸<br>高显遗嘱<br>七七法事<br>八泽温泉（墓地）<br>枝梨子遗书<br>由香的死：拿走信封、之后死了、倒着的N（俄语字母）、刀伤、勒脖<br>红酒<br>安眠药<br>审讯<br>直之的珍珠领带夹<br>私生子<br>脚印<br>纪代美的一对珍珠<br>头发<br>茶道<br>碎冰锥</p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -355,7 +565,7 @@
 <ul>
 <li>GaussDecayFunction<br>高斯衰减&#x3D;e^(distance^2 &#x2F; 2scale)</li>
 </ul>
-
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
     </div>
 
@@ -440,7 +650,7 @@
     
     <div class="post-body" itemprop="articleBody">
           <p><img src="/imgs/%E8%AF%BB%E4%B9%A6/%E5%89%A7%E6%9C%AC%E6%9D%80.png" alt="剧本杀" title="剧本杀"></p>
-
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
     </div>
 
@@ -525,7 +735,7 @@
     
     <div class="post-body" itemprop="articleBody">
           <p><img src="/imgs/%E8%AF%BB%E4%B9%A6/%E6%8E%8C%E6%8E%A7%E8%B0%88%E8%AF%9D.png" alt="掌控谈话" title="掌控谈话"></p>
-
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
     </div>
 
@@ -610,7 +820,7 @@
     
     <div class="post-body" itemprop="articleBody">
           <p><img src="/imgs/%E8%AF%BB%E4%B9%A6/%E6%BC%94%E8%AE%B2%E7%9A%84%E5%8A%9B%E9%87%8F.png" alt="演讲的力量" title="演讲的力量"></p>
-
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
     </div>
 
@@ -920,7 +1130,7 @@
 <li>HLog是WAL(Write Ahead Log)<br>用户数据需要先写HLog才能写入MemStore，并且直到MemStore缓存内容对应的日志已经被写入磁盘，该缓存内容才会被刷新到磁盘。</li>
 <li>数据恢复<br>ZooKeeper会实时监测每个Region服务器的状态，当某个Region服务器发生故障，ZooKeeper会通知Master。<br>Master会处理该故障服务器上的HLog文件，注意HLog会包含来自多个Region对象的日志记录，系统会<strong>根据每条日志所属的Region对象对HLog数据进行拆分</strong>，分别放到对应Region对象的目录下，然后再将失效的Region重新分配到可用的Region服务器中，并把与该Region对象相关的HLog日志记录也发送给相应的Region服务器。<br>Region服务器领取到分配给自己的Region对象以及与之相关的HLog日志记录以后，会<strong>重演一遍日志记录中的操作</strong>，把日志记录中的数据写入MemStore缓存，然后刷新到磁盘的StoreFile文件中，完成数据恢复。</li>
 </ul>
-
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
     </div>
 
@@ -1073,7 +1283,7 @@
 <ul>
 <li>添加文档时，使用processor set来增加一个新字段views</li>
 </ul>
-
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
     </div>
 
@@ -1183,336 +1393,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/9863f346.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/9863f346.html" class="post-title-link" itemprop="url">ES5_2创建Index原则</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-06-12 21:14:48" itemprop="dateCreated datePublished" datetime="2021-06-12T21:14:48+08:00">2021-06-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-10-09 16:58:44" itemprop="dateModified" datetime="2022-10-09T16:58:44+08:00">2022-10-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>定义索引的最佳实践。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/9863f346.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/fb6ff4f1.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/fb6ff4f1.html" class="post-title-link" itemprop="url">ES5_1数据建模</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-06-12 21:14:48" itemprop="dateCreated datePublished" datetime="2021-06-12T21:14:48+08:00">2021-06-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-10-09 16:58:44" itemprop="dateModified" datetime="2022-10-09T16:58:44+08:00">2022-10-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="文档关联"><a href="#文档关联" class="headerlink" title="文档关联"></a>文档关联</h1><h2 id="范式化"><a href="#范式化" class="headerlink" title="范式化"></a>范式化</h2><p>关系数据库一般会考虑Normalize数据，而在Elasticsearch中，往往考虑Denormalize。</p>
-<ul>
-<li>查询性能好</li>
-<li>无需表连接</li>
-<li>无需行锁</li>
-</ul>
-<h2 id="关联"><a href="#关联" class="headerlink" title="关联"></a>关联</h2><p>ES不擅长处理关联关系，一般采用以下4种方法处理关联：</p>
-<ul>
-<li>对象类型</li>
-<li>嵌套对象（Nested Object）</li>
-<li>父子关联关系（Parent &#x2F; Child）</li>
-<li>应用端关联</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Nested Object</th>
-<th>Parent &#x2F; Child</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>优点</td>
-<td>文档存储在一起，读取性能高</td>
-<td>父子文档可以独立更新</td>
-</tr>
-<tr>
-<td>缺点</td>
-<td>更新嵌套的子文档时，需要更新整个文档</td>
-<td>需要额外的内存维护关系，读取性能相对较差</td>
-</tr>
-<tr>
-<td>适用场景</td>
-<td>子文档偶尔更新，以查询为主</td>
-<td>子文档更新频繁</td>
-</tr>
-</tbody></table>
-<h3 id="Nested"><a href="#Nested" class="headerlink" title="Nested"></a>Nested</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"># 插入两条数据</span><br><span class="line">PUT blog/doc/1</span><br><span class="line">&#123;</span><br><span class="line">  &quot;content&quot;: &quot;i love you&quot;,</span><br><span class="line">  &quot;time&quot;: &quot;2021-12-12T12:12:12&quot;,</span><br><span class="line">  &quot;user&quot;: &#123;</span><br><span class="line">    &quot;userId&quot;: 1,</span><br><span class="line">    &quot;userName&quot;: &quot;Jack&quot;,</span><br><span class="line">    &quot;city&quot;: &quot;shanghai&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">PUT blog/doc/2</span><br><span class="line">&#123;</span><br><span class="line">  &quot;content&quot;: &quot;i dont love you&quot;,</span><br><span class="line">  &quot;time&quot;: &quot;2021-12-12T12:12:12&quot;,</span><br><span class="line">  &quot;user&quot;: [&#123;</span><br><span class="line">    &quot;userId&quot;: 2,</span><br><span class="line">    &quot;userName&quot;: &quot;Jack Mike&quot;,</span><br><span class="line">    &quot;city&quot;: &quot;hebei&quot;</span><br><span class="line">  &#125;,</span><br><span class="line">  &#123;</span><br><span class="line">    &quot;userId&quot;: 3,</span><br><span class="line">    &quot;userName&quot;: &quot;Joe&quot;,</span><br><span class="line">    &quot;city&quot;: &quot;beijing&quot;</span><br><span class="line">  &#125;]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 搜索</span><br><span class="line">POST blog/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;bool&quot;: &#123;</span><br><span class="line">      &quot;must&quot;: [</span><br><span class="line">        &#123;&quot;match&quot;: &#123;&quot;content&quot;: &quot;you&quot;&#125;&#125;,</span><br><span class="line">        &#123;&quot;match&quot;: &#123;&quot;user.userName&quot;: &quot;Jack&quot;&#125;&#125;,</span><br><span class="line">        &#123;&quot;match&quot;: &#123;&quot;user.city&quot;: &quot;beijing&quot;&#125;&#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面的搜索初看没什么问题，但是实际上查出了我们不需要的数据。</p>
-<ul>
-<li>**Jack Mike来自hebei，Joe来自beijing，并不符合查询条件的“来自beijing的Jack”。</li>
-</ul>
-<p>出现这个问题的原因是：</p>
-<ul>
-<li>ES存储时，Nested对象的边界没有被考虑在内，JSON格式被处理成了扁平式的键值对结构</li>
-</ul>
-<p>用<strong>Nested Data Type</strong>可以解决这个问题：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">// 先指定user是nested域</span><br><span class="line">PUT blog</span><br><span class="line">&#123;</span><br><span class="line">  &quot;mappings&quot;: &#123;</span><br><span class="line">    &quot;doc&quot;: &#123;</span><br><span class="line">      &quot;properties&quot;: &#123;</span><br><span class="line">        &quot;content&quot;: &#123;</span><br><span class="line">          &quot;type&quot;: &quot;text&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;time&quot;: &#123;</span><br><span class="line">          &quot;type&quot;: &quot;date&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;user&quot;: &#123;</span><br><span class="line">          &quot;type&quot;: &quot;nested&quot;,</span><br><span class="line">          &quot;properties&quot;: &#123;</span><br><span class="line">            &quot;userId&quot;: &#123;</span><br><span class="line">              &quot;type&quot;: &quot;long&quot;</span><br><span class="line">            &#125;,</span><br><span class="line">            &quot;userName&quot;: &#123;</span><br><span class="line">              &quot;type&quot;: &quot;text&quot;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">// 查询</span><br><span class="line">POST blog/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;bool&quot;: &#123;</span><br><span class="line">      &quot;must&quot;: [</span><br><span class="line">        &#123;&quot;match&quot;: &#123;&quot;content&quot;: &quot;you&quot;&#125;&#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          &quot;nested&quot;: &#123; // 指定对嵌套对象的查询</span><br><span class="line">            &quot;path&quot;: &quot;user&quot;, // 指定路径，就是嵌套对象是哪个域</span><br><span class="line">            &quot;query&quot;: &#123;</span><br><span class="line">              &quot;bool&quot;: &#123;</span><br><span class="line">                &quot;must&quot;: [</span><br><span class="line">                    &#123;&quot;match&quot;: &#123;&quot;user.userName&quot;: &quot;Jack&quot;&#125;&#125;,</span><br><span class="line">                    &#123;&quot;match&quot;: &#123;&quot;user.city&quot;: &quot;beijing&quot;&#125;&#125;</span><br><span class="line">                ]</span><br><span class="line">              &#125;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>像这么定义索引的话相同搜索条件就查不出来了，当然查询条件的city改成”hebei”的话就能重新查出来了。</p>
-<ul>
-<li>其中，Nested数据结构，允许对象数组中的对象被独立索引</li>
-<li>用nested和properties关键字将所有actors索引到了多个分隔的文档</li>
-<li>在内部，Nexted文档会被存到两个Lucene对象中，</li>
-</ul>
-<h3 id="Parent-Child"><a href="#Parent-Child" class="headerlink" title="Parent &#x2F; Child"></a>Parent &#x2F; Child</h3><p>Nested方式关联的局限性：</p>
-<ul>
-<li>每次更新，需要重新索引整个对象（包括根对象和嵌套对象）</li>
-</ul>
-<p>ES中Parent &#x2F; Child的关系是类似关系数据库中的Join查询。</p>
-<ul>
-<li>父文档和子文档是两个独立的文档；</li>
-<li>更新父文档无需重新索引子文档，子文档被添加、更新或删除也不会影响到父文档和其他的子文档。</li>
-</ul>
-<p>创建索引，设置mapping：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">PUT my_blogs</span><br><span class="line">&#123;</span><br><span class="line">  &quot;mappings&quot;: &#123;</span><br><span class="line">    &quot;doc&quot;: &#123;</span><br><span class="line">      &quot;properties&quot;: &#123;</span><br><span class="line">        &quot;blog_comments_relation&quot;: &#123;</span><br><span class="line">          &quot;type&quot;: &quot;join&quot;, // 声明join类型</span><br><span class="line">            &quot;relations&quot;: &#123; // 声明parent和child关系</span><br><span class="line">              &quot;blog&quot;: &quot;comment&quot; // parent名称和child名称</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        &quot;content&quot;: &#123;</span><br><span class="line">          &quot;type&quot;: &quot;text&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;title&quot;: &#123;</span><br><span class="line">          &quot;type&quot;: &quot;keyword&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>索引父子文档并查询：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">#索引父文档</span><br><span class="line">PUT my_blogs/_doc/blog1</span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;:&quot;Learning Elasticsearch&quot;,</span><br><span class="line">  &quot;content&quot;:&quot;learning ELK @ geektime&quot;,</span><br><span class="line">  &quot;blog_comments_relation&quot;:&#123;</span><br><span class="line">    &quot;name&quot;:&quot;blog&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#索引父文档</span><br><span class="line">PUT my_blogs/_doc/blog2</span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;:&quot;Learning Hadoop&quot;,</span><br><span class="line">  &quot;content&quot;:&quot;learning Hadoop&quot;,</span><br><span class="line">  &quot;blog_comments_relation&quot;:&#123;</span><br><span class="line">    &quot;name&quot;:&quot;blog&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#索引子文档</span><br><span class="line">PUT my_blogs/_doc/comment1?routing=blog1</span><br><span class="line">&#123;</span><br><span class="line">  &quot;comment&quot;:&quot;I am learning ELK&quot;,</span><br><span class="line">  &quot;username&quot;:&quot;Jack&quot;,</span><br><span class="line">  &quot;blog_comments_relation&quot;:&#123;</span><br><span class="line">    &quot;name&quot;:&quot;comment&quot;,</span><br><span class="line">    &quot;parent&quot;:&quot;blog1&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#索引子文档</span><br><span class="line">PUT my_blogs/_doc/comment2?routing=blog2</span><br><span class="line">&#123;</span><br><span class="line">  &quot;comment&quot;:&quot;I like Hadoop!!!!!&quot;,</span><br><span class="line">  &quot;username&quot;:&quot;Jack&quot;,</span><br><span class="line">  &quot;blog_comments_relation&quot;:&#123;</span><br><span class="line">    &quot;name&quot;:&quot;comment&quot;,</span><br><span class="line">    &quot;parent&quot;:&quot;blog2&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#索引子文档</span><br><span class="line">PUT my_blogs/_doc/comment3?routing=blog2</span><br><span class="line">&#123;</span><br><span class="line">  &quot;comment&quot;:&quot;Hello Hadoop&quot;,</span><br><span class="line">  &quot;username&quot;:&quot;Bob&quot;,</span><br><span class="line">  &quot;blog_comments_relation&quot;:&#123;</span><br><span class="line">    &quot;name&quot;:&quot;comment&quot;,</span><br><span class="line">    &quot;parent&quot;:&quot;blog2&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>索引子文档时设置routing&#x3D;父文档，保证父文档和子文档在一个分片上</li>
-<li>同时在parent中设置其父文档的</li>
-</ul>
-<p>根据需要查询：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">#根据父文档ID查看</span><br><span class="line">GET my_blogs/_doc/blog2</span><br><span class="line"></span><br><span class="line"># Parent Id 查询</span><br><span class="line">POST my_blogs/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;parent_id&quot;: &#123;</span><br><span class="line">      &quot;type&quot;: &quot;comment&quot;,</span><br><span class="line">      &quot;id&quot;: &quot;blog2&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># Has Child 查询,返回父文档</span><br><span class="line">POST my_blogs/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;has_child&quot;: &#123;</span><br><span class="line">      &quot;type&quot;: &quot;comment&quot;,</span><br><span class="line">      &quot;query&quot; : &#123;</span><br><span class="line">                &quot;match&quot;: &#123;</span><br><span class="line">                    &quot;username&quot; : &quot;Jack&quot;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># Has Parent 查询，返回相关的子文档</span><br><span class="line">POST my_blogs/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;has_parent&quot;: &#123;</span><br><span class="line">      &quot;parent_type&quot;: &quot;blog&quot;,</span><br><span class="line">      &quot;query&quot; : &#123;</span><br><span class="line">                &quot;match&quot;: &#123;</span><br><span class="line">                    &quot;title&quot; : &quot;Learning Hadoop&quot;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">#通过ID ，访问子文档，不会返回_source</span><br><span class="line">GET my_blogs/_doc/comment3</span><br><span class="line">#通过ID和routing ，访问子文档，能返回_source</span><br><span class="line">GET my_blogs/_doc/comment3?routing=blog2</span><br><span class="line"></span><br><span class="line">#更新子文档</span><br><span class="line">PUT my_blogs/_doc/comment3?routing=blog2</span><br><span class="line">&#123;</span><br><span class="line">    &quot;comment&quot;: &quot;Hello Hadoop??&quot;,</span><br><span class="line">    &quot;blog_comments_relation&quot;: &#123;</span><br><span class="line">      &quot;name&quot;: &quot;comment&quot;,</span><br><span class="line">      &quot;parent&quot;: &quot;blog2&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>查询子文档：</p>
-<ul>
-<li>has_parent</li>
-</ul>
-<p>根据子文档查父文档：</p>
-<ul>
-<li>parent_id</li>
-<li>has_child</li>
-</ul>
-<h1 id="数据建模"><a href="#数据建模" class="headerlink" title="数据建模"></a>数据建模</h1><p>过程：</p>
-<ol>
-<li>概念模型</li>
-<li>逻辑模型<br>实体属性<br>实体之间的关系<br>搜索相关的配置</li>
-<li>数据模型<br>索引分片数<br>mapping字段配置、关系处理</li>
-</ol>
-<h2 id="字段建模"><a href="#字段建模" class="headerlink" title="字段建模"></a>字段建模</h2><h3 id="字段类型"><a href="#字段类型" class="headerlink" title="字段类型"></a>字段类型</h3><p>text:</p>
-<ul>
-<li>用于全文本字段，文本会被Analyzer分词</li>
-<li>默认不支持聚合分析及排序，需要设置fielddata为true</li>
-</ul>
-<p>keyword:</p>
-<ul>
-<li>用于id、枚举及不需要分词的文本</li>
-<li>适用于Filter（精确匹配）、sorting、aggregation</li>
-</ul>
-<p>设置多字段类型：</p>
-<ul>
-<li>默认会为文本类型设置成text，并且设置一个keyword的子字段</li>
-<li>在处理人类语言时，通过增加“英文”、”拼音”、”标准”分词器，提高搜索体验</li>
-</ul>
-<p>结构化数据：</p>
-<ul>
-<li>精确数据类型，可以用byte的情况下就不要用long</li>
-<li>枚举类型设置为keyword，即便是数字也应该设置成keyword，获取更好的性能</li>
-</ul>
-<h3 id="搜索和分词"><a href="#搜索和分词" class="headerlink" title="搜索和分词"></a>搜索和分词</h3><ul>
-<li>如果不需要搜索、排序和聚合分析，则设置enable为false<br>不需要检索的话，将index设置为false</li>
-<li>对需要搜索的字段，设置存储粒度<br>index_options &#x2F; norms<br>不需要归一化数据时，也可以关闭，节约磁盘存储</li>
-</ul>
-<h3 id="聚合及排序"><a href="#聚合及排序" class="headerlink" title="聚合及排序"></a>聚合及排序</h3><ul>
-<li>如果不需要聚合或排序<br>设置Doc_values &#x2F; fielddata为false</li>
-<li>对更新频繁、聚合查询频繁的keyword类型的字段<br>设置eager_global_ordinals为true，利用缓存提高聚合性能</li>
-</ul>
-<h3 id="额外存储"><a href="#额外存储" class="headerlink" title="额外存储"></a>额外存储</h3><p>_source设置enabled为false可以节约磁盘空间<br>但是一般不会把_source关掉，而是优先考虑增加压缩比，因为关掉后无法再看到_source字段，且无法做Reindex和Update</p>
-<h2 id="数据建模最佳实践"><a href="#数据建模最佳实践" class="headerlink" title="数据建模最佳实践"></a>数据建模最佳实践</h2><h3 id="关联关系"><a href="#关联关系" class="headerlink" title="关联关系"></a>关联关系</h3><ol>
-<li>优先考虑Denormalization</li>
-<li>当数据包含多数值对象，同时有查询需求时，使用Nested Object</li>
-<li>关联文档更新非常频繁时，使用Parent &#x2F; Child</li>
-</ol>
-<h3 id="避免过多字段"><a href="#避免过多字段" class="headerlink" title="避免过多字段"></a>避免过多字段</h3><p>过多字段带来的问题：</p>
-<ol>
-<li>不容易维护</li>
-<li>Mapping信息保存在Cluster State中，数据量过大的话会对集群性能造成影响（Cluster State信息需要和所有节点同步）</li>
-<li>删除或修改数据需要reindex</li>
-</ol>
-<p>默认最大字段数是1000，可以设置index.mapping.total_fields.limit来修改</p>
-<h3 id="避免正则查询"><a href="#避免正则查询" class="headerlink" title="避免正则查询"></a>避免正则查询</h3><p>正则查询存在的问题：</p>
-<ul>
-<li>正则、通配符查询、前缀查询属于Term查询，但是性能不够好</li>
-<li>特别是将通配符放在开头的话，性能极差</li>
-</ul>
-<h3 id="避免空值引起的聚合不准"><a href="#避免空值引起的聚合不准" class="headerlink" title="避免空值引起的聚合不准"></a>避免空值引起的聚合不准</h3><p>比如下面插入两条文档，一条文档的rating值为null：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">PUT ratings/doc/1</span><br><span class="line">&#123;</span><br><span class="line"> &quot;rating&quot;:5</span><br><span class="line">&#125;</span><br><span class="line">PUT ratings/doc/2</span><br><span class="line">&#123;</span><br><span class="line"> &quot;rating&quot;:null</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>聚合分析结果中可以看到，total虽然是2，但是avg结果却是5：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">POST ratings/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;size&quot;: 0,</span><br><span class="line">  &quot;aggs&quot;: &#123;</span><br><span class="line">    &quot;avg&quot;: &#123;</span><br><span class="line">      &quot;avg&quot;: &#123;</span><br><span class="line">        &quot;field&quot;: &quot;rating&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>解决办法是给null取默认值：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">DELETE ratings</span><br><span class="line">PUT ratings</span><br><span class="line">&#123;</span><br><span class="line">  &quot;mappings&quot;: &#123;</span><br><span class="line">    &quot;doc&quot;: &#123;</span><br><span class="line">      &quot;properties&quot;: &#123;</span><br><span class="line">        &quot;rating&quot;: &#123;</span><br><span class="line">          &quot;type&quot;: &quot;long&quot;,</span><br><span class="line">          &quot;null_value&quot;: 1.0</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="为索引的Mapping加入Meta信息"><a href="#为索引的Mapping加入Meta信息" class="headerlink" title="为索引的Mapping加入Meta信息"></a>为索引的Mapping加入Meta信息</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">PUT softwares</span><br><span class="line">&#123;</span><br><span class="line">  &quot;mappings&quot;: &#123;</span><br><span class="line">    &quot;_meta&quot;: &#123;</span><br><span class="line">      &quot;software_version_mapping&quot;: &quot;1.0&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>Mapping的设置是一个迭代的过程：</p>
-<ul>
-<li>加入新的字段很容易（必要时需要update_by_query）</li>
-<li>更新删除字段不允许（需要Reindex重建数据）</li>
-<li>最好能对Mapping加入Meta信息，更好地进行版本管理</li>
-<li>可以考虑将Mapping文件上传git进行管理</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">79</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">180</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">79</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">182</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">180</span>
+          <span class="site-state-item-count">182</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -175,6 +175,254 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/ea705bce.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/ea705bce.html" class="post-title-link" itemprop="url">Apollo 原理总结</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-10-20 18:14:10" itemprop="dateCreated datePublished" datetime="2020-10-20T18:14:10+08:00">2020-10-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+<h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><ul>
+<li>App: App信息</li>
+<li>AppNamespace: App下Namespace的元信息</li>
+<li>Cluster: 集群信息</li>
+<li>Namespace: 集群下的namespace</li>
+<li>Item: Namespace的配置，每个Item是一个key, value组合</li>
+<li>Release: Namespace发布的配置，每个发布包含发布时该Namespace的所有配置</li>
+<li>Commit: Namespace下的配置更改记录</li>
+<li>Audit: 审计信息，记录用户在何时使用何种方式操作了哪个实体。</li>
+</ul>
+<h1 id="Apollo架构"><a href="#Apollo架构" class="headerlink" title="Apollo架构"></a>Apollo架构</h1><p><img src="/imgs/Apollo/Apollo%E6%9E%B6%E6%9E%84.png" alt="Apollo架构——图片来自Apollo-github"></p>
+<ul>
+<li>Apollo Client：为应用提供配置查询功能；</li>
+<li>Apollo Config Service：提供配置的读取、推送等功能，服务对象是 Apollo Client；</li>
+<li>Apollo Portal：Apollo管理界面，为开发者提供配置修改功能；</li>
+<li>Apollo Admin Service：提供配置修改、发布等功能，服务对象是Apollo Portal。</li>
+</ul>
+<h1 id="服务发现和负载均衡"><a href="#服务发现和负载均衡" class="headerlink" title="服务发现和负载均衡"></a>服务发现和负载均衡</h1><p>在Apollo中，Config Service和Admin Service都是<strong>多实例</strong>、<strong>无状态</strong>部署的，需要将自己注册到<strong>Eureka</strong>。<br>Eureka负责服务发现，在Eureka之上Apollo又架了一层<strong>Meta Server</strong>用于封装Eureka的服务发现接口：</p>
+<ul>
+<li>Client通过域名访问Meta Server获取Config Service服务列表（IP+Port），而后直接通过IP+Port访问服务，同时在Client侧会做<strong>load balance</strong>、<strong>错误重试</strong>；</li>
+<li>Portal通过域名访问Meta Server获取Admin Service服务列表（IP+Port），而后直接通过IP+Port访问服务，同时在Portal侧会做<strong>load balance</strong>、<strong>错误重试</strong>。</li>
+</ul>
+<p>为什么Apollo使用Eureka而不是别的服务发现组件，比如ZooKeeper？</p>
+<ol>
+<li>提供了完整的服务注册和发现实现，用起来省心；</li>
+<li>项目基础是SpringCloud，已经有应用Eureka的基础；</li>
+</ol>
+<p>Meta Server部署在哪里？<br>Meta Server只是一个逻辑角色，在部署时和Config Service是在一个JVM进程中的，所以IP、端口和Config Service一致</p>
+<h1 id="服务端实现原理"><a href="#服务端实现原理" class="headerlink" title="服务端实现原理"></a>服务端实现原理</h1><p>服务端的主要任务是维护配置信息，以及将配置信息推送到客户端。</p>
+<h2 id="服务端推送大体流程"><a href="#服务端推送大体流程" class="headerlink" title="服务端推送大体流程"></a>服务端推送大体流程</h2><ol>
+<li>用户在Portal操作配置发布</li>
+<li>Portal调用Admin Service的接口操作发布</li>
+<li>Admin Service发布配置后，发送<strong>ReleaseMessage</strong>给各个Config Service</li>
+<li>Config Service收到ReleaseMessage后，<strong>通知对应的客户端</strong></li>
+</ol>
+<h2 id="发送ReleaseMessage给Config-Service的过程"><a href="#发送ReleaseMessage给Config-Service的过程" class="headerlink" title="发送ReleaseMessage给Config Service的过程"></a>发送ReleaseMessage给Config Service的过程</h2><p><img src="/imgs/Apollo/Apollo%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF%E7%9A%84%E5%8F%91%E5%B8%83.png" alt="Apollo配置信息的发布——图片来自Apollo-github"><br>用户操作配置发布后，Admin Service会往<strong>ReleaseMessage</strong>表插入一条消息记录，然后Config Service<strong>定时轮询</strong>这张表来消费消息。<br>ApolloPortol会调Admin服务发出<strong>消息</strong>，这时，Admin Service作为<strong>Producer</strong>发出消息，各个ConfigService作为<strong>Consumer</strong>消费消息，为了减少对外部的依赖，Apollo发送消息的功能是<strong>通过数据库自己实现的一个简单的消息队列</strong>。</p>
+<ol>
+<li>Admin操作Release：<code>com.ctrip.framework.apollo.portal.controller.ReleaseController#createRelease</code><br>在Admin Service的后台操作界面上可以看到Release操作入口。</li>
+<li>Admin向ReleaseMessage表插入一条消息记录：<code>com.ctrip.framework.apollo.adminservice.controller.ReleaseController#publish</code><br>该消息的内容就是配置发布的AppId+Cluster+Namespace。<br>注意在“发消息”前，先把发布信息存到了Release表中。</li>
+<li>定时扫描消息，<br>扫描消息：<code>com.ctrip.framework.apollo.biz.message.ReleaseMessageScanner</code><br>定时任务逻辑：批量处理，每次扫描500条，每条消息分别触发所有消息监听器（ReleaseMessageListener）。<br>定时任务线程池配置：每100毫秒执行一次，core线程数只有1，但是总线程数为Integer.MAX_INT。</li>
+<li>Config Service通知客户端<br>代码入口：<code>NotificationControllerV2#handleMessage</code><br>注意NotificationControllerV2这个Controller本身也是个消息监听器。<br>Config Service会从消息中获取配置发布的AppId+Cluster+Namespace，然后通知客户端（通知客户端的过程见下面）。</li>
+</ol>
+<h2 id="Config-Service通知客户端的过程"><a href="#Config-Service通知客户端的过程" class="headerlink" title="Config Service通知客户端的过程"></a>Config Service通知客户端的过程</h2><ol>
+<li>客户端发起一个HTTP请求到Config Service<br>入口：&#x2F;notifications&#x2F;v2，对应NotificationControllerV2（注意和上面的消息监听器是同一个类）。</li>
+<li>Config Service将请求挂起<br>通过Spring 的 DeferredResult将请求挂起，默认等待60秒。<br>如果在等待期间有该客户端关注的配置（Namespace）发布，则NotificationControllerV2会调用DeferredResult#setResult传入变化的Namespace信息，同时该请求也会立刻返回。<br>反之，如果60秒内都没有该客户端关注的配置发布，则返回HTTP状态码304给客户端。</li>
+<li>客户端请求最新的Namespace配置<br>如果Config Service返回了配置信息、客户端获取到变化的Namespace信息后，客户端就会立即请求Config Service获取该Namespace的最新配置。</li>
+</ol>
+<h1 id="客户端实现原理"><a href="#客户端实现原理" class="headerlink" title="客户端实现原理"></a>客户端实现原理</h1><p>客户端主要任务是从Config Service获取配置信息（Push和Pull都有），并在本地维护一个配置文件缓存。<br><img src="/imgs/Apollo/Apollo%E9%85%8D%E7%BD%AE%E5%9C%A8%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%E7%BB%B4%E6%8A%A4.png" alt="Apollo配置在客户端的维护——图片来自Apollo-github"></p>
+<h2 id="客户端long-polling"><a href="#客户端long-polling" class="headerlink" title="客户端long-polling"></a>客户端long-polling</h2><p>客户端会和服务端维持一个长连接，以及时接收到配置的变更信息。<br>入口：<code>com.ctrip.framework.apollo.internals.RemoteConfigLongPollService#startLongPolling</code><br>客户端长轮询的是Config Service的配置变更通知接口。当有新通知时就会触发RemoteConfigRepository，立即轮询Config Service的配置读取<code>/configs/&#123;appId&#125;/&#123;clusterName&#125;/&#123;namespace:.+&#125;</code>接口。</p>
+<h2 id="客户端定时Pull"><a href="#客户端定时Pull" class="headerlink" title="客户端定时Pull"></a>客户端定时Pull</h2><p>客户端定时从Config Service拉取应用的配置信息，使用的接口和上面的long-polling一样：<code>/configs/&#123;appId&#125;/&#123;clusterName&#125;/&#123;namespace:.+&#125;</code>。<br>入口：<code>RemoteConfigRepository#scheduleLongPollingRefresh</code><br>这是一个fallback机制，主要目的是防止推送机制失效导致配置不更新。<br>客户端定时拉取会上报本地版本，所以一般情况下，对于定时拉取的操作，服务端都会返回304 - Not Modified。<br>定时频率默认为每5分钟拉取一次，客户端也可以通过在运行时指定System Property: apollo.refreshInterval来覆盖，单位为分钟。</p>
+<h2 id="客户端本地对配置的维护"><a href="#客户端本地对配置的维护" class="headerlink" title="客户端本地对配置的维护"></a>客户端本地对配置的维护</h2><ol>
+<li>客户端从Apollo配置中心服务端获取到应用的最新配置后，会保存在内存中</li>
+<li>客户端会把从服务端获取到的配置在本地文件系统缓存一份<br>在遇到服务不可用，或网络不通的时候，依然能从本地恢复配置</li>
+<li>应用程序可以从Apollo客户端获取最新的配置、订阅配置更新通知</li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97">Java客户端使用指南</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/ctripcorp/apollo/wiki/Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E8%AE%BE%E8%AE%A1#31-%E5%92%8Cspring%E9%9B%86%E6%88%90%E7%9A%84%E5%8E%9F%E7%90%86">Apollo配置中心设计</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/80b748be.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/80b748be.html" class="post-title-link" itemprop="url">项目总结-bm</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-09-23 22:53:43" itemprop="dateCreated datePublished" datetime="2020-09-23T22:53:43+08:00">2020-09-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ol>
+<li>业务背景</li>
+<li>业务逻辑</li>
+<li>收益</li>
+<li>技术选型<br>服务器几台、QPS多少、存储、缓存、MQ等</li>
+<li>架构图</li>
+<li>规划</li>
+<li>个人角色 &#x2F; 做了什么</li>
+<li>技术难点</li>
+<li>遇到的问题</li>
+<li>复盘 &#x2F; 未来规划</li>
+</ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/80b748be.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -447,7 +695,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jmap -dump:format=b,file=&lt;文件名&gt; [pid]</span><br><span class="line">gzip &lt;文件名&gt;</span><br></pre></td></tr></table></figure>
 <p>下载到本地，因为线上服务器没有开启下载端口，因此下载文件必须要中转一下，先上传到一台暴露到公网的服务器，再从该服务器上下载，如果没有这样的服务器也可以用github代替。<br>在本地使用eclipse MAT分析。</p>
 <h1 id="问题排查记录"><a href="#问题排查记录" class="headerlink" title="问题排查记录"></a>问题排查记录</h1><p>手动导出内存dump文件：<br><img src="/imgs/JVM/robin%E7%9A%84%E5%86%85%E5%AD%98dump%E6%96%87%E4%BB%B6.png" alt="robin的内存dump文件" title="robin的内存dump文件"><br>仔细观察其中对象占用的内存空间，发现一个大对象占用了接近1&#x2F;3的内存空间，发现是<code>com.alibaba.druid.stat.JdbcDataSourceStat</code>中有个LinkedHashMap类型的成员变量占用了大量空间没有释放，在源码中对应一个sqlStatMap。<br><img src="/imgs/JVM/%E5%8D%A0%E7%94%A8%E5%A4%A7%E9%87%8F%E5%86%85%E5%AD%98%E7%A9%BA%E9%97%B4%E7%9A%84%E5%A4%A7%E5%AF%B9%E8%B1%A1.png" alt="占用大量内存空间的大对象" title="占用大量内存空间的大对象"><br><img src="/imgs/JVM/Druid%E4%B8%AD%E7%9A%84sqlStatMap.png" alt="Druid中的sqlStatMap" title="Druid中的sqlStatMap"><br>从源码可知，打开开关之后，每次执行SQL前后都会把SQL记到这个sqlStatMap里，<strong>在JVM实例运行期间会一直存在（基本都在老年代）</strong>，这个开关主要用于监控SQL执行情况，<strong>对SQL语句的执行本身没有影响，且我们这边统计SQL（包括慢查询等）都是基于MySQL本身的功能、并没有用到这个配置。</strong><br>可以把这个开关关掉，因为我们根本没有使用Druid内置的SQL监控功能，<strong>关闭后预计可以释放25%左右的堆空间。</strong><br>另外附：<br>1、配置_StatFilter：<a target="_blank" rel="noopener" href="https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE_StatFilter">https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE_StatFilter</a><br>2、每个sql语句都会长期持有引用，加快FullGC频率 #1664：<a target="_blank" rel="noopener" href="https://github.com/alibaba/druid/issues/1664">https://github.com/alibaba/druid/issues/1664</a></p>
-
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
     </div>
 
@@ -631,7 +879,7 @@
 <p>以下是一些参数设置</p>
 <p>.&#x2F;configure –enable-smp  –enable-x2apic –enable-debugger –enable-disasm –enable-vmx&#x3D;2 –enable-configurable-msrs –enable-x86-64 –enable-a20-pin –enable-acpi –enable-pci  </p>
 <p><a target="_blank" rel="noopener" href="http://blog.csdn.net/column/details/xv6-jos.html">http://blog.csdn.net/column/details/xv6-jos.html</a></p>
-
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
     </div>
 
@@ -1047,7 +1295,7 @@
 <h2 id="为什么TCP建立连接是3次握手而不是2次或4次？"><a href="#为什么TCP建立连接是3次握手而不是2次或4次？" class="headerlink" title="为什么TCP建立连接是3次握手而不是2次或4次？"></a>为什么TCP建立连接是3次握手而不是2次或4次？</h2><ul>
 <li>如果是2次握手<br>比如A和B建立连接时，A可能会重试发送，但此时可能前面的请求由于网络等情况没有及时送到B，后来重试的请求先建立了连接，然后先发出的请求才送到，这个连接仍然建立了，但是却没有任何作用（因为A已经默认之前发出的请求都失败了）。<br><img src="/imgs/%E7%BD%91%E7%BB%9C/TCP%E5%A6%82%E6%9E%9C%E6%98%AF2%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%8F%AF%E8%83%BD%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98.png" alt="TCP如果是2次握手可能存在的问题" title="TCP如果是2次握手可能存在的问题"><br>为了解决上面的问题，必须要有一个“应答之应答”，A需要告诉B这个连接的建立是有效的，因此需要3次握手。<br>那么为什么不是4次握手或更多次的握手呢？主要是因为很多次也不能保证就真的可靠了，而且太多次对效率也会有比较大的影响。</li>
 </ul>
-<h2 id="为什么TCP关闭连接是4次挥手而不是2次或6次？"><a href="#为什么TCP关闭连接是4次挥手而不是2次或6次？" class="headerlink" title="为什么TCP关闭连接是4次挥手而不是2次或6次？"></a>为什么TCP关闭连接是4次挥手而不是2次或6次？</h2>
+<h2 id="为什么TCP关闭连接是4次挥手而不是2次或6次？"><a href="#为什么TCP关闭连接是4次挥手而不是2次或6次？" class="headerlink" title="为什么TCP关闭连接是4次挥手而不是2次或6次？"></a>为什么TCP关闭连接是4次挥手而不是2次或6次？</h2><script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
     </div>
 
@@ -1179,7 +1427,7 @@
 <li>《Algorithms》 - Robert_Sedgewick<br>红黑树原来是从23树演化而来，之前以为是凭空编出来的。</li>
 <li><a target="_blank" rel="noopener" href="https://algs4.cs.princeton.edu/33balanced/RedBlackBST.java.html">《Algorithms》中的红黑树实现</a></li>
 </ol>
-
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
     </div>
 
@@ -1289,304 +1537,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/466d4e65.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/466d4e65.html" class="post-title-link" itemprop="url">分布式一致性协议</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-08-19 18:13:15" itemprop="dateCreated datePublished" datetime="2020-08-19T18:13:15+08:00">2020-08-19</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-10-09 16:58:44" itemprop="dateModified" datetime="2022-10-09T16:58:44+08:00">2022-10-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%80%E6%9C%AF%E7%82%B9%E6%80%BB%E7%BB%93/" itemprop="url" rel="index"><span itemprop="name">技术点总结</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<p> </p>
-<h1 id="分布式一致性协议的演化"><a href="#分布式一致性协议的演化" class="headerlink" title="分布式一致性协议的演化 "></a>分布式一致性协议的演化 </h1><h1 id="2PC"><a href="#2PC" class="headerlink" title="2PC "></a>2PC </h1><h1 id="3PC"><a href="#3PC" class="headerlink" title="3PC"></a>3PC</h1><p>与 2PC 的区别是：</p>
-<ol>
-<li>将 2PC 的 prepare 阶段拆为 CanCommit 和 PreCommit 两个阶段，其中：<ul>
-<li>CanCommit 阶段：参与者需要判断是否可以执行事务提交操作<br> 这个阶段如果出现超时、某个参与者返回 No 等情况，事务直接失败；<br> 在所有参与者 CanCommit 阶段都返回 Yes 响应后可以进入 PreCommit 阶段；</li>
-<li>PreCommit 阶段：预提交即执行事务操作，并记录 undo 和 redo 日志，这时本地事务还未 commit<br> 这个阶段如果有任何一个参与者向协调者返回了 No 响应或超时协调者还未接收到参与者的响应，则协调者会开始执行事务的 abort；<br> 如果所有参与者都返回了 ACK 响应，则可以进入最终的 doCommit 阶段；</li>
-<li>abort：上一步，如果要开始执行中断事务，协调者会向所有参与者发送 abort 请求，参与者接收</li>
-<li>doCommit 阶段： </li>
-</ul>
-</li>
-</ol>
-<h1 id="Paxos"><a href="#Paxos" class="headerlink" title="Paxos"></a>Paxos</h1><h2 id="与-2PC（及其衍生协议）区别"><a href="#与-2PC（及其衍生协议）区别" class="headerlink" title="与 2PC（及其衍生协议）区别"></a>与 2PC（及其衍生协议）区别</h2><p>Paxos 协议和 2PC 协议在分布式系统中所起的作用并不相同。Paxos 协议用于保证同一个数据分片的多个副本之间的数据一致性。当这些副本分布到不同的数据中心时，这个需求尤其强烈。2PC 协议用于保证属于多个数据分片上的操作的原子性。这些数据分片可能分布在不同的服务器上，2PC 协议保证多台服务器上的操作要么全部成功，要么全部失败。<br>Paxos 协议有两种用法：一种用法是用它来实现全局的锁服务或者命名和配置服务，例如 Google Chubby 以及 Apache Zookeeper。另外一种用法是用它来将用户数据复制到多个数据中心，例如 Google Megastore 以及 Google Spanner。<br>2PC 协议最大的缺陷在于无法处理协调者宕机问题。如果协调者宕机，那么，2PC 协议中的每个参与者可能都不知道事务应该提交还是回滚，整个协议被阻塞，执行过程中申请的资源都无法释放。因此，常见的做法是将 2PC 和 Paxos 协议结合起来，通过 2PC 保证多个数据分片上的操作的原子性，通过 Paxos 协议实现同一个数据分片的多个副本之间的一致性（一般）。另外，通过 Paxos 协议解决 2PC 协议中协调者宕机问题。当 2PC 协议中的协调者出现故障时，通过 Paxos 协议选举出新的协调者继续提供服务，可以解决<strong>单点故障</strong>问题（但是你确定服务参与者足够多能够发起一次选举吗？）。</p>
-<h2 id="Paxos-1"><a href="#Paxos-1" class="headerlink" title="Paxos"></a>Paxos</h2><h3 id="Basic-Paxos（单值Paxos）"><a href="#Basic-Paxos（单值Paxos）" class="headerlink" title="Basic Paxos（单值Paxos）"></a>Basic Paxos（单值Paxos）</h3><p>目前在多个proposer可以同时发起提议的情况下，满足P1、P2a即能做到确定并只确定一个值。如果再加上节点宕机恢复、消息丢包的考量呢？<br>假设acceptor c 宕机一段时间后恢复，c 宕机期间其他acceptor已经确定了一项值为v的决议但c 因为宕机并不知晓；c 恢复后如果有proposer马上发起一项值不是v的提议，由于条件P1，c 会接受该提议，这与P2a矛盾。为了避免这样的情况出现，进一步地我们对proposer作约束：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">P2b. 如果一项值为v的提议被确定，那么proposer后续只发起值为v的提议</span><br></pre></td></tr></table></figure>
-<p>满足P2b则P2a成立 (P2b &#x3D;&gt; P2a &#x3D;&gt; P2)。<br>P2b约束的是提议被确定(chosen)后proposer的行为，我们更关心提议被确定前proposer应该怎么做：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">P2c. 对于提议(n,v)，acceptor的多数派S中，如果存在acceptor最近一次(即ID值最大)接受的提议的值为v&#x27;，那么要求v = v&#x27;；否则v可为任意值</span><br></pre></td></tr></table></figure>
-<p>满足P2c则P2b成立 (P2c &#x3D;&gt; P2b &#x3D;&gt; P2a &#x3D;&gt; P2)。</p>
-<p>条件P2c是Basic Paxos的核心，光看P2c的描述可能会觉得一头雾水，我们通过 <a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/publication/part-time-parliament/?from=http://research.microsoft.com/en-us/um/people/lamport/pubs/lamport-paxos.pdf">The Part-Time Parliament</a>中的例子加深理解：<br><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/BasicPaxos%E4%BE%8B%E5%AD%90.jpg" alt="BasicPaxos例子" title="BasicPaxos例子"><br>假设有A~E 5个acceptor，- 表示acceptor因宕机等原因缺席当次决议，x 表示acceptor不接受提议，o 表示接受提议；多数派acceptor接受提议后提议被确定，以上表格对应的决议过程如下：<br>ID为2的提议最早提出，根据P2c其提议值可为任意值，这里假设为a<br>acceptor A&#x2F;B&#x2F;C&#x2F;E 在之前的决议中没有接受(accept)任何提议，因而ID为5的提议的值也可以为任意值，这里假设为b<br>acceptor B&#x2F;D&#x2F;E，其中D曾接受ID为2的提议，根据P2c，该轮ID为14的提议的值必须与ID为2的提议的值相同，为a<br>acceptor A&#x2F;C&#x2F;D，其中D曾接受ID为2的提议、C曾接受ID为5的提议，相比之下ID 5较ID 2大，根据P2c，该轮ID为27的提议的值必须与ID为5的提议的值相同，为b；该轮决议被多数派acceptor接受，因此该轮决议得以确定<br>acceptor B&#x2F;C&#x2F;D，3个acceptor之前都接受过提议，相比之下C、D曾接受的ID 27的ID号最大，该轮ID为29的提议的值必须与ID为27的提议的值相同，为b<br>以上提到的各项约束条件可以归纳为3点，如果proposer&#x2F;acceptor满足下面3点，那么在少数节点宕机、网络分化隔离的情况下，在“确定并只确定一个值”这件事情上可以保证一致性(consistency)：<br>B1(ß): ß中每一轮决议都有唯一的ID标识<br>B2(ß): 如果决议B被acceptor多数派接受，则确定决议B<br>B3(ß): 对于ß中的任意提议B(n,v)，acceptor的多数派中如果存在acceptor最近一次(即ID值最大)接受的提议的值为v’，那么要求v &#x3D; v’；否则v可为任意值<br>(注: 希腊字母ß表示多轮决议的集合，字母B表示一轮决议)<br>另外为保证P2c，我们对acceptor作两个要求：</p>
-<ol>
-<li>记录曾接受的ID最大的提议，因proposer需要问询该信息以决定提议值</li>
-<li>在回应提议ID为n的proposer自己曾接受过ID最大的提议时，acceptor同时保证(promise)不再接受ID小于n的提议<br>至此，proposer&#x2F;acceptor完成一轮决议可归纳为prepare和accept两个阶段。prepare阶段proposer发起提议问询提议值、acceptor回应问询并进行promise；accept阶段完成决议，图示如下：<br><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/accept%E6%B5%81%E7%A8%8B.jpg" alt="accept流程" title="accept流程"><br>还有一个问题需要考量，假如proposer A发起ID为n的提议，在提议未完成前proposer B又发起ID为n+1的提议，在n+1提议未完成前proposer C又发起ID为n+2的提议…… 如此acceptor不能完成决议、形成活锁(livelock)，虽然这不影响一致性，但我们一般不想让这样的情况发生。解决的方法是从proposer中选出一个leader，提议统一由leader发起。<br>最后我们再引入一个新的角色：learner，learner依附于acceptor，用于习得已确定的决议。以上决议过程都只要求acceptor多数派参与，而我们希望尽量所有acceptor的状态一致。如果部分acceptor因宕机等原因未知晓已确定决议，宕机恢复后可经本机learner采用pull的方式从其他acceptor习得。</li>
-</ol>
-<h3 id="Multi-Paxos（多值Paxos）"><a href="#Multi-Paxos（多值Paxos）" class="headerlink" title="Multi Paxos（多值Paxos）"></a>Multi Paxos（多值Paxos）</h3><p>通过以上步骤分布式系统已经能确定一个值，“只确定一个值有什么用？这可解决不了我面临的问题。” 你心中可能有这样的疑问。<br>其实不断地进行“确定一个值”的过程、再为每个过程编上序号，就能得到具有全序关系(total order)的系列值，进而能应用在数据库副本存储等很多场景。我们把单次“确定一个值”的过程称为实例(instance)，它由proposer&#x2F;acceptor&#x2F;learner组成，下图说明了A&#x2F;B&#x2F;C三机上的实例：<br><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/MultiPaxos.jpg" alt="MultiPaxos" title="MultiPaxos"><br>不同序号的实例之间互相不影响，A&#x2F;B&#x2F;C三机输入相同、过程实质等同于执行相同序列的状态机(state machine)指令 ，因而将得到一致的结果。<br>proposer leader在Multi Paxos中还有助于提升性能，常态下统一由leader发起提议，可节省prepare步骤(leader不用问询acceptor曾接受过的ID最大的提议、只有leader提议也不需要acceptor进行promise)直至发生leader宕机、重新选主。</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>以上介绍了Paxos的推演过程、如何在Basic Paxos的基础上通过状态机构建Multi Paxos。<br>微信后台开发同学实现并开源了一套基于Paxos协议的多机状态拷贝类库<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/23279058">PhxPaxos</a>，PhxPaxos用于将单机服务扩展到多机，其经过线上系统验证并在一致性保证、性能等方面作了很多考量。</p>
-<h2 id="Paxos变种和优化"><a href="#Paxos变种和优化" class="headerlink" title="Paxos变种和优化"></a>Paxos变种和优化</h2><p>如果想把Paxos应用于工程实践，了解基本原理还不够。<br>有很多基于Paxos的优化，在保证一致性协议正确(safety)的前提下，减少Paxos决议通信步骤、避免单点故障、实现节点负载均衡，从而降低时延、增加吞吐量、提升可用性，下面我们就来了解这些Paxos变种。</p>
-<h3 id="Multi-Paxos"><a href="#Multi-Paxos" class="headerlink" title="Multi Paxos"></a>Multi Paxos</h3><p>首先我们来回顾一下Multi Paxos，Multi Paxos在Basic Paxos的基础上确定一系列值，其决议过程如下：<br><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/MultiPaxos%E4%BE%8B%E5%AD%90.jpg" alt="MultiPaxos例子" title="MultiPaxos例子"><br>phase1a: leader提交提议给acceptor<br>phase1b: acceptor返回最近一次接受的提议(即曾接受的最大的提议ID和对应的value)，未接受过提议则返回空<br>phase2a: leader收集acceptor的应答，分两种情况处理<br>phase2a.1: 如果应答内容都为空，则自由选择一个提议value<br>phase2a.2: 如果应答内容不为空，则选择应答里面ID最大的提议的value<br>phase2b: acceptor将决议同步给learner<br>Multi Paxos中leader用于避免活锁，但leader的存在会带来其他问题，一是如何选举和保持唯一leader(虽然无leader或多leader不影响一致性，但影响决议进程progress)，二是充当leader的节点会承担更多压力，如何均衡节点的负载。Mencius[1]提出节点轮流担任leader，以达到均衡负载的目的；租约(lease)可以帮助实现唯一leader，但leader故障情况下可导致服务短期不可用。</p>
-<h3 id="Fast-Paxos"><a href="#Fast-Paxos" class="headerlink" title="Fast Paxos"></a>Fast Paxos</h3><p>在Multi Paxos中，proposer -&gt; leader -&gt; acceptor -&gt; learner，从提议到完成决议共经过3次通信，能不能减少通信步骤？<br>对Multi Paxos phase2a，如果可以自由提议value，则可以让proposer直接发起提议、leader退出通信过程，变为proposer -&gt; acceptor -&gt; learner，这就是Fast Paxos[2]的由来。<br><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/FastPaxos%E4%BE%8B%E5%AD%90.jpg" alt="FastPaxos例子" title="FastPaxos例子"><br>Multi Paxos里提议都由leader提出，因而不存在一次决议出现多个value，Fast Paxos里由proposer直接提议，一次决议里可能有多个proposer提议、出现多个value，即出现提议冲突(collision)。leader起到初始化决议进程(progress)和解决冲突的作用，当冲突发生时leader重新参与决议过程、回退到3次通信步骤。<br>Paxos自身隐含的一个特性也可以达到减少通信步骤的目标，如果acceptor上一次确定(chosen)的提议来自proposerA，则当次决议proposerA可以直接提议减少一次通信步骤。如果想实现这样的效果，需要在proposer、acceptor记录上一次决议确定(chosen)的历史，用以在提议前知道哪个proposer的提议上一次被确定、当次决议能不能节省一次通信步骤。</p>
-<h3 id="EPaxos"><a href="#EPaxos" class="headerlink" title="EPaxos"></a>EPaxos</h3><p>除了从减少通信步骤的角度提高Paxos决议效率外，还有其他方面可以降低Paxos决议时延，比如Generalized Paxos[3]提出不冲突的提议(例如对不同key的写请求)可以同时决议、以降低Paxos时延。<br>更进一步地，EPaxos[4](Egalitarian Paxos)提出一种既支持不冲突提议同时提交降低时延、还均衡各节点负载、同时将通信步骤减少到最少的Paxos优化方法。<br>为达到这些目标，EPaxos的实现有几个要点。一是EPaxos中没有全局的leader，而是每一次提议发起提议的proposer作为当次提议的leader(command leader)；二是不相互影响(interfere)的提议可以同时提交；三是跳过prepare，直接进入accept阶段。EPaxos决议的过程如下：<br><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/EPaxos%E7%9A%84accept%E8%BF%87%E7%A8%8B.jpg" alt="EPaxos的accept过程" title="EPaxos的accept过程"></p>
-<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>以上介绍了几个基于Paxos的变种，Mencius中节点轮流做leader、均衡节点负载，Fast Paxos减少一次通信步骤，Generalized Paxos允许互不影响的决议同时进行，EPaxos无全局leader、各节点平等分担负载。</p>
-<h1 id="Raft"><a href="#Raft" class="headerlink" title="Raft"></a>Raft</h1><p>Paxos 偏向于理论、对如何应用到工程实践提及较少。理解的难度加上现实的骨感，在生产环境中基于 Paxos 实现一个正确的分布式系统非常难。<br>Raft 在 2013 年提出，提出的时间虽然不长，但已经有很多系统基于 Raft 实现。相比 Paxos，Raft 的优点就是更利于理解、更易于实行。<br>为达到更容易理解和实行的目的，Raft 将问题分解和具体化：Leader 统一处理变更操作请求，一致性协议的作用具化为保证节点间操作日志副本(log replication)一致，以 term 作为逻辑时钟(logical clock)保证时序，节点运行相同状态机(state machine)得到一致结果。Raft 协议具体过程如下：</p>
-<p><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Raft%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.jpg" alt="Raft执行流程" title="Raft执行流程"></p>
-<ol>
-<li>Client 发起请求，每一条请求包含操作指令</li>
-<li>请求交由 Leader 处理，Leader 将操作指令(entry)追加(append)至操作日志，紧接着对 Follower 发起 AppendEntries 请求、尝试让操作日志副本在 Follower 落地</li>
-<li>如果 Follower 多数派(quorum)同意 AppendEntries 请求，Leader 进行 commit 操作、把指令交由状态机处理</li>
-<li>状态机处理完成后将结果返回给 Client</li>
-</ol>
-<p>指令通过 log index(指令 id)和 term number 保证时序，正常情况下 Leader、Follower 状态机按相同顺序执行指令，得出相同结果、状态一致。<br>宕机、网络分化等情况可引起 Leader 重新选举(每次选举产生新 Leader 的同时，产生新的 term)、Leader&#x2F;Follower 间状态不一致。Raft 中 Leader 为自己和所有 Follower 各维护一个 nextIndex 值，其表示 Leader 紧接下来要处理的指令 id 以及将要发给 Follower 的指令 id，LnextIndex 不等于 FnextIndex 时代表 Leader 操作日志和 Follower 操作日志存在不一致，这时将从 Follower 操作日志中最初不一致的地方开始，由 Leader 操作日志覆盖 Follower，直到 LnextIndex、FnextIndex 相等。<br>Paxos 中 Leader 的存在是为了提升决议效率，Leader 的有无和数目并不影响决议一致性，Raft 要求具备唯一 Leader，并把一致性问题具体化为保持日志副本的一致性，以此实现相较 Paxos 而言更容易理解、更容易实现的目标。</p>
-<h1 id="Zab"><a href="#Zab" class="headerlink" title="Zab"></a>Zab</h1><p>Zab 的全称是 Zookeeper atomic broadcast protocol，是 Zookeeper 内部用到的一致性协议。相比 Paxos，Zab 最大的特点是保证强一致性(strong consistency，或叫线性一致性 linearizable consistency)。<br>和 Raft 一样，Zab 要求唯一 Leader 参与决议，Zab 可以分解成 discovery、sync、broadcast 三个阶段：<br><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Zab%E5%8E%9F%E7%90%86.png" alt="Zab原理" title="Zab原理"></p>
-<ul>
-<li>discovery<br><strong>选举</strong>产生<strong>PL(prospective leader)<strong>，PL 收集</strong>Follower epoch(cepoch)<strong>，根据</strong>Follower</strong>的反馈 PL 产生<strong>newepoch</strong>(每次选举产生新 Leader 的同时产生新 epoch，类似 Raft 的 term)。</li>
-<li>sync<br>PL 补齐相比 Follower 多数派缺失的状态、之后各 Follower 再补齐相比 PL 缺失的状态，PL 和 Follower 完成状态同步后 PL 变为**正式 Leader(established leader)**。</li>
-<li>broadcast<br>Leader 处理 Client 的写操作，并将状态变更广播至 Follower，Follower<strong>多数派</strong>通过之后 Leader 发起将状态变更**提交(deliver&#x2F;commit)**。</li>
-</ul>
-<p>Leader 和 Follower 之间通过<strong>心跳</strong>判别健康状态，正常情况下 Zab 处在 broadcast 阶段，出现 Leader 宕机、网络隔离等异常情况时 Zab 重新回到 discovery 阶段。</p>
-<h2 id="Zookeeper介绍"><a href="#Zookeeper介绍" class="headerlink" title="Zookeeper介绍"></a>Zookeeper介绍</h2><p>Zookeeper是一个开源的分布式协调服务，其设计目标是将那些复杂的且容易出错的分布式一致性服务封装起来，构成一个高效可靠的原语集，并以一些列简单的接口提供给用户使用。其是一个典型的分布式数据一致性的解决方案，分布式应用程序可以基于它实现诸如数据发布&#x2F;发布、负载均衡、命名服务、分布式协调&#x2F;通知、集群管理、Master选举、分布式锁和分布式队列等功能。其可以保证如下分布式一致性特性。</p>
-<ol>
-<li>顺序一致性，从同一个客户端发起的事务请求，最终将会严格地按照其发起顺序被应用到Zookeeper中去。</li>
-<li>原子性，所有事务请求的处理结果在整个集群中所有机器上的应用情况是一致的，即整个集群要么都成功应用了某个事务，要么都没有应用。</li>
-<li>单一视图，无论客户端连接的是哪个Zookeeper服务器，其看到的服务端数据模型都是一致的。</li>
-<li>可靠性，一旦服务端成功地应用了一个事务，并完成对客户端的响应，那么该事务所引起的服务端状态变更将会一直被保留，除非有另一个事务对其进行了变更。</li>
-<li>实时性，Zookeeper保证在一定的时间段内，客户端最终一定能够从服务端上读取到最新的数据状态。</li>
-</ol>
-<h4 id="设计目标"><a href="#设计目标" class="headerlink" title="设计目标"></a>设计目标</h4><p>Zookeeper致力于提供一个高性能、高可用、且具有严格的顺序访问控制能力（主要是写操作的严格顺序性）的分布式协调服务，其具有如下的设计目标。</p>
-<ol>
-<li>简单的数据模型，Zookeeper使得分布式程序能够通过一个共享的树形结构的名字空间来进行相互协调，即Zookeeper服务器内存中的数据模型由一系列被称为ZNode的数据节点组成，Zookeeper将全量的数据存储在内存中，以此来提高服务器吞吐、减少延迟的目的。</li>
-<li>可构建集群，一个Zookeeper集群通常由一组机器构成，组成Zookeeper集群的而每台机器都会在内存中维护当前服务器状态，并且每台机器之间都相互通信。</li>
-<li>顺序访问，对于来自客户端的每个更新请求，Zookeeper都会分配一个全局唯一的递增编号，这个编号反映了所有事务操作的先后顺序。</li>
-<li>高性能，Zookeeper将全量数据存储在内存中，并直接服务于客户端的所有非事务请求，因此它尤其适用于以读操作为主的应用场景。</li>
-</ol>
-<h4 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h4><ol>
-<li>集群角色，最典型的集群就是Master&#x2F;Slave模式（主备模式），此情况下把所有能够处理写操作的机器称为Master机器，把所有通过异步复制方式获取最新数据，并提供读服务的机器为Slave机器。Zookeeper引入了Leader、Follower、Observer三种角色，Zookeeper集群中的所有机器通过Leader选举过程来选定一台被称为Leader的机器，Leader服务器为客户端提供写服务，Follower和Observer提供读服务，但是Observer不参与Leader选举过程，不参与写操作的过半写成功策略，Observer可以在不影响写性能的情况下提升集群的性能。</li>
-<li>会话，指客户端会话，一个客户端连接是指客户端和服务端之间的一个TCP长连接，Zookeeper对外的服务端口默认为2181，客户端启动的时候，首先会与服务器建立一个TCP连接，从第一次连接建立开始，客户端会话的生命周期也开始了，通过这个连接，客户端能够心跳检测与服务器保持有效的会话，也能够向Zookeeper服务器发送请求并接受响应，同时还能够通过该连接接受来自服务器的Watch事件通知。</li>
-<li>数据节点，第一类指构成集群的机器，称为机器节点，第二类是指数据模型中的数据单元，称为数据节点-Znode，Zookeeper将所有数据存储在内存中，数据模型是一棵树，由斜杠&#x2F;进行分割的路径，就是一个ZNode，如&#x2F;foo&#x2F;path1，每个ZNode都会保存自己的数据内存，同时还会保存一些列属性信息。ZNode分为持久节点和临时节点两类，持久节点是指一旦这个ZNode被创建了，除非主动进行ZNode的移除操作，否则这个ZNode将一直保存在Zookeeper上，而临时节点的生命周期和客户端会话绑定，一旦客户端会话失效，那么这个客户端创建的所有临时节点都会被移除。另外，Zookeeper还允许用户为每个节点添加一个特殊的属性：SEQUENTIAL。一旦节点被标记上这个属性，那么在这个节点被创建的时候，Zookeeper会自动在其节点后面追加一个整形数字，其是由父节点维护的自增数字。</li>
-<li>版本，对于每个ZNode，Zookeeper都会为其维护一个叫作Stat的数据结构，Stat记录了这个ZNode的三个数据版本，分别是version（当前ZNode的版本）、cversion（当前ZNode子节点的版本）、aversion（当前ZNode的ACL版本）。</li>
-<li>Watcher，Zookeeper允许用户在指定节点上注册一些Watcher，并且在一些特定事件触发的时候，Zookeeper服务端会将事件通知到感兴趣的客户端。</li>
-<li>ACL，Zookeeper采用ACL（Access Control Lists）策略来进行权限控制，其定义了如下五种权限：<br>· CREATE：创建子节点的权限。<br>· READ：获取节点数据和子节点列表的权限。<br>· WRITE：更新节点数据的权限。<br>· DELETE：删除子节点的权限。<br>· ADMIN：设置节点ACL的权限。</li>
-</ol>
-<h2 id="ZAB协议"><a href="#ZAB协议" class="headerlink" title="ZAB协议"></a>ZAB协议</h2><p>Zookeeper使用了Zookeeper Atomic Broadcast（ZAB，Zookeeper原子消息广播协议）的协议作为其数据一致性的核心算法。ZAB协议是为Zookeeper专门设计的一种支持崩溃恢复的原子广播协议。<br>Zookeeper依赖ZAB协议来实现分布式数据的一致性，基于该协议，Zookeeper实现了一种主备模式的系统架构来保持集群中各副本之间的数据的一致性，即其使用一个单一的主进程来接收并处理客户端的所有事务请求，并采用ZAB的原子广播协议，将服务器数据的状态变更以事务Proposal的形式广播到所有的副本进程中，ZAB协议的主备模型架构保证了同一时刻集群中只能够有一个主进程来广播服务器的状态变更，因此能够很好地处理客户端大量的并发请求。<br>ZAB协议的核心是定义了对于那些会改变Zookeeper服务器数据状态的事务请求的处理方式，即：所有事务请求必须由一个全局唯一的服务器来协调处理，这样的服务器被称为Leader服务器，余下的服务器则称为Follower服务器，Leader服务器负责将一个客户端事务请求转化成一个事务Proposal（提议），并将该Proposal分发给集群中所有的Follower服务器，之后Leader服务器需要等待所有Follower服务器的反馈，一旦<strong>超过半数</strong>的Follower服务器进行了正确的反馈后，那么Leader就会再次向所有的Follower服务器分发Commit消息，要求其将前一个Proposal进行提交。<br>ZAB协议包括两种基本的模式：崩溃恢复和消息广播。<br>当整个服务框架启动过程中或Leader服务器出现网络中断、崩溃退出与重启等异常情况时，ZAB协议就会进入恢复模式并选举产生新的Leader服务器。当选举产生了新的Leader服务器，同时集群中已经有过半的机器与该Leader服务器完成了状态同步之后，ZAB协议就会退出恢复模式，状态同步时指数据同步，用来保证集群在过半的机器能够和Leader服务器的数据状态保持一致。<br>当集群中已经有过半的Follower服务器完成了和Leader服务器的状态同步，那么整个服务框架就可以进入消息广播模式，当一台同样遵守ZAB协议的服务器启动后加入到集群中，如果此时集群中已经存在一个Leader服务器在负责进行消息广播，那么加入的服务器就会自觉地进入数据恢复模式：找到Leader所在的服务器，并与其进行数据同步，然后一起参与到消息广播流程中去。Zookeeper只允许唯一的一个Leader服务器来进行事务请求的处理，Leader服务器在接收到客户端的事务请求后，会生成对应的事务提议并发起一轮广播协议，而如果集群中的其他机器收到客户端的事务请求后，那么这些非Leader服务器会首先将这个事务请求转发给Leader服务器。<br>当Leader服务器出现崩溃或者机器重启、集群中已经不存在过半的服务器与Leader服务器保持正常通信时，那么在重新开始新的一轮的原子广播事务操作之前，所有进程首先会使用崩溃恢复协议来使彼此到达一致状态，于是整个ZAB流程就会从消息广播模式进入到崩溃恢复模式。一个机器要成为新的Leader，必须获得过半机器的支持，同时由于每个机器都有可能会崩溃，因此，ZAB协议运行过程中，前后会出现多个Leader，并且每台机器也有可能会多次成为Leader，进入崩溃恢复模式后，只要集群中存在过半的服务器能够彼此进行正常通信，那么就可以产生一个新的Leader并再次进入消息广播模式。如一个由三台机器组成的ZAB服务，通常由一个Leader、2个Follower服务器组成，某一个时刻，加入其中一个Follower挂了，整个ZAB集群是不会中断服务的。</p>
-<ol>
-<li>消息广播，ZAB协议的消息广播过程使用原子广播协议，类似于一个二阶段提交过程，针对客户端的事务请求，Leader服务器会为其生成对应的事务Proposal，并将其发送给集群中其余所有的机器，然后再分别收集各自的选票，最后进行事务提交。</li>
-</ol>
-<p>在ZAB的二阶段提交过程中，移除了中断逻辑，所有的Follower服务器要么正常反馈Leader提出的事务Proposal，要么就抛弃Leader服务器，同时，ZAB协议将二阶段提交中的中断逻辑移除意味着我们可以在过半的Follower服务器已经反馈Ack之后就开始提交事务Proposal，而不需要等待集群中所有的Follower服务器都反馈响应，但是，在这种简化的二阶段提交模型下，无法处理Leader服务器崩溃退出而带来的数据不一致问题，因此ZAB采用了崩溃恢复模式来解决此问题，另外，整个消息广播协议是基于具有FIFO特性的TCP协议来进行网络通信的，因此能够很容易保证消息广播过程中消息接受与发送的顺序性。再整个消息广播过程中，Leader服务器会为每个事务请求生成对应的Proposal来进行广播，并且在广播事务Proposal之前，Leader服务器会首先为这个事务Proposal分配一个全局单调递增的唯一ID，称之为事务ID（ZXID），由于ZAB协议需要保证每个消息严格的因果关系（顺序一致性&gt;因果一致性），因此必须将每个事务Proposal按照其ZXID的先后顺序来进行排序和处理。</p>
-<ol>
-<li>崩溃恢复，在Leader服务器出现崩溃，或者由于网络原因导致Leader服务器失去了与过半Follower的联系，那么就会进入崩溃恢复模式，在ZAB协议中，为了保证程序的正确运行，整个恢复过程结束后需要选举出一个新的Leader服务器，因此，ZAB协议需要一个高效且可靠的Leader选举算法，从而保证能够快速地选举出新的Leader，同时，Leader选举算法不仅仅需要让Leader自身知道已经被选举为Leader，同时还需要让集群中的所有其他机器也能够快速地感知到选举产生的新的Leader服务器。</li>
-<li>基本特性，ZAB协议规定了如果一个事务Proposal在一台机器上被处理成功，那么应该在所有的机器上都被处理成功，哪怕机器出现故障崩溃。ZAB协议需要确保那些已经在Leader服务器上提交的事务最终被所有服务器都提交，假设一个事务在Leader服务器上被提交了，并且已经得到了过半Follower服务器的Ack反馈，但是在它Commit消息发送给所有Follower机器之前，Leader服务挂了。如下图所示</li>
-</ol>
-<p>在集群正常运行过程中的某一个时刻，Server1是Leader服务器，其先后广播了P1、P2、C1、P3、C2（C2是Commit Of Proposal2的缩写），其中，当Leader服务器发出C2后就立即崩溃退出了，针对这种情况，ZAB协议就需要确保事务Proposal2最终能够在所有的服务器上都被提交成功，否则将出现不一致。<br>ZAB协议需要确保丢弃那些只在Leader服务器上被提出的事务。如果在崩溃恢复过程中出现一个需要被丢弃的提议，那么在崩溃恢复结束后需要跳过该事务Proposal，如下图所示<br>假设初始的Leader服务器Server1在提出一个事务Proposal3之后就崩溃退出了，从而导致集群中的其他服务器都没有收到这个事务Proposal，于是，当Server1恢复过来再次加入到集群中的时候，ZAB协议需要确保丢弃Proposal3这个事务。<br>在上述的崩溃恢复过程中需要处理的特殊情况，就决定了ZAB协议必须设计这样的Leader选举算法：能够确保提交已经被Leader提交的事务的Proposal，同时丢弃已经被跳过的事务Proposal。如果让Leader选举算法能够保证新选举出来的Leader服务器拥有集群中所有机器最高编号（ZXID最大）的事务Proposal，那么就可以保证这个新选举出来的Leader一定具有所有已经提交的提议，更为重要的是如果让具有最高编号事务的Proposal机器称为Leader，就可以省去Leader服务器查询Proposal的提交和丢弃工作这一步骤了。</p>
-<ol>
-<li>数据同步，完成Leader选举后，在正式开始工作前，Leader服务器首先会确认日志中的所有Proposal是否都已经被集群中的过半机器提交了，即是否完成了数据同步。Leader服务器需要确所有的Follower服务器都能够接收到每一条事务Proposal，并且能够正确地将所有已经提交了的事务Proposal应用到内存数据库中。Leader服务器会为每个Follower服务器维护一个队列，并将那些没有被各Follower服务器同步的事务以Proposal消息的形式逐个发送给Follower服务器，并在每一个Proposal消息后面紧接着再发送一个Commit消息，以表示该事务已经被提交，等到Follower服务器将所有其尚未同步的事务Proposal都从Leader服务器上同步过来并成功应用到本地数据库后，Leader服务器就会将该Follower服务器加入到真正的可用Follower列表并开始之后的其他流程。<br>下面分析ZAB协议如何处理需要丢弃的事务Proposal的，ZXID是一个64位的数字，其中32位可以看做是一个简单的单调递增的计数器，针对客户端的每一个事务请求，Leader服务器在产生一个新的事务Proposal时，都会对该计数器进行加1操作，而高32位则代表了Leader周期epoch的编号，每当选举产生一个新的Leader时，就会从这个Leader上取出其本地日志中最大事务Proposal的ZXID，并解析出epoch值，然后加1，之后以该编号作为新的epoch，低32位则置为0来开始生成新的ZXID，ZAB协议通过epoch号来区分Leader周期变化的策略，能够有效地避免不同的Leader服务器错误地使用不同的ZXID编号提出不一样的事务Proposal的异常情况。当一个包含了上一个Leader周期中尚未提交过的事务Proposal的服务器启动时，其肯定无法成为Leader，因为当前集群中一定包含了一个Quorum（过半）集合，该集合中的机器一定包含了更高epoch的事务的Proposal，因此这台机器的事务Proposal并非最高，也就无法成为Leader。<br>2.4 ZAB协议原理<br>ZAB主要包括消息广播和崩溃恢复两个过程，进一步可以分为三个阶段，分别是发现（Discovery）、同步（Synchronization）、广播（Broadcast）阶段。ZAB的每一个分布式进程会循环执行这三个阶段，称为主进程周期。<br>· 发现，选举产生PL(prospective leader)，PL收集Follower epoch(cepoch)，根据Follower的反馈，PL产生newepoch(每次选举产生新Leader的同时产生新epoch)。<br>· 同步，PL补齐相比Follower多数派缺失的状态、之后各Follower再补齐相比PL缺失的状态，PL和Follower完成状态同步后PL变为正式Leader(established leader)。<br>· 广播，Leader处理客户端的写操作，并将状态变更广播至Follower，Follower多数派通过之后Leader发起将状态变更落地(deliver&#x2F;commit)。<br>在正常运行过程中，ZAB协议会一直运行于阶段三来反复进行消息广播流程，如果出现崩溃或其他原因导致Leader缺失，那么此时ZAB协议会再次进入发现阶段，选举新的Leader。<br>2.4.1 运行分析<br>每个进程都有可能处于如下三种状态之一<br>· LOOKING：Leader选举阶段。<br>· FOLLOWING：Follower服务器和Leader服务器保持同步状态。<br>· LEADING：Leader服务器作为主进程领导状态。<br>所有进程初始状态都是LOOKING状态，此时不存在Leader，此时，进程会试图选举出一个新的Leader，之后，如果进程发现已经选举出新的Leader了，那么它就会切换到FOLLOWING状态，并开始和Leader保持同步，处于FOLLOWING状态的进程称为Follower，LEADING状态的进程称为Leader，当Leader崩溃或放弃领导地位时，其余的Follower进程就会转换到LOOKING状态开始新一轮的Leader选举。<br>一个Follower只能和一个Leader保持同步，Leader进程和所有与所有的Follower进程之间都通过心跳检测机制来感知彼此的情况。若Leader能够在超时时间内正常收到心跳检测，那么Follower就会一直与该Leader保持连接，而如果在指定时间内Leader无法从过半的Follower进程那里接收到心跳检测，或者TCP连接断开，那么Leader会放弃当前周期的领导，比你转换到LOOKING状态，其他的Follower也会选择放弃这个Leader，同时转换到LOOKING状态，之后会进行新一轮的Leader选举，并在选举产生新的Leader之后开始新的一轮主进程周期。<br>2.5 ZAB与Paxos的联系和区别<br>联系：</li>
-<li>都存在一个类似于Leader进程的角色，由其负责协调多个Follower进程的运行。</li>
-<li>Leader进程都会等待超过半数的Follower做出正确的反馈后，才会将一个提议进行提交。</li>
-<li>在ZAB协议中，每个Proposal中都包含了一个epoch值，用来代表当前的Leader周期，在Paxos算法中，同样存在这样的一个标识，名字为Ballot。<br>区别：<br>Paxos算法中，新选举产生的主进程会进行两个阶段的工作，第一阶段称为读阶段，新的主进程和其他进程通信来收集主进程提出的提议，并将它们提交。第二阶段称为写阶段，当前主进程开始提出自己的提议。<br>ZAB协议在Paxos基础上添加了同步阶段，此时，新的Leader会确保存在过半的Follower已经提交了之前的Leader周期中的所有事务Proposal。<br>ZAB协议主要用于构建一个高可用的分布式数据主备系统，而Paxos算法则用于构建一个分布式的一致性状态机系统。</li>
-</ol>
-<h2 id="Zab-如何保证强一致"><a href="#Zab-如何保证强一致" class="headerlink" title="Zab 如何保证强一致"></a>Zab 如何保证强一致</h2><p>Zab 通过约束事务先后顺序达到强一致性，先广播的事务先 commit、FIFO，Zab 称之为**primary order(以下简称 PO)**。实现 PO 的核心是<code>zxid</code>。<br>Zab 中每个事务对应一个 zxid，它由两部分组成：<code>&lt;e, c&gt;</code>，e 即 Leader 选举时生成的 epoch，c 表示当次 epoch 内事务的编号、依次递增。假设有两个事务的 zxid 分别是 z、z’，当满足 <code>z.e &lt; z&#39;.e</code> 或者 <code>z.e = z&#39;.e &amp;&amp; z.c &lt; z&#39;.c</code> 时，定义 z 先于 z’发生(<code>z &lt; z&#39;</code>)。<br>为实现 PO，Zab 对 Follower、Leader 有以下约束：</p>
-<ol>
-<li>有事务 z 和 z’，如果 Leader 先广播 z，则 Follower 需保证先 commit z 对应的事务</li>
-<li>有事务 z 和 z’，z 由 Leader p 广播，z’由 Leader q 广播，Leader p 先于 Leader q，则 Follower 需保证先 commit z 对应的事务</li>
-<li>有事务 z 和 z’，z 由 Leader p 广播，z’由 Leader q 广播，Leader p 先于 Leader q，如果 Follower 已经 commit z，则 q 需保证已 commit z 才能广播 z’</li>
-</ol>
-<p>第 1、2 点保证事务 FIFO，第 3 点保证 Leader 上具备所有已 commit 的事务。<br>相比 Paxos，Zab 约束了事务顺序、适用于有强一致性需求的场景。</p>
-<h1 id="Paxos、Raft、Zab-比较"><a href="#Paxos、Raft、Zab-比较" class="headerlink" title="Paxos、Raft、Zab 比较"></a>Paxos、Raft、Zab 比较</h1><p>除 Paxos、Raft 和 Zab 外，Viewstamped Replication(简称 VR)也是讨论比较多的一致性协议。这些协议包含很多共同的内容(Leader、quorum、state machine 等)，因而我们不禁要问：Paxos、Raft、Zab 和 VR 等分布式一致性协议区别到底在哪，还是根本就是一回事？<br>Paxos、Raft、Zab 和 VR 都是解决一致性问题的协议，Paxos 协议原文倾向于理论，Raft、Zab、VR 倾向于实践，一致性保证程度等的不同也导致这些协议间存在差异。下图帮助我们理解这些协议的相似点和区别<br><img src="http://8.219.79.196/imgs/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/Paxos%E3%80%81Raft%E3%80%81Zab%E6%AF%94%E8%BE%83.jpg" alt="Paxos、Raft、Zab比较" title="Paxos、Raft、Zab比较"></p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><h2 id="Paxos-2"><a href="#Paxos-2" class="headerlink" title="Paxos "></a>Paxos </h2><ol>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/23279058">分布式系统理论进阶 - Paxos</a> </li>
-<li><a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/publication/paxos-made-simple/?from=http://research.microsoft.com/en-us/um/people/lamport/pubs/paxos-simple.pdf">Paxos Made Simple</a> </li>
-<li><a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/publication/part-time-parliament/?from=http://research.microsoft.com/en-us/um/people/lamport/pubs/lamport-paxos.pdf">The Part-Time Parliament</a> </li>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/23279058">Tencent&#x2F;phxpaxos</a> </li>
-</ol>
-<h2 id="Raft-1"><a href="#Raft-1" class="headerlink" title="Raft "></a>Raft </h2><ol>
-<li><a target="_blank" rel="noopener" href="http://www.cs.utexas.edu/users/lorenzo/corsi/cs380d/papers/paper2-1.pdf">[1] Paxos made live - An engineering perspective, Tushar Chandra, Robert Griesemer and Joshua Redstone, 2007</a></li>
-<li><a target="_blank" rel="noopener" href="http://files.catwell.info/misc/mirror/raft/raft.pdf">[2] In Search of an Understandable Consensus Algorithm, Diego Ongaro and John Ousterhout, 2013</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.baidu.com/link?url=59S8Pf5DhEUcoYrNaNCLLF9d-rKeHrakboBuYcNcn86jxgxEIH-LzSzP_isdeyhTA3hkn7AYn64x1KCNAvSy22SJEMKGlqG5Ypum8iTcd9AT2QQwHoHAwVuTR7yBFc4n&wd=&eqid=8c4a598b000007f000000006580cec0c">[3] In Search of an Understandable Consensus Algorithm (Extended Version), Diego Ongaro and John Ousterhout, 2013</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.infosys.tuwien.ac.at/teaching/courses/AdvancedDistributedSystems/download/1990_Schneider_Implementing%20fault-tolerant%20services%20using%20the%20state%20machine%20approach.pdf">[4] Implementing Fault-Tolerant Services Using the State Machine, Fred B. Schneider, 1990</a> </li>
-</ol>
-<h2 id="Zab-1"><a href="#Zab-1" class="headerlink" title="Zab "></a>Zab </h2><ol>
-<li><a target="_blank" rel="noopener" href="http://www.cs.cornell.edu/courses/cs6452/2012sp/papers/zab-ieee.pdf">[5] Zab:High-performance broadcast for primary-backup systems, FlavioP.Junqueira,BenjaminC.Reed,andMarcoSeraﬁni, 2011</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.tcs.hut.fi/Studies/T-79.5001/reports/2012-deSouzaMedeiros.pdf">[6] ZooKeeper’s atomic broadcast protocol: Theory and practice, Andr´e Medeiros, 2012</a></li>
-<li><a target="_blank" rel="noopener" href="http://pmg.csail.mit.edu/papers/vr.pdf">[7] Viewstamped Replication A New Primary Copy Method to Support Highly-Available Distributed Systems, Brian M.Oki and Barbar H.Liskov, 1988</a></li>
-<li><a target="_blank" rel="noopener" href="http://pmg.csail.mit.edu/papers/vr-revisited.pdf">[8] Viewstamped Replication Revisited, Barbara Liskov and James Cowling, Barbara Liskov and James Cowling ,2012</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.acolyer.org/2015/03/01/cant-we-all-just-agree/">[9] Can’t we all just agree? The morning paper, 2015</a></li>
-<li><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1309.5671.pdf">[10] Vive La Difference: Paxos vs. Viewstamped Replication vs. Zab, Robbert van Renesse, Nicolas Schiper and Fred B. Schneider, 2014</a> </li>
-</ol>
-<h2 id="Paxos-变种和优化"><a href="#Paxos-变种和优化" class="headerlink" title="Paxos 变种和优化 "></a>Paxos 变种和优化 </h2><ol>
-<li><a target="_blank" rel="noopener" href="http://cseweb.ucsd.edu/classes/wi09/cse223a/mencius.pdf">[1] Mencius: Building Efficient Replicated State Machines for WANs, Yanhua Mao,Flavio P. Junqueira,Keith Marzullo, 2018</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/tr-2005-112.pdf">[2] Fast Paxos, Leslie Lamport, 2005</a></li>
-<li><a target="_blank" rel="noopener" href="http://diyhpl.us/~bryan/papers2/distributed/distributed-systems/generalized-consensus-and-paxos.2004.pdf">[3] Generalized Consensus and Paxos, Leslie Lamport, 2004</a></li>
-<li><a target="_blank" rel="noopener" href="http://sigops.org/sosp/sosp13/papers/p358-moraru.pdf">[4] There Is More Consensus in Egalitarian Parliaments, Iulian Moraru, David G. Andersen, Michael Kaminsky, 2013</a></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/b5a259aa.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/b5a259aa.html" class="post-title-link" itemprop="url">QMQ 总结</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-08-16 20:52:48" itemprop="dateCreated datePublished" datetime="2020-08-16T20:52:48+08:00">2020-08-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="总体架构"><a href="#总体架构" class="headerlink" title="总体架构"></a>总体架构</h1><p><img src="/imgs/QMQ/QMQ-%E6%B6%88%E6%81%AF%E7%9A%84%E5%8F%91%E9%80%81%E5%92%8C%E6%B6%88%E8%B4%B9%E6%B5%81%E7%A8%8B.png" alt="QMQ-消息的发送和消费流程" title="QMQ-消息的发送和消费流程"></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/b5a259aa.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/6/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/4/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/6/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
