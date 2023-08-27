@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">79</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">182</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">183</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -158,7 +158,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-count">80</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -175,6 +175,222 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/4621ba57.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/4621ba57.html" class="post-title-link" itemprop="url">性能分析-CPU</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-03-20 20:09:11" itemprop="dateCreated datePublished" datetime="2022-03-20T20:09:11+08:00">2022-03-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+<p><img src="/imgs/Linux/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90-CPU.png" alt="性能分析-CPU" title="性能分析-CPU"></p>
+<h1 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h1><h2 id="平均负载"><a href="#平均负载" class="headerlink" title="平均负载"></a>平均负载</h2><p>平均负载是指单位时间内，处于<strong>可运行状态</strong>和<strong>不可中断状态</strong>的平均进程数，也就是<strong>平均活跃进程数</strong>。所以，它不仅包括了正在使用 CPU 的进程，还包括等待 CPU 和等待 I&#x2F;O 的进程，因此和CPU使用率也并没有直接关系。</p>
+<ul>
+<li>所谓可运行状态的进程，是指正在使用 CPU 或者正在等待 CPU 的进程，也就是我们常用 ps 命令看到的，处于 R 状态（Running 或 Runnable）的进程。</li>
+<li>不可中断状态的进程则是正处于内核态关键流程中的进程，并且这些流程是不可打断的，比如最常见的是等待硬件设备的 I&#x2F;O 响应，也就是我们在 ps 命令中看到的 D 状态（Uninterruptible Sleep，也称为 Disk Sleep）的进程。</li>
+</ul>
+<p>当平均负载为2时，意味着：</p>
+<ul>
+<li>在只有2个CPU的系统上，意味着所有CPU都刚好被完全占用；</li>
+<li>在4个CPU的系统上，意味着CPU有50%的空闲；</li>
+<li>在只有一个CPU的系统中，意味着有一半的进程竞争不到CPU。</li>
+</ul>
+<p>平均负载为多少比较合适？</p>
+<ul>
+<li>先看系统有几个CPU，可以通过top命令或文件&#x2F;proc&#x2F;cpuinfo读取</li>
+<li>经验讲当平均负载高于CPU数量70%时，需要分析排查负载过高的问题</li>
+<li>uptime查看负载变化趋势，把系统的平均负载监控起来，根据更多的历史数据来判断负载变化趋势，如果有明显升高趋势再做分析。</li>
+</ul>
+<h2 id="CPU使用率"><a href="#CPU使用率" class="headerlink" title="CPU使用率"></a>CPU使用率</h2><h3 id="CPU使用率的定义和计算"><a href="#CPU使用率的定义和计算" class="headerlink" title="CPU使用率的定义和计算"></a>CPU使用率的定义和计算</h3><p>CPU 使用率，是单位时间内 CPU 繁忙情况的统计，跟平均负载并不一定完全对应。<br>比如：<br>CPU 密集型进程，使用大量 CPU 会导致平均负载升高，此时这两者是一致的；<br>I&#x2F;O 密集型进程，等待 I&#x2F;O 也会导致平均负载升高，但 CPU 使用率不一定很高；<br>大量等待 CPU 的进程调度也会导致平均负载升高，此时的 CPU 使用率也会比较高。</p>
+<p>Linux 通过 &#x2F;proc 虚拟文件系统,向用户空间提供了系统内部状态的信息,而 &#x2F;proc&#x2F;stat 提供的就是系统的 CPU 和任务统计信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cat /proc/stat | grep ^cpu</span><br><span class="line">cpu 280580 7407 286084 172900810 83602 0 583 0 0 0</span><br><span class="line">cpu0 144745 4181 176701 86423902 52076 0 301 0 0 0</span><br><span class="line">cpu1 135834 3226 109383 86476907 31525 0 282 0 0 0</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第一行cpu指所有cpu的累加，后面的cpu0, cpu1表示各个cpu的统计</li>
+<li>user(通常缩写为 us),代表<strong>用户态 CPU 时间</strong>。注意,它不包括下面的 nice 时间,但包括了 guest 时间。</li>
+<li>nice(通常缩写为 ni),代表低优先级用户态 CPU 时间,也就是进程的 nice 值被调整为 1-19 之间时的 CPU 时间。这里注意,nice 可取值范围是 -20 到 19,数值越</li>
+<li>大,优先级反而越低。</li>
+<li>system(通常缩写为sys),代表<strong>内核态 CPU 时间</strong>。</li>
+<li>idle(通常缩写为id),代表空闲时间。注意,它不包括等待 I&#x2F;O 的时间(iowait)。</li>
+<li>iowait(通常缩写为 wa),代表等待 I&#x2F;O 的 CPU 时间。</li>
+<li>irq(通常缩写为 hi),代表处理硬中断的 CPU 时间。</li>
+<li>softirq(通常缩写为 si),代表处理软中断的 CPU 时间。</li>
+<li>steal(通常缩写为 st),代表当系统运行在虚拟机中的时候,被其他虚拟机占用的 CPU 时间。</li>
+<li>guest(通常缩写为 guest),代表通过虚拟化运行其他操作系统的时间,也就是运行虚拟机的 CPU 时间。</li>
+<li>guest_nice(通常缩写为 gnice),代表以低优先级运行虚拟机的时间。</li>
+</ul>
+<p>而<strong>CPU使用率</strong>，就是除了空闲时间外的其他时间占总CPU时间的百分比，用公式来表示就是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CPU使用率 = 1 - 空闲时间 / 总CPU时间</span><br></pre></td></tr></table></figure>
+<p>但是这个值是<strong>开机以来的CPU使用率</strong>，没什么参考价值，重要的是计算<strong>单位时间内的CPU使用率</strong>或简称<strong>平均CPU使用率</strong>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">平均CPU使用率 = 1 - (空闲时间new - 空闲时间old) / (总CPU时间new - 总CPU时间old)</span><br></pre></td></tr></table></figure>
+<p>平均CPU使用率可以通过top、ps命令来查看。</p>
+<p><strong>造成CPU使用率过高的原因</strong>可能是：</p>
+<ul>
+<li>用户CPU过高</li>
+<li>系统CPU过高（如上下文切换）</li>
+<li>等待IO的CPU（如等待磁盘的响应）</li>
+<li>中断CPU（包括软中断和硬中断）</li>
+</ul>
+<h2 id="CPU上下文切换"><a href="#CPU上下文切换" class="headerlink" title="CPU上下文切换"></a>CPU上下文切换</h2><p>CPU 上下文切换，就是先把前一个任务的 CPU 上下文（也就是 CPU 寄存器和程序计数器）保存起来，然后加载新任务的上下文到这些寄存器和程序计数器，最后再跳转到程序计数器所指的新位置，运行新任务。<br>根据任务的不同，CPU 的上下文切换可以分为几个不同的场景，也就是<strong>进程上下文切换</strong>、<strong>线程上下文切换</strong>以及<strong>中断上下文切换</strong>。</p>
+<h3 id="进程上下文切换"><a href="#进程上下文切换" class="headerlink" title="进程上下文切换"></a>进程上下文切换</h3><p>根据Linux的特权等级分级：</p>
+<ul>
+<li>内核空间（Ring 0）具有最高权限，可以直接访问所有资源；</li>
+<li>用户空间（Ring 3）只能访问受限资源，不能直接访问内存等硬件设备，必须通过 <strong>系统调用</strong> 陷入到内核中，才能访问这些特权资源。<br>需要注意的是，系统调用陷入内核态执行完毕后，还需要切换回用户态，此时其实又发生了一次上下文切换，所以一次系统调用伴随了2次的CPU上下文切换。</li>
+</ul>
+<p>系统调用过程的CPU上下文切换：</p>
+<ol>
+<li>CPU 寄存器里原来用户态的指令位置，需要先保存起来。</li>
+<li>接着，为了执行内核态代码，CPU 寄存器需要更新为内核态指令的新位置。</li>
+<li>最后才是跳转到内核态运行内核任务。</li>
+<li>系统调用结束后，CPU寄存器需要恢复原来保存的用户态，然后再切换到用户空间，继续运行进程。<blockquote>
+<p>需要注意的是，系统调用过程中，并不会涉及到虚拟内存等进程用户态的资源，也不会切换进程。</p>
+</blockquote>
+</li>
+</ol>
+<p>进程上下文切换：<br><img src="/imgs/Linux/%E8%BF%9B%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2.png" alt="进程上下文切换" title="进程上下文切换"><br>进程的上下文切换就比系统调用时多了一步：在保存当前进程的内核状态和 CPU 寄存器之前，需要先把该进程的虚拟内存、栈等保存下来；而加载了下一进程的内核态后，还需要刷新进程的虚拟内存和用户栈。</p>
+<ul>
+<li>进程上下文切换，是指从一个进程切换到另一个进程运行。而系统调用过程中一直是同一个进程在运行。</li>
+<li>进程是由内核来管理和调度的，进程的切换只能发生在内核态。所以，进程的上下文不仅包括了虚拟内存、栈、全局变量等用户空间的资源，还包括了内核堆栈、寄存器等内核空间的状态。</li>
+</ul>
+<p>进程上下文潜在的性能问题：</p>
+<ol>
+<li>频繁的上下文切换容易导致平均负载升高：每次上下文切换都需要几十纳秒到数微秒的 CPU 时间。这个时间还是相当可观的，特别是在进程上下文切换次数较多的情况下，很容易导致 CPU 将大量时间耗费在寄存器、内核栈以及虚拟内存等资源的保存和恢复上，进而大大缩短了真正运行进程的时间。这也正是上一节中我们所讲的，导致平均负载升高的一个重要因素。</li>
+<li>Linux 通过 TLB（Translation Lookaside Buffer）来管理虚拟内存到物理内存的映射关系。当虚拟内存更新后，TLB 也需要刷新，内存的访问也会随之变慢。特别是在多处理器系统上，缓存是被多个处理器共享的，刷新缓存不仅会影响当前处理器的进程，还会影响共享缓存的其他处理器的进程。</li>
+</ol>
+<p>切换进程上下文的时机：<br>只有在进程调度的时候，才需要切换上下文。Linux 为每个 CPU 都维护了一个就绪队列，将活跃进程（即正在运行和正在等待 CPU 的进程）按照优先级和等待 CPU 的时间排序，然后选择最需要 CPU 的进程，也就是优先级最高和等待 CPU 时间最长的进程来运行。</p>
+<ol>
+<li>进程执行完终止了，它之前使用的 CPU 会释放出来，这个时候再从就绪队列里，拿一个新的进程过来运行。</li>
+<li>为了保证所有进程可以得到公平调度，CPU 时间被划分为一段段的时间片，这些时间片再被轮流分配给各个进程。这样，当某个进程的时间片耗尽了，就会被系统挂起，切换到其它正在等待 CPU 的进程运行。</li>
+<li>进程在系统资源不足（比如内存不足）时，要等到资源满足后才可以运行，这个时候进程也会被挂起，并由系统调度其他进程运行。</li>
+<li>当进程通过睡眠函数 sleep 这样的方法将自己主动挂起时，自然也会重新调度。</li>
+<li>当有优先级更高的进程运行时，为了保证高优先级进程的运行，当前进程会被挂起，由高优先级进程来运行。</li>
+<li>发生硬件中断时，CPU 上的进程会被中断挂起，转而执行内核中的中断服务程序。</li>
+</ol>
+<h3 id="线程上下文切换"><a href="#线程上下文切换" class="headerlink" title="线程上下文切换"></a>线程上下文切换</h3><p>线程与进程最大的区别在于，线程是调度的基本单位，而进程则是资源拥有的基本单位。说白了，所谓内核中的任务调度，实际上的调度对象是线程；而进程只是给线程提供了虚拟内存、全局变量等资源。</p>
+<blockquote>
+<p>当进程只有一个线程时，可以认为进程就等于线程。<br>当进程拥有多个线程时，这些线程会共享相同的虚拟内存和全局变量等资源。这些资源在上下文切换时是不需要修改的。<br>另外，线程也有自己的私有数据，比如栈和寄存器等，这些在上下文切换时也是需要保存的。</p>
+</blockquote>
+<p>因此，根据切换的多个线程所属的进程不同，有2种情况：</p>
+<ol>
+<li>前后两个线程属于不同进程。此时，因为资源不共享，所以切换过程就跟进程上下文切换是一样。</li>
+<li>前后两个线程属于同一个进程。此时，因为虚拟内存是共享的，所以在切换时，虚拟内存这些资源就保持不动，只需要切换线程的私有数据、寄存器等不共享的数据。<blockquote>
+<p>同进程内的线程切换消耗的资源更少。</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="中断上下文切换"><a href="#中断上下文切换" class="headerlink" title="中断上下文切换"></a>中断上下文切换</h3><p>为了快速响应硬件的事件，中断处理会打断进程的正常调度和执行，转而调用中断处理程序，响应设备事件。而在打断其他进程时，就需要将进程当前的状态保存下来，这样在中断结束后，进程仍然可以从原来的状态恢复运行。<br>跟进程上下文不同，中断上下文切换并不涉及到进程的用户态。所以，即便中断过程打断了一个正处在用户态的进程，也不需要保存和恢复这个进程的虚拟内存、全局变量等用户态资源。中断上下文，其实只包括内核态中断服务程序执行所必需的状态，包括 CPU 寄存器、内核堆栈、硬件中断参数等。</p>
+<h2 id="CPU瓶颈定位"><a href="#CPU瓶颈定位" class="headerlink" title="CPU瓶颈定位"></a>CPU瓶颈定位</h2><p>1、平均负载<br>系统平均活跃进程数，反映了系统的整体负载情况<br>2、CPU使用率<br>根据CPU上运行任务的不同，CPU使用率可以分为：</p>
+<ul>
+<li>用户 CPU 使用率,包括用户态 CPU 使用率(user)和低优先级用户态 CPU 使用率(nice),表示 CPU 在用户态运行的时间百分比。用户 CPU 使用率高,通常说明有应用程序比较繁忙。</li>
+<li>系统 CPU 使用率,表示 CPU 在内核态运行的时间百分比(不包括中断)。系统 CPU 使用率高,说明内核比较繁忙。</li>
+<li>等待 I&#x2F;O 的CPU使用率,通常也称为iowait,表示等待 I&#x2F;O 的时间百分比。iowait 高,通常说明系统与硬件设备的 I&#x2F;O 交互时间比较长。</li>
+<li>软中断和硬中断的 CPU 使用率,分别表示内核调用软中断处理程序、硬中断处理程序的时间百分比。它们的使用率高,通常说明系统发生了大量的中断。</li>
+<li>除了上面这些,还有在虚拟化环境中会用到的窃取 CPU 使用率(steal)和客户 CPU 使用率(guest),分别表示被其他虚拟机占用的 CPU 时间百分比,和运行客户虚拟机的 CPU 时间百分比。</li>
+</ul>
+<p>3、进程上下文切换<br>过多的上下文切换会将原本运行进程的CPU时间，消耗在寄存器、内核栈以及虚拟内存等数据的保存和回复上，缩短进程真正运行的时间，成为性能瓶颈。包括：</p>
+<ul>
+<li>无法获取资源而导致的自愿上下文切换;</li>
+<li>被系统强制调度导致的非自愿上下文切换。</li>
+</ul>
+<p>4、CPU缓存的命中率<br>包括L1、L2、L3等三级缓存。</p>
+<h1 id="性能剖析"><a href="#性能剖析" class="headerlink" title="性能剖析"></a>性能剖析</h1><p>uptime - 查看平均负载<br>平均负载最理想情况下等于CPU个数，超过时表示发生了过载，达到70%时就应该分析排查负载高的问题，。</p>
+<p>watch - 可用于观察负载变化情况</p>
+<p>top 或 读取&#x2F;proc&#x2F;cpuinfo - 查看系统有几个CPU</p>
+<p>top - 查看CPU使用率</p>
+<h2 id="mpstat-处理器统计"><a href="#mpstat-处理器统计" class="headerlink" title="mpstat - 处理器统计"></a>mpstat - 处理器统计</h2><h2 id="pidstat-进程统计"><a href="#pidstat-进程统计" class="headerlink" title="pidstat - 进程统计"></a>pidstat - 进程统计</h2><p>-w 查看进程上下文切换情况</p>
+<ul>
+<li>cswch 每秒自愿上下文切换(voluntary context switches)的次数<br>是指进程无法获取所需资源,导致的上下文切换。比如说, I&#x2F;O、内存等系统资源不足时,就会发生自愿上下文切换。</li>
+<li>nvcswch 每秒非自愿上下文切换(non voluntary context switches)的次数。<br>是指进程由于时间片已到等原因,被系统强制调度,进而发生的上下文切换。比如说,大量进程都在争抢 CPU 时,就容易发生非自愿上下文切换。</li>
+</ul>
+<h2 id="stress-系统压测"><a href="#stress-系统压测" class="headerlink" title="stress - 系统压测"></a>stress - 系统压测</h2><h2 id="sysstat-Linux常用性能工具"><a href="#sysstat-Linux常用性能工具" class="headerlink" title="sysstat - Linux常用性能工具"></a>sysstat - Linux常用性能工具</h2><blockquote>
+<p>sysstat包含mpstat、pidstat<br>mpstat 是一个常用的多核 CPU 性能分析工具，用来实时查看每个 CPU 的性能指标，以及所有 CPU 的平均指标。<br>pidstat 是一个常用的进程性能分析工具，用来实时查看进程的 CPU、内存、I&#x2F;O 以及上下文切换等性能指标。</p>
+</blockquote>
+<h2 id="vmstat-查看系统上下文切换情况"><a href="#vmstat-查看系统上下文切换情况" class="headerlink" title="vmstat - 查看系统上下文切换情况"></a>vmstat - 查看系统上下文切换情况</h2><p>主要用来分析系统的内存使用情况，也常用来分析CPU上下文切换和中断的次数</p>
+<ul>
+<li>cs(context switch)是每秒上下文切换的次数。</li>
+<li>in(interrupt)则是每秒中断的次数。</li>
+<li>r(Running or Runnable)是就绪队列的长度,也就是正在运行和等待CPU的进程数。</li>
+<li>b(Blocked)则是处于不可中断睡眠状态的进程数。</li>
+</ul>
+<p>vmstat主要用于看系统整体的上下文切换情况，如果想看每个进程的详细情况，可以用pidstat</p>
+<h2 id="top-默认以3秒时间间隔统计CPU使用率"><a href="#top-默认以3秒时间间隔统计CPU使用率" class="headerlink" title="top - 默认以3秒时间间隔统计CPU使用率"></a>top - 默认以3秒时间间隔统计CPU使用率</h2><h2 id="ps-统计进程整个生命周期的CPU使用率"><a href="#ps-统计进程整个生命周期的CPU使用率" class="headerlink" title="ps - 统计进程整个生命周期的CPU使用率"></a>ps - 统计进程整个生命周期的CPU使用率</h2><h2 id="pidstat-分析每个进程CPU使用情况"><a href="#pidstat-分析每个进程CPU使用情况" class="headerlink" title="pidstat - 分析每个进程CPU使用情况"></a>pidstat - 分析每个进程CPU使用情况</h2><h2 id="perf-分析性能问题-比如CPU使用率过高"><a href="#perf-分析性能问题-比如CPU使用率过高" class="headerlink" title="perf 分析性能问题 比如CPU使用率过高"></a>perf 分析性能问题 比如CPU使用率过高</h2><p>perf top 实时显示占用CPU时钟最多的函数或指令，因此可以用来查找热点函数<br>perf record、perf report 保存性能分析结果及展示结果</p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1129,159 +1345,6 @@
 <li>HLog是每个Region服务器仅配置一个<br>一个Region服务器包含多个Region，这些<strong>一台Region服务器上的Region会共用一个HLog</strong><br>这样做的好处是：一台Region服务器不需要打开多个日志文件，<strong>减少磁盘寻址次数</strong>，提高写操作性能。<br>这样的坏处是：如果一个Region服务器发生故障，为了恢复其上的Region对象，需要按所属Region对HLog进行拆分，然后分发到其他Region服务器上执行恢复操作。</li>
 <li>HLog是WAL(Write Ahead Log)<br>用户数据需要先写HLog才能写入MemStore，并且直到MemStore缓存内容对应的日志已经被写入磁盘，该缓存内容才会被刷新到磁盘。</li>
 <li>数据恢复<br>ZooKeeper会实时监测每个Region服务器的状态，当某个Region服务器发生故障，ZooKeeper会通知Master。<br>Master会处理该故障服务器上的HLog文件，注意HLog会包含来自多个Region对象的日志记录，系统会<strong>根据每条日志所属的Region对象对HLog数据进行拆分</strong>，分别放到对应Region对象的目录下，然后再将失效的Region重新分配到可用的Region服务器中，并把与该Region对象相关的HLog日志记录也发送给相应的Region服务器。<br>Region服务器领取到分配给自己的Region对象以及与之相关的HLog日志记录以后，会<strong>重演一遍日志记录中的操作</strong>，把日志记录中的数据写入MemStore缓存，然后刷新到磁盘的StoreFile文件中，完成数据恢复。</li>
-</ul>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e0b783b0.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/e0b783b0.html" class="post-title-link" itemprop="url">ES5_3IngestNode</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-07-01 21:14:48" itemprop="dateCreated datePublished" datetime="2021-07-01T21:14:48+08:00">2021-07-01</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="Ingest-Node"><a href="#Ingest-Node" class="headerlink" title="Ingest Node"></a>Ingest Node</h2><p>Ingest Node提供了一种类似Logstash的功能：</p>
-<ul>
-<li>预处理能力，可拦截Index或Bulk API的请求</li>
-<li>对数据进行转换，并重新返回给Index或Bulk API<br>比如为某个字段设置默认值、重命名某个字段的字段名、对字段值进行Split操作<br>支持设置Painless脚本，对数据进行更加复杂的加工。</li>
-</ul>
-<p>相对Logstash来说：</p>
-<table>
-<thead>
-<tr>
-<th>-</th>
-<th>Logstash</th>
-<th>Ingest Node</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>数据输入与输出</td>
-<td>支持从不同的数据源读取，并写入不同的数据源</td>
-<td>支持从ES REST API获取数据，并且写入ES</td>
-</tr>
-<tr>
-<td>数据缓冲</td>
-<td>实现了简单的数据队列，支持重写</td>
-<td>不支持缓冲</td>
-</tr>
-<tr>
-<td>数据处理</td>
-<td>支持大量插件、支持定制开发</td>
-<td>内置插件，支持开发Plugin（但是添加Plugin需要重启）</td>
-</tr>
-<tr>
-<td>配置和使用</td>
-<td>增加了一定的架构复杂度</td>
-<td>无需额外部署</td>
-</tr>
-</tbody></table>
-<h3 id="构建Ingest-Node-Pipeline-Processor"><a href="#构建Ingest-Node-Pipeline-Processor" class="headerlink" title="构建Ingest Node - Pipeline &amp; Processor"></a>构建Ingest Node - Pipeline &amp; Processor</h3><p><img src="/imgs/ES/ES-IngestNode.png" alt="ES-IngestNode" title="ES-IngestNode"></p>
-<ul>
-<li>Pipeline<br>管道会对通过的数据（文档），按照顺序进行加工</li>
-<li>Processor<br>对加工的行为进行抽象封装</li>
-</ul>
-<h3 id="创建pipeline"><a href="#创建pipeline" class="headerlink" title="创建pipeline"></a>创建pipeline</h3><p>为ES添加一个Pipeline：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">PUT _ingest/pipeline/blog_pipeline</span><br><span class="line">&#123;</span><br><span class="line">  &quot;description&quot;: &quot;a blog pipeline&quot;,</span><br><span class="line">  &quot;processors&quot;: [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;split&quot;: &#123;</span><br><span class="line">          &quot;field&quot;: &quot;tags&quot;,</span><br><span class="line">          &quot;separator&quot;: &quot;,&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line"></span><br><span class="line">      &#123;</span><br><span class="line">        &quot;set&quot;:&#123;</span><br><span class="line">          &quot;field&quot;: &quot;views&quot;,</span><br><span class="line">          &quot;value&quot;: 0</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>查看Pipeline：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET _ingest/pipeline/blog_pipeline</span><br></pre></td></tr></table></figure>
-<p>测试Pipeline：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">POST _ingest/pipeline/blog_pipeline/_simulate</span><br><span class="line">&#123;</span><br><span class="line">  &quot;docs&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;_source&quot;: &#123;</span><br><span class="line">        &quot;title&quot;: &quot;Introducing cloud computering&quot;,</span><br><span class="line">        &quot;tags&quot;: &quot;openstack,k8s&quot;,</span><br><span class="line">        &quot;content&quot;: &quot;You konw, for cloud&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>可以看到tags被拆分成了数组</li>
-<li>最终文档中新增了一个views字段</li>
-</ul>
-<p>使用Pipeline更新文档：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PUT tech_blogs/_doc/2?pipeline=blog_pipeline</span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;: &quot;Introducing cloud computering&quot;,</span><br><span class="line">  &quot;tags&quot;: &quot;openstack,k8s&quot;,</span><br><span class="line">  &quot;content&quot;: &quot;You konw, for cloud&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>但是使用_update_by_query更新文档时可能会报错：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">POST /tech_blogs/_update_by_query?pipeline=blog_pipeline</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  ...</span><br><span class="line">  &quot;failures&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;index&quot;: &quot;tech_blogs&quot;,</span><br><span class="line">      &quot;type&quot;: &quot;doc&quot;,</span><br><span class="line">      &quot;id&quot;: &quot;1&quot;,</span><br><span class="line">      &quot;cause&quot;: &#123;</span><br><span class="line">        &quot;type&quot;: &quot;exception&quot;,</span><br><span class="line">        &quot;reason&quot;: &quot;java.lang.IllegalArgumentException: java.lang.IllegalArgumentException: field [tags] of type [java.util.ArrayList] cannot be cast to [java.lang.String]&quot;,</span><br><span class="line">        &quot;caused_by&quot;: &#123;</span><br><span class="line">          &quot;type&quot;: &quot;illegal_argument_exception&quot;,</span><br><span class="line">          &quot;reason&quot;: &quot;java.lang.IllegalArgumentException: field [tags] of type [java.util.ArrayList] cannot be cast to [java.lang.String]&quot;,</span><br><span class="line">          &quot;caused_by&quot;: &#123;</span><br><span class="line">            &quot;type&quot;: &quot;illegal_argument_exception&quot;,</span><br><span class="line">            &quot;reason&quot;: &quot;field [tags] of type [java.util.ArrayList] cannot be cast to [java.lang.String]&quot;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;header&quot;: &#123;</span><br><span class="line">          &quot;processor_type&quot;: &quot;split&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &quot;status&quot;: 500</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>是因为对已经拆分过的字段再用split processor拆分，相当于要对数组类型的字段做字符串切分操作。<br>为了避免这种情况，可以通过加条件来忽略已经处理过的文档：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">POST tech_blogs/_update_by_query?pipeline=blog_pipeline</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot;: &#123;</span><br><span class="line">        &quot;bool&quot;: &#123;</span><br><span class="line">            &quot;must_not&quot;: &#123;</span><br><span class="line">                &quot;exists&quot;: &#123;</span><br><span class="line">                    &quot;field&quot;: &quot;views&quot;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="构建pipeline"><a href="#构建pipeline" class="headerlink" title="构建pipeline"></a>构建pipeline</h3><p>processor的种类比较多，这里列出一部分。</p>
-<h4 id="字段拆分-split"><a href="#字段拆分-split" class="headerlink" title="字段拆分 - split"></a>字段拆分 - split</h4><p>ES的_ingest命令可以分析pipeline：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">POST _ingest/pipeline/_simulate</span><br><span class="line">&#123;</span><br><span class="line">  &quot;pipeline&quot;: &#123;</span><br><span class="line">    &quot;description&quot;: &quot;to split blog tags&quot;,</span><br><span class="line">    &quot;processors&quot;: [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;split&quot;: &#123;</span><br><span class="line">          &quot;field&quot;: &quot;tags&quot;,</span><br><span class="line">          &quot;separator&quot;: &quot;,&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;docs&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;_index&quot;: &quot;index&quot;,</span><br><span class="line">      &quot;_id&quot;: &quot;id&quot;,</span><br><span class="line">      &quot;_source&quot;: &#123;</span><br><span class="line">        &quot;title&quot;: &quot;Introducing big data......&quot;,</span><br><span class="line">        &quot;tags&quot;: &quot;hadoop,elasticsearch,spark&quot;,</span><br><span class="line">        &quot;content&quot;: &quot;You konw, for big data&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;_index&quot;: &quot;index&quot;,</span><br><span class="line">      &quot;_id&quot;: &quot;idxx&quot;,</span><br><span class="line">      &quot;_source&quot;: &#123;</span><br><span class="line">        &quot;title&quot;: &quot;Introducing cloud computering&quot;,</span><br><span class="line">        &quot;tags&quot;: &quot;openstack,k8s&quot;,</span><br><span class="line">        &quot;content&quot;: &quot;You konw, for cloud&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>pipeline中只有一个processor，它将文档的tags字段按”,”拆分为数组</li>
-<li>文档有一个tags字段，但是原始值中多个标签被拼成了一个字符串</li>
-</ul>
-<h4 id="字段值重置-set"><a href="#字段值重置-set" class="headerlink" title="字段值重置 - set"></a>字段值重置 - set</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">POST _ingest/pipeline/_simulate</span><br><span class="line">&#123;</span><br><span class="line">  &quot;pipeline&quot;: &#123;</span><br><span class="line">    &quot;description&quot;: &quot;to split blog tags&quot;,</span><br><span class="line">    &quot;processors&quot;: [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;split&quot;: &#123;</span><br><span class="line">          &quot;field&quot;: &quot;tags&quot;,</span><br><span class="line">          &quot;separator&quot;: &quot;,&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line"></span><br><span class="line">      &#123;</span><br><span class="line">        &quot;set&quot;:&#123;</span><br><span class="line">          &quot;field&quot;: &quot;views&quot;,</span><br><span class="line">          &quot;value&quot;: 0</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;docs&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;_index&quot;:&quot;index&quot;,</span><br><span class="line">      &quot;_id&quot;:&quot;id&quot;,</span><br><span class="line">      &quot;_source&quot;:&#123;</span><br><span class="line">        &quot;title&quot;:&quot;Introducing big data......&quot;,</span><br><span class="line">        &quot;tags&quot;:&quot;hadoop,elasticsearch,spark&quot;,</span><br><span class="line">        &quot;content&quot;:&quot;You konw, for big data&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;_index&quot;:&quot;index&quot;,</span><br><span class="line">      &quot;_id&quot;:&quot;idxx&quot;,</span><br><span class="line">      &quot;_source&quot;:&#123;</span><br><span class="line">        &quot;title&quot;:&quot;Introducing cloud computering&quot;,</span><br><span class="line">        &quot;tags&quot;:&quot;openstack,k8s&quot;,</span><br><span class="line">        &quot;content&quot;:&quot;You konw, for cloud&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>添加文档时，使用processor set来增加一个新字段views</li>
 </ul>
 <script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       

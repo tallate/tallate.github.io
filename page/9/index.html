@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">79</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">182</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">183</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -158,7 +158,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-count">80</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -175,6 +175,193 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e39c963b.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/e39c963b.html" class="post-title-link" itemprop="url">JVM 源码分析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-05 20:56:12" itemprop="dateCreated datePublished" datetime="2019-10-05T20:56:12+08:00">2019-10-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-10-09 16:58:44" itemprop="dateModified" datetime="2022-10-09T16:58:44+08:00">2022-10-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+
+<h2 id="搭建源码调试环境"><a href="#搭建源码调试环境" class="headerlink" title="搭建源码调试环境"></a>搭建源码调试环境</h2><p>源码下载地址：<a target="_blank" rel="noopener" href="https://github.com/unofficial-openjdk/openjdk">unofficial-openjdk&#x2F;openjdk</a></p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000008346240">OpenJDK9 Hotspot Ubuntu 编译和调试</a><br>mac 环境下搭建：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ee7e9176632c">mac 下编译 openjdk1.9 及集成 clion 动态调试</a></li>
+</ol>
+<h3 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h3><ol>
+<li>g++和 gcc 版本不匹配</li>
+<li>一些 Warning 被当作错误报错了<br>大部分 Warning 不会影响最终结果，可以关掉：<a target="_blank" rel="noopener" href="https://blog.csdn.net/desiyonan/article/details/80802066">https://blog.csdn.net/desiyonan/article/details/80802066</a></li>
+</ol>
+<h3 id="阅读"><a href="#阅读" class="headerlink" title="阅读"></a>阅读</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/54621747">如何找 JDK 中 native 代码的位置？</a></li>
+<li><a target="_blank" rel="noopener" href="http://rednaxelafx.iteye.com/blog/1549577">OpenJDK 源码阅读导航</a></li>
+</ol>
+<h3 id="编译-openjdk"><a href="#编译-openjdk" class="headerlink" title="编译 openjdk"></a>编译 openjdk</h3><ol>
+<li>下载<br>代码的下载见 building 文档，使用一个 Mercurial 工具进行源码控制。</li>
+<li>准备工具<br>找到这种开放源码的软件，第一步当然是查看 README 了，openjdk 的 README 中告知了 building 文档的位置，相当详细。<br>硬件要求<br>操作系统要求<br>编译器要求，需要 gcc 和 clang，他们的区别见<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/20235742">Clang 比 GCC 好在哪里？</a><br>JDK 要求，虽然挺矛盾的，但是一部分模块是用 JDK 写的，所以 Java 编译器也是需要的，一般编译 JDK8 时需要的 JDK 版本是 7 就够了，但是 openjdk 需要 8 才行（不知道为什么），这个 jdk 可以直接使用 apt-get 安装。<br>外部库要求，<br>其他工具，make、bash、autoconf</li>
+<li>configure<br>准备所有配置文件</li>
+<li>make<br>编译源码，默认下只会编译一些必要的部分，如果编译成功可以在 openjdk&#x2F;build 文件夹下找到目标文件，我的成品所在目录是<code>$&#123;openjdk&#125;/build/linux-x86_64-normal-server-release/jdk/bin</code>。</li>
+<li>run test<br>openjdk 使用了一个叫 jtreg 的测试框架，文档有<a target="_blank" rel="noopener" href="http://openjdk.java.net/jtreg/build.html">这里</a>还有<a target="_blank" rel="noopener" href="https://adoptopenjdk.gitbooks.io/adoptopenjdk-getting-started-kit/content/en/intermediate-steps/how_to_use_jtreg_-_java_regression_test_harness.html">这里</a>，我设置了一个愚蠢的环境变量 JAVA18HOME 然后尝试着去<code>make -C make</code>编译它，但是还是提示缺少什么<code>org.testing</code>，可能还有什么依赖库没装，这个框架可能是给 oracle 的内部员工或者外星人用的吧？</li>
+</ol>
+<h3 id="定位-Object-的-native-方法"><a href="#定位-Object-的-native-方法" class="headerlink" title="定位 Object 的 native 方法"></a>定位 Object 的 native 方法</h3><ol>
+<li>搜索“Object”打开 jdk 下的 Object.c 文件<br>看到下面这个方法数组： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">static JNINativeMethod methods[] = &#123;</span><br><span class="line">    &#123;&quot;hashCode&quot;,    &quot;()I&quot;,                    (void *)&amp;JVM_IHashCode&#125;,</span><br><span class="line">    &#123;&quot;wait&quot;,        &quot;(J)V&quot;,                   (void *)&amp;JVM_MonitorWait&#125;,</span><br><span class="line">    &#123;&quot;notify&quot;,      &quot;()V&quot;,                    (void *)&amp;JVM_MonitorNotify&#125;,</span><br><span class="line">    &#123;&quot;notifyAll&quot;,   &quot;()V&quot;,                    (void *)&amp;JVM_MonitorNotifyAll&#125;,</span><br><span class="line">    &#123;&quot;clone&quot;,       &quot;()Ljava/lang/Object;&quot;,   (void *)&amp;JVM_Clone&#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+<li>然后搜索“JVM_MonitorWait”打开 hotspot 下的 jvm.cpp 文件<br>里面有下面这条语句： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">JVM_ENTRY(void, JVM_MonitorWait(JNIEnv* env, jobject handle, jlong ms))</span><br><span class="line">  JVMWrapper(&quot;JVM_MonitorWait&quot;);</span><br><span class="line">  Handle obj(THREAD, JNIHandles::resolve_non_null(handle));</span><br><span class="line">  JavaThreadInObjectWaitState jtiows(thread, ms != 0);</span><br><span class="line">  if (JvmtiExport::should_post_monitor_wait()) &#123;</span><br><span class="line">    JvmtiExport::post_monitor_wait((JavaThread *)THREAD, (oop)obj(), ms);</span><br><span class="line"></span><br><span class="line">    // The current thread already owns the monitor and it has not yet</span><br><span class="line">    // been added to the wait queue so the current thread cannot be</span><br><span class="line">    // made the successor. This means that the JVMTI_EVENT_MONITOR_WAIT</span><br><span class="line">    // event handler cannot accidentally consume an unpark() meant for</span><br><span class="line">    // the ParkEvent associated with this ObjectMonitor.</span><br><span class="line">  &#125;</span><br><span class="line">  ObjectSynchronizer::wait(obj, ms, CHECK);</span><br><span class="line">JVM_END</span><br></pre></td></tr></table></figure>
+我们暂时不知道这几个宏到底什么意思，不过核心大概是最后的那个<code>ObjectSynchronizer::wait</code>吧，这个类定义在 C++文件 synchronizer.cpp 中。</li>
+<li>综上所述<br>可以看到如果一个类定义了 native 方法，那么基本可以在 jdk 目录下找到该类的定义（<strong>类所在包结构和其在 openjdk 中的定义的路径有什么关联？？？</strong>），至于其实现，从<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/54621747">知乎</a>上可以找到一段说明，我不知道对错：<blockquote>
+<p>如果间接调用了 hotspot 的实现（jvm 会以动态库的形式被加载，prims 文件夹里定义了 hotspot 与其他模块的接口及其实现），那么从 hotspot&#x2F;src&#x2F;share&#x2F;vm&#x2F;prims&#x2F;jvm.cpp 中可以找到 JVM_Xxx 函数的实现。</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="为-Object-类添加-native-方法-nop"><a href="#为-Object-类添加-native-方法-nop" class="headerlink" title="为 Object 类添加 native 方法 nop()"></a>为 Object 类添加 native 方法 nop()</h3><p>根据<a target="_blank" rel="noopener" href="http://www.infoq.com/cn/articles/Introduction-to-HotSpot">这里</a>的说法，openjdk 有两种方式来定义 native 函数，一种是按一种特别的方式命名函数，这样加载后就可以和 Java 中的 native 方法对上，另一种是使用 registerNatives()的方式，观察 Object.c 文件可以发现，这种方法先定义了一个 JNINativeMethod 类型的静态数组来做 Java 方法和本地函数的对应，然后使用 JNI 方法注册了一个叫 Java_java_lang_Object_registerNatives 的本地方法来实施这种映射。<br>当使用第一种方式在 Object.c 中定义一个特殊命名的 nop()函数时，编译不通过，报错显示<code>Incompatible definition of java.lang.Object</code>，我定义的 nop 函数：<br>    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">JNIEXPORT void JNICALL</span><br><span class="line">Java_java_lang_Object_nop(JNIEnv *env, jobject this)</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>然后下面是我使用第二种方式定义 nop()函数的过程（虽然也不行）：</p>
+<ol>
+<li><p>修改 Object.c<br>methods 数组中添加一行：</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;nop&quot;, &quot;()V&quot;, (void*)&amp;</span><br></pre></td></tr></table></figure>
+<p>这种定义方法参照了<a target="_blank" rel="noopener" href="http://blog.csdn.net/bigapple88/article/details/6756204">这里</a></p>
+</li>
+<li><p>修改 Object.java<br>其所在目录为<code>$&#123;openjdk&#125;/jdk/src/java.base/share/classes/java/lang/Object.java</code>，为其添加一个 nop()方法：</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">*</span><br><span class="line">*/</span><br><span class="line">@HotSpotIntrinsicCandidate</span><br><span class="line">public native void nop();</span><br></pre></td></tr></table></figure>
+<p>为什么要加注释？为什么不能加 final？</p>
+</li>
+<li><p>重编译 make<br>虽然只是添加了一个方法，但是几乎所有包下的都要重新编译了，所以编译过程会稍微有点长。</p>
+</li>
+<li><p>测试<br>使用<code>javap</code>命令反编译可以看到 Object 类中确实已经有了一个 nop()方法：</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javap $&#123;openjdk&#125;/build/linux-x86_64-normal-server-release/jdk/modules/java.base/java/lang/Object.class</span><br></pre></td></tr></table></figure>
+<p><strong>但是实际编译时却报错了，错误大概是Object类不兼容？？？</strong></p>
+</li>
+<li><p>native 方法的实现机制<br>参见 JNI 原理。</p>
+</li>
+</ol>
+<h2 id="JNI"><a href="#JNI" class="headerlink" title="JNI"></a>JNI</h2><h3 id="生成-h头文件"><a href="#生成-h头文件" class="headerlink" title="生成.h头文件"></a>生成.h头文件</h3><p>使用 javah 命令，在项目的 src 目录下运行，其中-d 指定目标目录，-jni 是默认选项，生成 jni 头文件，可以加-classpath 指定 class 路径，但必须是绝对路径</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javah -d ../jni -jni com.tallate.HelloJNI</span><br></pre></td></tr></table></figure>
+<p>接下来编译.c 文件，-c 可以生成目标文件（未链接），-I 可以指定#include 查找的目录，不然 jni 有些头文件找不到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c -I &quot;/usr/lib/jvm/java-8-openjdk-amd64/include&quot; -I &quot;/usr/lib/jvm/java-8-openjdk-amd64/include/linux&quot;  HelloJNI.c </span><br></pre></td></tr></table></figure>
+<p>接下来编译成一个.so 链接库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc HelloJNI.c -I &quot;/usr/lib/jvm/java-8-openjdk-amd64/include&quot; -I &quot;/usr/lib/jvm/java-8-openjdk-amd64/include/linux&quot; -fPIC -shared -o libhello.so</span><br></pre></td></tr></table></figure>
+<p>接下来可以在Java中加载</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 在linux下动态库必须有前缀lib</span><br><span class="line">System.loadLibrary(&quot;hello&quot;);</span><br></pre></td></tr></table></figure>
+<h3 id="调用-native-方法的流程"><a href="#调用-native-方法的流程" class="headerlink" title="调用 native 方法的流程"></a>调用 native 方法的流程</h3><ol>
+<li>native 方法编译后多一个 ACC_NATIVE 标志</li>
+<li>loadLibrary 方法调用 JVM 的 load 本地方法</li>
+<li>load 方法最终调用系统调用 dlopen 加载动态链接库</li>
+<li>调用本地方法时，实际上调用了 JVM 中加载的函数，栈帧压入本地方法栈中（HotSpot 中本地方法栈&#x3D;虚拟机栈）</li>
+</ol>
+<h3 id="修改-Object-类，为其添加一个-native-方法-nop"><a href="#修改-Object-类，为其添加一个-native-方法-nop" class="headerlink" title="修改 Object 类，为其添加一个 native 方法 nop()"></a>修改 Object 类，为其添加一个 native 方法 nop()</h3><h2 id="锁（内置锁）"><a href="#锁（内置锁）" class="headerlink" title="锁（内置锁）"></a>锁（内置锁）</h2><ol>
+<li>锁的存储结构？</li>
+<li>获取锁的时机？</li>
+<li>释放锁的时机？</li>
+</ol>
+<h2 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h2><p>和 JDK 的线程操作相关的类有 Object 和 Thread，Object 中包括 wait、notify 和 notifyAll，Thread 中包括 yield、sleep、exit、interrupt、join、start，run 的主要任务是执行用户定义的逻辑，还有一些方法已经被 Deprecated，不必再提</p>
+<h3 id="源码中和线程操作相关的一些数据结构"><a href="#源码中和线程操作相关的一些数据结构" class="headerlink" title="源码中和线程操作相关的一些数据结构"></a>源码中和线程操作相关的一些数据结构</h3><ol>
+<li><p>ObjectMonitor<br>对象监视器，定义和声明在 objectMonitor.*中，主要包含</p>
+</li>
+<li><p>ObjectWaiter</p>
+</li>
+<li><p>ObjectSynchronizer</p>
+</li>
+</ol>
+<h3 id="wait"><a href="#wait" class="headerlink" title="wait"></a>wait</h3><p>wait 是 native 方法，实现在 synchronizer.cpp 中，ObjectSynchronizer::wait：</p>
+<ol>
+<li><p>通过<code>ObjectSynchronizer::inflate</code>方法找到 object 中的<code>ObjectMonitor monitor</code></p>
+</li>
+<li><p>调用 monitor.wait<br>wait 方法比较复杂，但是核心过程只有 3 步：</p>
+<ul>
+<li>ObjectMonitor::AddWaiter(..)将新建立的 ObjectWaiter 对象插入_WaitSet 队列的末尾</li>
+<li>ObjectMonitor::exit(..)释放锁</li>
+<li>Self-&gt;_ParkEvent-&gt;park等待</li>
+</ul>
+</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><h3 id="JNI-1"><a href="#JNI-1" class="headerlink" title="JNI"></a>JNI</h3><ol>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/huachao1001/article/category/2862631">介绍</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/ngvjai/article/details/8520840">生成.so 方法</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/larrylgq/article/details/7515362">修改 java.library.path 方法</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/hackooo/article/details/48395765/">Java JNI 实现原理初探</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.chinaunix.net/uid-22028680-id-3178229.html">Java Native Interface (JNI) 工作原理</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/Anker/p/3746802.html">dlopen</a></li>
+</ol>
+<h3 id="线程-1"><a href="#线程-1" class="headerlink" title="线程"></a>线程</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/23328075">java sleep 和 wait 的区别的疑惑?</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/raintungli/article/details/6532784">java 中的 wait 和 notify 实现的源码分析</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/raintungli/article/details/6553337">JVM Thread stop 的源码分析</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2058,98 +2245,6 @@ jdk1.6 及之前版本，因为 HotSpot 实行“永久代”（PermGen），方
 <li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/102859170">Redis集群——主从复制数据同步</a></li>
 </ol>
 <script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/a2b16944.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/a2b16944.html" class="post-title-link" itemprop="url">Redis 持久化</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-09-22 12:21:48" itemprop="dateCreated datePublished" datetime="2019-09-22T12:21:48+08:00">2019-09-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BC%93%E5%AD%98/" itemprop="url" rel="index"><span itemprop="name">缓存</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>Redis 为了达到最快的读写速度将数据都读到内存中，并通过异步的方式将数据写入磁盘。所以 redis 具有快速和数据持久化的特征。如果不将数据放在内存中，磁盘 I&#x2F;O 速度为严重影响 redis 的性能。在内存越来越便宜的今天，redis 将会越来越受欢迎。<br>如果设置了最大使用的内存，则数据已有记录数达到内存限值后不能继续插入新值。<br>不过 Redis 也提供了持久化的选项。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/a2b16944.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
       
     </div>
 

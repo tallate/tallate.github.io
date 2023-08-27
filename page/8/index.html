@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">79</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">182</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">183</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -158,7 +158,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-count">80</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -175,6 +175,366 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/86b66af2.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/86b66af2.html" class="post-title-link" itemprop="url">MySQL4_1事务</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-05-25 10:18:28" itemprop="dateCreated datePublished" datetime="2020-05-25T10:18:28+08:00">2020-05-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+<h2 id="事务的使用"><a href="#事务的使用" class="headerlink" title="事务的使用"></a>事务的使用</h2><h3 id="事务的状态"><a href="#事务的状态" class="headerlink" title="事务的状态"></a>事务的状态</h3><p>事务是一个抽象的概念，它对应一个或多个数据库操作。根据这些操作所执行的不同阶段，我们可以把事务大致划分为以下几个状态：<br><img src="/imgs/MySQL/MySQL-%E4%BA%8B%E5%8A%A1%E7%8A%B6%E6%80%81.png" alt="MySQL-事务状态" title="MySQL-事务状态"><br>如上图可知，事务从活动的开始，直到提交或中止状态时生命周期才算结束，当事务是已提交的，它做的修改会持久生效（事务的<strong>持久性</strong>），当事务中止，该事务所做的一切修改都会被回滚（<strong>原子性</strong>）。<br>1、活动的（active）<br>事务对应的数据库操作正在执行过程中时，我们就说该事务处在活动的状态。<br>2、部分提交的（partially committed）<br>当事务中的最后一个操作执行完成，但由于操作都在内存中执行，所造成的影响并没有刷新到磁盘时，我们就说该事务处在部分提交的状态。<br>3、失败的（failed）<br>当事务处在活动的或者部分提交的状态时，可能遇到了某些错误（数据库自身的错误、操作系统错误或者直接断电等）而无法继续执行，或者人为的停止当前事务的执行，我们就说该事务处在失败的状态。<br>4、中止的（aborted）<br>事务执行到一半出错会变为失败状态，此时，需要进行回滚，即撤销失败事务对当前数据库造成的影响，回滚完毕后，事务就处在了中止的状态。<br>比如 A 向 B 转账，A 账户扣除后遇到错误，导致 B 账户余额没变，此时需要将 A 账户的扣减操作回滚，恢复到原来的金额。<br>5、提交的（committed）<br>当一个处在部分提交的状态的事务将修改过的数据都同步到磁盘上之后，我们就可以说该事务处在了提交的状态。</p>
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><p>1、开启事务</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-- 注意后面的WORK可有可无</span><br><span class="line">BEGIN [WORK];</span><br></pre></td></tr></table></figure>
+<p>或者</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-- START TRANSACTION和BEGIN的区别主要是前者还能指定事务的访问模式，如果不设置访问模式，</span><br><span class="line">则默认是READ WRITE模式</span><br><span class="line">START TRANSACTION [READ ONLY | READ WRITE | WITH CONSISTENT SNAPSHOT];</span><br></pre></td></tr></table></figure>
+<p>需要注意的是，<code>begin/start transaction</code>并不是事务的起点，当执行到第一个操作 InnoDB 表的语句时事务才真正启动。或者可以使用<code>start transaction with consistent snapshot</code>来立刻启动。<br>2、提交事务</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">COMMIT [WORK];</span><br></pre></td></tr></table></figure>
+<p>3、手动中止事务</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ROLLBACK [WORK];</span><br></pre></td></tr></table></figure>
+<p>注意，ROLLBACK 语句是我们程序员手动的去回滚事务时才去使用的，如果事务在执行过程中遇到了某些错误而无法继续执行的话，事务自身会自动的回滚。<br>4、事务中涉及到的所有表都支持事务<br>目前只有 InnoDB 和 NDB 存储引擎是支持事务的，如果某个事务中操作的表使用的是不支持事务的表，则对这些表所做的修改将无法被回滚。<br>5、自动提交</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SHOW VARIABLES LIKE &#x27;autocommit&#x27;;</span><br></pre></td></tr></table></figure>
+<p>如果这个自动提交开关是打开的，则只要我们不显式使用 START TRANSACTION 或者 BEGIN 语句开启一个事务，那么每一条语句都算是一个独立的事务，这种特性称之为事务的自动提交。<br>6、隐式提交<br>就算 autocommit 开关是关闭的，如果我们输入了某些语句还是会触发隐式的提交，包括：</p>
+<ul>
+<li>DDL：<code>CREATE</code>、<code>ALTER</code>、<code>DROP</code></li>
+<li>对系统表执行的操作：ALTER USER、CREATE USER、DROP USER、GRANT、RENAME USER、REVOKE、SET PASSWORD</li>
+<li>事务控制或关于锁定的语句：当我们在一个事务还没提交或者回滚时就又使用 START TRANSACTION 或者 BEGIN 语句开启了另一个事务时，会隐式的提交上一个事务；或原来 autocommit 为 OFF 的情况下将其修改为 ON，也会触发隐式提交；或者使用 LOCK TABLES、UNLOCK TABLES 等关于锁定的语句也会隐式的提交前边语句所属的事务。</li>
+<li>加载数据的语句：比如我们使用 LOAD DATA 语句来批量往数据库中导入数据时，也会隐式的提交前边语句所属的事务。</li>
+<li>关于 MySQL 复制的一些语句：使用 START SLAVE、STOP SLAVE、RESET SLAVE、CHANGE MASTER TO 等语句时也会隐式的提交前边语句所属的事务。<br>其它的一些语句：使用 ANALYZE TABLE、CACHE INDEX、CHECK TABLE、FLUSH、 LOAD INDEX INTO CACHE、OPTIMIZE TABLE、REPAIR TABLE、RESET 等语句也会隐式的提交前边语句所属的事务。<br>7、保存点<br>在事务执行的某个阶段设置检查点，下次回滚时可以回滚至此处，而不是从头开始：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SAVEPOINT 保存点名称;</span><br><span class="line">ROLLBACK [WORK] TO [SAVEPOINT] 保存点名称;</span><br><span class="line">RELEASE SAVEPOINT 保存点名称;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="事务的属性"><a href="#事务的属性" class="headerlink" title="事务的属性"></a>事务的属性</h2><p>事务具有以下 4 个基本特征：</p>
+<h3 id="原子性-Atomic"><a href="#原子性-Atomic" class="headerlink" title="原子性(Atomic)"></a>原子性(Atomic)</h3><p>事务中包含的每个操作都被看做一个逻辑单元，这个逻辑单元中的操作要么全部成功，要么全部失败。（记录之前的版本，允许回滚）。</p>
+<h3 id="一致性-Consistency"><a href="#一致性-Consistency" class="headerlink" title="一致性(Consistency)"></a>一致性(Consistency)</h3><p>事务执行的结果必须是使数据库从一个一致性状态变到另一个一致性状态。换句话说，事务执行前和事务执行后数据内在的逻辑始终是成立的。比如转帐前后两人的存款总和始终不变。因此当数据库只包含成功事务提交的结果时，就说数据库处于一致性状态。如果数据库系统运行中发生故障，有些事务尚未完成就被迫中断，这时数据库就处于一种不正确的状态，或者说是不一致的状态。例如在一在进行转账的操作中，需要从账户 A 取出 100 元转入账户 B。那么就可以定义一个事务，该事物包括两个操作：第一个操作是从账户 A 中减去 100 元，第二个操作是向账户 B 中转入 100 元。这两个操作要么全做，要么全不做。全做或者全不做，数据库就会处于一致性状态。如果只做一个操作，则逻辑上就会发生错误，减少或增加 100 元，数据库就 处于不一致的状态了。所以说一致性和原子性是密不可分的。</p>
+<p>但是现在问题来了——<strong>原子性就一定能够保证一致性吗？</strong><br>答案是否定的：原子性不能完全保证一致性。因为在多个事务并行进行的情况下，即使保证了每个事务的原子性，仍然可能导致数据不一致的结果。例如事务 1 需要将 100 元转入账户 A：先读取 A 的账户余额的值，然后在这个值上加上 100.但是，在这两个操作之间，事务 2 修改了账户 A 的值，为它增加了 100 元，那么最后结果应该是 A 增加了 200 元。但事实上，当事务 1 最终完成时，账户 A 只增加了 100 元，因为事务 2 的执行结果被事务 1 覆盖掉了。所以为了保证并发事务的一致性，就引入了事务的隔离性。(事务开始和结束之间的中间状态不会被其他事务看到)</p>
+<h3 id="隔离性-Isolation"><a href="#隔离性-Isolation" class="headerlink" title="隔离性(Isolation)"></a>隔离性(Isolation)</h3><p>一个事务的执行不能被其他事务干扰。即一个事务的内部操作及使用的数据对其他并发事务是隔离的，并发执行的各个事务之间不能互相干扰。要达到这么一种效果：对于任意两个并发的事务 T1 和 T2，T2 要么在 T1 开始之前就已经结束，要么在 T1 结束之后才开始，这样每个事务都感觉不到有其他事务在并发的执行。关于事务的隔离性数据库提供了多种隔离级别，后面会提到。(适当地破坏一致性来提升性能与并行度 例如：最终一致 ~&#x3D; 读未提交)</p>
+<h3 id="持久性-Durability"><a href="#持久性-Durability" class="headerlink" title="持久性(Durability)"></a>持久性(Durability)</h3><p>持久性是指一个事务一旦提交，它对数据库中数据的改变就是永久性的。接下来的操作或故障不应该对其执行结果有影响。(每一次的事务提交之后就会保证不丢失)</p>
+<h2 id="事务隔离级别"><a href="#事务隔离级别" class="headerlink" title="事务隔离级别"></a>事务隔离级别</h2><h3 id="事务并发执行可能遇到的问题"><a href="#事务并发执行可能遇到的问题" class="headerlink" title="事务并发执行可能遇到的问题"></a>事务并发执行可能遇到的问题</h3><p>在不保证串行执行的情况下，多个事务的并行执行可能会导致一些问题，按由重到轻分别为：<br>1、脏写（Dirty Write）：一个事务修改了另一个未提交事务修改过的数据；<br>2、脏读（Dirty Read）：一个事务读到了另一个未提交事务修改过的数据；<br>3、不可重复读（Non-Repeatable Read）：一个事务只能读到另一个已经提交的事务修改过的数据，并且其他事务每对该数据进行一次修改并提交后，该事务都能查询得到最新值；<br>4、幻读（Phantom）：一个事务先根据某些条件查询出一些记录，之后另一个事务又向表中插入了符合这些条件的记录，原先的事务再次按照该条件查询时，能把另一个事务插入的记录也读出来。<br>5、丢失更新：两个事务在并发下同时更新，后一个事务的更新覆盖了前一个事务的更新；此时前一个事务再去查询时会发现刚才修改的内容没有被修改，好像丢失了更新；丢失更新可以发生在事务的<strong>提交</strong>和<strong>回滚</strong>阶段；丢失更新的解决方案是加<strong>悲观锁（for update）</strong>或<strong>乐观锁（）</strong>。</p>
+<p>隔离级别越低，越严重的问题就越可能发生，按隔离级别的严格程度由轻到严分别为：<br>1、READ UNCOMMITTED：未提交读。<br>2、READ COMMITTED：已提交读。<br>3、REPEATABLE READ：可重复读。<br>4、SERIALIZABLE：可串行化。</p>
+<p>隔离级别 | 脏读 | 不可重复读 | 幻读 | 丢失更新<br>READ UNCOMMITTED | 会 | 会 | 会 | 会<br>READ COMMITTED | 不会 | 会 | 会 | 会<br>REPEATABLE READ | 不会 | 不会 | 会 | 会<br>SERIALIZABLE | 不会 | 不会 | 不会 | 不会</p>
+<h3 id="设置隔离级别"><a href="#设置隔离级别" class="headerlink" title="设置隔离级别"></a>设置隔离级别</h3><p>以可重复读为例，设置某次连接的事务隔离级别：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ;</span><br></pre></td></tr></table></figure>
+
+<h3 id="隔离级别与-MVCC、锁之间的关系"><a href="#隔离级别与-MVCC、锁之间的关系" class="headerlink" title="隔离级别与 MVCC、锁之间的关系"></a>隔离级别与 MVCC、锁之间的关系</h3><p>接下来我们会讨论如何实现各种隔离级别，原理是利用 MVCC 机制和各种锁，因此这里提前说明一下实现各种隔离级别所需的技术：</p>
+<p>隔离级别 | 是否使用 MVCC | 是否使用行锁 | 是否使用间隙锁</p>
+<ul>
+<li>| - | -<br>读未提交 | 否 | 否，忽略其他事务放置的锁 | 否<br>读已提交 | 是 | 是 | 否<br>可重复读 | 是，与读已提交的区别是创建 ReadView 的时机不同 | 是 | 是<br>序列化 | 否，所有事务序列化执行，没有使用 MVCC 的必要了 | 是 | 是</li>
+</ul>
+<h2 id="事务隔离级别与MVCC"><a href="#事务隔离级别与MVCC" class="headerlink" title="事务隔离级别与MVCC"></a>事务隔离级别与MVCC</h2><p>MVCC 利用 Read View（一致性读视图）来表示数据一个可见的状态，当数据当前的 Read View 是不可见时，能够通过 undo log 串联起来的版本链回溯找到数据可见的版本。</p>
+<h3 id="undo-log"><a href="#undo-log" class="headerlink" title="undo log"></a>undo log</h3><p>在 InnoDB 引擎中，聚簇索引都会有 2 个隐藏列：</p>
+<blockquote>
+<p>row_id 并不是必要的，我们创建的表中有主键或者非 NULL 的 UNIQUE 键时都不会包含 row_id 列</p>
+</blockquote>
+<ul>
+<li>trx_id：每次一个事务对某条聚簇索引记录进行改动时，都会把该事务的事务 id 赋值给 trx_id 隐藏列。</li>
+<li>roll_pointer：每次对某条聚簇索引记录进行改动时，都会把旧的版本写入到 undo 日志中，然后这个隐藏列就相当于一个指针，可以通过它来找到该记录修改前的信息。<br><img src="/imgs/MySQL/MySQL-undolog.png" alt="MySQL-undolog" title="MySQL-undolog"></li>
+</ul>
+<p>这个<strong>undo log</strong>就是 MVCC 的核心，undo log 的类型包括：<br>1、insert undo：在事务正式提交之后就可以被释放掉了，因为要回滚插入操作直接将记录删掉即可；<br>2、update undo：因为 update undo 还需要支持 MVCC，不能直接释放。</p>
+<p>每次修改记录时，都会记录一条 undo log，每条 undo log 都有一个 roll_pointer 属性，因此所有 undo log 实际山可以组成一个链表，称为<strong>版本链</strong>：<br><img src="/imgs/MySQL/MySQL-%E7%89%88%E6%9C%AC%E9%93%BE.png" alt="MySQL-版本链" title="MySQL-版本链"><br>版本链的头节点就是当前记录最新的值，注意每条 undo log 都含有一个事务 id（trx_id）。</p>
+<h3 id="Read-View-一致性读视图"><a href="#Read-View-一致性读视图" class="headerlink" title="Read View (一致性读视图)"></a>Read View (一致性读视图)</h3><p>Read View 只有在 READ COMMITTED、REPEATABLE READ 两种隔离级别下才能生效。<br>READ UNCOMMITTED：由于可以读到未提交事务修改过的记录，所以直接读取记录的最新版本；<br>SERIALIZABLE：加锁；<br>READ COMMITTED、REPEATABLE READ：只能读到已提交的事务修改过的记录，因此需要判断一下版本链中的<strong>哪个版本是当前事务可见的</strong>。</p>
+<p><img src="/imgs/MySQL/MySQL-%E6%95%B0%E6%8D%AE%E7%89%88%E6%9C%AC%E5%8F%AF%E8%A7%81%E6%80%A7%E8%A7%84%E5%88%99.png" alt="MySQL-数据版本可见性规则" title="MySQL-数据版本可见性规则"><br>对于当前事务的启动瞬间来说，一个数据版本的 row trx_id，有以下几种可能：</p>
+<ul>
+<li>落在中间部分，表示这个版本是已提交的事务或者是当前事务自己生成的，这个数据是可见的；</li>
+<li>落在右边，表示这个版本是由将来启动的事务生成的，不可见；</li>
+<li>如果落在左边，若 row trx_id 在数组中，表示这个版本是由还未提交的事务生成的，不可见；若 row trx_id 不在数组中，表示这个版本是已经提交了的事务生成的，可见。</li>
+</ul>
+<p>总而言之，除了自己的更新总是可见以外，有三种情况：</p>
+<ul>
+<li>版本未提交，不可见；</li>
+<li>版本已提交，但是是在视图创建后提交的，不可见；</li>
+<li>版本已提交，而且是在视图创建前提交的，可见。</li>
+</ul>
+<p>如果某个版本的数据对当前事务不可见的话，那就顺着版本链找到下一个版本的数据，继续按照上边的步骤判断可见性，依此类推，直到版本链中的最后一个版本。如果最后一个版本也不可见的话，那么就意味着该条记录对该事务完全不可见，查询结果就不包含该记录。<br>虽然期间这行数据可能被修改过，但是事务不论在什么时候查询，看到这行数据的结构都是一致的，所以我们称之为<strong>一致性读</strong>。</p>
+<p>前面提过 READ COMMITTED、REPEATABLE READ 都需要维护版本，它们之间的区别主要是<strong>生成 ReadView 的时机</strong>不同。</p>
+<h3 id="READ-COMMITTED-每次读取数据前生成一个-ReadView"><a href="#READ-COMMITTED-每次读取数据前生成一个-ReadView" class="headerlink" title="READ COMMITTED - 每次读取数据前生成一个 ReadView"></a>READ COMMITTED - <strong>每次</strong>读取数据前生成一个 ReadView</h3><p>1、首先有两个事务在执行：<br>ID 为 100 的事务：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># Transaction 100</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line">UPDATE hero SET name = &#x27;关羽&#x27; WHERE number = 1;</span><br><span class="line"></span><br><span class="line">UPDATE hero SET name = &#x27;张飞&#x27; WHERE number = 1;</span><br></pre></td></tr></table></figure>
+<p>ID 为 200 的事务：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># Transaction 200</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line"># 更新了一些别的表的记录</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>此时，表 hero 中 number 为 1 的记录得到的版本链表如下所示：<br><img src="/imgs/MySQL/MySQL-ReadView%E7%89%88%E6%9C%AC%E9%93%BE.png" alt="MySQL-ReadView版本链" title="MySQL-ReadView版本链"></p>
+<p>2、上面两个事务正在执行的过程中，如果有一个使用 READ COMMITTED 隔离级别的事务开始执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 使用READ COMMITTED隔离级别的事务</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line"># SELECT1：Transaction 100、200未提交</span><br><span class="line">SELECT * FROM hero WHERE number = 1; # 得到的列name的值为&#x27;刘备&#x27;</span><br></pre></td></tr></table></figure>
+<p>这个 SELECT1 的执行过程如下：</p>
+<ul>
+<li>在执行 SELECT 语句时会先生成一个 ReadView，ReadView 中的 trx_id 列表为<code>[100, 200]</code>；</li>
+<li>trx_id&#x3D;100 的事务写入了两个版本，这些版本处在未提交事务集合内，因此不符合可见性要求，跳到下面的版本；</li>
+<li>跳到刘备这个版本后，因为 trx_id&#x3D;80，处于已提交事务集合内，是可见的，因此最终返回的版本就是这条数据。</li>
+</ul>
+<p>3、提交其中一个事务<br>我们把事务 id 为 100 的事务提交一下，就像这样：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># Transaction 100</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line">UPDATE hero SET name = &#x27;关羽&#x27; WHERE number = 1;</span><br><span class="line"></span><br><span class="line">UPDATE hero SET name = &#x27;张飞&#x27; WHERE number = 1;</span><br><span class="line"></span><br><span class="line">COMMIT;</span><br></pre></td></tr></table></figure>
+<p>然后再到事务 id 为 200 的事务中更新一下表 hero 中 number 为 1 的记录：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># Transaction 200</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line"># 更新了一些别的表的记录</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">UPDATE hero SET name = &#x27;赵云&#x27; WHERE number = 1;</span><br><span class="line"></span><br><span class="line">UPDATE hero SET name = &#x27;诸葛亮&#x27; WHERE number = 1;</span><br></pre></td></tr></table></figure>
+<p>此刻，表 hero 中 number 为 1 的记录的版本链如下所示：<br><img src="/imgs/MySQL/MySQL-ReadView%E7%89%88%E6%9C%AC%E9%93%BE1.png" alt="MySQL-ReadView版本链1" title="MySQL-ReadView版本链1"></p>
+<p>4、然后再到刚才使用 READ COMMITTED 隔离级别的事务中继续查找这个 number 为 1 的记录，如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 使用READ COMMITTED隔离级别的事务</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line"># SELECT1：Transaction 100、200均未提交</span><br><span class="line">SELECT * FROM hero WHERE number = 1; # 得到的列name的值为&#x27;刘备&#x27;</span><br><span class="line"></span><br><span class="line"># SELECT2：Transaction 100提交，Transaction 200未提交</span><br><span class="line">SELECT * FROM hero WHERE number = 1; # 得到的列name的值为&#x27;张飞&#x27;</span><br></pre></td></tr></table></figure>
+<p>这个 SELECT2 的执行过程如下：</p>
+<ul>
+<li>在执行 SELECT 语句时会<strong>又单独生成一个 ReadView</strong>，该 ReadView 的 trx_id 列表为<code>[200]</code>，此时 trx_id 为 100 的事务已经提交了；</li>
+<li>头两个版本诸葛亮、赵云因为版本 trx_id&#x3D;200 处于未提交事务集合内，因此不可见；</li>
+<li>下一个版本张飞可见，因此被返回。</li>
+</ul>
+<h3 id="REPEATABLE-READ-在第一次读取数据时生成一个-ReadView"><a href="#REPEATABLE-READ-在第一次读取数据时生成一个-ReadView" class="headerlink" title="REPEATABLE READ - 在第一次读取数据时生成一个 ReadView"></a>REPEATABLE READ - 在<strong>第一次</strong>读取数据时生成一个 ReadView</h3><p>READ COMMITTED 会在<strong>每次</strong>读取数据时生成 ReadView，而 REPEATABLE READ 则只在<strong>第一次</strong>读取数据时生成一个 ReadView，之后的查询就不会重复生成了。<br>同上一节中的例子，在 REPEATABLE READ 隔离级别的事务中多次查找这个 number 为 1 的记录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 使用REPEATABLE READ隔离级别的事务</span><br><span class="line">BEGIN;</span><br><span class="line"></span><br><span class="line"># SELECT1：Transaction 100、200均未提交</span><br><span class="line">SELECT * FROM hero WHERE number = 1; # 得到的列name的值为&#x27;刘备&#x27;</span><br><span class="line"></span><br><span class="line"># SELECT2：Transaction 100提交，Transaction 200未提交</span><br><span class="line">SELECT * FROM hero WHERE number = 1; # 得到的列name的值仍为&#x27;刘备&#x27;</span><br></pre></td></tr></table></figure>
+<p>这个 SELECT2 的执行过程如下：</p>
+<ul>
+<li>因为当前事务的隔离级别为 REPEATABLE READ，而之前在执行 SELECT1 时已经生成过 ReadView 了，所以此时直接复用之前的 ReadView，快照中的 trx_id 列表为<code>[100, 200]</code>。</li>
+<li>头几个版本诸葛亮、赵云、张飞、关羽均不符合可见性原则；</li>
+<li>下一个版本刘备 trx_id 为 80，符合可见性原则，因此返回。</li>
+</ul>
+<p>之后该事务不论何时查找，结果都会是这样。</p>
+<h3 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h3><p>更新数据都是先读后写的，如果按照之前读取的规则，当前事务应该是读取不到其他更新的事务所做的修改的，但是这样可能会导致其他事务的更新丢失，因此更新操作的读取都是读当前的值，即<strong>当前读（current read）</strong>。</p>
+<blockquote>
+<p>除了 update 语句外，如果 select 语句加锁也是当前读，可以用 lock in share mock（读锁）或 for update（写锁）语句来加锁。</p>
+</blockquote>
+<p><img src="/imgs/MySQL/MySQL-%E5%BD%93%E5%89%8D%E8%AF%BB.png" alt="MySQL-当前读" title="MySQL-当前读"><br>如上图所示，事务 A、B 刚开始时就创建了视图，事务 C 没有显式使用 begin&#x2F;commit，表示该 update 语句本身就是一个事务。</p>
+<ol>
+<li>刚开始，id 为 1 的记录的字段 k 值为 1；</li>
+<li>事务 C 更新 k 为 2；</li>
+<li>由于当前读的规则，事务 B 在 update 时能看到 k 为 2，并更新为 3，注意因为更新后最新版本是当前事务写入的，因此当前事务之后的读操作总是可以读到最新的数据。</li>
+<li>事务 A 在继续查询时，依据版本链找到可见的 k 为 1。</li>
+</ol>
+<p>可见，虽然期间这一行数据被修改过，但是事务 A 不论在什么时候查询，看到这行数据的结果都是一致的，我们称之为<strong>一致性读</strong>。</p>
+<p>注意，上面的事务 C 更新完后直接提交了，如果不提交，由于二段锁协议，事务 B 将一直等待 C 提交事务。<br><img src="/imgs/MySQL/MySQL-%E6%AD%BB%E9%94%81.png" alt="MySQL-死锁" title="MySQL-死锁"></p>
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>DELETE 语句并不会立即将记录从页面中清除，而是执行一个所谓的<strong>delete mark</strong>操作，为此，表的每一行记录都会额外增加一个删除版本号（delete_version）。<br>1、新增<br>| - | - | - |</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>create_version</th>
+<th>delete_version</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>1</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>2、更新<br>采用 delete+add 的方式实现，将老数据行标志为删除，然后新增一行新的数据：</p>
+<p>| - | - | - |</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>create_version</th>
+<th>delete_version</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td>1</td>
+<td>2</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>3、删除<br>删除会直接将数据的删除版本号更新为当前事务的版本号：</p>
+<p>| - | - | - |</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>create_version</th>
+<th>delete_version</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td>1</td>
+<td>2</td>
+<td>3</td>
+</tr>
+</tbody></table>
+<p>4、查询<br>为了避免查到旧数据或已经被其他事务更改过的数据，需要满足：</p>
+<ul>
+<li>当前事务的版本号需要大于等于创建版本号；</li>
+<li>当前事务的版本号需要小于删除的版本号。</li>
+</ul>
+<h3 id="count"><a href="#count" class="headerlink" title="count(*)"></a>count(*)</h3><p><code>count(*)</code>用于统计表中的数据量，不同的存储引擎的实现方式有所不同：</p>
+<ul>
+<li>MyISAM：总行数会被存到磁盘，执行 count(*)时直接返回这个值；</li>
+<li>InnoDB：把数据一行一行读出然后累积计数。<blockquote>
+<p>上述讨论的 count(*)都是不带查询条件的，不然肯定还要用到索引来过滤数据，MyISAM 也不能这么快返回。</p>
+</blockquote>
+</li>
+</ul>
+<p>InnoDB 不把数据总数存起来的原因是，由于 MVCC，即使多个查询是在同一时刻发生的，它们该返回多少行数据也是不确定的，如下图所示：<br><img src="/imgs/MySQL/MVCC%E4%B8%8Ecount%E6%98%9F%E6%9F%A5%E8%AF%A2.png" alt="MVCC与count星查询" title="MVCC与count星查询"><br>三个会话，最后查出的数据总量是不同的。<br><code>show table status</code>命令输出结果中也有一个<code>TABLE_ROWS</code>字段用于显示该表当前有多少行，但是由于误差比较大，不能直接拿来用。</p>
+<p>由于上述方法存在的缺陷，当需要获取数据库表记录总数时，我们一般会自己计数：</p>
+<ol>
+<li>用缓存系统计数<br>由于更新数据库和更新缓存并不是一个原子操作，可能会导致其他线程读到缓存中的计数但是读不到新数据的情况。</li>
+<li>在数据库保存计数<br>由于会话 A 的事务还未提交，对表 C 的技术值的修改对会话 B 就是不可见的，因此可以保证逻辑上是一致的。<br><img src="/imgs/MySQL/MySQL-%E4%BD%BF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%A1%E6%95%B0%E8%A7%A3%E5%86%B3%E7%BB%9F%E8%AE%A1%E9%97%AE%E9%A2%98.png" alt="MySQL-使用数据库计数解决统计问题" title="MySQL-使用数据库计数解决统计问题"><br>注意，最好先插入操作记录再更新计数表，因为更新计数表涉及到行锁的竞争，先插入再更新能最大程度地减少了事务之间的锁等待，提升了并发度。</li>
+</ol>
+<p><code>count(主键ID)</code>、<code>count(*)</code>、<code>count(1)</code>、<code>count(字段)</code>之间的比较：</p>
+<ul>
+<li><code>count(主键ID)</code>：InnoDB 引擎会遍历整张表，把每一行的 id 值都取出来，返回给 server 层。server 层拿到 id 后，判断是不可能为空的，就按行累加。</li>
+<li><code>count(1)</code>：InnoDB 引擎遍历整张表，但不取值。server 层对于返回的每一行，放一个数字“1”进去，判断是不可能为空的，按行累加。<br>因为不取值、不涉及解析数据行及拷贝字段值的操作，所以<code>count(1)</code>会比<code>count(主键ID)</code>要快。</li>
+<li><code>count(字段)</code>：如果这个“字段”是定义为 not null 的话，一行行地从记录里面读出这个字段，判断不能为 null，按行累加；<br>如果这个“字段”定义允许为 null，那么执行的时候，判断到有可能是 null，还要把值取出来再判断一下，不是 null 才累加。</li>
+<li><code>count(*)</code>：并不会把全部字段取出来，而是专门做了优化，不取值。<code>count(*)</code> 肯定不是 null，按行累加。<br>因此<code>count(*)</code>会比其他方式更快。</li>
+</ul>
+<h3 id="MVCC-小结"><a href="#MVCC-小结" class="headerlink" title="MVCC 小结"></a>MVCC 小结</h3><p>从上边的描述中我们可以看出来，所谓的 MVCC（Multi-Version Concurrency Control ，多版本并发控制）指的就是在使用 READ COMMITTD、REPEATABLE READ 这两种隔离级别的事务在执行普通的 SELECT 操作时访问记录的版本链的过程，这样子可以使不同事务的读-写、写-读操作并发执行，从而提升系统性能。READ COMMITTD、REPEATABLE READ 这两个隔离级别的一个很大不同就是生成 ReadView 的时机不同：</p>
+<ul>
+<li>READ COMMITTD 在每一次进行普通 SELECT 操作前都会生成一个 ReadView；</li>
+<li>而 REPEATABLE READ 只在第一次进行普通 SELECT 操作前生成一个 ReadView，之后的查询操作都重复使用这个 ReadView 就好了。</li>
+</ul>
+<p>可重复读的核心是一致性读（consistent read），而事务更新数据时，只能用当前读。如果当前的记录的行锁被其他事务占用，则需要进入锁等待。</p>
+<h2 id="事务隔离级别与锁"><a href="#事务隔离级别与锁" class="headerlink" title="事务隔离级别与锁"></a>事务隔离级别与锁</h2><h3 id="可重复读解决幻读问题-间隙锁"><a href="#可重复读解决幻读问题-间隙锁" class="headerlink" title="可重复读解决幻读问题 - 间隙锁"></a>可重复读解决幻读问题 - 间隙锁</h3><p><img src="/imgs/MySQL/MySQL-%E5%BD%93%E5%89%8D%E8%AF%BB%E4%BE%8B%E5%AD%902.png" alt="MySQL-当前读例子2" title="MySQL-当前读例子2"><br>注意上图中的 Q1、Q2、Q3 语句末尾带了<code>for update</code>，说明均为<strong>当前读</strong>，并会加上写锁，可以看到，Q3 语句看到了 Session B 和 Session C 插入的记录，说明发生了<strong>幻读</strong>的现象。</p>
+<ol>
+<li>在<strong>可重复读隔离级别</strong>下，普通的查询是<strong>快照读</strong>，是不会看到别的事务插入的数据的。因此，幻读在<strong>当前读</strong>下才会出现。<br>当前读包括写操作和加锁的查询语句（<code>for update</code>）。</li>
+<li>Q2 读到了 Session B 更新的数据，这个修改结果是可以被<strong>当前读</strong>看到的，但不能称为幻读，幻读特指新插入的行被其他事务读到了。<blockquote>
+<p>当前读的规则是要读到所有已经提交的记录的最新值。</p>
+</blockquote>
+</li>
+</ol>
+<h4 id="幻读可能导致的问题及解决办法-间隙锁"><a href="#幻读可能导致的问题及解决办法-间隙锁" class="headerlink" title="幻读可能导致的问题及解决办法 - 间隙锁"></a>幻读可能导致的问题及解决办法 - 间隙锁</h4><p>由于当前读只会对<strong>当前可见</strong>的那些记录进行加锁，因此上述两种情况引入的<strong>新记录</strong>都是锁不上的，锁不上一方面导致可重复读的语义被破坏，因为我要把所有满足条件的记录都锁住，但是事务执行期间却有其他事务引入的满足条件的记录没有被锁住；另一方面是数据一致性问题，如下图所示：<br><img src="/imgs/MySQL/MySQL-%E5%B9%BB%E8%AF%BB%E5%AF%BC%E8%87%B4%E7%9A%84%E6%95%B0%E6%8D%AE%E4%B8%8D%E4%B8%80%E8%87%B4%E9%97%AE%E9%A2%98.png" alt="MySQL-幻读导致的数据不一致问题" title="MySQL-幻读导致的数据不一致问题"><br>执行期间：</p>
+<ol>
+<li>经过 T1 时刻，id&#x3D;5 这一行变成 (5,5,100)，当然这个结果最终是在 T6 时刻正式提交的；</li>
+<li>经过 T2 时刻，id&#x3D;0 这一行变成 (0,5,5)；</li>
+<li>经过 T4 时刻，表里面多了一行 (1,5,5)；</li>
+<li>其他行跟这个执行序列无关，保持不变。</li>
+</ol>
+<p>但是 binlog 中的内容：</p>
+<ol>
+<li>T2 时刻，session B 事务提交，写入了两条语句；</li>
+<li>T4 时刻，session C 事务提交，写入了两条语句；</li>
+<li>T6 时刻，session A 事务提交，写入了 update t set d&#x3D;100 where d&#x3D;5 这条语句。</li>
+</ol>
+<p>注意 binlog 中 T1 的语句位置变到了最后提交的时候执行。</p>
+<p>那么 update 和 insert 引入“新记录”有什么区别呢？为什么只有 insert 这种情况被称为幻读而要单独拿出来讲？其实是因为，就算我们在当前读的时候就算把所有记录都加上锁（极端情况），新插入的记录因为其还未被分配存储空间，所以我们是无法为其加锁的。<br>MySQL 中解决幻读的方式是<strong>间隙锁</strong>，在给对应记录加行锁的同时，MySQL 还会给行两边的间隙加间隙锁，行锁和间隙锁又合称<strong>Next-Key Lock</strong>。<br>不同于行锁，间隙锁之间是不存在冲突关系的，跟间隙锁存在冲突关系的，是“往这个间隙中插入一条记录”这个操作。</p>
+<h4 id="间隙锁的生效条件"><a href="#间隙锁的生效条件" class="headerlink" title="间隙锁的生效条件"></a>间隙锁的生效条件</h4><ol>
+<li>事务的隔离级别是<strong>可重复读</strong></li>
+<li>查找过程中访问到的对象才会加锁<br>查找并非特指<code>select</code>，不管是<code>delete</code>还是<code>update</code>，语句执行的第一步都是先找到对象，因此这些语句都会用到锁。</li>
+</ol>
+<h4 id="间隙锁存在的问题-死锁"><a href="#间隙锁存在的问题-死锁" class="headerlink" title="间隙锁存在的问题 - 死锁"></a>间隙锁存在的问题 - 死锁</h4><p>间隙锁可能会引起<strong>死锁</strong>，如下图所示：<br><img src="/imgs/MySQL/MySQL-%E9%97%B4%E9%9A%99%E9%94%81%E5%BC%95%E8%B5%B7%E7%9A%84%E6%AD%BB%E9%94%81.png" alt="MySQL-间隙锁引起的死锁" title="MySQL-间隙锁引起的死锁">……</p>
+<ol>
+<li>session A 执行 select … for update 语句，由于 id&#x3D;9 这一行并不存在，因此会加上间隙锁 (5,10)；</li>
+<li>session B 执行 select … for update 语句，同样会加上间隙锁 (5,10)，间隙锁之间不会冲突，因此这个语句可以执行成功；</li>
+<li>session B 试图插入一行 (9,9,9)，被 session A 的间隙锁挡住了，只好进入等待；</li>
+<li>session A 试图插入一行 (9,9,9)，被 session B 的间隙锁挡住了。</li>
+</ol>
+<p>可见，两个 session 进入了互相等待的状态，形成了死锁，可见，死锁会导致同样的语句锁住更大的范围，这其实是影响了并发度的。<br>如果需要避免这种死锁，可以：</p>
+<ul>
+<li>将隔离级别设置为读提交，但同时，你要解决可能出现的数据和日志不一致问题，需要把 binlog 格式设置为 row。</li>
+</ul>
+<h2 id="事务隔离级别的选择"><a href="#事务隔离级别的选择" class="headerlink" title="事务隔离级别的选择"></a>事务隔离级别的选择</h2><h3 id="为什么选择RR？"><a href="#为什么选择RR？" class="headerlink" title="为什么选择RR？"></a>为什么选择RR？</h3><p><a target="_blank" rel="noopener" href="https://www.hollischuang.com/archives/6427">为什么MySQL选择REPEATABLE READ作为默认隔离级别？</a></p>
+<ul>
+<li>主从复制：使用GapLock避免主从不一致，先执行update语句的事务可以通过GapLock阻塞后执行的事务。</li>
+<li>兼容：RR可以兼容statement格式的binlog，通过GapLock避免主从不一致；而RC无法避免。</li>
+</ul>
+<h3 id="为什么选择RC？"><a href="#为什么选择RC？" class="headerlink" title="为什么选择RC？"></a>为什么选择RC？</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/hollischuang/p/15522907.html">MySQL 默认隔离级别是RR，为什么阿里这种大厂会改成RC？</a><br>RR和RC区别</p>
+<ul>
+<li>RC每次读取都会重新生成一个快照，总是读取行的最新版本</li>
+<li>一致性读：RC支持“半一致读”，一条update语句，如果 where 条件匹配到的记录已经加锁，那么InnoDB会返回记录最近提交的版本，由MySQL上层判断此是否需要真的加锁，因此可以<strong>大大减少锁冲突</strong>。</li>
+<li>锁机制：RC隔离级别不解决幻读问题，不会加Gap Lock和Next-Key Lock，因此<strong>锁粒度相对较小，不容易形成死锁</strong>；</li>
+<li>主从同步：RC仅支持row格式的binlog</li>
+</ul>
+<p>理由</p>
+<ul>
+<li>提升并发：半一致读和锁机制</li>
+<li>减少死锁：锁机制</li>
+</ul>
+<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><h3 id="如何正确地删除表中的大量数据"><a href="#如何正确地删除表中的大量数据" class="headerlink" title="如何正确地删除表中的大量数据"></a>如何正确地删除表中的大量数据</h3><p>比如，现在想要删除表中的前 10000 条数据，有以下三种方法：<br>    * 直接执行 delete from T limit 10000;<br>    一个大的删除语句，单个语句占用时间长，锁的时间也比较长，且大事务还会导致主从延迟。<br>    * 在一个连接中循环执行 20 次 delete from T limit 500;<br>    相对第 1、3 两种方式较好。<br>    * 在 20 个连接中同时执行 delete from T limit 500。<br>    这 20 个连接互相之间可能会产生锁冲突。</p>
+<h3 id="下面的更新为什么没有成功"><a href="#下面的更新为什么没有成功" class="headerlink" title="下面的更新为什么没有成功"></a>下面的更新为什么没有成功</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE TABLE `t` (</span><br><span class="line">  `id` int(11) NOT NULL,</span><br><span class="line">  `c` int(11) DEFAULT NULL,</span><br><span class="line">  PRIMARY KEY (`id`)</span><br><span class="line">) ENGINE=InnoDB;</span><br><span class="line">insert into t(id, c) values(1,1),(2,2),(3,3),(4,4);</span><br></pre></td></tr></table></figure>
+<p>以下事务可能并不能将所有 c 都置为 0。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from t;</span><br><span class="line">update t set c = 0 where id = c;</span><br><span class="line">commit;</span><br></pre></td></tr></table></figure>
+<p>比如：<br><img src="/imgs/MySQL/MySQL-%E6%9B%B4%E6%96%B0%E4%B8%A2%E5%A4%B1.png" alt="MySQL-更新丢失" title="MySQL-更新丢失"><br>其中，事务 A 开始后，在还未对数据进行加锁的情况下，被事务 B 修改了数据，这时，读操作由于<strong>快照读规则</strong>，只能读取到老版本数据，而写操作由于<strong>当前读规则</strong>可以读取到事务 B 写入的数据。<br>现实中，给数据加乐观锁时也有可能会出现这种情况。</p>
+<h3 id="MySQL-实现各隔离级别的方式"><a href="#MySQL-实现各隔离级别的方式" class="headerlink" title="MySQL 实现各隔离级别的方式"></a>MySQL 实现各隔离级别的方式</h3><p>读未提交和串行化比较简单，读未提交完全没有做任何事务控制，串行化一个个事务轮流执行。<br>读已提交隔离级别下，事务会在每次执行读操作前创建一个 ReadView，记录当前正在执行中的所有事务的 trx_id 集合——当然包括当前事务，读取数据时有一个回溯版本的过程：若判断数据当前版本在 ReadView 内，则说明该事务正在执行中，不可读，因此回溯到上一个版本，直到找到一个版本不在 ReadView 内。<br>可重复读和读已提交原理类似，只是可重复读是在第一次执行读操作的时候生成 ReadView 的。</p>
+<h3 id="MySQL-怎么实现事务的-ACID"><a href="#MySQL-怎么实现事务的-ACID" class="headerlink" title="MySQL 怎么实现事务的 ACID"></a>MySQL 怎么实现事务的 ACID</h3><ol>
+<li>一致性<br>数据库通过原子性、隔离性、持久性来保证一致性，也就是说 ACID 四大特性之中，C(一致性)是目的，A(原子性)、I(隔离性)、D(持久性)是手段，是为了保证一致性，数据库提供的手段。</li>
+<li>原子性<br>利用 undo log，如果事务需要回滚则使用 undo log 撤销所有已经成功执行的 sql 语句。<blockquote>
+<p>对 delete 语句回滚即重新 insert 原语句；<br>对 update 回滚即 update 成旧值；<br>对 insert 语句回滚即 delete 该记录。</p>
+</blockquote>
+</li>
+<li>持久性<br>利用 redo log，事务提交前先将记录写入 redo log，提交时将 redo log 刷盘，宕机时会将 redo log 中的内容恢复到数据库，再根据 undo log 和 bin log 的内容决定应该回滚数据还是提交数据。<br>相对数据页来说，redo log 有以下好处：<ul>
+<li>redo log 体积小，毕竟只记录了哪一页修改了啥，因此体积小，刷盘快。</li>
+<li>redo log 是一直往末尾进行追加，属于顺序 IO。效率显然比随机 IO 来的快。</li>
+</ul>
+</li>
+<li>隔离性<br>利用锁和 MVCC 机制保证隔离性。</li>
+</ol>
+<h3 id="为什么最好不要有长事务"><a href="#为什么最好不要有长事务" class="headerlink" title="为什么最好不要有长事务"></a>为什么最好不要有长事务</h3><p>一般当系统判断当没有事务再使用到某些回滚日志时，这些回滚日志会被删除。那么系统怎么判断一个回滚日志不会再被使用到呢？就是当系统里没有比这个回滚日志更早的 read-view 的时候。<br>长事务意味着系统里面会存在很老的事务视图。由于这些事务随时可能访问数据库里面的任何数据，所以这个事务提交之前，数据库里面它可能用到的回滚记录都必须保留，这就会导致大量占用存储空间。 </p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1121,6 +1481,246 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/abe4b1f3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/abe4b1f3.html" class="post-title-link" itemprop="url">SpringBoot原理总结</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-19 12:21:48" itemprop="dateCreated datePublished" datetime="2019-10-19T12:21:48+08:00">2019-10-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E7%82%B9%E6%80%BB%E7%BB%93/" itemprop="url" rel="index"><span itemprop="name">技术点总结</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+<h1 id="开始使用-SpringBoot"><a href="#开始使用-SpringBoot" class="headerlink" title="开始使用 SpringBoot"></a>开始使用 SpringBoot</h1><h2 id="使用-sdkman-搭建环境"><a href="#使用-sdkman-搭建环境" class="headerlink" title="使用 sdkman 搭建环境"></a>使用 sdkman 搭建环境</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><ol>
+<li>sdkman<br>工具包管理器，可以用于管理 Spring Boot CLI。</li>
+<li>Spring Boot CLI<br>命令行工具。</li>
+<li>groovy<br>一种可以运行在 JVM 上的语言，和 Java 的编译器不同（语法、语义不同）。</li>
+</ol>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><ol>
+<li>安装 sdkman<br>按下面链接中的步骤来，可能需要连接 VPN：<br><a target="_blank" rel="noopener" href="http://sdkman.io/install.html">http://sdkman.io/install.html</a></li>
+<li>安装 Spring Boot CLI<br>默认安装最新版本的（安装位置在$HOME&#x2F;.sdkman 下）： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sdk install springboot</span><br></pre></td></tr></table></figure></li>
+<li>切换 Spring Boot CLI 版本 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sdk list springboot</span><br><span class="line">sdk install springboot XXX.RELEASE</span><br><span class="line">sdk use springboot XXX.RELEASE</span><br></pre></td></tr></table></figure></li>
+<li>设置默认版本 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sdk default springboot XXX.RELEASE</span><br></pre></td></tr></table></figure></li>
+<li>使用本地编译的 springboot <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sdk install springboot dev /path/to/spring-boot/spring-boot-cli/target/spring-boot-cli-2.0.0.BUILD-SNAPSHOT-bin/spring-2.0.0.BUILD-SNAPSHOT/</span><br><span class="line">$ sdk default springboot dev</span><br><span class="line">$ spring --version</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="第一个-SpringBoot-应用"><a href="#第一个-SpringBoot-应用" class="headerlink" title="第一个 SpringBoot 应用"></a>第一个 SpringBoot 应用</h3><ol>
+<li>创建一个 app.groovy 文件：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@RestController</span><br><span class="line">class ThisWillActuallyRun &#123;</span><br><span class="line">    @RequestMapping(&quot;/&quot;)</span><br><span class="line">    String home() &#123;</span><br><span class="line">        &quot;Hello World!&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>执行<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spring run app.groovy</span><br></pre></td></tr></table></figure></li>
+<li>访问<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">localhost:8080</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="IDEA-下搭建-SpringBoot-项目"><a href="#IDEA-下搭建-SpringBoot-项目" class="headerlink" title="IDEA 下搭建 SpringBoot 项目"></a>IDEA 下搭建 SpringBoot 项目</h2><h3 id="创建一个简单的-Web-项目"><a href="#创建一个简单的-Web-项目" class="headerlink" title="创建一个简单的 Web 项目"></a>创建一个简单的 Web 项目</h3><ol>
+<li>创建项目<br>new Projects… -&gt; Spring Initializr（这里可能需要连接 VPN） -&gt; 设置项目元数据 -&gt; 添加 Web 组件（对于这个例子来说足够了）</li>
+<li>添加控制器<br>创建 controller.HelloController： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@RestController</span><br><span class="line">public class HelloController &#123;</span><br><span class="line"></span><br><span class="line">    @RequestMapping(&quot;/hello&quot;)</span><br><span class="line">    public String hello() &#123;</span><br><span class="line">        System.out.println(&quot;Hello&quot;);</span><br><span class="line">        return &quot;hello&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>执行 XxxApplication.main()</li>
+<li>访问<br>localhost:8080</li>
+</ol>
+<h3 id="添加-Jpa-支持"><a href="#添加-Jpa-支持" class="headerlink" title="添加 Jpa 支持"></a>添加 Jpa 支持</h3><ol>
+<li>添加依赖<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;mysql&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></li>
+<li>添加配置 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">spring.datasource.driver-class-name=com.mysql.jdbc.Driver</span><br><span class="line">spring.datasource.url=jdbc:mysql://localhost:3306/test</span><br><span class="line">spring.datasource.username=root</span><br><span class="line">spring.datasource.password=85382855</span><br><span class="line">   </span><br><span class="line">spring.jpa.hibernate.ddl-auto=create</span><br><span class="line">spring.jpa.show-sql=true</span><br></pre></td></tr></table></figure></li>
+<li>创建实体类<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@Entity</span><br><span class="line">public class User &#123;</span><br><span class="line">    @Id</span><br><span class="line">    @GeneratedValue</span><br><span class="line">    private Integer id;</span><br><span class="line">    private String username;</span><br><span class="line">    private String password;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>创建 Dao 接口 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public interface UserDao extends JpaRepository&lt;User, Integer&gt; &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>注入 Dao 接口 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@Autowired</span><br><span class="line">private UserDao userDao;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">@RunWith(SpringRunner.class)</span><br><span class="line">@SpringBootTest</span><br><span class="line">public class HelloTest &#123;</span><br><span class="line"></span><br><span class="line">    private MockMvc mockMvc;</span><br><span class="line">    @Before</span><br><span class="line">    public void setUp() throws Exception &#123;</span><br><span class="line">        //测试 HelloWorldController</span><br><span class="line">        mockMvc = MockMvcBuilders.standaloneSetup(new HelloWorldController()).build();</span><br><span class="line">    &#125;</span><br><span class="line">    @Test</span><br><span class="line">    public void getHello() throws Exception &#123;</span><br><span class="line">        mockMvc.perform(MockMvcRequestBuilders.post(&quot;/hello?name=小明&quot;)</span><br><span class="line">                .accept(MediaType.APPLICATION_JSON_UTF8)).andDo(print());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="SpringBoot-原理分析"><a href="#SpringBoot-原理分析" class="headerlink" title="SpringBoot 原理分析"></a>SpringBoot 原理分析</h1><h2 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h2><ol>
+<li>约定优于配置（convention over configuration）<br>传统 Spring 项目配置繁琐是 SpringBoot 主要解决的痛点之一，autoconfigure 模块会在启动时为自动注入的 Bean 设置默认配置。</li>
+<li>模块化<br>类似于 maven 管理项目的依赖、git 管理代码的版本，SpringBoot 提供了对一些常用组件的模块化管理，只要添加依赖几乎就可以马上使用，展现出一种插件化的效果。</li>
+</ol>
+<h2 id="spring-boot-load-模块"><a href="#spring-boot-load-模块" class="headerlink" title="spring-boot-load 模块"></a>spring-boot-load 模块</h2><p>正常情况下一个类加载器只能找到加载路径的 jar 包里当前目录或者文件类里面的 *.class 文件，SpringBoot 允许我们使用 java -jar archive.jar 运行包含嵌套依赖 jar 的 jar 或者 war 文件。</p>
+<h3 id="传统类加载器的局限"><a href="#传统类加载器的局限" class="headerlink" title="传统类加载器的局限"></a>传统类加载器的局限</h3><p>传统类加载器无法加载 jar 包中嵌套的 jar 包。比如项目打包后包含如下这些类和 jar 包，则 c.jar 中的类无法被加载：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">a1.class</span><br><span class="line">a2.class</span><br><span class="line">b.jar</span><br><span class="line">    b1.class</span><br><span class="line">    b2.class</span><br><span class="line">    c.jar</span><br></pre></td></tr></table></figure>
+<p>为了能够加载嵌套 jar 里面的资源，之前的做法都是把嵌套 jar 里面的 class 文件和应用的 class 文件打包为一个 jar，这样就不存在嵌套 jar 了，但是这样做就不能很清晰的知道哪些是应用自己的，哪些是应用依赖的，另外多个嵌套 jar 里面的 class 文件可能内容不一样但是文件名却一样时候又会引发新的问题。</p>
+<h3 id="加载嵌套-jar-包中的-class-文件"><a href="#加载嵌套-jar-包中的-class-文件" class="headerlink" title="加载嵌套 jar 包中的 class 文件"></a>加载嵌套 jar 包中的 class 文件</h3><p>在 Java 中，AppClassLoader 和 ExtClassLoader 都继承自 URLClassLoader，并通过构造函数来传递需要加载的 class 文件所在的目录。<br><strong>那么只要将 jar 包中嵌套的 jar 包所在的路径作为 URLClassLoader 的扫描路径，就可以实现对嵌套 jar 包的扫描了。</strong><br>但是默认情况下 Java 使用 AppClassLoader 加载使用命令启动时指定的 classpath 下的类和 jar 包，那么如何使用自定义的 URLClassLoader 来加载这些类和 jar 包呢？具体做法是加一个中间层。<br>原来是直接使用 AppClassLoader 来加载应用：AppClassLoader -&gt; Application。<br>现在先加载一个自定义的启动类 <strong>Launcher</strong>，其中自定义 URLClassLoader，再使用该 URLClassLoader 来加载我们真正的 main 函数：AppClassLoader -&gt; Launcher -&gt; URLClassLoader -&gt; Application。</p>
+<h3 id="spring-boot-load-提供的启动器-Launcher"><a href="#spring-boot-load-提供的启动器-Launcher" class="headerlink" title="spring-boot-load 提供的启动器 Launcher"></a>spring-boot-load 提供的启动器 Launcher</h3><p>spring-boot-load 模块允许我们加载嵌套 jar 包中的 class 文件，它包含三种类启动器：</p>
+<ol>
+<li>JarLauncher</li>
+<li>WarLauncher</li>
+<li>PropertiesLauncher</li>
+</ol>
+<h3 id="spring-boot-maven-plugin-打包插件及-SpringBoot-指定的包结构"><a href="#spring-boot-maven-plugin-打包插件及-SpringBoot-指定的包结构" class="headerlink" title="spring-boot-maven-plugin 打包插件及 SpringBoot 指定的包结构"></a>spring-boot-maven-plugin 打包插件及 SpringBoot 指定的包结构</h3><p>为了为 SpringBoot 应用打包，需要引入如下 Maven 插件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;plugin&gt;</span><br><span class="line">      &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">      &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">      &lt;version&gt;1.5.9.RELEASE&lt;/version&gt;</span><br><span class="line">      &lt;executions&gt;</span><br><span class="line">        &lt;execution&gt;</span><br><span class="line">          &lt;goals&gt;</span><br><span class="line">            &lt;goal&gt;repackage&lt;/goal&gt;</span><br><span class="line">          &lt;/goals&gt;</span><br><span class="line">        &lt;/execution&gt;</span><br><span class="line">      &lt;/executions&gt;</span><br><span class="line"> &lt;/plugin&gt;</span><br></pre></td></tr></table></figure>
+
+<p>SpringBoot项目打包后的jar包结构如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">archive.jar</span><br><span class="line"> |</span><br><span class="line"> +-META-INF（1）</span><br><span class="line"> |  +-MANIFEST.MF</span><br><span class="line"> +-org（2）</span><br><span class="line"> |  +-springframework</span><br><span class="line"> |     +-boot</span><br><span class="line"> |        +-loader</span><br><span class="line"> |           +-&lt;spring boot loader classes&gt;</span><br><span class="line"> +-com（3）</span><br><span class="line"> |  +-mycompany</span><br><span class="line"> |     + project</span><br><span class="line"> |        +-YouClasses.class</span><br><span class="line"> +-lib（4）</span><br><span class="line">    +-dependency1.jar</span><br><span class="line">    +-dependency2.jar</span><br></pre></td></tr></table></figure>
+<p>目录（1）是 jar 文件中 MANIFEST.MF 文件的存放处。<br>目录（2）是 Spring-boot-loader 本身需要的 class 放置处。<br>目录（3）是应用本身的文件资源放置处。<br>目录（4）是应用依赖的 jar 固定放置处，即 lib 目录。</p>
+<p>打包按如下顺序进行：</p>
+<ol>
+<li>执行<code>mvn clean package</code>按原流程进行打包生成 jar 文件；</li>
+<li>spring-boot-maven-plugin 插件对 jar 包进行重写。<ol>
+<li>改写 MANIFEST.MF 文件：<code>Main-Class: org.springframework.boot.loader.JarLauncher</code>、<code>Start-Class: com.abc.MyApplication</code>，这里的 MyApplication 即项目中被<code>@SpringBootApplication</code>注解了的那个类，指定主类后 AppClassLoader 就会先加载 JarLauncher 并执行其中的 main 方法了；</li>
+<li>写入应用依赖的 jar 包到 lib 目录；</li>
+<li>拷贝 spring-boot-load 包里的 class 文件到 jar 包的目录（2）处。<blockquote>
+<p>为什么要拷贝到目录（2）的位置？因为后面启动流程中<code>LaunchedURLClassLoader</code>位于spring-boot-loader.jar包内，AppClassLoader无法加载嵌套的jar中的文件。</p>
+</blockquote>
+</li>
+</ol>
+</li>
+</ol>
+<p>启动顺序如下，以 JarLauncher 为例，假设 SpringBoot 项目打包后的 jar 包名为 test.jar：<br><img src="/imgs/SpringBoot/JarLauncher%E6%89%A7%E8%A1%8C%E6%97%B6%E5%BA%8F%E5%9B%BE.png" alt="JarLauncher执行时序图" title="JarLauncher执行时序图"></p>
+<ol>
+<li>使用 AppClassLoader 加载 JarLauncher，执行其 main 函数；</li>
+<li>查找 test.jar 中的嵌套 jar 后生成一个列表<code>List&lt;Archive&gt;</code>，每个<code>Archive</code>包含了一个嵌套 jar 的信息，对应 jar 包 Archive 的子类是 <code>JarFileArchive</code>。</li>
+<li>将 test.jar 本身构造成的 Archive 插入<code>List&lt;Archive&gt;</code>列表的第一个位置；</li>
+<li>将这个列表作为参数构建<code>LaunchedURLClassLoader</code>类加载器，这个类加载器继承自 URLClassLoader；</li>
+<li>使用 LaunchedURLClassLoader 加载并实例化 MyApplication 的一个对象，并通过反射调用 main 函数，这时候 SpringBoot 才正式开始初始化 SpringBoot 的环境，并创建容器。</li>
+</ol>
+<h2 id="spring-boot-autoconfigure-模块"><a href="#spring-boot-autoconfigure-模块" class="headerlink" title="spring-boot-autoconfigure 模块"></a>spring-boot-autoconfigure 模块</h2><p>Spring 的出现给我们管理 Bean 的依赖注入提供了便捷，但是当我们需要使用通过 pom 引入的 jar 里面的一个 Bean 时候，还是需要手动在 XML 配置文件里面配置。<br>spring-boot-autoconfigure 思路类似 **SPI(Service Provider Interface)**，都是不同的实现类实现了定义的接口，加载时候去查找 classpath 下的实现类，不同在于前者使用 <strong>autoconfigure</strong> 实现，后者使用的是 <strong>ServiceLoader</strong>。<br>autoconfigure 模块的主要功能如下：</p>
+<ol>
+<li>可以依据 classpath 里面的依赖内容自动配置 Bean 到 Spring 容器，并为默认化属性配置。</li>
+<li>尝试推断哪些 Beans 是用户可能会需要的。比如如果 HSQLDB 包在当前 classpath 下，并且用户并没有配置其他数据库链接，这时候 Auto-configuration 功能会自动注入一个基于内存的数据库连接到应用的 IOC 容器。再比如当我们在 pom 引入了 Tomcat 的 start 后，如果当前还没 Web 容器被注入到应用 IOC，那么 SpringBoot 就会为我们自动创建并启动一个内嵌 Tomcat 容器来服务。</li>
+</ol>
+<h3 id="EnableAutoConfiguration"><a href="#EnableAutoConfiguration" class="headerlink" title="EnableAutoConfiguration"></a>EnableAutoConfiguration</h3><p>核心注解<code>@EnableAutoConfiguration</code>的定义如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">@Target(&#123;ElementType.TYPE&#125;)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@Documented</span><br><span class="line">@Inherited</span><br><span class="line">@AutoConfigurationPackage</span><br><span class="line">@Import(&#123;AutoConfigurationImportSelector.class&#125;)</span><br><span class="line">public @interface EnableAutoConfiguration &#123;</span><br><span class="line">    String ENABLED_OVERRIDE_PROPERTY = &quot;spring.boot.enableautoconfiguration&quot;;</span><br><span class="line"></span><br><span class="line">    Class&lt;?&gt;[] exclude() default &#123;&#125;;</span><br><span class="line"></span><br><span class="line">    String[] excludeName() default &#123;&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>EnableAutoConfiguration</code> 注解主要作用是通过 <code>@Import</code> 注入 <code>EnableAutoConfigurationImportSelector</code> 实例，后者是实现 AutoConfiguration 功能的核心类。<br><img src="/imgs/SpringBoot/EnableAutoConfigurationImportSelector%E6%97%B6%E5%BA%8F%E5%9B%BE.png" alt="EnableAutoConfigurationImportSelector时序图" title="EnableAutoConfigurationImportSelector时序图"><br><code>EnableAutoConfigurationImportSelector</code> 类实现了 <code>DeferredImportSelector</code> 接口的 <code>String[] selectImports(AnnotationMetadata metadata)</code> 方法，当 Spring 框架解析 <code>@Import</code> 注解时候会调用该方法。<br>代码<code>EnableAutoConfigurationImportSelector#getCandidateConfigurations</code>和<code>loadFactoryNames</code>的作用是扫描 classpath 下含有 <code>Meta-INF/spring.factories</code> 文件的 jar，并解析文件中名字为 org.springframework.boot.autoconfigure.EnableAutoConfiguration 的配置项。<br>getCandidateConfigurations会返回名字为 org.springframework.boot.autoconfigure.EnableAutoConfiguration 的配置项的值的一个列表并且对列表内容进行去重处理。</p>
+<blockquote>
+<p>正常情况下，去重后的列表里面的类都会被自动注入到 Spring IOC 容器，除非指定不自动注入某些功能，比如若要排除自动创建数据源和事务管理的功能可以：<code>@EnableAutoConfiguration(exclude=&#123;DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class&#125;)</code>，getExclusions 就是读取 EnableAutoConfiguration 注解里面的 excludeName 和 exclude 配置项，然后从去重后的列名列表里面剔除。这样在自动注入时候就不会对排除掉的自动配置功能进行注入了。</p>
+</blockquote>
+<p>这个列表中的每个元素就是一个自动配置功能，比如 org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration 是 Web 容器自动注入的功能类（比如这个类可以自动扫描 Tomcat 的 start 并创建一个 Tomcat 容器）。</p>
+<h3 id="例子-注入-Web-容器"><a href="#例子-注入-Web-容器" class="headerlink" title="例子 - 注入 Web 容器"></a>例子 - 注入 Web 容器</h3><p>ServletWebServerFactoryAutoConfiguration 的部分核心代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)</span><br><span class="line">@ConditionalOnClass(ServletRequest.class)</span><br><span class="line">@ConditionalOnWebApplication(type = Type.SERVLET)</span><br><span class="line">@EnableConfigurationProperties(ServerProperties.class)</span><br><span class="line">@Import(&#123; ServletWebServerFactoryAutoConfiguration.BeanPostProcessorsRegistrar.class,</span><br><span class="line">		ServletWebServerFactoryConfiguration.EmbeddedTomcat.class,</span><br><span class="line">		ServletWebServerFactoryConfiguration.EmbeddedJetty.class,</span><br><span class="line">		ServletWebServerFactoryConfiguration.EmbeddedUndertow.class &#125;)</span><br><span class="line">public class ServletWebServerFactoryAutoConfiguration &#123;</span><br><span class="line"></span><br><span class="line">	@Bean</span><br><span class="line">	public ServletWebServerFactoryCustomizer servletWebServerFactoryCustomizer(ServerProperties serverProperties) &#123;</span><br><span class="line">		return new ServletWebServerFactoryCustomizer(serverProperties);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Bean</span><br><span class="line">	@ConditionalOnClass(name = &quot;org.apache.catalina.startup.Tomcat&quot;)</span><br><span class="line">	public TomcatServletWebServerFactoryCustomizer tomcatServletWebServerFactoryCustomizer(</span><br><span class="line">			ServerProperties serverProperties) &#123;</span><br><span class="line">		return new TomcatServletWebServerFactoryCustomizer(serverProperties);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	/**</span><br><span class="line">	 * Registers a &#123;@link WebServerFactoryCustomizerBeanPostProcessor&#125;. Registered via</span><br><span class="line">	 * &#123;@link ImportBeanDefinitionRegistrar&#125; for early registration.</span><br><span class="line">	 */</span><br><span class="line">	public static class BeanPostProcessorsRegistrar implements ImportBeanDefinitionRegistrar, BeanFactoryAware &#123;</span><br><span class="line"></span><br><span class="line">		private ConfigurableListableBeanFactory beanFactory;</span><br><span class="line"></span><br><span class="line">		@Override</span><br><span class="line">		public void setBeanFactory(BeanFactory beanFactory) throws BeansException &#123;</span><br><span class="line">			if (beanFactory instanceof ConfigurableListableBeanFactory) &#123;</span><br><span class="line">				this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		@Override</span><br><span class="line">		public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata,</span><br><span class="line">				BeanDefinitionRegistry registry) &#123;</span><br><span class="line">			if (this.beanFactory == null) &#123;</span><br><span class="line">				return;</span><br><span class="line">			&#125;</span><br><span class="line">			registerSyntheticBeanIfMissing(registry, &quot;webServerFactoryCustomizerBeanPostProcessor&quot;,</span><br><span class="line">					WebServerFactoryCustomizerBeanPostProcessor.class);</span><br><span class="line">			registerSyntheticBeanIfMissing(registry, &quot;errorPageRegistrarBeanPostProcessor&quot;,</span><br><span class="line">					ErrorPageRegistrarBeanPostProcessor.class);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		private void registerSyntheticBeanIfMissing(BeanDefinitionRegistry registry, String name, Class&lt;?&gt; beanClass) &#123;</span><br><span class="line">			if (ObjectUtils.isEmpty(this.beanFactory.getBeanNamesForType(beanClass, true, false))) &#123;</span><br><span class="line">				RootBeanDefinition beanDefinition = new RootBeanDefinition(beanClass);</span><br><span class="line">				beanDefinition.setSynthetic(true);</span><br><span class="line">				registry.registerBeanDefinition(name, beanDefinition);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ServletWebServerFactoryAutoConfiguration 类是 Web 容器自动注入的 Auto-configuration 类。</p>
+<ul>
+<li>@ConditionalOnWebApplication 说明当前是 Web 环境上下文时候才注入本类到 IOC。</li>
+<li>@Import 注解导入了另一个配置<code>ServletWebServerFactoryConfiguration.EmbeddedTomcat.class</code>，这里包含了真正的注入 Tomcat 实例的逻辑：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">class ServletWebServerFactoryConfiguration &#123;</span><br><span class="line"></span><br><span class="line">	@Configuration</span><br><span class="line">	@ConditionalOnClass(&#123; Servlet.class, Tomcat.class, UpgradeProtocol.class &#125;)</span><br><span class="line">	@ConditionalOnMissingBean(value = ServletWebServerFactory.class, search = SearchStrategy.CURRENT)</span><br><span class="line">	public static class EmbeddedTomcat &#123;</span><br><span class="line"></span><br><span class="line">		@Bean</span><br><span class="line">		public TomcatServletWebServerFactory tomcatServletWebServerFactory() &#123;</span><br><span class="line">			return new TomcatServletWebServerFactory();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure></li>
+<li>@ConditionalOnClass：只有在 classpath 下存在指定的类的时候 Bean 才能被创建。</li>
+<li>@ConditionalOnMissingBean：只有对应的 Bean 在系统中都没有被创建，它修饰的初始化代码块才会执行，【用户自己手动创建的 Bean 优先】。</li>
+</ul>
+<p>当应用引入 spring-boot-starter-web 时候默认引入的是 Tomcat 的 starter，所以会发现 classpath 下存在 Servlet.class、 Tomcat.class 这两个类，并且 IOC 里面没有 TomcatEmbeddedServletContainerFactory 的实例，因此会创建其实例到 IOC 容器中，最终会创建一个 Tomcat 容器。<br>当然，如果需要使用 Jetty 则需要在引用 spring-boot-starter-web 的时候排除掉 Tomcat 的 start，然后在引入 Jetty 的 start 即可。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总而言之，自动配置的生效步骤可以概括如下：</p>
+<ol>
+<li>Spring Boot 在启动时会去依赖的 Starter 包中寻找 resources&#x2F;META-INF&#x2F;spring.factories 文件，然后根据文件中配置的 Jar 包去扫描项目所依赖的 Jar 包。</li>
+<li>根据 spring.factories 配置加载 AutoConfigure 类</li>
+<li>根据 @Conditional 注解的条件，进行自动配置并将 Bean 注入 Spring Context</li>
+</ol>
+<h2 id="spring-boot-模块"><a href="#spring-boot-模块" class="headerlink" title="spring-boot 模块"></a>spring-boot 模块</h2><p>提供了一些特性用来支持 SpringBoot 中其它模块，这些特性包括：</p>
+<ol>
+<li>SpringApplication 类提供了静态方法以便于写一个独立了 Spring 应用程序，该类的主要职责是 create 和 refresh 一个合适的 Spring 应用程序上下文（ApplicationContext）。</li>
+<li>一流的外部配置的支持（application.properties）。</li>
+<li>提供了便捷的应用程序上下文（ApplicationContext）的初始化器，以便在 ApplicationContext 使用前对其进行用户定制。</li>
+<li>给 Web 应用提供了一个可选的 Web 容器（目前有 Tomcat 或 Jetty）。</li>
+</ol>
+<h3 id="SpringApplication-的执行流程"><a href="#SpringApplication-的执行流程" class="headerlink" title="SpringApplication 的执行流程"></a>SpringApplication 的执行流程</h3><p>一般的 SpringBoot 项目都会有一个如下所示的 Application 类：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@SpringBootApplication</span><br><span class="line">public class Web1Application &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SpringApplication.run(Web1Application.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>JarLauncher</code>启动过后里面实际上就是调用了 SpringApplication#run 方法，SpringApplication 的执行流程如下：<br><img src="/imgs/SpringBoot/SpringApplication%E6%89%A7%E8%A1%8C%E6%97%B6%E5%BA%8F%E5%9B%BE.png" alt="SpringApplication执行时序图" title="SpringApplication执行时序图"></p>
+<ol>
+<li>SpringApplication 的构造函数里面会调用 initialize 方法在 classpath 的 jar 包里面查找 META-INF&#x2F;spring.factories，如果找到则看里面是否有配置 <code>ApplicationContextInitializer</code> 类型的 Bean，有则加载到 SpringApplication 的变量 <code>initializers</code> 里面存放，比如 spring-boot.jar 里面。<br><img src="/imgs/SpringBoot/ApplicationContextInitializer%E9%85%8D%E7%BD%AE.png" alt="ApplicationContextInitializer配置" title="ApplicationContextInitializer配置"></li>
+<li>createAndRefreshContext 做了这几件事情：<ol>
+<li>设置环境，加载 application.properties 等配置文件；</li>
+<li>根据 classpath 的 jar 里面是否有 ConfigurableWebEnvironment 判断当前是否需要创建 Web 应用程序上下文还是创建一个非 Web 应用程序上下文；</li>
+<li>使用前面加载的应用程序初始化器对创建的应用程序上下文进行初始化；</li>
+<li>刷新应用程序上下文解析 Bean 定义到应用程序上下文里面的 IOC 容器，在刷新过程的 invokeBeanFactoryPostProcessors 过程中(10)(11)会去解析类上面标注的 @import 注解，然后就会调用所有的 ImportSelector 的 selectImports 方法，这也是第二部分时序图开始执行的地方。</li>
+</ol>
+</li>
+</ol>
+<h3 id="Web-容器的创建"><a href="#Web-容器的创建" class="headerlink" title="Web 容器的创建"></a>Web 容器的创建</h3><p>通过自动配置将 TomcatEmbeddedServletContainerFactory 或者 JettyEmbeddedServletContainerFactory 的实例注入 IOC 容器后，我们就可以使用 Web 容器来提供 Web 服务了。<br>具体的 Web 容器的创建是在容器刷新过程的 onRefresh 阶段进行的（这个阶段是在刷新过程的 invokeBeanFactoryPostProcessors 阶段的后面）：<br><img src="/imgs/SpringBoot/Web%E5%AE%B9%E5%99%A8%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B.png" alt="Web容器创建过程" title="Web容器创建过程"></p>
+<ul>
+<li>getBeanNamesForType 获取了 IOC 容器中的 EmbeddedServletContainerFactory 类型的 Bean 的 name 集合，如果 name 集合为空或者多个则抛出异常。还记得 Web 容器工厂是通过自动配置注入到 IOC 的吧，并且 TomcatEmbeddedServletContainerFactory 或者 JettyEmbeddedServletContainerFactory 都是实现了 EmbeddedServletContainerFactory 接口。</li>
+<li>如果 IOC 里面只有一个 Web 容器工厂 Bean 则获取该 Bean 的实例，然后调用该 Bean 的 getEmbeddedServletContainer 获取 Web 容器，这里假设 Web 容器工厂为 Tomcat ，则创建 Tomcat 容器并进行初始化。</li>
+</ul>
+<h2 id="Actuator-模块"><a href="#Actuator-模块" class="headerlink" title="Actuator 模块"></a>Actuator 模块</h2><p><img src="/imgs/SpringBoot/Actuator%E7%B1%BB%E5%9B%BE.png" alt="Actuator类图" title="Actuator类图"><br>Actuator 模块提供了一些组件用于检查应用或中间件的健康状况：</p>
+<ol>
+<li>Inspect：检测应用或中间件的健康状况；</li>
+<li>Aggregate：聚合所有结果。</li>
+</ol>
+<p>基于 Actuator 模块，我们可以开发一个服务探活系统：</p>
+<ol>
+<li>Actuator 为业务服务器暴露出一个探活端口<code>healthcheck</code>，借助 Spring 容器获取到中间件的客户端实例；</li>
+<li>探活服务<code>HealthCheck-Task</code>定时轮询所有服务，统计单位时间内请求出现问题的次数，从而发送报警短信提醒研发同学。</li>
+</ol>
+<p>服务的轮询探活将是这个系统的主要瓶颈，有一些措施可以作为参考：</p>
+<ol>
+<li>灵活使用<code>CompletableFuture</code>这些并发编排组件，因为探活请求一般都是比较”慢”的，因此可以通过并行化来提高效率；</li>
+<li>探活不能占用太多系统资源，合理设置探活超时时间，很多客户端的默认超时时间达到 1 分钟甚至更长，必须额外设置探活请求的超时时间，避免服务器挂掉时所有线程都被<code>hang</code>死，导致服务雪崩。<blockquote>
+<p>探活不能和业务代码共用线程池，做到线程池隔离，即使出问题也只影响到<code>HealthCheck-Task</code>。</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/hello-shf/p/10864977.html">SpringBoot应用篇（一）：自定义starter</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/bbf439c8a203">从零开始开发一个Spring Boot Starter</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/87f101d8ec41">SpringBoot启动流程解析</a></li>
+</ol>
+<h3 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/fangjian0423/springboot-analysis">fangjian0423&#x2F;springboot-analysis</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://tallate.github.io/6577ef90.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1337,246 +1937,6 @@ application-peer2.properties： <figure class="highlight plaintext"><table><tr><
 <li><a target="_blank" rel="noopener" href="https://yq.aliyun.com/articles/47344">用 Docker 构建、运行、发布一个 Spring Boot 应用</a></li>
 <li><a target="_blank" rel="noopener" href="https://github.com/spotify/docker-maven-plugin">docker-maven-plugin</a></li>
 <li><a target="_blank" rel="noopener" href="https://docs.docker.com/compose/">Docker Compose</a></li>
-</ol>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/abe4b1f3.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/abe4b1f3.html" class="post-title-link" itemprop="url">SpringBoot原理总结</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-10-19 12:21:48" itemprop="dateCreated datePublished" datetime="2019-10-19T12:21:48+08:00">2019-10-19</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%80%E6%9C%AF%E7%82%B9%E6%80%BB%E7%BB%93/" itemprop="url" rel="index"><span itemprop="name">技术点总结</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<h1 id="开始使用-SpringBoot"><a href="#开始使用-SpringBoot" class="headerlink" title="开始使用 SpringBoot"></a>开始使用 SpringBoot</h1><h2 id="使用-sdkman-搭建环境"><a href="#使用-sdkman-搭建环境" class="headerlink" title="使用 sdkman 搭建环境"></a>使用 sdkman 搭建环境</h2><h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><ol>
-<li>sdkman<br>工具包管理器，可以用于管理 Spring Boot CLI。</li>
-<li>Spring Boot CLI<br>命令行工具。</li>
-<li>groovy<br>一种可以运行在 JVM 上的语言，和 Java 的编译器不同（语法、语义不同）。</li>
-</ol>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><ol>
-<li>安装 sdkman<br>按下面链接中的步骤来，可能需要连接 VPN：<br><a target="_blank" rel="noopener" href="http://sdkman.io/install.html">http://sdkman.io/install.html</a></li>
-<li>安装 Spring Boot CLI<br>默认安装最新版本的（安装位置在$HOME&#x2F;.sdkman 下）： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sdk install springboot</span><br></pre></td></tr></table></figure></li>
-<li>切换 Spring Boot CLI 版本 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sdk list springboot</span><br><span class="line">sdk install springboot XXX.RELEASE</span><br><span class="line">sdk use springboot XXX.RELEASE</span><br></pre></td></tr></table></figure></li>
-<li>设置默认版本 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sdk default springboot XXX.RELEASE</span><br></pre></td></tr></table></figure></li>
-<li>使用本地编译的 springboot <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sdk install springboot dev /path/to/spring-boot/spring-boot-cli/target/spring-boot-cli-2.0.0.BUILD-SNAPSHOT-bin/spring-2.0.0.BUILD-SNAPSHOT/</span><br><span class="line">$ sdk default springboot dev</span><br><span class="line">$ spring --version</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h3 id="第一个-SpringBoot-应用"><a href="#第一个-SpringBoot-应用" class="headerlink" title="第一个 SpringBoot 应用"></a>第一个 SpringBoot 应用</h3><ol>
-<li>创建一个 app.groovy 文件：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@RestController</span><br><span class="line">class ThisWillActuallyRun &#123;</span><br><span class="line">    @RequestMapping(&quot;/&quot;)</span><br><span class="line">    String home() &#123;</span><br><span class="line">        &quot;Hello World!&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>执行<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spring run app.groovy</span><br></pre></td></tr></table></figure></li>
-<li>访问<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">localhost:8080</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h2 id="IDEA-下搭建-SpringBoot-项目"><a href="#IDEA-下搭建-SpringBoot-项目" class="headerlink" title="IDEA 下搭建 SpringBoot 项目"></a>IDEA 下搭建 SpringBoot 项目</h2><h3 id="创建一个简单的-Web-项目"><a href="#创建一个简单的-Web-项目" class="headerlink" title="创建一个简单的 Web 项目"></a>创建一个简单的 Web 项目</h3><ol>
-<li>创建项目<br>new Projects… -&gt; Spring Initializr（这里可能需要连接 VPN） -&gt; 设置项目元数据 -&gt; 添加 Web 组件（对于这个例子来说足够了）</li>
-<li>添加控制器<br>创建 controller.HelloController： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@RestController</span><br><span class="line">public class HelloController &#123;</span><br><span class="line"></span><br><span class="line">    @RequestMapping(&quot;/hello&quot;)</span><br><span class="line">    public String hello() &#123;</span><br><span class="line">        System.out.println(&quot;Hello&quot;);</span><br><span class="line">        return &quot;hello&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>执行 XxxApplication.main()</li>
-<li>访问<br>localhost:8080</li>
-</ol>
-<h3 id="添加-Jpa-支持"><a href="#添加-Jpa-支持" class="headerlink" title="添加 Jpa 支持"></a>添加 Jpa 支持</h3><ol>
-<li>添加依赖<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">  &lt;groupId&gt;mysql&lt;/groupId&gt;</span><br><span class="line">  &lt;artifactId&gt;mysql-connector-java&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></li>
-<li>添加配置 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">spring.datasource.driver-class-name=com.mysql.jdbc.Driver</span><br><span class="line">spring.datasource.url=jdbc:mysql://localhost:3306/test</span><br><span class="line">spring.datasource.username=root</span><br><span class="line">spring.datasource.password=85382855</span><br><span class="line">   </span><br><span class="line">spring.jpa.hibernate.ddl-auto=create</span><br><span class="line">spring.jpa.show-sql=true</span><br></pre></td></tr></table></figure></li>
-<li>创建实体类<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@Entity</span><br><span class="line">public class User &#123;</span><br><span class="line">    @Id</span><br><span class="line">    @GeneratedValue</span><br><span class="line">    private Integer id;</span><br><span class="line">    private String username;</span><br><span class="line">    private String password;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>创建 Dao 接口 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public interface UserDao extends JpaRepository&lt;User, Integer&gt; &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>注入 Dao 接口 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@Autowired</span><br><span class="line">private UserDao userDao;</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">@RunWith(SpringRunner.class)</span><br><span class="line">@SpringBootTest</span><br><span class="line">public class HelloTest &#123;</span><br><span class="line"></span><br><span class="line">    private MockMvc mockMvc;</span><br><span class="line">    @Before</span><br><span class="line">    public void setUp() throws Exception &#123;</span><br><span class="line">        //测试 HelloWorldController</span><br><span class="line">        mockMvc = MockMvcBuilders.standaloneSetup(new HelloWorldController()).build();</span><br><span class="line">    &#125;</span><br><span class="line">    @Test</span><br><span class="line">    public void getHello() throws Exception &#123;</span><br><span class="line">        mockMvc.perform(MockMvcRequestBuilders.post(&quot;/hello?name=小明&quot;)</span><br><span class="line">                .accept(MediaType.APPLICATION_JSON_UTF8)).andDo(print());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h1 id="SpringBoot-原理分析"><a href="#SpringBoot-原理分析" class="headerlink" title="SpringBoot 原理分析"></a>SpringBoot 原理分析</h1><h2 id="核心思想"><a href="#核心思想" class="headerlink" title="核心思想"></a>核心思想</h2><ol>
-<li>约定优于配置（convention over configuration）<br>传统 Spring 项目配置繁琐是 SpringBoot 主要解决的痛点之一，autoconfigure 模块会在启动时为自动注入的 Bean 设置默认配置。</li>
-<li>模块化<br>类似于 maven 管理项目的依赖、git 管理代码的版本，SpringBoot 提供了对一些常用组件的模块化管理，只要添加依赖几乎就可以马上使用，展现出一种插件化的效果。</li>
-</ol>
-<h2 id="spring-boot-load-模块"><a href="#spring-boot-load-模块" class="headerlink" title="spring-boot-load 模块"></a>spring-boot-load 模块</h2><p>正常情况下一个类加载器只能找到加载路径的 jar 包里当前目录或者文件类里面的 *.class 文件，SpringBoot 允许我们使用 java -jar archive.jar 运行包含嵌套依赖 jar 的 jar 或者 war 文件。</p>
-<h3 id="传统类加载器的局限"><a href="#传统类加载器的局限" class="headerlink" title="传统类加载器的局限"></a>传统类加载器的局限</h3><p>传统类加载器无法加载 jar 包中嵌套的 jar 包。比如项目打包后包含如下这些类和 jar 包，则 c.jar 中的类无法被加载：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">a1.class</span><br><span class="line">a2.class</span><br><span class="line">b.jar</span><br><span class="line">    b1.class</span><br><span class="line">    b2.class</span><br><span class="line">    c.jar</span><br></pre></td></tr></table></figure>
-<p>为了能够加载嵌套 jar 里面的资源，之前的做法都是把嵌套 jar 里面的 class 文件和应用的 class 文件打包为一个 jar，这样就不存在嵌套 jar 了，但是这样做就不能很清晰的知道哪些是应用自己的，哪些是应用依赖的，另外多个嵌套 jar 里面的 class 文件可能内容不一样但是文件名却一样时候又会引发新的问题。</p>
-<h3 id="加载嵌套-jar-包中的-class-文件"><a href="#加载嵌套-jar-包中的-class-文件" class="headerlink" title="加载嵌套 jar 包中的 class 文件"></a>加载嵌套 jar 包中的 class 文件</h3><p>在 Java 中，AppClassLoader 和 ExtClassLoader 都继承自 URLClassLoader，并通过构造函数来传递需要加载的 class 文件所在的目录。<br><strong>那么只要将 jar 包中嵌套的 jar 包所在的路径作为 URLClassLoader 的扫描路径，就可以实现对嵌套 jar 包的扫描了。</strong><br>但是默认情况下 Java 使用 AppClassLoader 加载使用命令启动时指定的 classpath 下的类和 jar 包，那么如何使用自定义的 URLClassLoader 来加载这些类和 jar 包呢？具体做法是加一个中间层。<br>原来是直接使用 AppClassLoader 来加载应用：AppClassLoader -&gt; Application。<br>现在先加载一个自定义的启动类 <strong>Launcher</strong>，其中自定义 URLClassLoader，再使用该 URLClassLoader 来加载我们真正的 main 函数：AppClassLoader -&gt; Launcher -&gt; URLClassLoader -&gt; Application。</p>
-<h3 id="spring-boot-load-提供的启动器-Launcher"><a href="#spring-boot-load-提供的启动器-Launcher" class="headerlink" title="spring-boot-load 提供的启动器 Launcher"></a>spring-boot-load 提供的启动器 Launcher</h3><p>spring-boot-load 模块允许我们加载嵌套 jar 包中的 class 文件，它包含三种类启动器：</p>
-<ol>
-<li>JarLauncher</li>
-<li>WarLauncher</li>
-<li>PropertiesLauncher</li>
-</ol>
-<h3 id="spring-boot-maven-plugin-打包插件及-SpringBoot-指定的包结构"><a href="#spring-boot-maven-plugin-打包插件及-SpringBoot-指定的包结构" class="headerlink" title="spring-boot-maven-plugin 打包插件及 SpringBoot 指定的包结构"></a>spring-boot-maven-plugin 打包插件及 SpringBoot 指定的包结构</h3><p>为了为 SpringBoot 应用打包，需要引入如下 Maven 插件：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;plugin&gt;</span><br><span class="line">      &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">      &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">      &lt;version&gt;1.5.9.RELEASE&lt;/version&gt;</span><br><span class="line">      &lt;executions&gt;</span><br><span class="line">        &lt;execution&gt;</span><br><span class="line">          &lt;goals&gt;</span><br><span class="line">            &lt;goal&gt;repackage&lt;/goal&gt;</span><br><span class="line">          &lt;/goals&gt;</span><br><span class="line">        &lt;/execution&gt;</span><br><span class="line">      &lt;/executions&gt;</span><br><span class="line"> &lt;/plugin&gt;</span><br></pre></td></tr></table></figure>
-
-<p>SpringBoot项目打包后的jar包结构如下所示：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">archive.jar</span><br><span class="line"> |</span><br><span class="line"> +-META-INF（1）</span><br><span class="line"> |  +-MANIFEST.MF</span><br><span class="line"> +-org（2）</span><br><span class="line"> |  +-springframework</span><br><span class="line"> |     +-boot</span><br><span class="line"> |        +-loader</span><br><span class="line"> |           +-&lt;spring boot loader classes&gt;</span><br><span class="line"> +-com（3）</span><br><span class="line"> |  +-mycompany</span><br><span class="line"> |     + project</span><br><span class="line"> |        +-YouClasses.class</span><br><span class="line"> +-lib（4）</span><br><span class="line">    +-dependency1.jar</span><br><span class="line">    +-dependency2.jar</span><br></pre></td></tr></table></figure>
-<p>目录（1）是 jar 文件中 MANIFEST.MF 文件的存放处。<br>目录（2）是 Spring-boot-loader 本身需要的 class 放置处。<br>目录（3）是应用本身的文件资源放置处。<br>目录（4）是应用依赖的 jar 固定放置处，即 lib 目录。</p>
-<p>打包按如下顺序进行：</p>
-<ol>
-<li>执行<code>mvn clean package</code>按原流程进行打包生成 jar 文件；</li>
-<li>spring-boot-maven-plugin 插件对 jar 包进行重写。<ol>
-<li>改写 MANIFEST.MF 文件：<code>Main-Class: org.springframework.boot.loader.JarLauncher</code>、<code>Start-Class: com.abc.MyApplication</code>，这里的 MyApplication 即项目中被<code>@SpringBootApplication</code>注解了的那个类，指定主类后 AppClassLoader 就会先加载 JarLauncher 并执行其中的 main 方法了；</li>
-<li>写入应用依赖的 jar 包到 lib 目录；</li>
-<li>拷贝 spring-boot-load 包里的 class 文件到 jar 包的目录（2）处。<blockquote>
-<p>为什么要拷贝到目录（2）的位置？因为后面启动流程中<code>LaunchedURLClassLoader</code>位于spring-boot-loader.jar包内，AppClassLoader无法加载嵌套的jar中的文件。</p>
-</blockquote>
-</li>
-</ol>
-</li>
-</ol>
-<p>启动顺序如下，以 JarLauncher 为例，假设 SpringBoot 项目打包后的 jar 包名为 test.jar：<br><img src="/imgs/SpringBoot/JarLauncher%E6%89%A7%E8%A1%8C%E6%97%B6%E5%BA%8F%E5%9B%BE.png" alt="JarLauncher执行时序图" title="JarLauncher执行时序图"></p>
-<ol>
-<li>使用 AppClassLoader 加载 JarLauncher，执行其 main 函数；</li>
-<li>查找 test.jar 中的嵌套 jar 后生成一个列表<code>List&lt;Archive&gt;</code>，每个<code>Archive</code>包含了一个嵌套 jar 的信息，对应 jar 包 Archive 的子类是 <code>JarFileArchive</code>。</li>
-<li>将 test.jar 本身构造成的 Archive 插入<code>List&lt;Archive&gt;</code>列表的第一个位置；</li>
-<li>将这个列表作为参数构建<code>LaunchedURLClassLoader</code>类加载器，这个类加载器继承自 URLClassLoader；</li>
-<li>使用 LaunchedURLClassLoader 加载并实例化 MyApplication 的一个对象，并通过反射调用 main 函数，这时候 SpringBoot 才正式开始初始化 SpringBoot 的环境，并创建容器。</li>
-</ol>
-<h2 id="spring-boot-autoconfigure-模块"><a href="#spring-boot-autoconfigure-模块" class="headerlink" title="spring-boot-autoconfigure 模块"></a>spring-boot-autoconfigure 模块</h2><p>Spring 的出现给我们管理 Bean 的依赖注入提供了便捷，但是当我们需要使用通过 pom 引入的 jar 里面的一个 Bean 时候，还是需要手动在 XML 配置文件里面配置。<br>spring-boot-autoconfigure 思路类似 **SPI(Service Provider Interface)**，都是不同的实现类实现了定义的接口，加载时候去查找 classpath 下的实现类，不同在于前者使用 <strong>autoconfigure</strong> 实现，后者使用的是 <strong>ServiceLoader</strong>。<br>autoconfigure 模块的主要功能如下：</p>
-<ol>
-<li>可以依据 classpath 里面的依赖内容自动配置 Bean 到 Spring 容器，并为默认化属性配置。</li>
-<li>尝试推断哪些 Beans 是用户可能会需要的。比如如果 HSQLDB 包在当前 classpath 下，并且用户并没有配置其他数据库链接，这时候 Auto-configuration 功能会自动注入一个基于内存的数据库连接到应用的 IOC 容器。再比如当我们在 pom 引入了 Tomcat 的 start 后，如果当前还没 Web 容器被注入到应用 IOC，那么 SpringBoot 就会为我们自动创建并启动一个内嵌 Tomcat 容器来服务。</li>
-</ol>
-<h3 id="EnableAutoConfiguration"><a href="#EnableAutoConfiguration" class="headerlink" title="EnableAutoConfiguration"></a>EnableAutoConfiguration</h3><p>核心注解<code>@EnableAutoConfiguration</code>的定义如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">@Target(&#123;ElementType.TYPE&#125;)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@Documented</span><br><span class="line">@Inherited</span><br><span class="line">@AutoConfigurationPackage</span><br><span class="line">@Import(&#123;AutoConfigurationImportSelector.class&#125;)</span><br><span class="line">public @interface EnableAutoConfiguration &#123;</span><br><span class="line">    String ENABLED_OVERRIDE_PROPERTY = &quot;spring.boot.enableautoconfiguration&quot;;</span><br><span class="line"></span><br><span class="line">    Class&lt;?&gt;[] exclude() default &#123;&#125;;</span><br><span class="line"></span><br><span class="line">    String[] excludeName() default &#123;&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>EnableAutoConfiguration</code> 注解主要作用是通过 <code>@Import</code> 注入 <code>EnableAutoConfigurationImportSelector</code> 实例，后者是实现 AutoConfiguration 功能的核心类。<br><img src="/imgs/SpringBoot/EnableAutoConfigurationImportSelector%E6%97%B6%E5%BA%8F%E5%9B%BE.png" alt="EnableAutoConfigurationImportSelector时序图" title="EnableAutoConfigurationImportSelector时序图"><br><code>EnableAutoConfigurationImportSelector</code> 类实现了 <code>DeferredImportSelector</code> 接口的 <code>String[] selectImports(AnnotationMetadata metadata)</code> 方法，当 Spring 框架解析 <code>@Import</code> 注解时候会调用该方法。<br>代码<code>EnableAutoConfigurationImportSelector#getCandidateConfigurations</code>和<code>loadFactoryNames</code>的作用是扫描 classpath 下含有 <code>Meta-INF/spring.factories</code> 文件的 jar，并解析文件中名字为 org.springframework.boot.autoconfigure.EnableAutoConfiguration 的配置项。<br>getCandidateConfigurations会返回名字为 org.springframework.boot.autoconfigure.EnableAutoConfiguration 的配置项的值的一个列表并且对列表内容进行去重处理。</p>
-<blockquote>
-<p>正常情况下，去重后的列表里面的类都会被自动注入到 Spring IOC 容器，除非指定不自动注入某些功能，比如若要排除自动创建数据源和事务管理的功能可以：<code>@EnableAutoConfiguration(exclude=&#123;DataSourceAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class&#125;)</code>，getExclusions 就是读取 EnableAutoConfiguration 注解里面的 excludeName 和 exclude 配置项，然后从去重后的列名列表里面剔除。这样在自动注入时候就不会对排除掉的自动配置功能进行注入了。</p>
-</blockquote>
-<p>这个列表中的每个元素就是一个自动配置功能，比如 org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration 是 Web 容器自动注入的功能类（比如这个类可以自动扫描 Tomcat 的 start 并创建一个 Tomcat 容器）。</p>
-<h3 id="例子-注入-Web-容器"><a href="#例子-注入-Web-容器" class="headerlink" title="例子 - 注入 Web 容器"></a>例子 - 注入 Web 容器</h3><p>ServletWebServerFactoryAutoConfiguration 的部分核心代码如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)</span><br><span class="line">@ConditionalOnClass(ServletRequest.class)</span><br><span class="line">@ConditionalOnWebApplication(type = Type.SERVLET)</span><br><span class="line">@EnableConfigurationProperties(ServerProperties.class)</span><br><span class="line">@Import(&#123; ServletWebServerFactoryAutoConfiguration.BeanPostProcessorsRegistrar.class,</span><br><span class="line">		ServletWebServerFactoryConfiguration.EmbeddedTomcat.class,</span><br><span class="line">		ServletWebServerFactoryConfiguration.EmbeddedJetty.class,</span><br><span class="line">		ServletWebServerFactoryConfiguration.EmbeddedUndertow.class &#125;)</span><br><span class="line">public class ServletWebServerFactoryAutoConfiguration &#123;</span><br><span class="line"></span><br><span class="line">	@Bean</span><br><span class="line">	public ServletWebServerFactoryCustomizer servletWebServerFactoryCustomizer(ServerProperties serverProperties) &#123;</span><br><span class="line">		return new ServletWebServerFactoryCustomizer(serverProperties);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	@Bean</span><br><span class="line">	@ConditionalOnClass(name = &quot;org.apache.catalina.startup.Tomcat&quot;)</span><br><span class="line">	public TomcatServletWebServerFactoryCustomizer tomcatServletWebServerFactoryCustomizer(</span><br><span class="line">			ServerProperties serverProperties) &#123;</span><br><span class="line">		return new TomcatServletWebServerFactoryCustomizer(serverProperties);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	/**</span><br><span class="line">	 * Registers a &#123;@link WebServerFactoryCustomizerBeanPostProcessor&#125;. Registered via</span><br><span class="line">	 * &#123;@link ImportBeanDefinitionRegistrar&#125; for early registration.</span><br><span class="line">	 */</span><br><span class="line">	public static class BeanPostProcessorsRegistrar implements ImportBeanDefinitionRegistrar, BeanFactoryAware &#123;</span><br><span class="line"></span><br><span class="line">		private ConfigurableListableBeanFactory beanFactory;</span><br><span class="line"></span><br><span class="line">		@Override</span><br><span class="line">		public void setBeanFactory(BeanFactory beanFactory) throws BeansException &#123;</span><br><span class="line">			if (beanFactory instanceof ConfigurableListableBeanFactory) &#123;</span><br><span class="line">				this.beanFactory = (ConfigurableListableBeanFactory) beanFactory;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		@Override</span><br><span class="line">		public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata,</span><br><span class="line">				BeanDefinitionRegistry registry) &#123;</span><br><span class="line">			if (this.beanFactory == null) &#123;</span><br><span class="line">				return;</span><br><span class="line">			&#125;</span><br><span class="line">			registerSyntheticBeanIfMissing(registry, &quot;webServerFactoryCustomizerBeanPostProcessor&quot;,</span><br><span class="line">					WebServerFactoryCustomizerBeanPostProcessor.class);</span><br><span class="line">			registerSyntheticBeanIfMissing(registry, &quot;errorPageRegistrarBeanPostProcessor&quot;,</span><br><span class="line">					ErrorPageRegistrarBeanPostProcessor.class);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		private void registerSyntheticBeanIfMissing(BeanDefinitionRegistry registry, String name, Class&lt;?&gt; beanClass) &#123;</span><br><span class="line">			if (ObjectUtils.isEmpty(this.beanFactory.getBeanNamesForType(beanClass, true, false))) &#123;</span><br><span class="line">				RootBeanDefinition beanDefinition = new RootBeanDefinition(beanClass);</span><br><span class="line">				beanDefinition.setSynthetic(true);</span><br><span class="line">				registry.registerBeanDefinition(name, beanDefinition);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>ServletWebServerFactoryAutoConfiguration 类是 Web 容器自动注入的 Auto-configuration 类。</p>
-<ul>
-<li>@ConditionalOnWebApplication 说明当前是 Web 环境上下文时候才注入本类到 IOC。</li>
-<li>@Import 注解导入了另一个配置<code>ServletWebServerFactoryConfiguration.EmbeddedTomcat.class</code>，这里包含了真正的注入 Tomcat 实例的逻辑：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">class ServletWebServerFactoryConfiguration &#123;</span><br><span class="line"></span><br><span class="line">	@Configuration</span><br><span class="line">	@ConditionalOnClass(&#123; Servlet.class, Tomcat.class, UpgradeProtocol.class &#125;)</span><br><span class="line">	@ConditionalOnMissingBean(value = ServletWebServerFactory.class, search = SearchStrategy.CURRENT)</span><br><span class="line">	public static class EmbeddedTomcat &#123;</span><br><span class="line"></span><br><span class="line">		@Bean</span><br><span class="line">		public TomcatServletWebServerFactory tomcatServletWebServerFactory() &#123;</span><br><span class="line">			return new TomcatServletWebServerFactory();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure></li>
-<li>@ConditionalOnClass：只有在 classpath 下存在指定的类的时候 Bean 才能被创建。</li>
-<li>@ConditionalOnMissingBean：只有对应的 Bean 在系统中都没有被创建，它修饰的初始化代码块才会执行，【用户自己手动创建的 Bean 优先】。</li>
-</ul>
-<p>当应用引入 spring-boot-starter-web 时候默认引入的是 Tomcat 的 starter，所以会发现 classpath 下存在 Servlet.class、 Tomcat.class 这两个类，并且 IOC 里面没有 TomcatEmbeddedServletContainerFactory 的实例，因此会创建其实例到 IOC 容器中，最终会创建一个 Tomcat 容器。<br>当然，如果需要使用 Jetty 则需要在引用 spring-boot-starter-web 的时候排除掉 Tomcat 的 start，然后在引入 Jetty 的 start 即可。</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总而言之，自动配置的生效步骤可以概括如下：</p>
-<ol>
-<li>Spring Boot 在启动时会去依赖的 Starter 包中寻找 resources&#x2F;META-INF&#x2F;spring.factories 文件，然后根据文件中配置的 Jar 包去扫描项目所依赖的 Jar 包。</li>
-<li>根据 spring.factories 配置加载 AutoConfigure 类</li>
-<li>根据 @Conditional 注解的条件，进行自动配置并将 Bean 注入 Spring Context</li>
-</ol>
-<h2 id="spring-boot-模块"><a href="#spring-boot-模块" class="headerlink" title="spring-boot 模块"></a>spring-boot 模块</h2><p>提供了一些特性用来支持 SpringBoot 中其它模块，这些特性包括：</p>
-<ol>
-<li>SpringApplication 类提供了静态方法以便于写一个独立了 Spring 应用程序，该类的主要职责是 create 和 refresh 一个合适的 Spring 应用程序上下文（ApplicationContext）。</li>
-<li>一流的外部配置的支持（application.properties）。</li>
-<li>提供了便捷的应用程序上下文（ApplicationContext）的初始化器，以便在 ApplicationContext 使用前对其进行用户定制。</li>
-<li>给 Web 应用提供了一个可选的 Web 容器（目前有 Tomcat 或 Jetty）。</li>
-</ol>
-<h3 id="SpringApplication-的执行流程"><a href="#SpringApplication-的执行流程" class="headerlink" title="SpringApplication 的执行流程"></a>SpringApplication 的执行流程</h3><p>一般的 SpringBoot 项目都会有一个如下所示的 Application 类：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@SpringBootApplication</span><br><span class="line">public class Web1Application &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SpringApplication.run(Web1Application.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在<code>JarLauncher</code>启动过后里面实际上就是调用了 SpringApplication#run 方法，SpringApplication 的执行流程如下：<br><img src="/imgs/SpringBoot/SpringApplication%E6%89%A7%E8%A1%8C%E6%97%B6%E5%BA%8F%E5%9B%BE.png" alt="SpringApplication执行时序图" title="SpringApplication执行时序图"></p>
-<ol>
-<li>SpringApplication 的构造函数里面会调用 initialize 方法在 classpath 的 jar 包里面查找 META-INF&#x2F;spring.factories，如果找到则看里面是否有配置 <code>ApplicationContextInitializer</code> 类型的 Bean，有则加载到 SpringApplication 的变量 <code>initializers</code> 里面存放，比如 spring-boot.jar 里面。<br><img src="/imgs/SpringBoot/ApplicationContextInitializer%E9%85%8D%E7%BD%AE.png" alt="ApplicationContextInitializer配置" title="ApplicationContextInitializer配置"></li>
-<li>createAndRefreshContext 做了这几件事情：<ol>
-<li>设置环境，加载 application.properties 等配置文件；</li>
-<li>根据 classpath 的 jar 里面是否有 ConfigurableWebEnvironment 判断当前是否需要创建 Web 应用程序上下文还是创建一个非 Web 应用程序上下文；</li>
-<li>使用前面加载的应用程序初始化器对创建的应用程序上下文进行初始化；</li>
-<li>刷新应用程序上下文解析 Bean 定义到应用程序上下文里面的 IOC 容器，在刷新过程的 invokeBeanFactoryPostProcessors 过程中(10)(11)会去解析类上面标注的 @import 注解，然后就会调用所有的 ImportSelector 的 selectImports 方法，这也是第二部分时序图开始执行的地方。</li>
-</ol>
-</li>
-</ol>
-<h3 id="Web-容器的创建"><a href="#Web-容器的创建" class="headerlink" title="Web 容器的创建"></a>Web 容器的创建</h3><p>通过自动配置将 TomcatEmbeddedServletContainerFactory 或者 JettyEmbeddedServletContainerFactory 的实例注入 IOC 容器后，我们就可以使用 Web 容器来提供 Web 服务了。<br>具体的 Web 容器的创建是在容器刷新过程的 onRefresh 阶段进行的（这个阶段是在刷新过程的 invokeBeanFactoryPostProcessors 阶段的后面）：<br><img src="/imgs/SpringBoot/Web%E5%AE%B9%E5%99%A8%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B.png" alt="Web容器创建过程" title="Web容器创建过程"></p>
-<ul>
-<li>getBeanNamesForType 获取了 IOC 容器中的 EmbeddedServletContainerFactory 类型的 Bean 的 name 集合，如果 name 集合为空或者多个则抛出异常。还记得 Web 容器工厂是通过自动配置注入到 IOC 的吧，并且 TomcatEmbeddedServletContainerFactory 或者 JettyEmbeddedServletContainerFactory 都是实现了 EmbeddedServletContainerFactory 接口。</li>
-<li>如果 IOC 里面只有一个 Web 容器工厂 Bean 则获取该 Bean 的实例，然后调用该 Bean 的 getEmbeddedServletContainer 获取 Web 容器，这里假设 Web 容器工厂为 Tomcat ，则创建 Tomcat 容器并进行初始化。</li>
-</ul>
-<h2 id="Actuator-模块"><a href="#Actuator-模块" class="headerlink" title="Actuator 模块"></a>Actuator 模块</h2><p><img src="/imgs/SpringBoot/Actuator%E7%B1%BB%E5%9B%BE.png" alt="Actuator类图" title="Actuator类图"><br>Actuator 模块提供了一些组件用于检查应用或中间件的健康状况：</p>
-<ol>
-<li>Inspect：检测应用或中间件的健康状况；</li>
-<li>Aggregate：聚合所有结果。</li>
-</ol>
-<p>基于 Actuator 模块，我们可以开发一个服务探活系统：</p>
-<ol>
-<li>Actuator 为业务服务器暴露出一个探活端口<code>healthcheck</code>，借助 Spring 容器获取到中间件的客户端实例；</li>
-<li>探活服务<code>HealthCheck-Task</code>定时轮询所有服务，统计单位时间内请求出现问题的次数，从而发送报警短信提醒研发同学。</li>
-</ol>
-<p>服务的轮询探活将是这个系统的主要瓶颈，有一些措施可以作为参考：</p>
-<ol>
-<li>灵活使用<code>CompletableFuture</code>这些并发编排组件，因为探活请求一般都是比较”慢”的，因此可以通过并行化来提高效率；</li>
-<li>探活不能占用太多系统资源，合理设置探活超时时间，很多客户端的默认超时时间达到 1 分钟甚至更长，必须额外设置探活请求的超时时间，避免服务器挂掉时所有线程都被<code>hang</code>死，导致服务雪崩。<blockquote>
-<p>探活不能和业务代码共用线程池，做到线程池隔离，即使出问题也只影响到<code>HealthCheck-Task</code>。</p>
-</blockquote>
-</li>
-</ol>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/hello-shf/p/10864977.html">SpringBoot应用篇（一）：自定义starter</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/bbf439c8a203">从零开始开发一个Spring Boot Starter</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/87f101d8ec41">SpringBoot启动流程解析</a></li>
-</ol>
-<h3 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://github.com/fangjian0423/springboot-analysis">fangjian0423&#x2F;springboot-analysis</a></li>
 </ol>
 <script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
@@ -1830,193 +2190,6 @@ application-peer2.properties： <figure class="highlight plaintext"><table><tr><
 </ul>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
 <li><a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/java/j-lo-just-in-time/">深入浅出 JIT 编译器</a></li>
-</ol>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e39c963b.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/e39c963b.html" class="post-title-link" itemprop="url">JVM 源码分析</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-10-05 20:56:12" itemprop="dateCreated datePublished" datetime="2019-10-05T20:56:12+08:00">2019-10-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-10-09 16:58:44" itemprop="dateModified" datetime="2022-10-09T16:58:44+08:00">2022-10-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-
-<h2 id="搭建源码调试环境"><a href="#搭建源码调试环境" class="headerlink" title="搭建源码调试环境"></a>搭建源码调试环境</h2><p>源码下载地址：<a target="_blank" rel="noopener" href="https://github.com/unofficial-openjdk/openjdk">unofficial-openjdk&#x2F;openjdk</a></p>
-<ol>
-<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000008346240">OpenJDK9 Hotspot Ubuntu 编译和调试</a><br>mac 环境下搭建：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ee7e9176632c">mac 下编译 openjdk1.9 及集成 clion 动态调试</a></li>
-</ol>
-<h3 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h3><ol>
-<li>g++和 gcc 版本不匹配</li>
-<li>一些 Warning 被当作错误报错了<br>大部分 Warning 不会影响最终结果，可以关掉：<a target="_blank" rel="noopener" href="https://blog.csdn.net/desiyonan/article/details/80802066">https://blog.csdn.net/desiyonan/article/details/80802066</a></li>
-</ol>
-<h3 id="阅读"><a href="#阅读" class="headerlink" title="阅读"></a>阅读</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/54621747">如何找 JDK 中 native 代码的位置？</a></li>
-<li><a target="_blank" rel="noopener" href="http://rednaxelafx.iteye.com/blog/1549577">OpenJDK 源码阅读导航</a></li>
-</ol>
-<h3 id="编译-openjdk"><a href="#编译-openjdk" class="headerlink" title="编译 openjdk"></a>编译 openjdk</h3><ol>
-<li>下载<br>代码的下载见 building 文档，使用一个 Mercurial 工具进行源码控制。</li>
-<li>准备工具<br>找到这种开放源码的软件，第一步当然是查看 README 了，openjdk 的 README 中告知了 building 文档的位置，相当详细。<br>硬件要求<br>操作系统要求<br>编译器要求，需要 gcc 和 clang，他们的区别见<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/20235742">Clang 比 GCC 好在哪里？</a><br>JDK 要求，虽然挺矛盾的，但是一部分模块是用 JDK 写的，所以 Java 编译器也是需要的，一般编译 JDK8 时需要的 JDK 版本是 7 就够了，但是 openjdk 需要 8 才行（不知道为什么），这个 jdk 可以直接使用 apt-get 安装。<br>外部库要求，<br>其他工具，make、bash、autoconf</li>
-<li>configure<br>准备所有配置文件</li>
-<li>make<br>编译源码，默认下只会编译一些必要的部分，如果编译成功可以在 openjdk&#x2F;build 文件夹下找到目标文件，我的成品所在目录是<code>$&#123;openjdk&#125;/build/linux-x86_64-normal-server-release/jdk/bin</code>。</li>
-<li>run test<br>openjdk 使用了一个叫 jtreg 的测试框架，文档有<a target="_blank" rel="noopener" href="http://openjdk.java.net/jtreg/build.html">这里</a>还有<a target="_blank" rel="noopener" href="https://adoptopenjdk.gitbooks.io/adoptopenjdk-getting-started-kit/content/en/intermediate-steps/how_to_use_jtreg_-_java_regression_test_harness.html">这里</a>，我设置了一个愚蠢的环境变量 JAVA18HOME 然后尝试着去<code>make -C make</code>编译它，但是还是提示缺少什么<code>org.testing</code>，可能还有什么依赖库没装，这个框架可能是给 oracle 的内部员工或者外星人用的吧？</li>
-</ol>
-<h3 id="定位-Object-的-native-方法"><a href="#定位-Object-的-native-方法" class="headerlink" title="定位 Object 的 native 方法"></a>定位 Object 的 native 方法</h3><ol>
-<li>搜索“Object”打开 jdk 下的 Object.c 文件<br>看到下面这个方法数组： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">static JNINativeMethod methods[] = &#123;</span><br><span class="line">    &#123;&quot;hashCode&quot;,    &quot;()I&quot;,                    (void *)&amp;JVM_IHashCode&#125;,</span><br><span class="line">    &#123;&quot;wait&quot;,        &quot;(J)V&quot;,                   (void *)&amp;JVM_MonitorWait&#125;,</span><br><span class="line">    &#123;&quot;notify&quot;,      &quot;()V&quot;,                    (void *)&amp;JVM_MonitorNotify&#125;,</span><br><span class="line">    &#123;&quot;notifyAll&quot;,   &quot;()V&quot;,                    (void *)&amp;JVM_MonitorNotifyAll&#125;,</span><br><span class="line">    &#123;&quot;clone&quot;,       &quot;()Ljava/lang/Object;&quot;,   (void *)&amp;JVM_Clone&#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
-<li>然后搜索“JVM_MonitorWait”打开 hotspot 下的 jvm.cpp 文件<br>里面有下面这条语句： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">JVM_ENTRY(void, JVM_MonitorWait(JNIEnv* env, jobject handle, jlong ms))</span><br><span class="line">  JVMWrapper(&quot;JVM_MonitorWait&quot;);</span><br><span class="line">  Handle obj(THREAD, JNIHandles::resolve_non_null(handle));</span><br><span class="line">  JavaThreadInObjectWaitState jtiows(thread, ms != 0);</span><br><span class="line">  if (JvmtiExport::should_post_monitor_wait()) &#123;</span><br><span class="line">    JvmtiExport::post_monitor_wait((JavaThread *)THREAD, (oop)obj(), ms);</span><br><span class="line"></span><br><span class="line">    // The current thread already owns the monitor and it has not yet</span><br><span class="line">    // been added to the wait queue so the current thread cannot be</span><br><span class="line">    // made the successor. This means that the JVMTI_EVENT_MONITOR_WAIT</span><br><span class="line">    // event handler cannot accidentally consume an unpark() meant for</span><br><span class="line">    // the ParkEvent associated with this ObjectMonitor.</span><br><span class="line">  &#125;</span><br><span class="line">  ObjectSynchronizer::wait(obj, ms, CHECK);</span><br><span class="line">JVM_END</span><br></pre></td></tr></table></figure>
-我们暂时不知道这几个宏到底什么意思，不过核心大概是最后的那个<code>ObjectSynchronizer::wait</code>吧，这个类定义在 C++文件 synchronizer.cpp 中。</li>
-<li>综上所述<br>可以看到如果一个类定义了 native 方法，那么基本可以在 jdk 目录下找到该类的定义（<strong>类所在包结构和其在 openjdk 中的定义的路径有什么关联？？？</strong>），至于其实现，从<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/54621747">知乎</a>上可以找到一段说明，我不知道对错：<blockquote>
-<p>如果间接调用了 hotspot 的实现（jvm 会以动态库的形式被加载，prims 文件夹里定义了 hotspot 与其他模块的接口及其实现），那么从 hotspot&#x2F;src&#x2F;share&#x2F;vm&#x2F;prims&#x2F;jvm.cpp 中可以找到 JVM_Xxx 函数的实现。</p>
-</blockquote>
-</li>
-</ol>
-<h3 id="为-Object-类添加-native-方法-nop"><a href="#为-Object-类添加-native-方法-nop" class="headerlink" title="为 Object 类添加 native 方法 nop()"></a>为 Object 类添加 native 方法 nop()</h3><p>根据<a target="_blank" rel="noopener" href="http://www.infoq.com/cn/articles/Introduction-to-HotSpot">这里</a>的说法，openjdk 有两种方式来定义 native 函数，一种是按一种特别的方式命名函数，这样加载后就可以和 Java 中的 native 方法对上，另一种是使用 registerNatives()的方式，观察 Object.c 文件可以发现，这种方法先定义了一个 JNINativeMethod 类型的静态数组来做 Java 方法和本地函数的对应，然后使用 JNI 方法注册了一个叫 Java_java_lang_Object_registerNatives 的本地方法来实施这种映射。<br>当使用第一种方式在 Object.c 中定义一个特殊命名的 nop()函数时，编译不通过，报错显示<code>Incompatible definition of java.lang.Object</code>，我定义的 nop 函数：<br>    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">JNIEXPORT void JNICALL</span><br><span class="line">Java_java_lang_Object_nop(JNIEnv *env, jobject this)</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>然后下面是我使用第二种方式定义 nop()函数的过程（虽然也不行）：</p>
-<ol>
-<li><p>修改 Object.c<br>methods 数组中添加一行：</p>
- <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;nop&quot;, &quot;()V&quot;, (void*)&amp;</span><br></pre></td></tr></table></figure>
-<p>这种定义方法参照了<a target="_blank" rel="noopener" href="http://blog.csdn.net/bigapple88/article/details/6756204">这里</a></p>
-</li>
-<li><p>修改 Object.java<br>其所在目录为<code>$&#123;openjdk&#125;/jdk/src/java.base/share/classes/java/lang/Object.java</code>，为其添加一个 nop()方法：</p>
- <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">*</span><br><span class="line">*/</span><br><span class="line">@HotSpotIntrinsicCandidate</span><br><span class="line">public native void nop();</span><br></pre></td></tr></table></figure>
-<p>为什么要加注释？为什么不能加 final？</p>
-</li>
-<li><p>重编译 make<br>虽然只是添加了一个方法，但是几乎所有包下的都要重新编译了，所以编译过程会稍微有点长。</p>
-</li>
-<li><p>测试<br>使用<code>javap</code>命令反编译可以看到 Object 类中确实已经有了一个 nop()方法：</p>
- <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javap $&#123;openjdk&#125;/build/linux-x86_64-normal-server-release/jdk/modules/java.base/java/lang/Object.class</span><br></pre></td></tr></table></figure>
-<p><strong>但是实际编译时却报错了，错误大概是Object类不兼容？？？</strong></p>
-</li>
-<li><p>native 方法的实现机制<br>参见 JNI 原理。</p>
-</li>
-</ol>
-<h2 id="JNI"><a href="#JNI" class="headerlink" title="JNI"></a>JNI</h2><h3 id="生成-h头文件"><a href="#生成-h头文件" class="headerlink" title="生成.h头文件"></a>生成.h头文件</h3><p>使用 javah 命令，在项目的 src 目录下运行，其中-d 指定目标目录，-jni 是默认选项，生成 jni 头文件，可以加-classpath 指定 class 路径，但必须是绝对路径</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javah -d ../jni -jni com.tallate.HelloJNI</span><br></pre></td></tr></table></figure>
-<p>接下来编译.c 文件，-c 可以生成目标文件（未链接），-I 可以指定#include 查找的目录，不然 jni 有些头文件找不到</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c -I &quot;/usr/lib/jvm/java-8-openjdk-amd64/include&quot; -I &quot;/usr/lib/jvm/java-8-openjdk-amd64/include/linux&quot;  HelloJNI.c </span><br></pre></td></tr></table></figure>
-<p>接下来编译成一个.so 链接库</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc HelloJNI.c -I &quot;/usr/lib/jvm/java-8-openjdk-amd64/include&quot; -I &quot;/usr/lib/jvm/java-8-openjdk-amd64/include/linux&quot; -fPIC -shared -o libhello.so</span><br></pre></td></tr></table></figure>
-<p>接下来可以在Java中加载</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 在linux下动态库必须有前缀lib</span><br><span class="line">System.loadLibrary(&quot;hello&quot;);</span><br></pre></td></tr></table></figure>
-<h3 id="调用-native-方法的流程"><a href="#调用-native-方法的流程" class="headerlink" title="调用 native 方法的流程"></a>调用 native 方法的流程</h3><ol>
-<li>native 方法编译后多一个 ACC_NATIVE 标志</li>
-<li>loadLibrary 方法调用 JVM 的 load 本地方法</li>
-<li>load 方法最终调用系统调用 dlopen 加载动态链接库</li>
-<li>调用本地方法时，实际上调用了 JVM 中加载的函数，栈帧压入本地方法栈中（HotSpot 中本地方法栈&#x3D;虚拟机栈）</li>
-</ol>
-<h3 id="修改-Object-类，为其添加一个-native-方法-nop"><a href="#修改-Object-类，为其添加一个-native-方法-nop" class="headerlink" title="修改 Object 类，为其添加一个 native 方法 nop()"></a>修改 Object 类，为其添加一个 native 方法 nop()</h3><h2 id="锁（内置锁）"><a href="#锁（内置锁）" class="headerlink" title="锁（内置锁）"></a>锁（内置锁）</h2><ol>
-<li>锁的存储结构？</li>
-<li>获取锁的时机？</li>
-<li>释放锁的时机？</li>
-</ol>
-<h2 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h2><p>和 JDK 的线程操作相关的类有 Object 和 Thread，Object 中包括 wait、notify 和 notifyAll，Thread 中包括 yield、sleep、exit、interrupt、join、start，run 的主要任务是执行用户定义的逻辑，还有一些方法已经被 Deprecated，不必再提</p>
-<h3 id="源码中和线程操作相关的一些数据结构"><a href="#源码中和线程操作相关的一些数据结构" class="headerlink" title="源码中和线程操作相关的一些数据结构"></a>源码中和线程操作相关的一些数据结构</h3><ol>
-<li><p>ObjectMonitor<br>对象监视器，定义和声明在 objectMonitor.*中，主要包含</p>
-</li>
-<li><p>ObjectWaiter</p>
-</li>
-<li><p>ObjectSynchronizer</p>
-</li>
-</ol>
-<h3 id="wait"><a href="#wait" class="headerlink" title="wait"></a>wait</h3><p>wait 是 native 方法，实现在 synchronizer.cpp 中，ObjectSynchronizer::wait：</p>
-<ol>
-<li><p>通过<code>ObjectSynchronizer::inflate</code>方法找到 object 中的<code>ObjectMonitor monitor</code></p>
-</li>
-<li><p>调用 monitor.wait<br>wait 方法比较复杂，但是核心过程只有 3 步：</p>
-<ul>
-<li>ObjectMonitor::AddWaiter(..)将新建立的 ObjectWaiter 对象插入_WaitSet 队列的末尾</li>
-<li>ObjectMonitor::exit(..)释放锁</li>
-<li>Self-&gt;_ParkEvent-&gt;park等待</li>
-</ul>
-</li>
-</ol>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><h3 id="JNI-1"><a href="#JNI-1" class="headerlink" title="JNI"></a>JNI</h3><ol>
-<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/huachao1001/article/category/2862631">介绍</a></li>
-<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/ngvjai/article/details/8520840">生成.so 方法</a></li>
-<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/larrylgq/article/details/7515362">修改 java.library.path 方法</a></li>
-<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/hackooo/article/details/48395765/">Java JNI 实现原理初探</a></li>
-<li><a target="_blank" rel="noopener" href="http://blog.chinaunix.net/uid-22028680-id-3178229.html">Java Native Interface (JNI) 工作原理</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/Anker/p/3746802.html">dlopen</a></li>
-</ol>
-<h3 id="线程-1"><a href="#线程-1" class="headerlink" title="线程"></a>线程</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/23328075">java sleep 和 wait 的区别的疑惑?</a></li>
-<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/raintungli/article/details/6532784">java 中的 wait 和 notify 实现的源码分析</a></li>
-<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/raintungli/article/details/6553337">JVM Thread stop 的源码分析</a></li>
 </ol>
 <script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       

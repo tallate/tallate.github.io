@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">79</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">182</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">183</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">182</span>
+          <span class="site-state-item-count">183</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -158,7 +158,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-count">80</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -175,6 +175,102 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/9d02e43e.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/9d02e43e.html" class="post-title-link" itemprop="url">并发的定义</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-01 21:07:49" itemprop="dateCreated datePublished" datetime="2019-09-01T21:07:49+08:00">2019-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>异步编程富有魅力，但是错误的使用不仅不会带来益处，还会使得系统变得难以维护、Bug 遍地，接下来我希望总结一下遇到的异步任务场景，减少以后遇到类似问题阻塞在设计上的时间。</p>
+<blockquote>
+<p>曾经经历过因三方（传统行业）接口效率过低而导致服务不可用的情况，交流发现对方根本没有考虑在系统里加入缓存、消息队列等中间件，原因竟然是希望保证高一致性。<br>实际上大部分场景中，查询操作并没有保证一致性的意义，而写操作就算不能马上被看到结果也不会对体验造成太大的影响——只要最终能成功即可，这是符合<code>BASE</code>设计原则的。这个问题后续经排查发现原因是对方因为系统设计有问题、导致频繁大规模的接口超时，重启了后问题缓解，对方就不再追究了，非常无奈。没有不能解决的技术难题，只是有时候沟通、惰性等会阻碍问题的定位。<br>并发的话题真是非常的多，从最底层的硬件到高级语言 Java 中的 JUC，从最繁琐的业务系统（现在一般是微服务架构）到比较新的人工智能（如分布式机器学习），几乎无所不包，一直想爬出坑来，但是总觉得差点意思，在此我也仅仅能根据一些现成的资料总结出一些结论。</p>
+</blockquote>
+<p>[x] 异步和非阻塞<br>[x] 并发和并行<br>[x] 并发模式 STM 介绍<br>[x] 并发模式 Actor 介绍</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/9d02e43e.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -999,190 +1095,6 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/1c3259ad.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/1c3259ad.html" class="post-title-link" itemprop="url">ES3_1分布式搜索</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-08-21 09:03:54" itemprop="dateCreated datePublished" datetime="2019-08-21T09:03:54+08:00">2019-08-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>先分析ES中的搜索原理，然后总结ES中的搜索方法，主要包括轻量查询、请求体查询。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/1c3259ad.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/8772904b.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/8772904b.html" class="post-title-link" itemprop="url">ES3_2分析</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-08-21 09:03:54" itemprop="dateCreated datePublished" datetime="2019-08-21T09:03:54+08:00">2019-08-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-10-09 16:58:44" itemprop="dateModified" datetime="2022-10-09T16:58:44+08:00">2022-10-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>搜索的前提是分析文档和搜索词。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/8772904b.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://tallate.github.io/bf6ba1a3.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1324,6 +1236,98 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">public Engine.GetResult get(Engine.Get get) &#123;</span><br><span class="line">    readAllowed();</span><br><span class="line">    return getEngine().get(get, this::acquireSearcher);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public GetResult get(Get get, BiFunction&lt;String, SearcherScope, Searcher&gt; searcherFactory) throws EngineException &#123;</span><br><span class="line">    assert Objects.equals(get.uid().field(), uidField) : get.uid().field();</span><br><span class="line">    try (ReleasableLock ignored = readLock.acquire()) &#123;</span><br><span class="line">        ensureOpen();</span><br><span class="line">        SearcherScope scope;</span><br><span class="line">        // 处理realtime选项，判断是否需要刷盘</span><br><span class="line">        if (get.realtime()) &#123;</span><br><span class="line">            VersionValue versionValue = null;</span><br><span class="line">            // versionMap写入索引的时候添加的，不会写入磁盘</span><br><span class="line">            try (Releasable ignore = versionMap.acquireLock(get.uid().bytes())) &#123;</span><br><span class="line">                // we need to lock here to access the version map to do this truly in RT</span><br><span class="line">                versionValue = getVersionFromMap(get.uid().bytes());</span><br><span class="line">            &#125;</span><br><span class="line">            if (versionValue != null) &#123;</span><br><span class="line">                if (versionValue.isDelete()) &#123;</span><br><span class="line">                    return GetResult.NOT_EXISTS;</span><br><span class="line">                &#125;</span><br><span class="line">                // 版本是否冲突</span><br><span class="line">                if (get.versionType().isVersionConflictForReads(versionValue.version, get.version())) &#123;</span><br><span class="line">                    throw new VersionConflictEngineException(shardId, get.type(), get.id(),</span><br><span class="line">                        get.versionType().explainConflictForReads(versionValue.version, get.version()));</span><br><span class="line">                &#125;</span><br><span class="line">                if (get.isReadFromTranslog()) &#123;</span><br><span class="line">                    // this is only used for updates - API _GET calls will always read form a reader for consistency</span><br><span class="line">                    // the update call doesn&#x27;t need the consistency since it&#x27;s source only + _parent but parent can go away in 7.0</span><br><span class="line">                    if (versionValue.getLocation() != null) &#123;</span><br><span class="line">                        try &#123;</span><br><span class="line">                            Translog.Operation operation = translog.readOperation(versionValue.getLocation());</span><br><span class="line">                            if (operation != null) &#123;</span><br><span class="line">                                // in the case of a already pruned translog generation we might get null here - yet very unlikely</span><br><span class="line">                                TranslogLeafReader reader = new TranslogLeafReader((Translog.Index) operation, engineConfig</span><br><span class="line">                                    .getIndexSettings().getIndexVersionCreated());</span><br><span class="line">                                return new GetResult(new Searcher(&quot;realtime_get&quot;, new IndexSearcher(reader)),</span><br><span class="line">                                    new VersionsAndSeqNoResolver.DocIdAndVersion(0, ((Translog.Index) operation).version(), reader, 0));</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125; catch (IOException e) &#123;</span><br><span class="line">                            maybeFailEngine(&quot;realtime_get&quot;, e); // lets check if the translog has failed with a tragic event</span><br><span class="line">                            throw new EngineException(shardId, &quot;failed to read operation from translog&quot;, e);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; else &#123;</span><br><span class="line">                        trackTranslogLocation.set(true);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                // 执行刷盘操作</span><br><span class="line">                refresh(&quot;realtime_get&quot;, SearcherScope.INTERNAL);</span><br><span class="line">            &#125;</span><br><span class="line">            scope = SearcherScope.INTERNAL;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            // we expose what has been externally expose in a point in time snapshot via an explicit refresh</span><br><span class="line">            scope = SearcherScope.EXTERNAL;</span><br><span class="line">        &#125;</span><br><span class="line">        // 调用Searcher读取数据</span><br><span class="line">        // no version, get the version from the index, we know that we refresh on flush</span><br><span class="line">        return getFromSearcher(get, searcherFactory, scope);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/1c3259ad.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/1c3259ad.html" class="post-title-link" itemprop="url">ES3_1分布式搜索</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-08-21 09:03:54" itemprop="dateCreated datePublished" datetime="2019-08-21T09:03:54+08:00">2019-08-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>先分析ES中的搜索原理，然后总结ES中的搜索方法，主要包括轻量查询、请求体查询。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/1c3259ad.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
