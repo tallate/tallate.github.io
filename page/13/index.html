@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">183</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">183</span>
+          <span class="site-state-item-count">186</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -175,6 +175,311 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/bf6c261d.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/bf6c261d.html" class="post-title-link" itemprop="url">Dubbo的SPI原理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-07 18:51:58" itemprop="dateCreated datePublished" datetime="2019-09-07T18:51:58+08:00">2019-09-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-10-09 16:58:44" itemprop="dateModified" datetime="2022-10-09T16:58:44+08:00">2022-10-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Dubbo/" itemprop="url" rel="index"><span itemprop="name">Dubbo</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+
+
+<h2 id="接口扩展策略注解-SPI"><a href="#接口扩展策略注解-SPI" class="headerlink" title="接口扩展策略注解 @SPI"></a>接口扩展策略注解 @SPI</h2><p>Dubbo中的很多扩展接口，如 Protocol、Transporter、Filter 等，都是通过 JDK 的 SPI 机制实现的，也就是说这些功能都可被用户自定义的扩展所替换，接口扩展点由注解<code>@SPI</code>定义。<br>JDK 中 SPI（Service Provider Interface）的设计与策略模式如出一辙，开发者可以替换掉 Dubbo 原扩展接口的默认实现，完成自定义需求，即可以自定义实现策略。<br>Dubbo 在 JDK 现有 SPI 实现的基础上做了如下改进：</p>
+<ol>
+<li>JDK 标准的 SPI 会一次性实例化扩展点所有实现，如果有扩展实现初始化很耗时，但如果没用上也加载，会很浪费资源。</li>
+<li>如果扩展点加载失败，连扩展点的名称都拿不到了。比如：JDK 标准的 ScriptEngine，通过 getName();获取脚本类型的名称，但如果 RubyScriptEngine 因为所依赖的 jruby.jar 不存在，导致 RubyScriptEngine 类加载失败，这个失败原因被吃掉了，和 ruby 对应不起来，当用户执行 ruby 脚本时，会报不支持 ruby，而不是真正失败的原因。</li>
+<li>增加了对扩展点 IoC 和 AOP 的支持，一个扩展点可以直接 setter 注入其它扩展点。</li>
+</ol>
+<p>那么 Dubbo 的 SPI 机制是怎么实现的呢？以协议扩展为例，Dubbo 中协议被抽象为 Protocol 接口。</p>
+<h3 id="读取扩展点"><a href="#读取扩展点" class="headerlink" title="读取扩展点"></a>读取扩展点</h3><p>ServiceConfig#protocol</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Protocol protocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension()</span><br></pre></td></tr></table></figure>
+
+<p>Dubbo 使用 ExtensionLoader 实现扩展点加载。</p>
+<ul>
+<li>ExtensionLoader#getExtensionLoader()<br>获取 ExtensionLoader 实现，保证每种扩展点一个单例。</li>
+<li>ExtensionLoader#getAdaptiveExtension()<br>根据不同的 SPI 扩展点，即不同的 interface，生成不同的 Adaptive 实例的代码。<br>-&gt; getAdaptiveExtensionClass()<br>-&gt; getExtensionClasses()<br>-&gt; loadExtensionClasses()<br>加载所有的扩展点实现，直到扩展点方法执行时才决定调用是一个扩展点实现，即从众多的实现策略中决定具体使用哪一个策略。<br>ExtensionLoader 会依次从<code>META-INF/dubbo/internal</code>（Dubbo 内部实现）、<code>META-INF/dubbo/</code>（开发者自定义策略）、<code>META-INF/services/</code>这几个目录下读取扩展点实现，目录下的同名文件配置了对应扩展点的实现策略，调用 loadFile 来加载对应的扩展策略。<br>-&gt; loadFile(Map&lt;String, Class&lt;?&gt;&gt; extensionClasses, String dir)</li>
+</ul>
+<h3 id="生成-Adaptive-实例"><a href="#生成-Adaptive-实例" class="headerlink" title="生成 Adaptive 实例"></a>生成 Adaptive 实例</h3><ul>
+<li>ExtensionLoader#loadFile<br>-&gt; String fileName &#x3D; dir + type.getName()<br>拼接文件路径<br>-&gt; ClassLoader classLoader &#x3D; findClassLoader()<br>拿到 ExtensionLoader 的类加载器。<br>-&gt; Class&lt;?&gt; clazz &#x3D; Class.forName(line, true, classLoader);<br>文件每行是一个实现类的全路径名，通过反射加载并拿到具体类型。<br>-&gt; extensionClasses.put(n, clazz)<br>添加到 map 里返回。</li>
+<li>ExtensionLoader#cachedClasses<br>-&gt; cachedClasses.set(classes)<br>添加到缓存。</li>
+<li>ExtensionLoader#createAdaptiveExtensionClass<br>-&gt; ExtensionLoader#createAdaptiveExtensionClassCode<br>生成 Adaptive 类。<br>-&gt; compiler &#x3D; ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.common.compiler.Compiler.class).getAdaptiveExtension()<br>拿到编译接口扩展点的一个具体实现，dubbo 内部支持 jdk 和 javassist，默认是 javassist。<br>-&gt; compiler.compile(code, classLoader)<br>编译代码，生成 Adaptive 实例类。</li>
+</ul>
+<p>上面提到 Compiler 也是一个扩展点，同样也依赖这个流程来实例化，在运行时生成 Adaptive 实例的时候，需要生成 Compiler 接口的 Adaptive 实例，即运行生成 Adaptive 实例的时候需要先有一个 Compiler 接口的 Adaptive 实例，那这样岂不是陷入了死循环，这里就要提到显示指定 Adaptive 实例的情况。<code>@Adaptive</code>注解支持类级别和方法级别：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、类级别：只能拥有一个，注解打在接口实现类上，显示的注册一个Adaptive实例，在编译期就存在，如`AdaptiveCompiler`，解决了上面的死循环问题，由`AdaptiveCompiler`依据dubbo配置决定使用哪个编译类；</span><br><span class="line">2、方法级别：在运行期动态的生成Adaptive实例。</span><br></pre></td></tr></table></figure>
+
+<h3 id="通过-URL-动态选择协议"><a href="#通过-URL-动态选择协议" class="headerlink" title="通过 URL 动态选择协议"></a>通过 URL 动态选择协议</h3><p>ExtensionLoader#createAdaptiveExtensionClassCode<br>生成的 Protocol 的 Adaptive 实例类，依据 URL 中 protocol key-value 的值，选择对应的 Protocol 策略来暴露和引用服务。<br>扩展点方法调用会有 URL 参数（或是参数有 URL 成员），这样依赖的扩展点可以从 URL 拿到配置信息，所有的扩展点自己定好配置的 Key 后，配置信息从 URL 上从最外层传入，URL 在配置传递上即是一条总线。<br>以 dubbo+zookeeper 为例，暴露和引用远程服务都是注册在 zookeeper 上的，服务注册在 zookeeper 上本质其实是一个 URL，远程服务调用的过程中依据 URL 的 key-value 来动态决定执行 Protocol、Filter 等接口扩展点的执行策略。<br>下面是 Provider 端暴露 HelloService 服务时在 zookeeper 上注册的 URL，在 zookeeper 上的路径为&#x2F;dubbo&#x2F;com.dubbo.test.service.HelloService&#x2F;providers，URL 表示了采用 dubbo 协议，接口为 com.dubbo.test.service.HelloService，方法为 say，要执行的 Filter 为 whiteFilter 等。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[zk： localhost：2181(CONNECTED) 1] Is /dubbo/com.dubbo.test.service.HelloService/providers</span><br><span class="line">[dubbo://127.0.0.1:2O881/com.dubbo.test.service.HelloService?anyhost=true&amp;application=dubbo-test-service&amp;dubbo=2.4.10&amp;group=test-prod&amp;interface=com.dubbo.test.service.HelloService&amp;methods=say&amp;pid=21242&amp;revision=l.0&amp;service.filter=whiteFilter&amp;side=providerxtamp=1495436105078&amp;version=l.0]</span><br></pre></td></tr></table></figure>
+
+<h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><ul>
+<li>volatile Class&lt;~&gt; cachedAdaptiveClass<br>这个是缓存 AdaptiveClass，如果一个扩展类的类上面带有 @Adaptive 注解，那么这个类就会被缓存在这个地方，每一种类型的扩展类只有一个 AdaptiveClass，如果发现有多个，则会报错。另外，当通过 getAdaptiveExtensionClass 来获取自适应扩展类时，如果当前还没有 AdaptiveClass，则会自动创建一个（动态生成 Java 代码，再编译，典型的比如 Protocol$Adaptive 就是这么生成的）</li>
+<li>Set&lt;~&gt; cachedWrapperClasses<br>这个是缓存包装类的，Dubbo 判断一个扩展类是否是包装类比较简单，通过构造函数来判断，如果这个扩展类有一个构造函数，其中参数是当前扩展类的类型，那么就是包装类，举个例子，ProtocolFilterWrapper 就是 protocol 扩展类的包装类，因为有这个构造函数：<code>public ProtocolFilterWrapper(Protocol protocol)</code></li>
+<li>Map&lt;~&gt; cachedActivates<br>这个是缓存激活的扩展类，当然，@Activate 注解还可以规定激活的条件和时机</li>
+<li>Holder&lt;~&gt; cachedClasses<br>这个是缓存 Adaptive 和 Wrapper 扩展类之外的普通扩展类</li>
+</ul>
+<p>扩展类被加载后会根据一定的规则放入以上 4 个缓存中，比如带有 @Adaptive 注解的会被放入 cachedAdaptiveClass。</p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/5582e809.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/5582e809.html" class="post-title-link" itemprop="url">分布式 Session 和 OAuth</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-02 21:20:12" itemprop="dateCreated datePublished" datetime="2019-09-02T21:20:12+08:00">2019-09-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>不论一家企业做什么领域业务，登录基本都是绕不过去的功能——任何操作都必须在已经登录的前提下才能执行，我这里主要聚焦登录中分布式 Session 的设计，然后连带提一下其他方方面面。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/5582e809.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e3d5c2fc.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/e3d5c2fc.html" class="post-title-link" itemprop="url">Java-线程池</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-01 21:07:49" itemprop="dateCreated datePublished" datetime="2019-09-01T21:07:49+08:00">2019-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>执行异步任务最简单的方式就是通过线程来执行，因为线程本质上是操作系统的资源，应用如果不加限制地占用——最严重的情况下——将会导致系统的宕机。因此，本地线程任务主要依赖线程池来执行，线程池可以看做一种线程资源池，提供了对线程资源的调度功能。当然，提到线程就不得不提并发安全，这又是一个非常复杂的主题，水平有限，无法一一道清。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/e3d5c2fc.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -978,356 +1283,6 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">POST /_bulk</span><br><span class="line">&#123; &quot;delete&quot;: &#123; &quot;_index&quot;: &quot;website&quot;, &quot;_type&quot;: &quot;blog&quot;, &quot;_id&quot;: &quot;123&quot; &#125;&#125; </span><br><span class="line">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;website&quot;, &quot;_type&quot;: &quot;blog&quot;, &quot;_id&quot;: &quot;123&quot; &#125;&#125;</span><br><span class="line">&#123; &quot;title&quot;: &quot;My first blog post&quot; &#125;</span><br><span class="line">&#123; &quot;index&quot;: &#123; &quot;_index&quot;: &quot;website&quot;, &quot;_type&quot;: &quot;blog&quot; &#125;&#125;</span><br><span class="line">&#123; &quot;title&quot;: &quot;My second blog post&quot; &#125;</span><br><span class="line">&#123; &quot;update&quot;: &#123; &quot;_index&quot;: &quot;webiite&quot;, &quot;_type&quot;: &quot;blog&quot;, &quot;_id&quot;: &quot;123&quot;, &quot;_retry_on_conflict&quot; : 3&#125; &#125;</span><br><span class="line">&#123; &quot;doc&quot; : &#123;&quot;title&quot; : &quot;My updated blog post&quot;&#125; &#125; </span><br></pre></td></tr></table></figure>
 <p>批量请求的大小有一个最佳值，大于这个值，性能将不再提升，甚至会下降。 但是<strong>最佳值不是一个固定的值，它完全取决于硬件、文档的大小和复杂度、索引和搜索的负载的整体情况</strong>。<br>幸运的是，很容易找到这个 最佳点 ：通过批量索引典型文档，并不断增加批量大小进行尝试。 当性能开始下降，那么你的批量大小就太大了。一个好的办法是开始时将 1,000 到 5,000 个文档作为一个批次, 如果你的文档非常大，那么就减少批量的文档个数。并且请求的文档也最好不要太大，一个好的批量大小在开始处理后所占用的物理大小约为 5-15 MB。</p>
 <script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/7c45b6f9.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/7c45b6f9.html" class="post-title-link" itemprop="url">ES2_2分布式文档存储</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-08-21 09:03:54" itemprop="dateCreated datePublished" datetime="2019-08-21T09:03:54+08:00">2019-08-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>[x] ES如何保证断电时数据也不会丢失</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/7c45b6f9.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/bf6ba1a3.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/bf6ba1a3.html" class="post-title-link" itemprop="url">ES2_3文档操作源码分析</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-08-21 09:03:54" itemprop="dateCreated datePublished" datetime="2019-08-21T09:03:54+08:00">2019-08-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="写入（POST、PUT、DELETE）流程源码分析"><a href="#写入（POST、PUT、DELETE）流程源码分析" class="headerlink" title="写入（POST、PUT、DELETE）流程源码分析"></a>写入（POST、PUT、DELETE）流程源码分析</h1><h2 id="refresh和flush-实时性和可靠性之间的权衡"><a href="#refresh和flush-实时性和可靠性之间的权衡" class="headerlink" title="refresh和flush - 实时性和可靠性之间的权衡"></a>refresh和flush - 实时性和可靠性之间的权衡</h2><p><img src="/imgs/ES/%E5%88%B7%E7%9B%98%E6%B5%81%E7%A8%8B.png" alt="刷盘流程" title="刷盘流程"></p>
-<h3 id="近实时性"><a href="#近实时性" class="headerlink" title="近实时性"></a>近实时性</h3><p>ES中数据写入后并不能被马上查到，而是必须先执行refresh，默认是1s，最快可到100ms。</p>
-<h3 id="可靠性"><a href="#可靠性" class="headerlink" title="可靠性"></a>可靠性</h3><p>搜索系统对可靠性要求都不高，一般数据的可靠性通过将原始数据存储在另一个存储系统来保证，当搜索系统的数据发生丢失时，再从其他存储系统导一份数据过来重新rebuild就可以了。<br>ES采用多副本模型，可以避免单机发生故障时丢失数据，但是ES同时为了提升读写性能，一般是每隔一段时间才会把Lucene的Segment flush到磁盘实现持久化，这样减少了磁盘IO，但是数据未flush期间，如果发生了宕机就很容易导致数据的丢失。对于这个问题，ES中的解决方法类似数据库中的CommitLog，ES中引入了一个TransLog。<br>可以通过设置TransLog的Flush频率来控制写入缓存的数据什么时候刷到磁盘上，要么是按请求，每次请求都Flush；要么是按时间，每隔一段时间Flush一次。一般为了性能考虑，会设置为每隔5秒或者1分钟Flush一次，Flush间隔时间越长，可靠性就会越低。</p>
-<h3 id="ES的刷盘流程"><a href="#ES的刷盘流程" class="headerlink" title="ES的刷盘流程"></a>ES的刷盘流程</h3><p>之前我们已经讨论了数据如何定位到某个node、某个shard。</p>
-<ol>
-<li>在每个shard上，数据会先写入Lucene，此时数据还在内存里；<br>写Lucene内存后还不可被搜索，需要先通过Refresh将内存对象转成完整Segment后，再次reopen后才可被搜索。<br>但是简单的Get操作是GetById的，这种查询可以直接从TransLog中查询，因此这种情况下是实时的。</li>
-<li>接着去写TransLog，写完TransLog后会刷新TransLog数据到磁盘上；<blockquote>
-<p>和数据库不同，数据库是先写CommitLog再写内存，而ES是先写内存（Lucene）再写TransLog，原因是Lucene的内存写入有很复杂的逻辑，比如分词、字段长度超过限制等，很容易失败，为了避免TransLog中有大量无效记录，减少recover的复杂度和提高速度，所以把写Lucene放到了前面。</p>
-</blockquote>
-</li>
-<li>等到TransLog数据被刷新到磁盘上后，返回写成功给用户。</li>
-<li>隔一段比较长的时间后，Lucene会把内存中新生成的Segment Flush到磁盘，之后就会把TransLog清空掉。</li>
-</ol>
-<h3 id="ES会丢失数据吗？"><a href="#ES会丢失数据吗？" class="headerlink" title="ES会丢失数据吗？"></a>ES会丢失数据吗？</h3><ul>
-<li>Lucene每隔1秒生成Segment文件，此时Segment还在缓存中，还未刷盘，如果这时挂掉，<strong>内存中的数据仍然可以从TransLog中恢复</strong>；</li>
-<li>TransLog中的数据是每隔5秒刷新到磁盘，显然这还不能保证数据安全，最多会导致丢失TransLog中5秒内的数据，<strong>可以通过配置增加TransLog刷磁盘的频率来增加数据可靠性，但是会对性能有比较大的影响</strong>。</li>
-<li>即使Master分片所在节点宕掉，导致TransLog丢失了，仍然<strong>可以从副本恢复</strong>。</li>
-</ul>
-<h2 id="文档更新（部分更新）"><a href="#文档更新（部分更新）" class="headerlink" title="文档更新（部分更新）"></a>文档更新（部分更新）</h2><p>Lucene中不支持文档的部分更新，因此需要在Elasticsearch中实现该功能：</p>
-<ol>
-<li>收到Update请求后，从Segment或TransLog中读取该id的完整文档，记录版本为V1；</li>
-<li>将版本V1的文档和请求中的部分字段文档合并，同时更新内存中的versionMap，得到V2，之后Update请求就变成了对V2的Index请求；</li>
-<li>加锁；</li>
-<li>再次从versionMap中读取该id的最大版本号V2，如果没有再从Segment或TransLog中读取，但是versionMap中基本都可以获取到；</li>
-<li>检查版本是否冲突（V1和V2），如果冲突则回退到开始的Update阶段重新执行，否则继续执行Index请求；</li>
-<li>在Index阶段，首先版本+1得到V3，再将文档加入到Lucene中去，Lucene中会删除同id的旧文档，然后再新增文档。写入成功后，将V3更新到versionMap中；</li>
-<li>释放锁。</li>
-</ol>
-<h2 id="文档操作类型"><a href="#文档操作类型" class="headerlink" title="文档操作类型"></a>文档操作类型</h2><p>文档操作分为单个的（Index）和批量的（Bulk），它们最终都会被统一封装为批量操作请求（BulkRequest）。</p>
-<h2 id="请求入口"><a href="#请求入口" class="headerlink" title="请求入口"></a>请求入口</h2><p>在ES中，所有action的入口都注册在ActionModule中，比如Bulk Request有两个注册入口：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">actions.register(BulkAction.INSTANCE, TransportBulkAction.class,</span><br><span class="line">        TransportShardBulkAction.class);</span><br><span class="line"></span><br><span class="line">registerHandler.accept(new RestBulkAction(settings, restController));</span><br></pre></td></tr></table></figure>
-<p>对于Rest请求，会在RestBulkAction中解析请求，并最终转换成TransportAction处理。</p>
-<p>比如对请求：<code>localhost:9200/website/blog/123</code></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;: &quot;My first blog entry&quot;,</span><br><span class="line">  &quot;text&quot;: &quot;Just trying this out...&quot;,</span><br><span class="line">  &quot;date&quot;: &quot;2014/01/01&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>会先被dispatch到<code>RestIndexAction</code>，然后转发给<code>TransportBulkAction#doExecute</code>，下面对文档写入流程的分析也将从这个入口开始。</p>
-<h2 id="文档写入流程"><a href="#文档写入流程" class="headerlink" title="文档写入流程"></a>文档写入流程</h2><p>由上边对ES数据模型的讨论可知，ES文档的写入必须是先成功写入到主分片，然后才能复制到相关的副分片。<br><img src="/imgs/ES/%E5%A4%9A%E8%8A%82%E7%82%B9%E5%A4%9A%E5%88%86%E7%89%87%E6%A8%A1%E5%9E%8B.png" alt="多节点多分片模型" title="多节点多分片模型"></p>
-<ol>
-<li>第一个接收请求的节点是协调节点；</li>
-<li>先根据_routing规则选择发给哪个shard（分片）；<br>优先使用IndexRequest中的设置，其次使用mapping中的配置，如果都没有则使用_id作为路由参数；</li>
-<li>从集群的meta中找出该shard的节点，此时，请求会被转发到<strong>primary shard</strong>所在的节点；</li>
-<li>请求接着发送给primary shard执行写操作；</li>
-<li>primary shard执行成功后再发送给多个replica shard；</li>
-<li>请求在多个replica shard上执行成功并返回给协调节点后，写入执行成功，协调节点返回结果给客户端。</li>
-</ol>
-<p>从上述写入的概述可知，写入流程具体的，可以分为<code>协调节点</code>、<code>主分片节点</code>及<code>副分片节点</code>三种角色的写入过程。<br><img src="/imgs/ES/ES%E5%86%99%E5%85%A5%E6%B5%81%E7%A8%8B.png" alt="ES写入流程" title="ES写入流程"></p>
-<h3 id="协调节点处理流程"><a href="#协调节点处理流程" class="headerlink" title="协调节点处理流程"></a>协调节点处理流程</h3><p>1、自动创建索引<br>入口：<code>TransportBulkAction#doExecute</code><br>找出请求中需要自动创建的索引</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">for (String index : indices) &#123;</span><br><span class="line">    boolean shouldAutoCreate;</span><br><span class="line">    try &#123;</span><br><span class="line">        shouldAutoCreate = shouldAutoCreate(index, state);</span><br><span class="line">    &#125; catch (IndexNotFoundException e) &#123;</span><br><span class="line">        shouldAutoCreate = false;</span><br><span class="line">        indicesThatCannotBeCreated.put(index, e);</span><br><span class="line">    &#125;</span><br><span class="line">    if (shouldAutoCreate) &#123;</span><br><span class="line">        autoCreateIndices.add(index);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>执行创建索引的请求：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">void createIndex(String index, TimeValue timeout, ActionListener&lt;CreateIndexResponse&gt; listener) &#123;</span><br><span class="line">    CreateIndexRequest createIndexRequest = new CreateIndexRequest();</span><br><span class="line">    createIndexRequest.index(index);</span><br><span class="line">    createIndexRequest.cause(&quot;auto(bulk api)&quot;);</span><br><span class="line">    createIndexRequest.masterNodeTimeout(timeout);</span><br><span class="line">    createIndexAction.execute(createIndexRequest, listener);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>2、路由请求<br>入口：<code>TransportBulkAction.BulkOperation#doRun</code><br>不同类型的请求路由逻辑也不同：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">switch (docWriteRequest.opType()) &#123;</span><br><span class="line">    // 创建索引、mapping请求</span><br><span class="line">    case CREATE:</span><br><span class="line">    case INDEX:</span><br><span class="line">        IndexRequest indexRequest = (IndexRequest) docWriteRequest;</span><br><span class="line">        final IndexMetaData indexMetaData = metaData.index(concreteIndex);</span><br><span class="line">        MappingMetaData mappingMd = indexMetaData.mappingOrDefault(indexRequest.type());</span><br><span class="line">        Version indexCreated = indexMetaData.getCreationVersion();</span><br><span class="line">        indexRequest.resolveRouting(metaData);</span><br><span class="line">        indexRequest.process(indexCreated, mappingMd, concreteIndex.getName());</span><br><span class="line">        break;</span><br><span class="line">    // 更新文档请求</span><br><span class="line">    case UPDATE:</span><br><span class="line">        TransportUpdateAction.resolveAndValidateRouting(metaData, concreteIndex.getName(), (UpdateRequest) docWriteRequest);</span><br><span class="line">        break;</span><br><span class="line">    // 删除文档操作</span><br><span class="line">    case DELETE:</span><br><span class="line">        docWriteRequest.routing(metaData.resolveWriteIndexRouting(docWriteRequest.parent(), docWriteRequest.routing(), docWriteRequest.index()));</span><br><span class="line">        // check if routing is required, if so, throw error if routing wasn&#x27;t specified</span><br><span class="line">        if (docWriteRequest.routing() == null &amp;&amp; metaData.routingRequired(concreteIndex.getName(), docWriteRequest.type())) &#123;</span><br><span class="line">            throw new RoutingMissingException(concreteIndex.getName(), docWriteRequest.type(), docWriteRequest.id());</span><br><span class="line">        &#125;</span><br><span class="line">        break;</span><br><span class="line">    default: throw new AssertionError(&quot;request type not supported: [&quot; + docWriteRequest.opType() + &quot;]&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>然后计算文档ID的hash值，将其分配给对应的shard：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">// 根据文档ID分配给对应的shardId</span><br><span class="line">// first, go over all the requests and create a ShardId -&gt; Operations mapping</span><br><span class="line">Map&lt;ShardId, List&lt;BulkItemRequest&gt;&gt; requestsByShard = new HashMap&lt;&gt;();</span><br><span class="line">for (int i = 0; i &lt; bulkRequest.requests.size(); i++) &#123;</span><br><span class="line">    DocWriteRequest request = bulkRequest.requests.get(i);</span><br><span class="line">    if (request == null) &#123;</span><br><span class="line">        continue;</span><br><span class="line">    &#125;</span><br><span class="line">    String concreteIndex = concreteIndices.getConcreteIndex(request.index()).getName();</span><br><span class="line">    ShardId shardId = clusterService.operationRouting().indexShards(clusterState, concreteIndex, request.id(), request.routing()).shardId();</span><br><span class="line">    List&lt;BulkItemRequest&gt; shardRequests = requestsByShard.computeIfAbsent(shardId, shard -&gt; new ArrayList&lt;&gt;());</span><br><span class="line">    shardRequests.add(new BulkItemRequest(i, request));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (requestsByShard.isEmpty()) &#123;</span><br><span class="line">    listener.onResponse(new BulkResponse(responses.toArray(new BulkItemResponse[responses.length()]), buildTookInMillis(startTimeNanos)));</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>3、轮询分片，分发请求</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">final AtomicInteger counter = new AtomicInteger(requestsByShard.size());</span><br><span class="line">// 当前节点ID</span><br><span class="line">String nodeId = clusterService.localNode().getId();</span><br><span class="line">for (Map.Entry&lt;ShardId, List&lt;BulkItemRequest&gt;&gt; entry : requestsByShard.entrySet()) &#123;</span><br><span class="line">    // 对每个分片</span><br><span class="line">    final ShardId shardId = entry.getKey();</span><br><span class="line">    final List&lt;BulkItemRequest&gt; requests = entry.getValue();</span><br><span class="line">    // 创建该分片的批量操作请求</span><br><span class="line">    BulkShardRequest bulkShardRequest = new BulkShardRequest(shardId, bulkRequest.getRefreshPolicy(),</span><br><span class="line">            requests.toArray(new BulkItemRequest[requests.size()]));</span><br><span class="line">    bulkShardRequest.waitForActiveShards(bulkRequest.waitForActiveShards());</span><br><span class="line">    bulkShardRequest.timeout(bulkRequest.timeout());</span><br><span class="line">    if (task != null) &#123;</span><br><span class="line">        bulkShardRequest.setParentTask(nodeId, task.getId());</span><br><span class="line">    &#125;</span><br><span class="line">    // 执行该请求</span><br><span class="line">    shardBulkAction.execute(bulkShardRequest, new ActionListener&lt;BulkShardResponse&gt;() &#123;</span><br><span class="line">        ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>4、将分片请求发往节点<br>代码入口：<code>TransportReplicationAction.ReroutePhase#doRun</code><br>将请求路由到主分片所在的节点上，并重试失败的操作。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// 找到主分片</span><br><span class="line">final ShardRouting primary = primary(state);</span><br><span class="line">if (retryIfUnavailable(state, primary)) &#123;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br><span class="line">final DiscoveryNode node = state.nodes().get(primary.currentNodeId());</span><br><span class="line">// 主分片在当前节点就直接本地执行，否则就调用该远程节点执行</span><br><span class="line">if (primary.currentNodeId().equals(state.nodes().getLocalNodeId())) &#123;</span><br><span class="line">    performLocalAction(state, primary, node, indexMetaData);</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    performRemoteAction(state, primary, node);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="主分片节点处理流程"><a href="#主分片节点处理流程" class="headerlink" title="主分片节点处理流程"></a>主分片节点处理流程</h3><p>如上所述，协调节点会将请求发送给主分片所在节点，该节点接收请求，并执行该请求对应的处理器。<br>消息接收入口：<code>TransportReplicationAction.PrimaryOperationTransportHandler#messageReceived</code><br>主节点执行逻辑：<code>ReplicationOperation#execute</code><br>1、判断活跃的shard是否足够<br>代码入口：<code>ReplicationOperation#checkActiveShardCount</code><br>活跃的分片越多，执行写入后同步的备份也越多，数据也越不容易丢失；默认为1，表示主分片可用就执行写入。<br>2、主分片执行<br>代码入口：<code>ReplicationOperation.Primary#perform</code></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public PrimaryResult perform(Request request) throws Exception &#123;</span><br><span class="line">    PrimaryResult result = shardOperationOnPrimary(request, indexShard);</span><br><span class="line">    assert result.replicaRequest() == null || result.finalFailure == null : &quot;a replica request [&quot; + result.replicaRequest()</span><br><span class="line">        + &quot;] with a primary failure [&quot; + result.finalFailure + &quot;]&quot;;</span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>3、主分片执行索引操作<br>代码中需要对请求进行dispatch，<code>TransportShardBulkAction#executeBulkItemRequest</code>，以UPDATE操作为例：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">private static BulkItemResultHolder executeUpdateRequest(UpdateRequest updateRequest, IndexShard primary,</span><br><span class="line">                                                         IndexMetaData metaData, BulkShardRequest request,</span><br><span class="line">                                                         int requestIndex, UpdateHelper updateHelper,</span><br><span class="line">                                                         LongSupplier nowInMillis,</span><br><span class="line">                                                         final MappingUpdatePerformer mappingUpdater) throws Exception &#123;</span><br><span class="line">    BulkItemRequest primaryItemRequest = request.items()[requestIndex];</span><br><span class="line">    assert primaryItemRequest.request() == updateRequest</span><br><span class="line">            : &quot;expected bulk item request to contain the original update request, got: &quot; +</span><br><span class="line">            primaryItemRequest.request() + &quot; and &quot; + updateRequest;</span><br><span class="line"></span><br><span class="line">    BulkItemResultHolder holder = null;</span><br><span class="line">    // There must be at least one attempt</span><br><span class="line">    // 保证至少执行一次，因此重试</span><br><span class="line">    int maxAttempts = Math.max(1, updateRequest.retryOnConflict());</span><br><span class="line">    for (int attemptCount = 0; attemptCount &lt; maxAttempts; attemptCount++) &#123;</span><br><span class="line"></span><br><span class="line">        holder = executeUpdateRequestOnce(updateRequest, primary, metaData, request.index(), updateHelper,</span><br><span class="line">                nowInMillis, primaryItemRequest, request.items()[requestIndex].id(), mappingUpdater);</span><br><span class="line"></span><br><span class="line">        // It was either a successful request, or it was a non-conflict failure</span><br><span class="line">        if (holder.isVersionConflict() == false) &#123;</span><br><span class="line">            return holder;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // We ran out of tries and haven&#x27;t returned a valid bulk item response, so return the last one generated</span><br><span class="line">    return holder;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>路径很长，最后调用了<code>InternalEngine#index</code></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line">public IndexResult index(Index index) throws IOException &#123;</span><br><span class="line">    assert Objects.equals(index.uid().field(), uidField) : index.uid().field();</span><br><span class="line">    final boolean doThrottle = index.origin().isRecovery() == false;</span><br><span class="line">    try (ReleasableLock releasableLock = readLock.acquire()) &#123;</span><br><span class="line">        ensureOpen();</span><br><span class="line">        assert assertIncomingSequenceNumber(index.origin(), index.seqNo());</span><br><span class="line">        assert assertVersionType(index);</span><br><span class="line">        try (Releasable ignored = versionMap.acquireLock(index.uid().bytes());</span><br><span class="line">            Releasable indexThrottle = doThrottle ? () -&gt; &#123;&#125; : throttle.acquireThrottle()) &#123;</span><br><span class="line">            lastWriteNanos = index.startTime();</span><br><span class="line">            /* A NOTE ABOUT APPEND ONLY OPTIMIZATIONS:</span><br><span class="line">             * if we have an autoGeneratedID that comes into the engine we can potentially optimize</span><br><span class="line">             * and just use addDocument instead of updateDocument and skip the entire version and index lookupVersion across the board.</span><br><span class="line">             * Yet, we have to deal with multiple document delivery, for this we use a property of the document that is added</span><br><span class="line">             * to detect if it has potentially been added before. We use the documents timestamp for this since it&#x27;s something</span><br><span class="line">             * that:</span><br><span class="line">             *  - doesn&#x27;t change per document</span><br><span class="line">             *  - is preserved in the transaction log</span><br><span class="line">             *  - and is assigned before we start to index / replicate</span><br><span class="line">             * NOTE: it&#x27;s not important for this timestamp to be consistent across nodes etc. it&#x27;s just a number that is in the common</span><br><span class="line">             * case increasing and can be used in the failure case when we retry and resent documents to establish a happens before relationship.</span><br><span class="line">             * for instance:</span><br><span class="line">             *  - doc A has autoGeneratedIdTimestamp = 10, isRetry = false</span><br><span class="line">             *  - doc B has autoGeneratedIdTimestamp = 9, isRetry = false</span><br><span class="line">             *</span><br><span class="line">             *  while both docs are in in flight, we disconnect on one node, reconnect and send doc A again</span><br><span class="line">             *  - now doc A&#x27; has autoGeneratedIdTimestamp = 10, isRetry = true</span><br><span class="line">             *</span><br><span class="line">             *  if A&#x27; arrives on the shard first we update maxUnsafeAutoIdTimestamp to 10 and use update document. All subsequent</span><br><span class="line">             *  documents that arrive (A and B) will also use updateDocument since their timestamps are less than maxUnsafeAutoIdTimestamp.</span><br><span class="line">             *  While this is not strictly needed for doc B it is just much simpler to implement since it will just de-optimize some doc in the worst case.</span><br><span class="line">             *</span><br><span class="line">             *  if A arrives on the shard first we use addDocument since maxUnsafeAutoIdTimestamp is &lt; 10. A` will then just be skipped or calls</span><br><span class="line">             *  updateDocument.</span><br><span class="line">             */</span><br><span class="line">            final IndexingStrategy plan;</span><br><span class="line"></span><br><span class="line">            if (index.origin() == Operation.Origin.PRIMARY) &#123;</span><br><span class="line">                plan = planIndexingAsPrimary(index);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                // non-primary mode (i.e., replica or recovery)</span><br><span class="line">                plan = planIndexingAsNonPrimary(index);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            final IndexResult indexResult;</span><br><span class="line">            if (plan.earlyResultOnPreFlightError.isPresent()) &#123;</span><br><span class="line">                indexResult = plan.earlyResultOnPreFlightError.get();</span><br><span class="line">                assert indexResult.getResultType() == Result.Type.FAILURE : indexResult.getResultType();</span><br><span class="line">            &#125; else if (plan.indexIntoLucene) &#123;</span><br><span class="line">                indexResult = indexIntoLucene(index, plan);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                indexResult = new IndexResult(</span><br><span class="line">                        plan.versionForIndexing, getPrimaryTerm(), plan.seqNoForIndexing, plan.currentNotFoundOrDeleted);</span><br><span class="line">            &#125;</span><br><span class="line">            if (index.origin() != Operation.Origin.LOCAL_TRANSLOG_RECOVERY) &#123;</span><br><span class="line">                final Translog.Location location;</span><br><span class="line">                if (indexResult.getResultType() == Result.Type.SUCCESS) &#123;</span><br><span class="line">                    location = translog.add(new Translog.Index(index, indexResult));</span><br><span class="line">                &#125; else if (indexResult.getSeqNo() != SequenceNumbers.UNASSIGNED_SEQ_NO) &#123;</span><br><span class="line">                    // if we have document failure, record it as a no-op in the translog with the generated seq_no</span><br><span class="line">                    location = translog.add(new Translog.NoOp(indexResult.getSeqNo(), index.primaryTerm(), indexResult.getFailure().toString()));</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    location = null;</span><br><span class="line">                &#125;</span><br><span class="line">                indexResult.setTranslogLocation(location);</span><br><span class="line">            &#125;</span><br><span class="line">            if (plan.indexIntoLucene &amp;&amp; indexResult.getResultType() == Result.Type.SUCCESS) &#123;</span><br><span class="line">                final Translog.Location translogLocation = trackTranslogLocation.get() ? indexResult.getTranslogLocation() : null;</span><br><span class="line">                versionMap.maybePutIndexUnderLock(index.uid().bytes(),</span><br><span class="line">                    new IndexVersionValue(translogLocation, plan.versionForIndexing, plan.seqNoForIndexing, index.primaryTerm()));</span><br><span class="line">            &#125;</span><br><span class="line">            if (indexResult.getSeqNo() != SequenceNumbers.UNASSIGNED_SEQ_NO) &#123;</span><br><span class="line">                localCheckpointTracker.markSeqNoAsCompleted(indexResult.getSeqNo());</span><br><span class="line">            &#125;</span><br><span class="line">            indexResult.setTook(System.nanoTime() - index.startTime());</span><br><span class="line">            indexResult.freeze();</span><br><span class="line">            return indexResult;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; catch (RuntimeException | IOException e) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            maybeFailEngine(&quot;index&quot;, e);</span><br><span class="line">        &#125; catch (Exception inner) &#123;</span><br><span class="line">            e.addSuppressed(inner);</span><br><span class="line">        &#125;</span><br><span class="line">        throw e;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="副分片执行"><a href="#副分片执行" class="headerlink" title="副分片执行"></a>副分片执行</h3><p>同样是在主节点的<code>ReplicationOperation#execute</code>中，需要调用副分片的写入接口。<br>1、调用副分片<br>代码入口：<code>ReplicationOperation#performOnReplicas</code></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">private void performOnReplica(final ShardRouting shard, final ReplicaRequest replicaRequest, final long globalCheckpoint) &#123;</span><br><span class="line">    if (logger.isTraceEnabled()) &#123;</span><br><span class="line">        logger.trace(&quot;[&#123;&#125;] sending op [&#123;&#125;] to replica &#123;&#125; for request [&#123;&#125;]&quot;, shard.shardId(), opType, shard, replicaRequest);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    totalShards.incrementAndGet();</span><br><span class="line">    pendingActions.incrementAndGet();</span><br><span class="line">    // 发HTTP请求给副分片</span><br><span class="line">    replicasProxy.performOn(shard, replicaRequest, globalCheckpoint, new ActionListener&lt;ReplicaResponse&gt;() &#123;</span><br><span class="line">        ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>2、副分片接收请求写入文档的流程与主分片基本一致。<br>消息接收入口是：<code>TransportReplicationAction.ReplicaOperationTransportHandler#messageReceived</code></p>
-<h1 id="GET流程源码分析"><a href="#GET流程源码分析" class="headerlink" title="GET流程源码分析"></a>GET流程源码分析</h1><h2 id="实时性"><a href="#实时性" class="headerlink" title="实时性"></a>实时性</h2><p>Elasticsearch中的GET请求也能保证是实时的，因为GET请求会直接读内存中尚未Flush到磁盘的TransLog。<br>但是GET请求只支持通过doc_id进行查询，所以对于条件查询（Search）依然无法实现实时。</p>
-<h2 id="GET执行流程"><a href="#GET执行流程" class="headerlink" title="GET执行流程"></a>GET执行流程</h2><p>GET指的是单个文档的查询请求，文档的唯一标识是ID，因此GET就是根据ID来找到一个文档。<br>ES集群中的节点分为<code>协调节点</code>和<code>数据节点</code>，GET请求会先打到协调节点，然后转发到数据节点上；如果一个节点执行失败，则转发到其他节点上进行读取。<br><img src="/imgs/ES/ES%E7%9A%84GET%E6%B5%81%E7%A8%8B.png" alt="ES的GET流程" title="ES的GET流程"></p>
-<h3 id="协调节点执行流程"><a href="#协调节点执行流程" class="headerlink" title="协调节点执行流程"></a>协调节点执行流程</h3><p>代码入口：<code>TransportSingleShardAction.AsyncSingleAction#perform</code><br>注意<code>AsyncSingleAction</code>构造方法中会先准备集群状态、节点列表等信息。<br>1、计算文档所在的shardid，即它所在的分片；<br>在构造方法中，会先根据请求进行路由：&#96;TransportGetAction#shards</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">private AsyncSingleAction(Request request, ActionListener&lt;Response&gt; listener) &#123;</span><br><span class="line">    this.listener = listener;</span><br><span class="line"></span><br><span class="line">    ClusterState clusterState = clusterService.state();</span><br><span class="line">    if (logger.isTraceEnabled()) &#123;</span><br><span class="line">        logger.trace(&quot;executing [&#123;&#125;] based on cluster state version [&#123;&#125;]&quot;, request, clusterState.version());</span><br><span class="line">    &#125;</span><br><span class="line">    // 集群nodes列表</span><br><span class="line">    nodes = clusterState.nodes();</span><br><span class="line">    ClusterBlockException blockException = checkGlobalBlock(clusterState);</span><br><span class="line">    if (blockException != null) &#123;</span><br><span class="line">        throw blockException;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    String concreteSingleIndex;</span><br><span class="line">    if (resolveIndex(request)) &#123;</span><br><span class="line">        concreteSingleIndex = indexNameExpressionResolver.concreteSingleIndex(clusterState, request).getName();</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        concreteSingleIndex = request.index();</span><br><span class="line">    &#125;</span><br><span class="line">    this.internalRequest = new InternalRequest(request, concreteSingleIndex);</span><br><span class="line">    // 解析请求，更新自定义routing</span><br><span class="line">    resolveRequest(clusterState, internalRequest);</span><br><span class="line"></span><br><span class="line">    blockException = checkRequestBlock(clusterState, internalRequest);</span><br><span class="line">    if (blockException != null) &#123;</span><br><span class="line">        throw blockException;</span><br><span class="line">    &#125;</span><br><span class="line">    // 根据路由算法计算得到目的shard迭代器，或者根据优先级选择目标节点</span><br><span class="line">    this.shardIt = shards(clusterState, internalRequest);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>2、发送请求<br>检查目标节点是不是本地节点，如果是则直接调本地的<code>TransportService#sendLocalRequest</code>；如果是远程节点则执行远程调用。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public &lt;T extends TransportResponse&gt; void sendRequest(final DiscoveryNode node, final String action,</span><br><span class="line">                                                            final TransportRequest request,</span><br><span class="line">                                                            final TransportResponseHandler&lt;T&gt; handler) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        Transport.Connection connection = getConnection(node);</span><br><span class="line">        sendRequest(connection, action, request, TransportRequestOptions.EMPTY, handler);</span><br><span class="line">    &#125; catch (NodeNotConnectedException ex) &#123;</span><br><span class="line">        // the caller might not handle this so we invoke the handler</span><br><span class="line">        handler.handleException(ex);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public Transport.Connection getConnection(DiscoveryNode node) &#123;</span><br><span class="line">    if (isLocalNode(node)) &#123;</span><br><span class="line">        return localNodeConnection;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        return transport.getConnection(node);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="数据节点执行流程"><a href="#数据节点执行流程" class="headerlink" title="数据节点执行流程"></a>数据节点执行流程</h3><p>代码入口：<code>TransportSingleShardAction.ShardTransportHandler#messageReceived</code></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public void messageReceived(final Request request, final TransportChannel channel) throws Exception &#123;</span><br><span class="line">    if (logger.isTraceEnabled()) &#123;</span><br><span class="line">        logger.trace(&quot;executing [&#123;&#125;] on shard [&#123;&#125;]&quot;, request, request.internalShardId);</span><br><span class="line">    &#125;</span><br><span class="line">    Response response = shardOperation(request, request.internalShardId);</span><br><span class="line">    channel.sendResponse(response);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">protected GetResponse shardOperation(GetRequest request, ShardId shardId) &#123;</span><br><span class="line">    IndexService indexService = indicesService.indexServiceSafe(shardId.getIndex());</span><br><span class="line">    IndexShard indexShard = indexService.getShard(shardId.id());</span><br><span class="line"></span><br><span class="line">    if (request.refresh() &amp;&amp; !request.realtime()) &#123;</span><br><span class="line">        indexShard.refresh(&quot;refresh_flag_get&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    GetResult result = indexShard.getService().get(request.type(), request.id(), request.storedFields(),</span><br><span class="line">            request.realtime(), request.version(), request.versionType(), request.fetchSourceContext());</span><br><span class="line">    return new GetResponse(result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>1、读取数据</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">private GetResult innerGet(String type, String id, String[] gFields, boolean realtime, long version, VersionType versionType,</span><br><span class="line">                           FetchSourceContext fetchSourceContext, boolean readFromTranslog) &#123;</span><br><span class="line">    fetchSourceContext = normalizeFetchSourceContent(fetchSourceContext, gFields);</span><br><span class="line">    final Collection&lt;String&gt; types;</span><br><span class="line">    // 处理_all选项</span><br><span class="line">    if (type == null || type.equals(&quot;_all&quot;)) &#123;</span><br><span class="line">        types = mapperService.types();</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        types = Collections.singleton(type);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Engine.GetResult get = null;</span><br><span class="line">    for (String typeX : types) &#123;</span><br><span class="line">        Term uidTerm = mapperService.createUidTerm(typeX, id);</span><br><span class="line">        if (uidTerm != null) &#123;</span><br><span class="line">            // 调用Engine读取数据</span><br><span class="line">            get = indexShard.get(new Engine.Get(realtime, readFromTranslog, typeX, id, uidTerm)</span><br><span class="line">                    .version(version).versionType(versionType));</span><br><span class="line">            if (get.exists()) &#123;</span><br><span class="line">                type = typeX;</span><br><span class="line">                break;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                get.release();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">        // 过滤返回结果</span><br><span class="line">        // 根据type、id、DocumentMapper等信息从刚刚获取的信息中获取数据，对指定的field、source进行过滤</span><br><span class="line">        // 把结果存于GetResult返回</span><br><span class="line">        return innerGetLoadFromStoredFields(type, id, gFields, fetchSourceContext, get, mapperService);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>2、从InternalEngine读取数据</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">public Engine.GetResult get(Engine.Get get) &#123;</span><br><span class="line">    readAllowed();</span><br><span class="line">    return getEngine().get(get, this::acquireSearcher);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public GetResult get(Get get, BiFunction&lt;String, SearcherScope, Searcher&gt; searcherFactory) throws EngineException &#123;</span><br><span class="line">    assert Objects.equals(get.uid().field(), uidField) : get.uid().field();</span><br><span class="line">    try (ReleasableLock ignored = readLock.acquire()) &#123;</span><br><span class="line">        ensureOpen();</span><br><span class="line">        SearcherScope scope;</span><br><span class="line">        // 处理realtime选项，判断是否需要刷盘</span><br><span class="line">        if (get.realtime()) &#123;</span><br><span class="line">            VersionValue versionValue = null;</span><br><span class="line">            // versionMap写入索引的时候添加的，不会写入磁盘</span><br><span class="line">            try (Releasable ignore = versionMap.acquireLock(get.uid().bytes())) &#123;</span><br><span class="line">                // we need to lock here to access the version map to do this truly in RT</span><br><span class="line">                versionValue = getVersionFromMap(get.uid().bytes());</span><br><span class="line">            &#125;</span><br><span class="line">            if (versionValue != null) &#123;</span><br><span class="line">                if (versionValue.isDelete()) &#123;</span><br><span class="line">                    return GetResult.NOT_EXISTS;</span><br><span class="line">                &#125;</span><br><span class="line">                // 版本是否冲突</span><br><span class="line">                if (get.versionType().isVersionConflictForReads(versionValue.version, get.version())) &#123;</span><br><span class="line">                    throw new VersionConflictEngineException(shardId, get.type(), get.id(),</span><br><span class="line">                        get.versionType().explainConflictForReads(versionValue.version, get.version()));</span><br><span class="line">                &#125;</span><br><span class="line">                if (get.isReadFromTranslog()) &#123;</span><br><span class="line">                    // this is only used for updates - API _GET calls will always read form a reader for consistency</span><br><span class="line">                    // the update call doesn&#x27;t need the consistency since it&#x27;s source only + _parent but parent can go away in 7.0</span><br><span class="line">                    if (versionValue.getLocation() != null) &#123;</span><br><span class="line">                        try &#123;</span><br><span class="line">                            Translog.Operation operation = translog.readOperation(versionValue.getLocation());</span><br><span class="line">                            if (operation != null) &#123;</span><br><span class="line">                                // in the case of a already pruned translog generation we might get null here - yet very unlikely</span><br><span class="line">                                TranslogLeafReader reader = new TranslogLeafReader((Translog.Index) operation, engineConfig</span><br><span class="line">                                    .getIndexSettings().getIndexVersionCreated());</span><br><span class="line">                                return new GetResult(new Searcher(&quot;realtime_get&quot;, new IndexSearcher(reader)),</span><br><span class="line">                                    new VersionsAndSeqNoResolver.DocIdAndVersion(0, ((Translog.Index) operation).version(), reader, 0));</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125; catch (IOException e) &#123;</span><br><span class="line">                            maybeFailEngine(&quot;realtime_get&quot;, e); // lets check if the translog has failed with a tragic event</span><br><span class="line">                            throw new EngineException(shardId, &quot;failed to read operation from translog&quot;, e);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125; else &#123;</span><br><span class="line">                        trackTranslogLocation.set(true);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                // 执行刷盘操作</span><br><span class="line">                refresh(&quot;realtime_get&quot;, SearcherScope.INTERNAL);</span><br><span class="line">            &#125;</span><br><span class="line">            scope = SearcherScope.INTERNAL;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            // we expose what has been externally expose in a point in time snapshot via an explicit refresh</span><br><span class="line">            scope = SearcherScope.EXTERNAL;</span><br><span class="line">        &#125;</span><br><span class="line">        // 调用Searcher读取数据</span><br><span class="line">        // no version, get the version from the index, we know that we refresh on flush</span><br><span class="line">        return getFromSearcher(get, searcherFactory, scope);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/1c3259ad.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/1c3259ad.html" class="post-title-link" itemprop="url">ES3_1分布式搜索</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-08-21 09:03:54" itemprop="dateCreated datePublished" datetime="2019-08-21T09:03:54+08:00">2019-08-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>先分析ES中的搜索原理，然后总结ES中的搜索方法，主要包括轻量查询、请求体查询。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/1c3259ad.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
       
     </div>
 

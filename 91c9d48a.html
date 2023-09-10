@@ -21,7 +21,7 @@
 
     <meta name="description" content="先介绍RocketMQ有哪些服务，然后介绍消息如何从Producer发送到Consumer。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="RocketMQ 如何发送一条消息">
+<meta property="og:title" content="RocketMQ 消息发送流程">
 <meta property="og:url" content="https://tallate.github.io/91c9d48a.html">
 <meta property="og:site_name" content="Tallate">
 <meta property="og:description" content="先介绍RocketMQ有哪些服务，然后介绍消息如何从Producer发送到Consumer。">
@@ -30,7 +30,7 @@
 <meta property="og:image" content="https://tallate.github.io/imgs/RocketMQ/Consumer%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B.png">
 <meta property="og:image" content="https://tallate.github.io/imgs/RocketMQ/RocketMQ-%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1.png">
 <meta property="article:published_time" content="2020-08-12T04:23:48.000Z">
-<meta property="article:modified_time" content="2023-08-20T12:17:42.831Z">
+<meta property="article:modified_time" content="2023-09-10T17:08:41.967Z">
 <meta property="article:author" content="tallate">
 <meta property="article:tag" content="RocketMQ">
 <meta name="twitter:card" content="summary">
@@ -41,10 +41,10 @@
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/91c9d48a.html","path":"/91c9d48a.html","title":"RocketMQ 如何发送一条消息"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/91c9d48a.html","path":"/91c9d48a.html","title":"RocketMQ 消息发送流程"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>RocketMQ 如何发送一条消息 | Tallate</title>
+<title>RocketMQ 消息发送流程 | Tallate</title>
   
 
 
@@ -93,7 +93,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">183</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -144,7 +144,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8"><span class="nav-number">1.</span> <span class="nav-text">启动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">服务发现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Broker"><span class="nav-number">2.1.</span> <span class="nav-text">Broker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NameServer"><span class="nav-number">2.2.</span> <span class="nav-text">NameServer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Producer"><span class="nav-number">2.3.</span> <span class="nav-text">Producer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Consumer"><span class="nav-number">2.4.</span> <span class="nav-text">Consumer</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E6%B6%88%E6%81%AF%E7%9A%84%E5%8F%91%E9%80%81%E8%BD%A8%E8%BF%B9"><span class="nav-number">3.</span> <span class="nav-text">一个消息的发送轨迹</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Producer-%E7%AB%AF%E5%8F%91%E9%80%81"><span class="nav-number">3.1.</span> <span class="nav-text">Producer 端发送</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Server-%E7%AB%AF%E5%AD%98%E5%82%A8"><span class="nav-number">3.2.</span> <span class="nav-text">Server 端存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Consumer-%E7%AB%AF%E6%8B%89%E5%8F%96"><span class="nav-number">3.3.</span> <span class="nav-text">Consumer 端拉取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#QA%E3%80%81%E6%B6%88%E8%B4%B9%E8%80%85%E9%98%BB%E5%A1%9E"><span class="nav-number">3.3.1.</span> <span class="nav-text">QA、消费者阻塞</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">4.</span> <span class="nav-text">负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Producer-%E7%AB%AF%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">4.1.</span> <span class="nav-text">Producer 端负载均衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Consumer-%E7%AB%AF%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">4.2.</span> <span class="nav-text">Consumer 端负载均衡</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%AA%E6%B6%88%E6%81%AF%E7%9A%84%E5%8F%91%E9%80%81%E8%BD%A8%E8%BF%B9"><span class="nav-number">1.</span> <span class="nav-text">一个消息的发送轨迹</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Producer-%E7%AB%AF%E5%8F%91%E9%80%81"><span class="nav-number">1.1.</span> <span class="nav-text">Producer 端发送</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Server-%E7%AB%AF%E5%AD%98%E5%82%A8"><span class="nav-number">1.2.</span> <span class="nav-text">Server 端存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Consumer-%E7%AB%AF%E6%8B%89%E5%8F%96"><span class="nav-number">1.3.</span> <span class="nav-text">Consumer 端拉取</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#QA%E3%80%81%E6%B6%88%E8%B4%B9%E8%80%85%E9%98%BB%E5%A1%9E"><span class="nav-number">1.3.1.</span> <span class="nav-text">QA、消费者阻塞</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#QA2%E3%80%81%E5%A6%82%E6%9E%9C%E5%AE%A2%E6%88%B7%E7%AB%AFgroup%E6%B6%88%E8%B4%B9%E7%BA%BF%E7%A8%8B%E6%B1%A0%E6%98%AF%E5%85%B1%E7%94%A8%E7%9A%84%EF%BC%8C%E9%82%A3%E4%B9%88%E4%B8%80%E4%B8%AAgroup%E6%B6%88%E8%B4%B9%E6%85%A2%E4%BC%9A%E5%BD%B1%E5%93%8D%E5%85%B6%E4%BB%96group%E7%9A%84%E6%B6%88%E8%B4%B9%E5%90%97%EF%BC%9F"><span class="nav-number">1.3.2.</span> <span class="nav-text">QA2、如果客户端group消费线程池是共用的，那么一个group消费慢会影响其他group的消费吗？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">2.</span> <span class="nav-text">负载均衡</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Producer-%E7%AB%AF%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">2.1.</span> <span class="nav-text">Producer 端负载均衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Consumer-%E7%AB%AF%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">2.2.</span> <span class="nav-text">Consumer 端负载均衡</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -157,7 +157,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">183</span>
+          <span class="site-state-item-count">186</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -208,12 +208,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="RocketMQ 如何发送一条消息 | Tallate">
+      <meta itemprop="name" content="RocketMQ 消息发送流程 | Tallate">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          RocketMQ 如何发送一条消息
+          RocketMQ 消息发送流程
         </h1>
 
         <div class="post-meta-container">
@@ -231,7 +231,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+      <time title="修改时间：2023-09-11 01:08:41" itemprop="dateModified" datetime="2023-09-11T01:08:41+08:00">2023-09-11</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -255,25 +255,6 @@
     <div class="post-body" itemprop="articleBody"><p>先介绍RocketMQ有哪些服务，然后介绍消息如何从Producer发送到Consumer。</p>
 <span id="more"></span>
 
-<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><p>RocketMQ 的消息队列集群结构主要包含 NameServer、Broker（Master&#x2F;Slave）、Producer、Consumer 4 个部分，基本通信流程如下：</p>
-<ol>
-<li>Broker 启动后需要完成一次将自己注册至 NameServer 的操作；随后每隔 30s 时间定时向 NameServer 上报 Topic 路由信息。<br>Broker 启动入口：<code>org.apache.rocketmq.broker.BrokerController#start</code><br>注册到每个 NameServer：<code>org.apache.rocketmq.broker.out.BrokerOuterAPI#registerBrokerAll</code></li>
-<li>消息生产者 Producer 作为客户端发送消息时候，需要根据消息的 Topic 从本地缓存的 TopicPublishInfoTable 获取路由信息。如果没有则更新路由信息会从 NameServer 上重新拉取，同时 Producer 会默认每隔 30s 向 NameServer 拉取一次路由信息。</li>
-<li>消息生产者 Producer 根据<code>2</code>中获取的路由信息选择一个队列（MessageQueue）进行消息发送；Broker 作为消息的接收者接收消息并落盘存储。</li>
-<li>消息消费者 Consumer 根据<code>2</code>中获取的路由信息，并再完成客户端的负载均衡后，选择其中的某一个或者某几个消息队列来拉取消息并进行消费。</li>
-</ol>
-<h2 id="服务发现"><a href="#服务发现" class="headerlink" title="服务发现"></a>服务发现</h2><h3 id="Broker"><a href="#Broker" class="headerlink" title="Broker"></a>Broker</h3><p>Broker端启动时会向NameServer注册，并开启一个定时任务，用于每隔十秒向所有NameServer发送心跳请求，将Topic信息注册到NameServer。</p>
-<h3 id="NameServer"><a href="#NameServer" class="headerlink" title="NameServer"></a>NameServer</h3><p>除了Broker可以向NameServer注册服务信息，NameServer也会启动一个定时任务来定时清理不活动的Broker，默认情况下是清除两分钟没有向NameServer发送心跳更新的Broker。<br>NameServer的结构比较简单，主要类只有6个：</p>
-<ul>
-<li><code>NamesrvStartup</code>：程序入口。</li>
-<li><code>NamesrvController</code>：NameServer 的总控制器，负责所有服务的生命周期管理。</li>
-<li><code>RouteInfoManager</code>：NameServer 最核心的实现类，负责保存和管理<strong>集群路由信息</strong>。<br><code>topicQueueTable</code> 保存的是主题和队列信息，其中每个队列信息对应的类 QueueData 中，还保存了 brokerName。需要注意的是，这个 brokerName 并不真正是某个 Broker 的物理地址，它对应的一组 Broker 节点，包括一个主节点和若干个从节点。<br><code>brokerAddrTable</code> 中保存了集群中每个 brokerName 对应 Broker 信息，每个 Broker 信息用一个 BrokerData 对象表示。<br><code>brokerLiveTable</code> 中保存了集群中所有活跃的Broker。<br>定时每10秒一次扫描并清除不活跃的Broker，代码见：<code>RouteInfoManager#scanNotActiveBroker</code>。</li>
-<li><code>BrokerHousekeepingService</code>：监控 Broker 连接状态的代理类。</li>
-<li><code>DefaultRequestProcessor</code>：负责处理客户端和 Broker 发送过来的 RPC 请求的处理器。<br>先用读写锁保证并发安全，然后比较所有路由信息Map并更新。</li>
-<li><code>ClusterTestRequestProcessor</code>：用于测试的请求处理器。</li>
-</ul>
-<h3 id="Producer"><a href="#Producer" class="headerlink" title="Producer"></a>Producer</h3><p>Producer是只能发给Broker集群里的Master的，如果Master挂掉，那么Producer也不能继续发消息了，只能等集群重新选举出一个新的Master，虽然可用性会降低，但是也给顺序消息的实现提供了方便。</p>
-<h3 id="Consumer"><a href="#Consumer" class="headerlink" title="Consumer"></a>Consumer</h3><p>定时从NameServer拉取<code>topicRouteTable</code>更新本地的<code>brokerAddrTable</code>，也就是说，只要NameServer会把宕掉的Broker清掉，那么Consumer最终（注意并不能实时）也可以取到拿到一份活跃的Broker列表。<br><code>MQClientInstance#updateTopicRouteInfoFromNameServer(final String topic, boolean isDefault, DefaultMQProducer defaultMQProducer)</code><br>Consumer端是定时地上Broker拉取消息。<br><code>org.apache.rocketmq.common.ServiceThread#start</code><br>如果某次消费出错了，就会触发Fallback方案，改为稍后再重试。<br><code>org.apache.rocketmq.client.impl.MQClientAPIImpl#pullMessageAsync</code></p>
 <h2 id="一个消息的发送轨迹"><a href="#一个消息的发送轨迹" class="headerlink" title="一个消息的发送轨迹"></a>一个消息的发送轨迹</h2><h3 id="Producer-端发送"><a href="#Producer-端发送" class="headerlink" title="Producer 端发送"></a>Producer 端发送</h3><p>Producer端的发送分为<strong>同步</strong>、<strong>异步</strong>、<strong>单向</strong>三种，下面以同步发送为例，异步发送只是把发送任务放到了一个线程池中执行，单向和同步的区别只是单向发出去后不会再管发没发成功（）。</p>
 <ol>
 <li>Producer 端调发送接口<br><code>org.apache.rocketmq.client.producer.DefaultMQProducer#send(Message)</code><br>发送前需要设置 NameServer 的地址信息，这样发消息前才能根据 NameServer 中的服务注册表信息来进行消息的路由。</li>
@@ -300,8 +281,8 @@
 <li>启动客户端<br><code>org.apache.rocketmq.client.impl.consumer.DefaultMQPushConsumerImpl#start</code><br>可以看到，启动了很多实例，重点需要关注的是最后启动的<code>MQClientInstance</code>实例。</li>
 <li>客户端实例的初始化<br><code>org.apache.rocketmq.client.impl.factory.MQClientInstance#startScheduledTask</code><br>使用定时任务执行从 NameServer 拉取路由信息（包括 Topic 下的 Queue 和 Consumer 列表）、向 Broker 发送心跳等任务。<br><code>org.apache.rocketmq.client.impl.consumer.PullMessageService#start</code><br>启动一个线程轮询拉消息。<br><code>org.apache.rocketmq.client.impl.consumer.RebalanceService#start</code><br>重新负载均衡。</li>
 <li>接收消息<br><code>RebalanceService#start</code>中启动了一个拉取线程<br>可见Consumer端<strong>Pull消息是单线程的</strong></li>
-<li>提交处理<br><code>org.apache.rocketmq.client.impl.consumer.ConsumeMessageConcurrentlyService#submitConsumeRequest</code><br>虽然Pull消息是单线程的，但是<strong>消费消息是多线程的</strong>。<blockquote>
-<p>线程池定义：线程数&#x3D;20，等待队列是LinkedBlockingQueue</p>
+<li>提交处理<br><code>org.apache.rocketmq.client.impl.consumer.ConsumeMessageConcurrentlyService#submitConsumeRequest</code><br>虽然Pull消息是单线程的，但是<strong>消费消息是多线程的，且多个group共享同一个线程池</strong>。<blockquote>
+<p>线程池定义：corePoolSize&#x3D;20, maxPoolSize&#x3D;64，等待队列是LinkedBlockingQueue</p>
 </blockquote>
 </li>
 <li>处理消费结果<br><code>org.apache.rocketmq.client.impl.consumer.ConsumeMessageConcurrentlyService#processConsumeResult</code><br>可见有<code>CONSUME_SUCCESS</code>和<code>RECONSUME_LATER</code>这两种消费结果（报错也被当作<code>RECONSUME_LATER</code>处理），这里最核心逻辑就是更新offset确定消费进度。</li>
@@ -309,6 +290,12 @@
 <h4 id="QA、消费者阻塞"><a href="#QA、消费者阻塞" class="headerlink" title="QA、消费者阻塞"></a>QA、消费者阻塞</h4><p>如上所示，客户端通过线程池来处理消息，那么当线程被阻塞后还会继续消费消息吗？<br>不会，如果处理中的消息量达到了阈值，客户端会阻塞拉取线程：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">long cachedMessageCount = processQueue.getMsgCount().get();</span><br><span class="line">long cachedMessageSizeInMiB = processQueue.getMsgSize().get() / (1024 * 1024);</span><br><span class="line"></span><br><span class="line">if (cachedMessageCount &gt; this.defaultMQPushConsumer.getPullThresholdForQueue()) &#123;</span><br><span class="line">    this.executePullRequestLater(pullRequest, PULL_TIME_DELAY_MILLS_WHEN_FLOW_CONTROL);</span><br><span class="line">    if ((queueFlowControlTimes++ % 1000) == 0) &#123;</span><br><span class="line">        log.warn(</span><br><span class="line">            &quot;the cached message count exceeds the threshold &#123;&#125;, so do flow control, minOffset=&#123;&#125;, maxOffset=&#123;&#125;, count=&#123;&#125;, size=&#123;&#125; MiB, pullRequest=&#123;&#125;, flowControlTimes=&#123;&#125;&quot;,</span><br><span class="line">            this.defaultMQPushConsumer.getPullThresholdForQueue(), processQueue.getMsgTreeMap().firstKey(), processQueue.getMsgTreeMap().lastKey(), cachedMessageCount, cachedMessageSizeInMiB, pullRequest, queueFlowControlTimes);</span><br><span class="line">    &#125;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (cachedMessageSizeInMiB &gt; this.defaultMQPushConsumer.getPullThresholdSizeForQueue()) &#123;</span><br><span class="line">    this.executePullRequestLater(pullRequest, PULL_TIME_DELAY_MILLS_WHEN_FLOW_CONTROL);</span><br><span class="line">    if ((queueFlowControlTimes++ % 1000) == 0) &#123;</span><br><span class="line">        log.warn(</span><br><span class="line">            &quot;the cached message size exceeds the threshold &#123;&#125; MiB, so do flow control, minOffset=&#123;&#125;, maxOffset=&#123;&#125;, count=&#123;&#125;, size=&#123;&#125; MiB, pullRequest=&#123;&#125;, flowControlTimes=&#123;&#125;&quot;,</span><br><span class="line">            this.defaultMQPushConsumer.getPullThresholdSizeForQueue(), processQueue.getMsgTreeMap().firstKey(), processQueue.getMsgTreeMap().lastKey(), cachedMessageCount, cachedMessageSizeInMiB, pullRequest, queueFlowControlTimes);</span><br><span class="line">    &#125;</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<h4 id="QA2、如果客户端group消费线程池是共用的，那么一个group消费慢会影响其他group的消费吗？"><a href="#QA2、如果客户端group消费线程池是共用的，那么一个group消费慢会影响其他group的消费吗？" class="headerlink" title="QA2、如果客户端group消费线程池是共用的，那么一个group消费慢会影响其他group的消费吗？"></a>QA2、如果客户端group消费线程池是共用的，那么一个group消费慢会影响其他group的消费吗？</h4><p>是有可能的，需要分2阶段来分析</p>
+<ol>
+<li>拉消息阶段，每个group的拉消息请求数都是公平的<br>见代码 <code>RebalanceImpl.updateProcessQueueTableInRebalance</code></li>
+<li>消费消息阶段，除非某个group的消息消费速度过慢了，把所有的线程都阻塞了，才会影响其他group消息的消费</li>
+</ol>
+<p>参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/b1303110335/article/details/118755341">https://blog.csdn.net/b1303110335/article/details/118755341</a></p>
 <h2 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h2><h3 id="Producer-端负载均衡"><a href="#Producer-端负载均衡" class="headerlink" title="Producer 端负载均衡"></a>Producer 端负载均衡</h3><p><code>org.apache.rocketmq.client.impl.producer.DefaultMQProducerImpl#selectOneMessageQueue</code><br>Producer 端发送消息前会先从 NameServer 拿到 Topic 的路由信息，即 Topic 有几个 Queue、及这些 Queue 位于哪个 Broker。之后，客户端会根据负载均衡和容错策略从中选择一个发送。</p>
 <h3 id="Consumer-端负载均衡"><a href="#Consumer-端负载均衡" class="headerlink" title="Consumer 端负载均衡"></a>Consumer 端负载均衡</h3><p>RocketMQ 中 Consumer 端有两种消费模式（Push&#x2F;Pull），它们本质上都是基于拉模式来获取消息的，Push 模式只是对 Pull 模式的一种封装：</p>
 <ol>
@@ -346,13 +333,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/28a7425f.html" rel="prev" title="RocketMQ 消息的存储和查询原理">
-                  <i class="fa fa-angle-left"></i> RocketMQ 消息的存储和查询原理
+                <a href="/7c98402b.html" rel="prev" title="RocketMQ 消息重试和幂等">
+                  <i class="fa fa-angle-left"></i> RocketMQ 消息重试和幂等
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/8573ae23.html" rel="next" title="RocketMQ消费质量保证">
-                  RocketMQ消费质量保证 <i class="fa fa-angle-right"></i>
+                <a href="/8573ae23.html" rel="next" title="RocketMQ消息可靠性">
+                  RocketMQ消息可靠性 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
