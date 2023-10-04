@@ -184,7 +184,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/3648b215.html">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e095c2f.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -202,7 +202,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/3648b215.html" class="post-title-link" itemprop="url">RocketMQ 的应用</a>
+          <a href="/e095c2f.html" class="post-title-link" itemprop="url">RocketMQ 概述</a>
         </h2>
 
         <div class="post-meta-container">
@@ -220,7 +220,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-10-09 16:58:44" itemprop="dateModified" datetime="2022-10-09T16:58:44+08:00">2022-10-09</time>
+      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -244,132 +244,151 @@
     <div class="post-body" itemprop="articleBody">
           <span id="more"></span>
 
-
-<h1 id="为什么使用RocketMQ"><a href="#为什么使用RocketMQ" class="headerlink" title="为什么使用RocketMQ"></a>为什么使用RocketMQ</h1><h2 id="使用MQ的优点"><a href="#使用MQ的优点" class="headerlink" title="使用MQ的优点"></a>使用MQ的优点</h2><ol>
-<li>解耦<br>直连的情况下，每接入一个系统就需要直接改代码调新系统接口；<br>使用 RocketMQ 的情况下，新系统可以自己监听消息。</li>
-<li>异步<br>非必要的业务逻辑异步处理，加快响应速度。</li>
-<li>削峰<br>直连的情况下，所有请求会直接全部打到下游服务，引入消息队列后，消息队列可以暂存消息，让下游服务慢慢消费；</li>
-</ol>
-<h2 id="使用-MQ-的缺点"><a href="#使用-MQ-的缺点" class="headerlink" title="使用 MQ 的缺点"></a>使用 MQ 的缺点</h2><p>系统可用性降低：消息队列挂掉将影响系统可用性。<br>系统复杂性增加：加入了消息队列，要多考虑很多方面的问题，比如：一致性问题、如何保证消息不被重复消费、如何保证消息可靠性传输等。因此，需要考虑的东西更多，系统复杂性增大。</p>
-<h1 id="使用-RocketMQ"><a href="#使用-RocketMQ" class="headerlink" title="使用 RocketMQ"></a>使用 RocketMQ</h1><h2 id="搭建-Name-Server-和-Broker-Server（单点）"><a href="#搭建-Name-Server-和-Broker-Server（单点）" class="headerlink" title="搭建 Name Server 和 Broker Server（单点）"></a>搭建 Name Server 和 Broker Server（单点）</h2><p><a target="_blank" rel="noopener" href="http://rocketmq.apache.org/docs/quick-start/">看下这个</a><br>为了方便，需要设置 Broker 服务器的一些属性，在 broker.conf 中：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 允许使用SQL语法过滤消息</span><br><span class="line">enablePropertyFilter=true</span><br><span class="line"># 自动创建Topic，否则使用新Topic时还需要在控制台创建</span><br><span class="line">autoCreateTopicEnable=true</span><br></pre></td></tr></table></figure>
-<p>对 Broker 服务器的启动可以使用下面的命令：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">start mqbroker.cmd -n 127.0.0.1:9876 -c ../conf/broker.conf &amp;</span><br></pre></td></tr></table></figure>
-
-<p>如果后续生产消息时报错：<code>maybe your broker machine memory too small</code>。<br>出现这个问题的主要原因是磁盘空间不够了，而我的电脑磁盘一直都是稀缺资源，所以就出问题了。<br>可以修改 runbroker.sh，在里面增加一句话即可： JAVA_OPT&#x3D;”${JAVA_OPT} -Drocketmq.broker.diskSpaceWarningLevelRatio&#x3D;0.98” 我这里把磁盘保护的百分比设置成98%，只有磁盘空间使用率达到98%时才拒绝接收producer消息。</p>
-<h2 id="搭建RocketMQ-Console"><a href="#搭建RocketMQ-Console" class="headerlink" title="搭建RocketMQ Console"></a>搭建RocketMQ Console</h2><p>控制台，方便创建Topic、统计消息、查看集群状态等。<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/miaoying/p/10319840.html">看下这个</a></p>
-<h2 id="多主多从（2主多从）"><a href="#多主多从（2主多从）" class="headerlink" title="多主多从（2主多从）"></a>多主多从（2主多从）</h2><p>同上下载源码并编译完成后，第一步是创建配置文件，我计划将所有主从放到同一台服务器上，因此在本地创建所有配置文件和数据存储目录：<br>1、创建数据存储目录</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mkdir -p /home/hgc/Documents/project/open/rocketmq/store1/&#123;rootdir-a-m,commitlog-a-m,rootdir-a-s,commitlog-a-s&#125;</span><br><span class="line">mkdir -p /home/hgc/Documents/project/open/rocketmq/store2/&#123;rootdir-b-m,commitlog-b-m,rootdir-b-s,commitlog-b-s&#125;</span><br></pre></td></tr></table></figure>
-<p>2、配置环境变量<br>在<code>/etc/profile</code>文件中加入：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># RocketMQ</span><br><span class="line">export ROCKETMQ_HOME=/home/hgc/Documents/project/open/rocketmq</span><br><span class="line">export PATH=$PATH:$ROCKETMQ_HOME/bin</span><br></pre></td></tr></table></figure>
-<p>3、创建配置文件<br>&#x2F;home&#x2F;hgc&#x2F;Documents&#x2F;project&#x2F;open&#x2F;rocketmq&#x2F;conf.1.m&#x2F;broker.conf</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">brokerClusterName = DefaultCluster</span><br><span class="line">brokerName = rocketmq-nameserver-1</span><br><span class="line">#brokerId 0 表示 Master，&gt;0 表示 Slave</span><br><span class="line">brokerId=0</span><br><span class="line"># Broker 对外服务的监听端口</span><br><span class="line">listenPort=10911</span><br><span class="line">#nameServer地址，分号分割</span><br><span class="line">namesrvAddr=127.0.0.1:9876</span><br><span class="line"># 删除文件时间点，默认凌晨 4点</span><br><span class="line">deleteWhen=04</span><br><span class="line">#文件保留时间，默认 48 小时</span><br><span class="line">fileReservedTime=72</span><br><span class="line">#Broker role有3种：SYNC_MASTER、ASYNC_MASTER、SLAVE。关键词SYNC和ASYNC表示Master和Slave之间同步消息的机制，SYNC即同步更新，指当Slave和Master消息同步完成后，再返回发送成功的状态。ASYNC即异步更新，master与slave有短暂消息延迟，毫&gt; 秒级。本文在此使用了异步复制集群模式，线上环境推荐使用同步双写模式，即SYNC_MASTER</span><br><span class="line">brokerRole=SYNC_MASTER</span><br><span class="line"># 刷盘方式 ASYNC_FLUSH 异步刷盘</span><br><span class="line">flushDiskType=ASYNC_FLUSH</span><br><span class="line">#存储路径</span><br><span class="line">storePathRootDir=/home/hgc/Documents/project/open/rocketmq/store1/rootdir-a-m</span><br><span class="line">storePathCommitLog=/home/hgc/Documents/project/open/rocketmq/store1/commitlog-a-m</span><br><span class="line"># 是否允许 Broker 自动创建Topic</span><br><span class="line">autoCreateTopicEnable=true</span><br><span class="line"># 是否允许 Broker 自动创建订阅组</span><br><span class="line">autoCreateSubscriptionGroup=true</span><br></pre></td></tr></table></figure>
-<p>&#x2F;home&#x2F;hgc&#x2F;Documents&#x2F;project&#x2F;open&#x2F;rocketmq&#x2F;conf.2.m&#x2F;broker.conf</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">brokerName=rocketmq-nameserver-2</span><br><span class="line">listenPort=10921</span><br><span class="line">namesrvAddr=rocketmq-nameserver-1:9876</span><br><span class="line">brokerId=0</span><br><span class="line">deleteWhen=04</span><br><span class="line">fileReservedTime=72</span><br><span class="line">brokerRole=SYNC_MASTER</span><br><span class="line">storePathRootDir=/home/hgc/Documents/project/open/rocketmq/store2/rootdir-b-m</span><br><span class="line">storePathCommitLog=/home/hgc/Documents/project/open/rocketmq/store2/commitlog-b-m</span><br><span class="line">autoCreateTopicEnable=true</span><br><span class="line">autoCreateSubscriptionGroup=true</span><br><span class="line">flushDiskType=ASYNC_FLUSH</span><br></pre></td></tr></table></figure>
-<p>&#x2F;home&#x2F;hgc&#x2F;Documents&#x2F;project&#x2F;open&#x2F;rocketmq&#x2F;conf.1.s&#x2F;broker.conf</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">brokerClusterName = DefaultCluster</span><br><span class="line">brokerName = rocketmq-nameserver-1</span><br><span class="line">brokerId=1</span><br><span class="line">listenPort=10917</span><br><span class="line">namesrvAddr=127.0.0.1:9876</span><br><span class="line">deleteWhen=04</span><br><span class="line">fileReservedTime=72</span><br><span class="line">brokerRole=SLAVE</span><br><span class="line">flushDiskType=ASYNC_FLUSH</span><br><span class="line">storePathRootDir=/home/hgc/Documents/project/open/rocketmq/store1/rootdir-a-s</span><br><span class="line">storePathCommitLog=/home/hgc/Documents/project/open/rocketmq/store1/commitlog-a-s</span><br><span class="line">autoCreateTopicEnable=true</span><br><span class="line">autoCreateSubscriptionGroup=true</span><br></pre></td></tr></table></figure>
-<p>&#x2F;home&#x2F;hgc&#x2F;Documents&#x2F;project&#x2F;open&#x2F;rocketmq&#x2F;conf.2.s&#x2F;broker.conf</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">brokerName=rocketmq-nameserver-2</span><br><span class="line">listenPort=10927</span><br><span class="line">namesrvAddr=127.0.0.1:9876</span><br><span class="line">brokerId=1</span><br><span class="line">deleteWhen=04</span><br><span class="line">fileReservedTime=72</span><br><span class="line">brokerRole=SLAVE</span><br><span class="line">storePathRootDir=/home/hgc/Documents/project/open/rocketmq/store2/rootdir-b-s</span><br><span class="line">storePathCommitLog=/home/hgc/Documents/project/open/rocketmq/store2/commitlog-b-s</span><br><span class="line">autoCreateTopicEnable=true</span><br><span class="line">autoCreateSubscriptionGroup=true</span><br><span class="line">flushDiskType=ASYNC_FLUSH</span><br></pre></td></tr></table></figure>
-<p>4、启动NameServer<br>启动前先修改启动脚本，因为是单机使用，把堆大小稍微改小点：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JAVA_OPT=&quot;$&#123;JAVA_OPT&#125; -server -Xms1g -Xmx1g -Xmn1g -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=320m&quot;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup sh bin/mqnamesrv &amp;</span><br></pre></td></tr></table></figure>
-<p>5、启动Broker<br>同理改下启动脚本：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">JAVA_OPT=&quot;$&#123;JAVA_OPT&#125; -server -Xms1g -Xmx1g -Xmn1g&quot;</span><br></pre></td></tr></table></figure>
-<p>按master - slave的顺序启动每个Broker</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">nohup sh bin/mqbroker -c conf.1.m/broker.conf &gt; conf.1.m/logs/broker.1.m.log &amp;</span><br><span class="line">nohup sh bin/mqbroker -c conf.2.m/broker.conf &gt; conf.2.m/logs/broker.2.m.log &amp;</span><br><span class="line">nohup sh bin/mqbroker -c conf.1.s/broker.conf &gt; conf.1.s/logs/broker.1.s.log &amp;</span><br><span class="line">nohup sh bin/mqbroker -c conf.2.s/broker.conf &gt; conf.2.s/logs/broker.2.s.log &amp;</span><br></pre></td></tr></table></figure>
-<p>6、查看注册情况</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"># 看看集群注册情况</span><br><span class="line">./mqadmin clusterList -n 127.0.0.1:9876</span><br><span class="line"># 创建一个Topic</span><br><span class="line">./mqadmin updateTopic -c DefaultCluster -n localhost:9876 -t TopicTest</span><br><span class="line"># 看看Topic列表</span><br><span class="line">./mqadmin topicList -n 127.0.0.1:9876</span><br><span class="line"># 看看Topic路由信息</span><br><span class="line">./mqadmin topicRoute -n 127.0.0.1:9876 -t TopicTest</span><br><span class="line"># 查看Topic统计信息</span><br><span class="line">mqadmin topicStatus -n 127.0.0.1:9876 -t TopicTest</span><br><span class="line"># 根据消息key查询消息</span><br><span class="line">./mqadmin queryMsgByKey -n &quot;127.0.0.1:9876&quot; -t TopicTest -k messageKey</span><br><span class="line"># 根据消息ID查询消息</span><br><span class="line">./mqadmin queryMsgById -n &quot;127.0.0.1:9876&quot; -t TopicTest -i 240882208B134140BD0FB45F5DBD2075000018B4AAC2130BE69B0001</span><br><span class="line"># 查询Producer的网络连接</span><br><span class="line">./mqadmin producerConnection -n 127.0.0.1:9876 -g ExampleProducerGroup -t TopicTest</span><br><span class="line"># 查询Consumer的网络连接</span><br><span class="line">./mqadmin consumerConnection -n 127.0.0.1:9876 -g ExampleConsumerGroup -t TopicTest</span><br><span class="line"># 查看订阅组的消费状态</span><br><span class="line">consumerProgress</span><br><span class="line"># 添加KV配置信息</span><br><span class="line">updateKvConfig</span><br><span class="line"># 删除KV配置信息</span><br><span class="line">deleteKvConfig</span><br><span class="line"># 添加project group配置信息</span><br><span class="line">updateProjectGroup</span><br><span class="line"># 删除project group配置信息</span><br><span class="line">deleteProjectGroup</span><br><span class="line"># 获取product group配置信息</span><br><span class="line">getProjectGroup</span><br><span class="line"># 设置消费进度</span><br><span class="line">resetOffsetByTime</span><br><span class="line"># 清除特定Broker权限</span><br><span class="line">wipeWritePerm</span><br><span class="line"># 获取Consumer消费进度</span><br><span class="line">getConsumerStatus</span><br></pre></td></tr></table></figure>
-<p>7、使用客户端测试<br>略<br>8、关闭服务器</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sh mqshutdown namesrv</span><br><span class="line">sh mqshutdown broker</span><br></pre></td></tr></table></figure>
-
-<h2 id="主从自动切换（DLedger）"><a href="#主从自动切换（DLedger）" class="headerlink" title="主从自动切换（DLedger）"></a>主从自动切换（DLedger）</h2><ul>
-<li>enableDLegerCommitLog<br>是否启用 DLedger，即是否启用 RocketMQ 主从切换，默认值为 false。如果需要开启主从切换，则该值需要设置为 true 。</li>
-<li>dLegerGroup<br>节点所属的 raft 组，建议与 brokerName 保持一致，例如 broker-a。</li>
-<li>dLegerPeers<br>集群节点信息，示例配置如下：n0-127.0.0.1:40911;n1-127.0.0.1:40912;n2-127.0.0.1:40913，多个节点用英文冒号隔开，单个条目遵循 legerSlefId-ip:端口，这里的端口用作 dledger 内部通信。</li>
-<li>dLegerSelfId<br>当前节点id。取自 legerPeers 中条目的开头，即上述示例中的 n0，并且特别需要强调，只能第一个字符为英文，其他字符需要配置成数字。</li>
-<li>storePathRootDir<br>DLedger 日志文件的存储根目录，为了能够支持平滑升级，该值与 storePathCommitLog 设置为不同的目录。</li>
+<h1 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h1><h2 id="选型"><a href="#选型" class="headerlink" title="选型"></a>选型</h2><table>
+<thead>
+<tr>
+<th>消息队列</th>
+<th>Kafka</th>
+<th>RocketMQ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>适用场景</td>
+<td>大量消息快速消费如流式计算</td>
+<td>高性能、稳定、高可靠</td>
+</tr>
+<tr>
+<td>热度</td>
+<td>与周边生态系统的兼容性最好</td>
+<td>有活跃中文社区</td>
+</tr>
+<tr>
+<td>消息可靠传递</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>延迟</td>
+<td>毫秒级</td>
+<td>毫秒级</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>每秒几十万</td>
+<td>每秒几十万</td>
+</tr>
+<tr>
+<td>消息丢失</td>
+<td>参数优化配置后0丢失</td>
+<td>参数优化配置后0丢失</td>
+</tr>
+<tr>
+<td>消费模式</td>
+<td>Pull</td>
+<td>Pull + Push（原理都是Pull）</td>
+</tr>
+<tr>
+<td>可用性</td>
+<td>非常高（分布式）</td>
+<td>非常高（主从）</td>
+</tr>
+<tr>
+<td>topic数量对吞吐量的影响</td>
+<td>topic达到几十，几百个时，吞吐量会大幅度下降</td>
+<td>topic达到几百，几千个时，吞吐量会有较小幅度的下降</td>
+</tr>
+</tbody></table>
+<p>缺点：</p>
+<ul>
+<li>Kafka：同步收发消息的响应时延比较高，因为当客户端发送一条消息的时候，Kafka 并不会立即发送出去，而是要等一会儿攒一批再发送，在它的 Broker 中，很多地方都会使用这种“先攒一波再一起处理”的设计。当业务场景中，每秒钟消息数量没有那么多的时候，Kafka 的时延反而会比较高。所以，Kafka 不太适合在线业务场景。</li>
+<li>RocketMQ：没有太明显的缺点</li>
 </ul>
-<p>第一个节点的broker.conf：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">brokerClusterName = DefaultCluster</span><br><span class="line">brokerName = broker1</span><br><span class="line">brokerId = 0</span><br><span class="line">listenPort=10911</span><br><span class="line">deleteWhen = 04</span><br><span class="line">fileReservedTime = 48</span><br><span class="line">brokerRole = ASYNC_MASTER</span><br><span class="line">flushDiskType = ASYNC_FLUSH</span><br><span class="line">namesrvAddr=127.0.0.1:9876</span><br><span class="line">storePathRootDir=/home/hgc/Documents/project/open/rocketmq-dleger/store1/</span><br><span class="line"># 与dledger相关的属性</span><br><span class="line">enableDLegerCommitLog=true</span><br><span class="line">dLegerGroup=broker1</span><br><span class="line">dLegerPeers=n0-127.0.0.1:40911;n1-127.0.0.1:40912;n2-127.0.0.1:40913</span><br><span class="line">dLegerSelfId=n0</span><br></pre></td></tr></table></figure>
-<p>第二个节点的broker.conf：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">brokerClusterName = DefaultCluster</span><br><span class="line">brokerName = broker1</span><br><span class="line">brokerId = 0</span><br><span class="line">listenPort=10921</span><br><span class="line">deleteWhen = 04</span><br><span class="line">fileReservedTime = 48</span><br><span class="line">brokerRole = ASYNC_MASTER</span><br><span class="line">flushDiskType = ASYNC_FLUSH</span><br><span class="line">namesrvAddr=127.0.0.1:9876</span><br><span class="line">storePathRootDir=/home/hgc/Documents/project/open/rocketmq-dleger/store2/</span><br><span class="line"># 与dledger 相关的配置属性</span><br><span class="line">enableDLegerCommitLog=true</span><br><span class="line">dLegerGroup=broker1</span><br><span class="line">dLegerPeers=n0-127.0.0.1:40911;n1-127.0.0.1:40912;n2-127.0.0.1:40913</span><br><span class="line">dLegerSelfId=n1</span><br></pre></td></tr></table></figure>
-<p>第三个节点的broker.conf：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">brokerClusterName = DefaultCluster</span><br><span class="line">brokerName = broker1</span><br><span class="line">brokerId = 0</span><br><span class="line">listenPort=10931</span><br><span class="line">deleteWhen = 04</span><br><span class="line">fileReservedTime = 48</span><br><span class="line">brokerRole = ASYNC_MASTER</span><br><span class="line">flushDiskType = ASYNC_FLUSH</span><br><span class="line">namesrvAddr=127.0.0.1:9876</span><br><span class="line">storePathRootDir=/home/hgc/Documents/project/open/rocketmq-dleger/store3/</span><br><span class="line"># 与dledger 相关的配置属性</span><br><span class="line">enableDLegerCommitLog=true</span><br><span class="line">dLegerGroup=broker1</span><br><span class="line">dLegerPeers=n0-127.0.0.1:40911;n1-127.0.0.1:40912;n2-127.0.0.1:40913</span><br><span class="line">dLegerSelfId=n2</span><br></pre></td></tr></table></figure>
-
-<p>对于DLedger集群来说，一方面要保证消息仍能正常收发，另一方面还要保证Master挂掉后集群会选举出一个新的Master，可以将Master kill掉来模拟这种情况，在rocketmq-console中查看节点角色的变化情况。</p>
-<h2 id="客户端配置"><a href="#客户端配置" class="headerlink" title="客户端配置"></a>客户端配置</h2><h3 id="消费模式"><a href="#消费模式" class="headerlink" title="消费模式"></a>消费模式</h3><p>有以下3种：</p>
+<h2 id="部署结构"><a href="#部署结构" class="headerlink" title="部署结构"></a>部署结构</h2><p><img src="/imgs/RocketMQ/RocketMQ-%E6%9E%B6%E6%9E%84%E5%9B%BE.png" alt="RocketMQ-架构图" title="RocketMQ-架构图"><br><img src="/imgs/RocketMQ/RocketMQ-%E9%83%A8%E7%BD%B2%E5%9B%BE.png" alt="RocketMQ-部署图" title="RocketMQ-部署图"></p>
+<ul>
+<li>启动 NameServer，NameServer 起来后监听端口，等待 Broker、Producer、Consumer 连上来，相当于一个路由控制中心。</li>
+<li>Broker 启动，跟所有的 NameServer 保持长连接，定时发送心跳包。心跳包中包含当前 Broker 信息(IP+端口等)以及存储所有 Topic 信息。注册成功后，NameServer 集群中就有 Topic 跟 Broker 的映射关系。</li>
+<li>收发消息前，先创建 Topic，创建 Topic 时需要指定该 Topic 要存储在哪些 Broker 上，也可以在发送消息时自动创建 Topic。</li>
+<li>Producer 发送消息，启动时先跟 NameServer 集群中的其中一台建立长连接，并从 NameServer 中获取当前发送的 Topic 存在哪些 Broker 上，轮询从队列列表中选择一个队列，然后与队列所在的 Broker 建立长连接从而向 Broker 发消息。</li>
+<li>Consumer 跟 Producer 类似，跟其中一台 NameServer 建立长连接，获取当前订阅 Topic 存在哪些 Broker 上，然后直接跟 Broker 建立连接通道，开始消费消息。</li>
+</ul>
+<p>下图来自<a target="_blank" rel="noopener" href="https://github.com/apache/rocketmq/blob/master/docs/cn/architecture.md">GitHub</a><br><img src="/imgs/RocketMQ/rocketmq_architecture.png" alt="rocketmq_architecture" title="rocketmq_architecture"></p>
+<h2 id="推拉模型"><a href="#推拉模型" class="headerlink" title="推拉模型"></a>推拉模型</h2><h3 id="推模式优缺点"><a href="#推模式优缺点" class="headerlink" title="推模式优缺点"></a>推模式优缺点</h3><ul>
+<li><p>实时性高</p>
+</li>
+<li><p>推送速率难以适应消费速率</p>
+</li>
+<li><p>不同消费者的消费速率很有可能不一样，Broker难以平衡每个消费者的推送速率，如果要实现自适应就会大大增加Broker自身的复杂度</p>
+</li>
+</ul>
+<p>因此推模式适用于消息量不大、消费能力强要求实时性高的情况下。</p>
+<h3 id="拉模式优缺点"><a href="#拉模式优缺点" class="headerlink" title="拉模式优缺点"></a>拉模式优缺点</h3><ul>
+<li><p>消费者可以根据自己能力拉取消息处理，灵活稳定</p>
+</li>
+<li><p>可以更合适地进行消息的批量发送，基于推模式可以来一个消息就推送，也可以缓存一些消息之后再推送，但是推送的时候其实不知道消费者能不能一次性处理这么多消息。而拉模式可以根据消费者缓存能力决定拉取多少消息。</p>
+</li>
+<li><p>会造成消息的延迟消费，如果长时间没有消息，消费端不断轮询拉取，会造成一定时间的忙等，如果轮询时间过长，又会导致消息的延迟加大。</p>
+</li>
+</ul>
+<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><h2 id="消息队列可以做什么？"><a href="#消息队列可以做什么？" class="headerlink" title="消息队列可以做什么？"></a>消息队列可以做什么？</h2><p>异步处理耗时任务<br>解耦上下游系统<br>削峰填谷</p>
+<h2 id="哪些消息队列可以做到在消息生产、消费过程中不重、不丢（Exactly-once）？"><a href="#哪些消息队列可以做到在消息生产、消费过程中不重、不丢（Exactly-once）？" class="headerlink" title="哪些消息队列可以做到在消息生产、消费过程中不重、不丢（Exactly once）？"></a>哪些消息队列可以做到在消息生产、消费过程中不重、不丢（Exactly once）？</h2><p>Kafka、RocketMQ、RabbitMQ都没有实现这个需求，因为要实现Exactly once，除了重发外还需要做幂等，实现比较复杂，而且对性能影响比较大。</p>
+<h2 id="RocketMQ中的Consumer是推还是拉？"><a href="#RocketMQ中的Consumer是推还是拉？" class="headerlink" title="RocketMQ中的Consumer是推还是拉？"></a>RocketMQ中的Consumer是推还是拉？</h2><p>RocketMQ支持推和拉，但这两种方式实际上都是通过pull实现的，只是拉是同步的，而推是传个回调函数，当RocketMQ客户端接收到消息后再调用这个回调函数。</p>
+<h2 id="RocketMQ发送、存储、接收的流程？"><a href="#RocketMQ发送、存储、接收的流程？" class="headerlink" title="RocketMQ发送、存储、接收的流程？"></a>RocketMQ发送、存储、接收的流程？</h2><h2 id="当发现消费者不消费时，如何诊断问题？"><a href="#当发现消费者不消费时，如何诊断问题？" class="headerlink" title="当发现消费者不消费时，如何诊断问题？"></a>当发现消费者不消费时，如何诊断问题？</h2><ol>
+<li>检查连接状态，看消费者是否正常连接Broker；</li>
+<li>看消费者是否有分配到ConsumeQueue，因为一个ConsumeQueue只能被一个消费者消费，所以消费者数量超过ConsumeQueue时，就会出现部分消费者没有ConsumeQueue可消费的情况；</li>
+<li>生产者是否有正常消费，从控制台就可以看；</li>
+<li>如果检查完以上步骤后仍然没有发现问题，则需要查看消费者的客户端日志再进一步分析。</li>
+</ol>
+<h2 id="怎么实现消息发送的严格顺序性？"><a href="#怎么实现消息发送的严格顺序性？" class="headerlink" title="怎么实现消息发送的严格顺序性？"></a>怎么实现消息发送的严格顺序性？</h2><p>RMQ中的<strong>分区算法</strong>指的就是把消息发到固定的某些队列上，因为同一队列只能被一个消费者消费，因此可以保证这个队列中消息的顺序性。<br>可选的分区算法如：</p>
 <ol>
-<li>CONSUME_FROM_LAST_OFFSET：默认策略，从该队列最尾开始消费，即跳过历史消息</li>
-<li>CONSUME_FROM_FIRST_OFFSET：从队列最开始开始消费，即历史消息（还储存在broker的）全部消费一遍</li>
-<li>CONSUME_FROM_TIMESTAMP：从某个时间点开始消费，和setConsumeTimestamp()配合使用，默认是半个小时以前</li>
+<li>在表中存储key和分区的对应关系，通过查表确定分区号；</li>
+<li>取模</li>
 </ol>
-<h3 id="其他概念"><a href="#其他概念" class="headerlink" title="其他概念"></a>其他概念</h3><p>msgId：根据 queueNum 取模放到 broker 队列<br>instanceName：每个集群不一致，同一集群 groupName 不能重，两个 topic 的 groupName 不能一样<br>两种模式本质都是拉：push 是构建长连接，一次拉完，一个一个给 broker 回执 ack，多个 Consumer 平分（必须是 4 的倍数，不够再给余数，比如 9 个消息三个 Consumer 分别拉到 4、4、1），poll 模式批量，按设定拉取</p>
-<h2 id="消息的生成和消费"><a href="#消息的生成和消费" class="headerlink" title="消息的生成和消费"></a>消息的生成和消费</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.apache.rocketmq&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;rocketmq-client&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;4.3.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
-<p>消息生产：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line">public class ProducerTest &#123;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 同步消息</span><br><span class="line">     */</span><br><span class="line">    @Test</span><br><span class="line">    public void sendSyncMsg() throws MQClientException, UnsupportedEncodingException, RemotingException, InterruptedException, MQBrokerException &#123;</span><br><span class="line">        DefaultMQProducer producer = new DefaultMQProducer(&quot;please_rename_unique_group_name&quot;);</span><br><span class="line">        producer.setNamesrvAddr(&quot;localhost:9876&quot;);</span><br><span class="line">        producer.start();</span><br><span class="line">        for (int i = 0; i &lt; 100; i++) &#123;</span><br><span class="line">            // 创建消息，并指定Topic，Tag和消息体</span><br><span class="line">            Message msg = new Message(&quot;TopicTest&quot;,</span><br><span class="line">                    &quot;TagA&quot;,</span><br><span class="line">                    (&quot;Hello RocketMQ &quot; + i).getBytes(RemotingHelper.DEFAULT_CHARSET)</span><br><span class="line">            );</span><br><span class="line">            // 发送消息到一个Broker</span><br><span class="line">            SendResult sendResult = producer.send(msg);</span><br><span class="line">            // 通过sendResult返回消息是否成功送达</span><br><span class="line">            System.out.printf(&quot;%s%n&quot;, sendResult);</span><br><span class="line">        &#125;</span><br><span class="line">        // 如果不再发送消息，关闭Producer实例。</span><br><span class="line">        producer.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 异步消息</span><br><span class="line">     */</span><br><span class="line">    @Test</span><br><span class="line">    public void sendAsyncMsg() throws MQClientException, UnsupportedEncodingException, RemotingException, InterruptedException &#123;</span><br><span class="line">        DefaultMQProducer producer = new DefaultMQProducer(&quot;please_rename_unique_group_name&quot;);</span><br><span class="line">        producer.setNamesrvAddr(&quot;localhost:9876&quot;);</span><br><span class="line">        producer.start();</span><br><span class="line">        producer.setRetryTimesWhenSendAsyncFailed(0);</span><br><span class="line">        int messageCount = 100;</span><br><span class="line">        // 根据消息数量实例化倒计时计算器</span><br><span class="line">        final CountDownLatch2 countDownLatch = new CountDownLatch2(messageCount);</span><br><span class="line">        for (int i = 0; i &lt; messageCount; i++) &#123;</span><br><span class="line">            final int index = i;</span><br><span class="line">            // 创建消息，并指定Topic，Tag和消息体</span><br><span class="line">            Message msg = new Message(&quot;TopicTest&quot;,</span><br><span class="line">                    &quot;TagA&quot;,</span><br><span class="line">                    &quot;OrderID188&quot;,</span><br><span class="line">                    &quot;Hello world&quot;.getBytes(RemotingHelper.DEFAULT_CHARSET));</span><br><span class="line">            // SendCallback接收异步返回结果的回调</span><br><span class="line">            producer.send(msg, new SendCallback() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public void onSuccess(SendResult sendResult) &#123;</span><br><span class="line">                    System.out.printf(&quot;%-10d OK %s %n&quot;, index,</span><br><span class="line">                            sendResult.getMsgId());</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                @Override</span><br><span class="line">                public void onException(Throwable e) &#123;</span><br><span class="line">                    System.out.printf(&quot;%-10d Exception %s %n&quot;, index, e);</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        // 等待5s</span><br><span class="line">        countDownLatch.await(5, TimeUnit.SECONDS);</span><br><span class="line">        // 如果不再发送消息，关闭Producer实例。</span><br><span class="line">        producer.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 单向消息</span><br><span class="line">     */</span><br><span class="line">    @Test</span><br><span class="line">    public void testSendOnewayMsg() throws MQClientException, UnsupportedEncodingException, RemotingException, InterruptedException &#123;</span><br><span class="line">        DefaultMQProducer producer = new DefaultMQProducer(&quot;please_rename_unique_group_name&quot;);</span><br><span class="line">        producer.setNamesrvAddr(&quot;localhost:9876&quot;);</span><br><span class="line">        producer.start();</span><br><span class="line">        for (int i = 0; i &lt; 100; i++) &#123;</span><br><span class="line">            // 创建消息，并指定Topic，Tag和消息体</span><br><span class="line">            Message msg = new Message(&quot;TopicTest&quot;,</span><br><span class="line">                    &quot;TagA&quot;,</span><br><span class="line">                    (&quot;Hello RocketMQ &quot; + i).getBytes(RemotingHelper.DEFAULT_CHARSET)</span><br><span class="line">            );</span><br><span class="line">            // 发送单向消息，没有任何返回结果</span><br><span class="line">            producer.sendOneway(msg);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        // 如果不再发送消息，关闭Producer实例。</span><br><span class="line">        producer.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>消息消费：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public class ConsumerTest &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws MQClientException &#123;</span><br><span class="line">        // 实例化消费者</span><br><span class="line">        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(&quot;please_rename_unique_group_name&quot;);</span><br><span class="line"></span><br><span class="line">        // 设置NameServer的地址</span><br><span class="line">        consumer.setNamesrvAddr(&quot;localhost:9876&quot;);</span><br><span class="line"></span><br><span class="line">        // 订阅一个或者多个Topic，以及Tag来过滤需要消费的消息</span><br><span class="line">        consumer.subscribe(&quot;TopicTest&quot;, &quot;*&quot;);</span><br><span class="line">        // 注册回调实现类来处理从broker拉取回来的消息</span><br><span class="line">        consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -&gt; &#123;</span><br><span class="line">            System.out.printf(&quot;%s Receive New Messages: %s %n&quot;, Thread.currentThread().getName(), msgs);</span><br><span class="line">            // 标记该消息已经被成功消费</span><br><span class="line">            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;</span><br><span class="line">        &#125;);</span><br><span class="line">        // 启动消费者实例</span><br><span class="line">        consumer.start();</span><br><span class="line">        System.out.printf(&quot;Consumer Started.%n&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="顺序消息"><a href="#顺序消息" class="headerlink" title="顺序消息"></a>顺序消息</h2><p>发送：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br></pre></td><td class="code"><pre><span class="line">public class OrderedProducer &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws Exception &#123;</span><br><span class="line">        DefaultMQProducer producer = new DefaultMQProducer(&quot;please_rename_unique_group_name&quot;);</span><br><span class="line"></span><br><span class="line">        producer.setNamesrvAddr(&quot;127.0.0.1:9876&quot;);</span><br><span class="line"></span><br><span class="line">        producer.start();</span><br><span class="line"></span><br><span class="line">        String[] tags = new String[]&#123;&quot;TagA&quot;, &quot;TagC&quot;, &quot;TagD&quot;&#125;;</span><br><span class="line"></span><br><span class="line">        // 订单列表</span><br><span class="line">        List&lt;OrderStep&gt; orderList = new OrderedProducer().buildOrders();</span><br><span class="line"></span><br><span class="line">        Date date = new Date();</span><br><span class="line">        SimpleDateFormat sdf = new SimpleDateFormat(&quot;yyyy-MM-dd HH:mm:ss&quot;);</span><br><span class="line">        String dateStr = sdf.format(date);</span><br><span class="line">        for (int i = 0; i &lt; 10; i++) &#123;</span><br><span class="line">            // 加个时间前缀</span><br><span class="line">            String body = dateStr + &quot; Hello RocketMQ &quot; + orderList.get(i);</span><br><span class="line">            Message msg = new Message(&quot;TopicTest&quot;, tags[i % tags.length], &quot;KEY&quot; + i, body.getBytes());</span><br><span class="line"></span><br><span class="line">            SendResult sendResult = producer.send(msg, (mqs, msg1, arg) -&gt; &#123;</span><br><span class="line">                Long id = (Long) arg;  //根据订单id选择发送queue</span><br><span class="line">                long index = id % mqs.size();</span><br><span class="line">                return mqs.get((int) index);</span><br><span class="line">            &#125;, orderList.get(i).getOrderId());//订单id</span><br><span class="line"></span><br><span class="line">            System.out.println(String.format(&quot;SendResult status:%s, queueId:%d, body:%s&quot;,</span><br><span class="line">                    sendResult.getSendStatus(),</span><br><span class="line">                    sendResult.getMessageQueue().getQueueId(),</span><br><span class="line">                    body));</span><br><span class="line">        &#125;</span><br><span class="line">        producer.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 订单的步骤</span><br><span class="line">     */</span><br><span class="line">    private static class OrderStep &#123;</span><br><span class="line"></span><br><span class="line">        private long orderId;</span><br><span class="line">        private String desc;</span><br><span class="line"></span><br><span class="line">        public long getOrderId() &#123;</span><br><span class="line">            return orderId;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public void setOrderId(long orderId) &#123;</span><br><span class="line">            this.orderId = orderId;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public String getDesc() &#123;</span><br><span class="line">            return desc;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public void setDesc(String desc) &#123;</span><br><span class="line">            this.desc = desc;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        public String toString() &#123;</span><br><span class="line">            return &quot;OrderStep&#123;&quot; +</span><br><span class="line">                    &quot;orderId=&quot; + orderId +</span><br><span class="line">                    &quot;, desc=&#x27;&quot; + desc + &#x27;\&#x27;&#x27; +</span><br><span class="line">                    &#x27;&#125;&#x27;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 生成模拟订单数据</span><br><span class="line">     */</span><br><span class="line">    private List&lt;OrderStep&gt; buildOrders() &#123;</span><br><span class="line">        List&lt;OrderStep&gt; orderList = new ArrayList&lt;OrderStep&gt;();</span><br><span class="line"></span><br><span class="line">        OrderStep orderDemo = new OrderStep();</span><br><span class="line">        orderDemo.setOrderId(15103111039L);</span><br><span class="line">        orderDemo.setDesc(&quot;创建&quot;);</span><br><span class="line">        orderList.add(orderDemo);</span><br><span class="line"></span><br><span class="line">        orderDemo = new OrderStep();</span><br><span class="line">        orderDemo.setOrderId(15103111065L);</span><br><span class="line">        orderDemo.setDesc(&quot;创建&quot;);</span><br><span class="line">        orderList.add(orderDemo);</span><br><span class="line"></span><br><span class="line">        orderDemo = new OrderStep();</span><br><span class="line">        orderDemo.setOrderId(15103111039L);</span><br><span class="line">        orderDemo.setDesc(&quot;付款&quot;);</span><br><span class="line">        orderList.add(orderDemo);</span><br><span class="line"></span><br><span class="line">        orderDemo = new OrderStep();</span><br><span class="line">        orderDemo.setOrderId(15103117235L);</span><br><span class="line">        orderDemo.setDesc(&quot;创建&quot;);</span><br><span class="line">        orderList.add(orderDemo);</span><br><span class="line"></span><br><span class="line">        orderDemo = new OrderStep();</span><br><span class="line">        orderDemo.setOrderId(15103111065L);</span><br><span class="line">        orderDemo.setDesc(&quot;付款&quot;);</span><br><span class="line">        orderList.add(orderDemo);</span><br><span class="line"></span><br><span class="line">        orderDemo = new OrderStep();</span><br><span class="line">        orderDemo.setOrderId(15103117235L);</span><br><span class="line">        orderDemo.setDesc(&quot;付款&quot;);</span><br><span class="line">        orderList.add(orderDemo);</span><br><span class="line"></span><br><span class="line">        orderDemo = new OrderStep();</span><br><span class="line">        orderDemo.setOrderId(15103111065L);</span><br><span class="line">        orderDemo.setDesc(&quot;完成&quot;);</span><br><span class="line">        orderList.add(orderDemo);</span><br><span class="line"></span><br><span class="line">        orderDemo = new OrderStep();</span><br><span class="line">        orderDemo.setOrderId(15103111039L);</span><br><span class="line">        orderDemo.setDesc(&quot;推送&quot;);</span><br><span class="line">        orderList.add(orderDemo);</span><br><span class="line"></span><br><span class="line">        orderDemo = new OrderStep();</span><br><span class="line">        orderDemo.setOrderId(15103117235L);</span><br><span class="line">        orderDemo.setDesc(&quot;完成&quot;);</span><br><span class="line">        orderList.add(orderDemo);</span><br><span class="line"></span><br><span class="line">        orderDemo = new OrderStep();</span><br><span class="line">        orderDemo.setOrderId(15103111039L);</span><br><span class="line">        orderDemo.setDesc(&quot;完成&quot;);</span><br><span class="line">        orderList.add(orderDemo);</span><br><span class="line"></span><br><span class="line">        return orderList;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>接收：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 顺序消息消费，带事务方式（应用可控制Offset什么时候提交）</span><br><span class="line"> */</span><br><span class="line">public class OrderedConsumer &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws Exception &#123;</span><br><span class="line">        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(&quot;please_rename_unique_group_name_3&quot;);</span><br><span class="line">        consumer.setNamesrvAddr(&quot;127.0.0.1:9876&quot;);</span><br><span class="line">        /**</span><br><span class="line">         * 设置Consumer第一次启动是从队列头部开始消费还是队列尾部开始消费&lt;br&gt;</span><br><span class="line">         * 如果非第一次启动，那么按照上次消费的位置继续消费</span><br><span class="line">         */</span><br><span class="line">        consumer.setConsumeFromWhere(ConsumeFromWhere.CONSUME_FROM_FIRST_OFFSET);</span><br><span class="line"></span><br><span class="line">        consumer.subscribe(&quot;TopicTest&quot;, &quot;TagA || TagC || TagD&quot;);</span><br><span class="line"></span><br><span class="line">        consumer.registerMessageListener(new MessageListenerOrderly() &#123;</span><br><span class="line"></span><br><span class="line">            Random random = new Random();</span><br><span class="line"></span><br><span class="line">            @Override</span><br><span class="line">            public ConsumeOrderlyStatus consumeMessage(List&lt;MessageExt&gt; msgs, ConsumeOrderlyContext context) &#123;</span><br><span class="line">                context.setAutoCommit(true);</span><br><span class="line">                for (MessageExt msg : msgs) &#123;</span><br><span class="line">                    // 可以看到每个queue有唯一的consume线程来消费, 订单对每个queue(分区)有序</span><br><span class="line">                    System.out.println(&quot;consumeThread=&quot; + Thread.currentThread().getName() + &quot; queueId=&quot; + msg.getQueueId() + &quot;, topic:&quot; + msg.getTopic() + &quot; content:&quot; + new String(msg.getBody()));</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                try &#123;</span><br><span class="line">                    //模拟业务逻辑处理中...</span><br><span class="line">//                    TimeUnit.SECONDS.sleep(1);</span><br><span class="line">                &#125; catch (Exception e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                return ConsumeOrderlyStatus.SUCCESS;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        consumer.start();</span><br><span class="line"></span><br><span class="line">        System.out.println(&quot;Consumer Started.&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="延时消息"><a href="#延时消息" class="headerlink" title="延时消息"></a>延时消息</h2><p>延时消息可以用于一些需要延迟处理业务的场景，比如下单后超过一定时间没支付就自动取消。<br>发送：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class ScheduledProducer &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws Exception &#123;</span><br><span class="line">        DefaultMQProducer producer = new DefaultMQProducer(&quot;ExampleProducerGroup&quot;);</span><br><span class="line">        producer.setNamesrvAddr(&quot;127.0.0.1:9876&quot;);</span><br><span class="line">        producer.start();</span><br><span class="line">        int totalMessagesToSend = 100;</span><br><span class="line">        for (int i = 0; i &lt; totalMessagesToSend; i++) &#123;</span><br><span class="line">            Message message = new Message(&quot;TopicTest&quot;, &quot;TagA&quot;, (&quot;Hello scheduled message &quot; + i).getBytes());</span><br><span class="line">            // 设置延时等级3,这个消息将在10s之后发送(现在只支持固定的几个时间,详看delayTimeLevel)</span><br><span class="line">            message.setDelayTimeLevel(3);</span><br><span class="line">            producer.send(message);</span><br><span class="line">        &#125;</span><br><span class="line">        producer.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>接收：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class ScheduledConsumer &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws Exception &#123;</span><br><span class="line">        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(&quot;ExampleConsumer&quot;);</span><br><span class="line">        consumer.setNamesrvAddr(&quot;127.0.0.1:9876&quot;);</span><br><span class="line">        consumer.subscribe(&quot;TopicTest&quot;, &quot;*&quot;);</span><br><span class="line">        consumer.registerMessageListener((MessageListenerConcurrently) (messages, context) -&gt; &#123;</span><br><span class="line">            for (MessageExt message : messages) &#123;</span><br><span class="line">                // Print approximate delay time period</span><br><span class="line">                System.out.println(&quot;Receive message[msgId=&quot; + message.getMsgId() + &quot;] &quot; + (System.currentTimeMillis() - message.getStoreTimestamp()) + &quot;ms later&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;</span><br><span class="line">        &#125;);</span><br><span class="line">        consumer.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="批量消息"><a href="#批量消息" class="headerlink" title="批量消息"></a>批量消息</h2><p>批量发送消息能显著提高传递小消息的性能。限制是这些批量消息应该有相同的 topic，相同的 waitStoreMsgOK，而且不能是延时消息，此外，这一批消息的总大小不应超过 4MB。<br>发送：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">public class BatchProducer &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws MQClientException &#123;</span><br><span class="line">        DefaultMQProducer producer = new DefaultMQProducer(&quot;ExampleProducerGroup&quot;);</span><br><span class="line">        producer.setNamesrvAddr(&quot;127.0.0.1:9876&quot;);</span><br><span class="line">        producer.start();</span><br><span class="line">        String topic = &quot;TopicTest&quot;;</span><br><span class="line">        List&lt;Message&gt; messages = new ArrayList&lt;&gt;();</span><br><span class="line">        messages.add(new Message(topic, &quot;TagA&quot;, &quot;OrderID001&quot;, &quot;Hello world 0&quot;.getBytes()));</span><br><span class="line">        messages.add(new Message(topic, &quot;TagA&quot;, &quot;OrderID002&quot;, &quot;Hello world 1&quot;.getBytes()));</span><br><span class="line">        messages.add(new Message(topic, &quot;TagA&quot;, &quot;OrderID003&quot;, &quot;Hello world 2&quot;.getBytes()));</span><br><span class="line">        try &#123;</span><br><span class="line">            producer.send(messages);</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        producer.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>接收逻辑并无不同：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class BatchConsumer &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws MQClientException &#123;</span><br><span class="line">        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(&quot;ExampleConsumer&quot;);</span><br><span class="line">        consumer.setNamesrvAddr(&quot;127.0.0.1:9876&quot;);</span><br><span class="line">        consumer.subscribe(&quot;TopicTest&quot;, &quot;*&quot;);</span><br><span class="line">        consumer.registerMessageListener((MessageListenerConcurrently) (messages, context) -&gt; &#123;</span><br><span class="line">            for (MessageExt message : messages) &#123;</span><br><span class="line">                // Print approximate delay time period</span><br><span class="line">                System.out.println(&quot;Receive message[msgId=&quot; + message.getMsgId() + &quot;] &quot; + (System.currentTimeMillis() - message.getStoreTimestamp()) + &quot;ms later&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;</span><br><span class="line">        &#125;);</span><br><span class="line">        consumer.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>注意我们上边提到的 4MB 的大小限制，如果消息列表中的消息变多了，很有可能会超过这个大小，这时最好对消息列表进行分割再发送：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">public class BatchProducer &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws MQClientException &#123;</span><br><span class="line">        DefaultMQProducer producer = new DefaultMQProducer(&quot;ExampleProducerGroup&quot;);</span><br><span class="line">        producer.setNamesrvAddr(&quot;127.0.0.1:9876&quot;);</span><br><span class="line">        producer.start();</span><br><span class="line">        String topic = &quot;TopicTest&quot;;</span><br><span class="line">        List&lt;Message&gt; messages = new ArrayList&lt;&gt;();</span><br><span class="line">        messages.add(new Message(topic, &quot;TagA&quot;, &quot;OrderID001&quot;, &quot;Hello world 0&quot;.getBytes()));</span><br><span class="line">        messages.add(new Message(topic, &quot;TagA&quot;, &quot;OrderID002&quot;, &quot;Hello world 1&quot;.getBytes()));</span><br><span class="line">        messages.add(new Message(topic, &quot;TagA&quot;, &quot;OrderID003&quot;, &quot;Hello world 2&quot;.getBytes()));</span><br><span class="line">        try &#123;</span><br><span class="line">            splitSend(producer, messages);</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        producer.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    static void splitSend(MQProducer producer, List&lt;Message&gt; messages) &#123;</span><br><span class="line">        //把大的消息分裂成若干个小的消息</span><br><span class="line">        ListSplitter splitter = new ListSplitter(messages);</span><br><span class="line">        while (splitter.hasNext()) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                List&lt;Message&gt; listItem = splitter.next();</span><br><span class="line">                producer.send(listItem);</span><br><span class="line">            &#125; catch (Exception e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">                //处理error</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">public class ListSplitter implements Iterator&lt;List&lt;Message&gt;&gt; &#123;</span><br><span class="line"></span><br><span class="line">    private final int SIZE_LIMIT = 1024 * 1024 * 4;</span><br><span class="line">    private final List&lt;Message&gt; messages;</span><br><span class="line">    private int currIndex;</span><br><span class="line"></span><br><span class="line">    public ListSplitter(List&lt;Message&gt; messages) &#123;</span><br><span class="line">        this.messages = messages;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public boolean hasNext() &#123;</span><br><span class="line">        return currIndex &lt; messages.size();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public List&lt;Message&gt; next() &#123;</span><br><span class="line">        int startIndex = getStartIndex();</span><br><span class="line">        int nextIndex = startIndex;</span><br><span class="line">        int totalSize = 0;</span><br><span class="line">        for (; nextIndex &lt; messages.size(); nextIndex++) &#123;</span><br><span class="line">            Message message = messages.get(nextIndex);</span><br><span class="line">            int tmpSize = calcMessageSize(message);</span><br><span class="line">            if (tmpSize + totalSize &gt; SIZE_LIMIT) &#123;</span><br><span class="line">                break;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                totalSize += tmpSize;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        List&lt;Message&gt; subList = messages.subList(startIndex, nextIndex);</span><br><span class="line">        currIndex = nextIndex;</span><br><span class="line">        return subList;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private int getStartIndex() &#123;</span><br><span class="line">        Message currMessage = messages.get(currIndex);</span><br><span class="line">        int tmpSize = calcMessageSize(currMessage);</span><br><span class="line">        while (tmpSize &gt; SIZE_LIMIT) &#123;</span><br><span class="line">            currIndex += 1;</span><br><span class="line">            Message message = messages.get(currIndex);</span><br><span class="line">            tmpSize = calcMessageSize(message);</span><br><span class="line">        &#125;</span><br><span class="line">        return currIndex;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private int calcMessageSize(Message message) &#123;</span><br><span class="line">        int tmpSize = message.getTopic().length() + message.getBody().length;</span><br><span class="line">        Map&lt;String, String&gt; properties = message.getProperties();</span><br><span class="line">        for (Map.Entry&lt;String, String&gt; entry : properties.entrySet()) &#123;</span><br><span class="line">            tmpSize += entry.getKey().length() + entry.getValue().length();</span><br><span class="line">        &#125;</span><br><span class="line">        tmpSize = tmpSize + 20; // 增加⽇日志的开销20字节</span><br><span class="line">        return tmpSize;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="消息订阅"><a href="#消息订阅" class="headerlink" title="消息订阅"></a>消息订阅</h2><p>RocketMQ 支持用 SQL 语法的语句来“<strong>模糊</strong>”订阅消息，只有使用 push 模式的消费者才能用使用 SQL92 标准的 sql 语句，接口如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void subscribe(finalString topic, final MessageSelector messageSelector)</span><br></pre></td></tr></table></figure>
+<h2 id="RocketMQ能否做到单队列的并行消费？"><a href="#RocketMQ能否做到单队列的并行消费？" class="headerlink" title="RocketMQ能否做到单队列的并行消费？"></a>RocketMQ能否做到单队列的并行消费？</h2><p>RocketMQ 在消费的时候，为了保证消息的不丢失和严格顺序，每个队列只能串行消费（一个消费者可以消费多个队列），无法做到并发，否则会出现消费空洞的问题。那如果放宽一下限制，不要求严格顺序，能否做到单个队列的并行消费呢？</p>
+<h2 id="怎么实现负载均衡？"><a href="#怎么实现负载均衡？" class="headerlink" title="怎么实现负载均衡？"></a>怎么实现负载均衡？</h2><h2 id="RocketMQ如何保证消息不丢（消息一定能被消费）？"><a href="#RocketMQ如何保证消息不丢（消息一定能被消费）？" class="headerlink" title="RocketMQ如何保证消息不丢（消息一定能被消费）？"></a>RocketMQ如何保证消息不丢（消息一定能被消费）？</h2><ol>
+<li>Producer端重试<br>默认push重试3次。</li>
+<li>Broker端只有在复制半数以上副本之后才会返回发送成功。<blockquote>
+<p>和MySQL里的semisync有点像。</p>
+</blockquote>
+</li>
+<li>Consumer端重复消费<br>DefaultMQPushConsumer默认超时重试无限次，默认异常重试16次，过期或重试不成功则进入死信队列、默认凌晨 3 点会清除死信队列，为了确保重试不会出现重复消费，业务逻辑一般都需要保证幂等（幂等key可以使用业务oid或uniqId）。<br>Consumer有两种返回值，CONSUME_SUCCESS和CONSUME_LATER，后者令Broker将消息转移到另一个Retry队列中供重试使用。</li>
+</ol>
+<h2 id="RocketMQ如何实现消息去重？"><a href="#RocketMQ如何实现消息去重？" class="headerlink" title="RocketMQ如何实现消息去重？"></a>RocketMQ如何实现消息去重？</h2><p>RocketMQ本身没有实现消息的去重功能，因为RocketMQ是At-Least-Once的。<br>所以，很多时候我们需要自己通过Redis等来实现消息去重，但是要注意的是不要用错了msgId：</p>
 <ul>
-<li>数值比较，比如：&gt;，&gt;&#x3D;，&lt;，&lt;&#x3D;，BETWEEN，&#x3D;；</li>
-<li>字符比较，比如：&#x3D;，&lt;&gt;，IN；</li>
-<li>IS NULL 或者 IS NOT NULL；</li>
-<li>逻辑符号 AND，OR，NOT；</li>
+<li><code>MessageExt.msgId</code>：重试时这个msgId是会变的，因此不适合当作幂等key；</li>
+<li><code>MessageExt.properties[&quot;PROPERTY_UNIQ_CLIENT_MESSAGE_ID_KEYIDX&quot;]</code>：相对上面那个msgId来说，这个UNIQ_KEY就算重试多次值还是一样的，因此更适合当作幂等key。</li>
 </ul>
-<p>常量支持类型为：</p>
-<ul>
-<li>数值，比如：123，3.1415；</li>
-<li>字符，比如：’abc’，必须用单引号包裹起来；</li>
-<li>NULL，特殊的常量</li>
-<li>布尔值，TRUE 或 FALSE</li>
-</ul>
-<p>消息发送：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class TagProducer &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws MQClientException, UnsupportedEncodingException, RemotingException, InterruptedException, MQBrokerException &#123;</span><br><span class="line">        DefaultMQProducer producer = new DefaultMQProducer(&quot;please_rename_unique_group_name&quot;);</span><br><span class="line">        producer.setNamesrvAddr(&quot;localhost:9876&quot;);</span><br><span class="line">        producer.start();</span><br><span class="line">        Message msg = new Message(&quot;TopicTest&quot;,</span><br><span class="line">                &quot;TagA&quot;,</span><br><span class="line">                (&quot;Hello RocketMQ&quot;).getBytes(RemotingHelper.DEFAULT_CHARSET)</span><br><span class="line">        );</span><br><span class="line">        // 设置一些属性</span><br><span class="line">        msg.putUserProperty(&quot;a&quot;, &quot;2&quot;);</span><br><span class="line">        SendResult sendResult = producer.send(msg);</span><br><span class="line">        producer.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>消息消费：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public class TagConsumer &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws MQClientException &#123;</span><br><span class="line">        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(&quot;please_rename_unique_group_name_4&quot;);</span><br><span class="line">        consumer.setNamesrvAddr(&quot;localhost:9876&quot;);</span><br><span class="line">        // 只有订阅的消息有这个属性a, a &gt;=0 and a &lt;= 3</span><br><span class="line">        consumer.subscribe(&quot;TopicTest&quot;, MessageSelector.bySql(&quot;a between 0 and 3&quot;));</span><br><span class="line">        consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -&gt; &#123;</span><br><span class="line">            System.out.println(new String(msgs.get(0).getBody()));</span><br><span class="line">            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;</span><br><span class="line">        &#125;);</span><br><span class="line">        consumer.start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="事务消息"><a href="#事务消息" class="headerlink" title="事务消息"></a>事务消息</h2><p>事务消息有3种状态：</p>
-<ul>
-<li>TransactionStatus.CommitTransaction: 提交事务，它允许消费者消费此消息。</li>
-<li>TransactionStatus.RollbackTransaction: 回滚事务，它代表该消息将被删除，不允许被消费。</li>
-<li>TransactionStatus.Unknown: 中间状态，它代表需要检查消息队列来确定状态。</li>
-</ul>
-<p>发送事务消息：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">public class TransactionProducer &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws MQClientException, InterruptedException &#123;</span><br><span class="line">        TransactionListener transactionListener = new TransactionListenerImpl();</span><br><span class="line">        TransactionMQProducer producer = new TransactionMQProducer(&quot;please_rename_unique_group_name&quot;);</span><br><span class="line">        producer.setNamesrvAddr(&quot;localhost:9876&quot;);</span><br><span class="line">        ExecutorService executorService = new ThreadPoolExecutor(2, 5, 100, TimeUnit.SECONDS, new ArrayBlockingQueue&lt;&gt;(2000), r -&gt; &#123;</span><br><span class="line">            Thread thread = new Thread(r);</span><br><span class="line">            thread.setName(&quot;client-transaction-msg-check-thread&quot;);</span><br><span class="line">            return thread;</span><br><span class="line">        &#125;);</span><br><span class="line">        producer.setExecutorService(executorService);</span><br><span class="line">        // 事务监听</span><br><span class="line">        producer.setTransactionListener(transactionListener);</span><br><span class="line">        producer.start();</span><br><span class="line">        String[] tags = new String[]&#123;&quot;TagA&quot;, &quot;TagB&quot;, &quot;TagC&quot;, &quot;TagD&quot;, &quot;TagE&quot;&#125;;</span><br><span class="line">        for (int i = 0; i &lt; 10; i++) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                Message msg =</span><br><span class="line">                        new Message(&quot;TopicTest&quot;, tags[i % tags.length], &quot;KEY&quot; + i,</span><br><span class="line">                                (&quot;Hello RocketMQ &quot; + i).getBytes(RemotingHelper.DEFAULT_CHARSET));</span><br><span class="line">                SendResult sendResult = producer.sendMessageInTransaction(msg, null);</span><br><span class="line">                System.out.printf(&quot;%s%n&quot;, sendResult);</span><br><span class="line">                Thread.sleep(10);</span><br><span class="line">            &#125; catch (MQClientException | UnsupportedEncodingException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        for (int i = 0; i &lt; 100000; i++) &#123;</span><br><span class="line">            Thread.sleep(1000);</span><br><span class="line">        &#125;</span><br><span class="line">        producer.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>实现事务监听接口，在发送半消息成功后会触发<code>executeLocalTransaction</code>方法来执行本地事务，<code>checkLocalTransaction</code>用于检查本地事务状态，并回应消息队列的检查请求：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public class TransactionListenerImpl implements TransactionListener &#123;</span><br><span class="line">  private AtomicInteger transactionIndex = new AtomicInteger(0);</span><br><span class="line">  private ConcurrentHashMap&lt;String, Integer&gt; localTrans = new ConcurrentHashMap&lt;&gt;();</span><br><span class="line">  @Override</span><br><span class="line">  public LocalTransactionState executeLocalTransaction(Message msg, Object arg) &#123;</span><br><span class="line">      int value = transactionIndex.getAndIncrement();</span><br><span class="line">      int status = value % 3;</span><br><span class="line">      localTrans.put(msg.getTransactionId(), status);</span><br><span class="line">      return LocalTransactionState.UNKNOW;</span><br><span class="line">  &#125;</span><br><span class="line">  @Override</span><br><span class="line">  public LocalTransactionState checkLocalTransaction(MessageExt msg) &#123;</span><br><span class="line">      Integer status = localTrans.get(msg.getTransactionId());</span><br><span class="line">      if (null != status) &#123;</span><br><span class="line">          switch (status) &#123;</span><br><span class="line">              case 0:</span><br><span class="line">                  return LocalTransactionState.UNKNOW;</span><br><span class="line">              case 1:</span><br><span class="line">                  return LocalTransactionState.COMMIT_MESSAGE;</span><br><span class="line">              case 2:</span><br><span class="line">                  return LocalTransactionState.ROLLBACK_MESSAGE;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      return LocalTransactionState.COMMIT_MESSAGE;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>事务消息使用上的限制：</p>
-<ul>
-<li>事务消息不支持延时消息和批量消息。</li>
-<li>为了避免单个消息被检查太多次而导致半队列消息累积，我们默认将单个消息的检查次数限制为 15 次，但是用户可以通过 Broker 配置文件的 transactionCheckMax 参数来修改此限制。如果已经检查某条消息超过 N 次的话（ N &#x3D; transactionCheckMax ） 则 Broker 将丢弃此消息，并在默认情况下同时打印错误日志。用户可以通过重写 AbstractTransactionalMessageCheckListener 类来修改这个行为。</li>
-<li>事务消息将在 Broker 配置文件中的参数 transactionTimeout 这样的特定时间长度之后被检查。当发送事务消息时，用户还可以通过设置用户属性 CHECK_IMMUNITY_TIME_IN_SECONDS 来改变这个限制，该参数优先于 transactionTimeout 参数。</li>
-<li>事务性消息可能不止一次被检查或消费。</li>
-<li>提交给用户的目标主题消息可能会失败，目前这依日志的记录而定。它的高可用性通过 RocketMQ 本身的高可用性机制来保证，如果希望确保事务消息不丢失、并且事务完整性得到保证，建议使用同步的双重写入机制。</li>
-<li>事务消息的生产者 ID 不能与其他类型消息的生产者 ID 共享。与其他类型的消息不同，事务消息允许反向查询、MQ 服务器能通过它们的生产者 ID 查询到消费者。</li>
-</ul>
-<h1 id="RocketMQ的运维"><a href="#RocketMQ的运维" class="headerlink" title="RocketMQ的运维"></a>RocketMQ的运维</h1><script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+<h2 id="消费失败怎么重发的？"><a href="#消费失败怎么重发的？" class="headerlink" title="消费失败怎么重发的？"></a>消费失败怎么重发的？</h2><h2 id="怎么判断消息堆积了？"><a href="#怎么判断消息堆积了？" class="headerlink" title="怎么判断消息堆积了？"></a>怎么判断消息堆积了？</h2><h2 id="刷盘的原理？"><a href="#刷盘的原理？" class="headerlink" title="刷盘的原理？"></a>刷盘的原理？</h2><ol>
+<li>CommitLog</li>
+<li>ConsumeLog</li>
+</ol>
+<h2 id="怎么实现消息复制（Broker主从之间）？"><a href="#怎么实现消息复制（Broker主从之间）？" class="headerlink" title="怎么实现消息复制（Broker主从之间）？"></a>怎么实现消息复制（Broker主从之间）？</h2><h2 id="RocketMQ-如何保证消息的高可用？"><a href="#RocketMQ-如何保证消息的高可用？" class="headerlink" title="RocketMQ 如何保证消息的高可用？"></a>RocketMQ 如何保证消息的高可用？</h2><ol>
+<li>NameServer 集群<br>NameServer集群节点没有Master、Slave之分，即使挂掉其中几台，其他的仍可提供服务。</li>
+<li>Broker多主多从<br>Broker支持多主多从集群，即使其中某台Master挂掉了，其他Master照样可以提供服务，而且挂掉的Master，其从节点照样可以通过选举得到一个新的Master。</li>
+</ol>
+<h2 id="broker集群的master宕机，slave是怎么提供服务的？master是怎么切换回来的？"><a href="#broker集群的master宕机，slave是怎么提供服务的？master是怎么切换回来的？" class="headerlink" title="broker集群的master宕机，slave是怎么提供服务的？master是怎么切换回来的？"></a>broker集群的master宕机，slave是怎么提供服务的？master是怎么切换回来的？</h2><h2 id="为什么-RocketMQ-使用-NameServer-而不是-ZooKeeper-作为服务注册表"><a href="#为什么-RocketMQ-使用-NameServer-而不是-ZooKeeper-作为服务注册表" class="headerlink" title="为什么 RocketMQ 使用 NameServer 而不是 ZooKeeper 作为服务注册表"></a>为什么 RocketMQ 使用 NameServer 而不是 ZooKeeper 作为服务注册表</h2><p>NameServer 具有<strong>高可用性</strong>，就算其中某台挂掉，其他服务器仍然能提供服务注册和查询功能。<br>ZooKeeper 的设计目标是<strong>高一致性</strong>，其中某台服务器挂掉，整个 ZooKeeper 集群就无法提供服务了——直到下一个Leader被选举出来为止。</p>
+<h2 id="NameServer是怎么感知Broker的变化的？"><a href="#NameServer是怎么感知Broker的变化的？" class="headerlink" title="NameServer是怎么感知Broker的变化的？"></a>NameServer是怎么感知Broker的变化的？</h2><h2 id="RocketMQ的事务消息是否完整实现了事务的ACID特性？"><a href="#RocketMQ的事务消息是否完整实现了事务的ACID特性？" class="headerlink" title="RocketMQ的事务消息是否完整实现了事务的ACID特性？"></a>RocketMQ的事务消息是否完整实现了事务的ACID特性？</h2><h2 id="为什么要有Half-Message？"><a href="#为什么要有Half-Message？" class="headerlink" title="为什么要有Half Message？"></a>为什么要有Half Message？</h2><ol>
+<li>可以先确认Broker服务器是否正常，如果半消息都发送失败了，就说明Broker挂了。</li>
+<li>可以通过半消息来回查事务状态，如果半消息发出后一直没有被二次确认，就会回查事务状态。<blockquote>
+<p>事务回查有两种情况：1、由于网络等原因一直没有执行事务的commit和rollback；2、本地事务执行成功了，但是返回commit的时候服务挂了，Broker最终也没有收到消息，因此还是半消息状态，因此仍会进行重试。</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="为什么说RocketMQ只能保证最终一致性？"><a href="#为什么说RocketMQ只能保证最终一致性？" class="headerlink" title="为什么说RocketMQ只能保证最终一致性？"></a>为什么说RocketMQ只能保证最终一致性？</h2><p>比如以一个转帐功能为例，A账户扣减、发MQ消息通知另一个服务增加B账户的余额，扣减和增加是在两个事务中执行的，MQ虽然能保证两个事务最终一定都能执行上，但是并不能保证中间状态不会出现，比如某个时刻A账户扣减了、但是B账户仍为原状。</p>
+<h2 id="RocketMQ使用某个消息序号messageID消费某个队列的消息，时间复杂度是多少？（假设消息文件commitLog数量为m，每个消息文件中消息条数是k，索引文件consumerQueue的数量是n，队列中共有j条消息）"><a href="#RocketMQ使用某个消息序号messageID消费某个队列的消息，时间复杂度是多少？（假设消息文件commitLog数量为m，每个消息文件中消息条数是k，索引文件consumerQueue的数量是n，队列中共有j条消息）" class="headerlink" title="RocketMQ使用某个消息序号messageID消费某个队列的消息，时间复杂度是多少？（假设消息文件commitLog数量为m，每个消息文件中消息条数是k，索引文件consumerQueue的数量是n，队列中共有j条消息）"></a>RocketMQ使用某个消息序号messageID消费某个队列的消息，时间复杂度是多少？（假设消息文件commitLog数量为m，每个消息文件中消息条数是k，索引文件consumerQueue的数量是n，队列中共有j条消息）</h2><p>复杂度是O(1)，因为消息序号中包含了消息在commitLog中的偏移量，因此可以直接通过偏移量来拿到消息。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/miaoying/p/10319840.html">rocketmq 控制台搭建（rocketmq-console）</a></li>
+<li><a target="_blank" rel="noopener" href="http://rocketmq.apache.org/docs/quick-start/">Quick Start</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.iocoder.cn/RocketMQ/build-debugging-environment/">RocketMQ 源码解析 —— 调试环境搭建</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/zhu_tianwei/article/details/40951301">RocketMQ管理命令说明</a></li>
+</ol>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/apache/rocketmq/blob/master/docs/cn/features.md">特性(features)</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/apache/rocketmq/blob/master/docs/cn/design.md">设计(design)</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/91528718">RocketMQ 实战(三) - 消息的有序性</a></li>
+<li><a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/43348.html?spm=5176.doc43490.6.566.Zd5Bl7">事务消息</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.iocoder.cn/categories/RocketMQ/">RocketMQ 源码分析</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
     </div>
 
@@ -1123,6 +1142,191 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e13f9e03.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/e13f9e03.html" class="post-title-link" itemprop="url">MySQL5_1高可用集群</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-05-29 10:18:28" itemprop="dateCreated datePublished" datetime="2020-05-29T10:18:28+08:00">2020-05-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+<h1 id="主从同步"><a href="#主从同步" class="headerlink" title="主从同步"></a>主从同步</h1><p>MySQL的主从同步是基于bin log实现的。</p>
+<h2 id="bin-log-同步流程"><a href="#bin-log-同步流程" class="headerlink" title="bin log 同步流程"></a>bin log 同步流程</h2><p><img src="/imgs/MySQL/MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png" alt="MySQL主从复制" title="MySQL主从复制"><br>备库 B 和主库 A 之间维持了一个长连接，主库 A 内部有一个线程专门服务于与 B 的 bin log 同步，一个事务日志同步的过程如下：</p>
+<ol>
+<li>在备库 B 上通过 change master 命令，设置主库 A 的 IP、端口、用户名、密码，以及要从哪个位置开始请求 binlog，这个位置包含文件名和日志偏移量；</li>
+<li>在备库 B 上执行 start slave 命令，这时候备库会启动两个线程，就是图中的 <code>io_thread</code> 和 <code>sql_thread</code>。其中 io_thread 负责与主库建立连接。</li>
+<li>主库 A 校验完用户名、密码后，开始按照备库 B 传过来的位置，从本地读取 bin log，发给 B。</li>
+<li>备库 B 拿到 bin log 后，写到本地文件，称为中转日志（relay log）。</li>
+<li>sql_thread 读取中转日志，解析出日志里的命令，并执行。</li>
+</ol>
+<h2 id="binlog格式"><a href="#binlog格式" class="headerlink" title="binlog格式"></a>binlog格式</h2><p>MySQL的bin log主要支持三种格式，分别是statement、row以及mixed。MySQL是在5.1.5版本开始支持row的、在5.1.8版本中开始支持mixed。</p>
+<ul>
+<li>statement：binlog中记录的是SQL语句的原文<br>容易引起<strong>主从不一致</strong>，因为binlog是按事务提交顺序记录的，但是两个并发执行的事务中update语句可能是乱序的。</li>
+<li>row：记录原数据</li>
+</ul>
+<h2 id="主备延迟"><a href="#主备延迟" class="headerlink" title="主备延迟"></a>主备延迟</h2><p>产生主备延迟的可能情况：</p>
+<ol>
+<li>备库所在的机器性能较主库差；</li>
+<li>备库的压力较大，比如因为备库不跑业务，所以很多人会随意执行一些特别耗时的操作，这些查询耗费大量的 CPU 资源，影响了同步速度，造成主备延迟。</li>
+<li>出现了大事务，比如，一次性用 delete 语句删除大量数据，或者大表的 DDL。</li>
+<li>一个服务器开放N个链接给客户端来连接，但是Slave里读取binlog的线程只有一个，当某个SQL在Slave上执行的时间稍长或由于某个SQL要进行锁表就会导致Master的SQL大量积压，未被同步到Slave，这就导致了主从不一致，也就是主从延迟。</li>
+</ol>
+<h2 id="并行复制策略"><a href="#并行复制策略" class="headerlink" title="并行复制策略"></a>并行复制策略</h2><p>为了避免备库追不上主库的情况，MySQL 利用并行复制策略提高复制的效率，从上面的<strong>主备同步流程图</strong>可知，并行化可以加到客户端连接和写入数据两个过程中。</p>
+<ol>
+<li>按表分发策略<br>如果两个事务更新不同的表，它们就可以并行。因为数据是存储在表里的，所以按表分发，可以保证两个 worker 不会更新同一行。<br>当然，如果有跨表的事务，还是要把两张表放在一起考虑的。</li>
+<li>按行分发策略<br>按表复制存在热点表的并行复制问题，即热点表会被分配给一个 worker 执行复制，这样就会退化成单线程复制。<br>按行复制的核心思路是：如果两个事务没有更新相同的行，则它们在备库上可以并行执行，为了知道具体修改了哪些行，这种模式需要设置 binlog 的格式为 row（因为 statement 格式直接记录更新语句，row 记录的是受影响的具体数据的 ID）。</li>
+</ol>
+<h2 id="半同步"><a href="#半同步" class="headerlink" title="半同步"></a>半同步</h2><p>在 MySQL 5.5 版本之前一直采用的是上述的异步复制方案，主库的事务执行不会管备库的同步进度，如果备库落后，主库不幸 crash，那么就会导致数据丢失。<br>于是在 MySQL 在 5.5 中就顺其自然地引入了半同步复制，主库在应答客户端提交的事务前需要保证至少一个从库接收并写到 relay log 中。</p>
+<h3 id="异步-半同步-全同步"><a href="#异步-半同步-全同步" class="headerlink" title="异步 &amp; 半同步 &amp; 全同步"></a>异步 &amp; 半同步 &amp; 全同步</h3><ul>
+<li>对于异步复制，主库将事务 Binlog 事件写入到 bin log 文件中，此时主库只会通知一下 Dump 线程发送这些新的 Binlog，然后主库就会继续处理提交操作，而此时不会保证这些 Binlog 传到任何一个从库节点上。</li>
+<li>对于全同步复制，当主库提交事务之后，所有的从库节点必须收到，APPLY 并且提交这些事务，然后主库线程才能继续做后续操作。这里面有一个很明显的缺点就是，主库完成一个事务的时间被拉长，性能降低。</li>
+<li>对于半同步复制，是介于全同步复制和异步复制之间的一种，主库只需要等待至少一个从库节点收到并且 Flush Binlog 到 Relay Log 文件即可，主库不需要等待所有从库给主库反馈。同时，这里只是一个收到的反馈，而不是已经完全执行并且提交的反馈，这样就节省了很多时间。</li>
+</ul>
+<h1 id="主备切换"><a href="#主备切换" class="headerlink" title="主备切换"></a>主备切换</h1><p>主备功能主要是通过 bin log 实现的。</p>
+<h2 id="主备切换流程"><a href="#主备切换流程" class="headerlink" title="主备切换流程"></a>主备切换流程</h2><p><img src="/imgs/MySQL/MySQL-%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2%E6%B5%81%E7%A8%8B.png" alt="MySQL-主备切换流程" title="MySQL-主备切换流程"><br>如图示，客户端的读写都是直接访问的节点 A，而节点 B 是 A 的备库，通常是只读的，只是将 A 的更新同步过来到本地执行，节点 A 的 update 同步到节点 B 的流程图如下所示：<br><img src="/imgs/MySQL/MySQL-%E4%B8%BB%E5%A4%87%E5%90%8C%E6%AD%A5%E6%B5%81%E7%A8%8B%E5%9B%BE.png" alt="MySQL-主备同步流程图" title="MySQL-主备同步流程图"></p>
+<ol>
+<li>主库接收到客户端的更新请求后，执行内部事务的更新逻辑，同时写 binlog；</li>
+<li>备库 B 跟主库 A 之间维持了一个长连接，专门用于服务备库 B 的事务日志同步；</li>
+</ol>
+<p>当需要切换时，切换到状态 2，这时候客户端读写访问的都是节点 B，而节点 A 是 B 的备库；</p>
+<h2 id="双-M-架构"><a href="#双-M-架构" class="headerlink" title="双 M 架构"></a>双 M 架构</h2><p>实际生产中更多采用的是双 M 架构：<br><img src="/imgs/MySQL/MySQL-%E5%8F%8CM%E6%9E%B6%E6%9E%84%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2%E6%B5%81%E7%A8%8B.png" alt="MySQL-双M架构主备切换流程" title="MySQL-双M架构主备切换流程"><br>与原先的方案相比，只是节点 A 和 B 之间多了一条线，这样，节点 A 和 B 之间总是互为主备关系，在切换的时候就不用再修改主备关系。</p>
+<h3 id="可靠性优先策略"><a href="#可靠性优先策略" class="headerlink" title="可靠性优先策略"></a>可靠性优先策略</h3><p>双 M 结构的可靠性优先主备切换流程如下：</p>
+<ol>
+<li>判断备库 B 现在的 <code>seconds_behind_master</code>，如果小于某个值（比如 5 秒）继续下一步，否则持续重试这一步；</li>
+<li>把主库 A 改成只读状态，即把 readonly 设置为 true；</li>
+<li>判断备库 B 的 seconds_behind_master 的值，直到这个值变成 0 为止；</li>
+<li>把备库 B 改成可读写状态，也就是把 readonly 设置为 false；</li>
+<li>把业务请求切到备库 B。</li>
+</ol>
+<p>这个切换流程一般由专门的 HA 系统来完成，称为<strong>可靠性优先流程</strong>。<br>注意：</p>
+<ol>
+<li>这个过程中，比较耗时的是第 3 步，可能会耗费好几秒的时间，因此一般会先在第 1 步中做判断，确保 seconds_behind_master 足够小后才执行。</li>
+</ol>
+<h3 id="可用性优先策略"><a href="#可用性优先策略" class="headerlink" title="可用性优先策略"></a>可用性优先策略</h3><p>可靠性优先策略中，同步流程中存在一段系统不可用的时间，如果强行把步骤 4、5 调整到最开始执行，也就是说不等主备数据同步，直接把连接切到备库 B，并且让备库 B 可以读写，那么系统几乎就没有不可用时间了，这个流程称为可用性优先策略。</p>
+<h2 id="一主多从"><a href="#一主多从" class="headerlink" title="一主多从"></a>一主多从</h2><p>平时使用数据库一般都是读多写少，在发展过程中很可能会先遇到读性能问题，为了解决读性能问题，在架构上的解决方式是<strong>一主多从</strong>。<br><img src="/imgs/MySQL/MySQL-%E4%B8%80%E4%B8%BB%E5%A4%9A%E4%BB%8E%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84.png" alt="MySQL-一主多从基本结构" title="MySQL-一主多从基本结构"><br>其中：</p>
+<ul>
+<li>A 和 A’互为主备；</li>
+<li>从库 B、C、D 指向主库 A，主库负责所有写入和一部分读，其他的读请求由从库分担。</li>
+</ul>
+<p><img src="/imgs/MySQL/MySQL-%E4%B8%80%E4%B8%BB%E5%A4%9A%E4%BB%8E%E7%9A%84%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2.png" alt="MySQL-一主多从的主备切换" title="MySQL-一主多从的主备切换"></p>
+<ul>
+<li>主备切换后，A’将成为新的主库；</li>
+<li>从库 B、C、D 改成连接到 A’。</li>
+</ul>
+<h1 id="读写分离"><a href="#读写分离" class="headerlink" title="读写分离"></a>读写分离</h1><p>上述的主从结构其实形成了一种读写分离的架构，连接信息一般保存到客户端，由客户端执行负载均衡。<br>另一种读写分离架构在客户端和服务器之间架设了一个代理层 proxy，客户端全部连接到这个 proxy，由 proxy 根据请求类型和上下文执行请求的路由分发。<br><img src="/imgs/MySQL/MySQL-%E5%B8%A6proxy%E7%9A%84%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E6%9E%B6%E6%9E%84.png" alt="MySQL-带proxy的读写分离架构" title="MySQL-带proxy的读写分离架构"></p>
+<ul>
+<li>直连的架构，少了一层 proxy，因此性能稍微更好一点，排查问题也更方便，但是主备切换库迁移时客户端会感知到，所以客户端需要一个后端管理组件，比如 Zookeeper。</li>
+<li>带 proxy 架构，对客户端友好，但是同时 proxy 架构也更加复杂。</li>
+</ul>
+<h2 id="“过期读”问题"><a href="#“过期读”问题" class="headerlink" title="“过期读”问题"></a>“过期读”问题</h2><p>当客户端先写入再读取时可能会读到修改前的值，因为写入是对主库写入，读取是对从库读，而主从同步存在延迟，刚写入主库的数据可能还没有同步到所有的从库。<br>解决过期读问题的方案：</p>
+<ul>
+<li>强制走主库方案；<br>一些必须拿到最新结果的请求，可以强制将其发到主库上，比如用户支付后需要马上看到商品是否已经购买成功，这个请求需要马上拿到最新的结果，因此最好走主库；<br>一些请求没有必要立刻拿到最新的结果，比如商户发布商品后，用户即使没有马上看到商品也是可以的，因此用户读取商品列表的请求完全可以路由到从库上去。</li>
+<li>sleep 方案；<br>不大靠谱，但是一定程度上还是可以解决问题的。</li>
+<li>判断主备无延迟方案；<br>判断 <code>show slave status</code> 结果里的 <code>seconds_behind_master</code> 参数的值，等于 0 才执行查询请求，这个参数可以表明从库是否已经完全同步。</li>
+<li>配合 semi-sync 方案；</li>
+<li>等主库位点方案；</li>
+<li>等 GTID 方案。</li>
+</ul>
+<h1 id="探活"><a href="#探活" class="headerlink" title="探活"></a>探活</h1><p>在一主一备的双 M 架构里，主备切换只需要把客户端流量切到备库；而在一主多从架构里，主备切换除了要把客户端流量切到备库外，还需要把从库接到新主库上。<br>主备切换有两种场景：主动切换和被动切换，其中被动切换往往是因为主库出问题而由 HA 系统发起的。</p>
+<h2 id="select-1"><a href="#select-1" class="headerlink" title="select 1"></a>select 1</h2><p><code>select 1</code>只能用于判断该数据库进程仍能执行，但是<strong>不能说明主库没有问题</strong>，比如，数据库线程池（由参数 innodb_thread_concurrency 控制）被打满的情况下，虽然<code>select 1</code>能执行，但是线程池还是会被堵住。</p>
+<blockquote>
+<p>innodb_thread_concurrency 控制的是并发查询，而不是并发连接，因为并发连接多只是多占用一些内存空间，并不会占用 CPU 资源。</p>
+</blockquote>
+<h2 id="查表判断"><a href="#查表判断" class="headerlink" title="查表判断"></a>查表判断</h2><p>为了知道线程池是否被打满，我们可以创建一张<code>health_check</code>表，里面只放一条数据，然后定时执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from mysql.health_check;</span><br></pre></td></tr></table></figure>
+<p>这种方法的缺点是，<strong>不能用于判断磁盘空间是否满了</strong>，因为如果磁盘空间满了，所有的更新语句和事务提交语句都会被堵塞，但是查询语句仍能执行。</p>
+<h2 id="更新判断"><a href="#更新判断" class="headerlink" title="更新判断"></a>更新判断</h2><p>更新一行数据，一般会放一个 timestamp 字段，用来表示最后一次执行检测的时间。<br>但是要注意如果主备都要检测，就不能只有一行数据了，因为会产生<strong>行冲突</strong>，导致主备同步的停止。一般会采用数据库实例的 server_id 作为主键，因为 MySQL 规定了主备服务器的 server_id 必须不同，这样就能保证主备的检测命令不会冲突了。<br>这种方式仍然存在一种问题：这种更新语句占用的 IO 资源很少，即使当时 IO 已经 100%，检测语句仍可以获得 IO 资源来执行，但系统可能已经出问题了，也就是说，这种检测存在随机性。</p>
+<h2 id="内部统计"><a href="#内部统计" class="headerlink" title="内部统计"></a>内部统计</h2><p>前面几种方法都是通过外部调用来发现问题的，更好的方式是利用 MySQL 本身的统计数据：<code>performance_schema</code>库的<code>file_summary_by_event_name</code>表。</p>
+<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><h2 id="主从同步的流程"><a href="#主从同步的流程" class="headerlink" title="主从同步的流程"></a>主从同步的流程</h2><p>主备服务器之间维持了一个长连接，备库上回启动两个线程，一个 io_thread 负责与主库建立连接并读取 bin log，另一个 sql_thread 负责解析命令并执行。</p>
+<h2 id="MySQL-是怎么保证数据不丢失的"><a href="#MySQL-是怎么保证数据不丢失的" class="headerlink" title="MySQL 是怎么保证数据不丢失的"></a>MySQL 是怎么保证数据不丢失的</h2><h2 id="MySQL-是怎么保证高可用的"><a href="#MySQL-是怎么保证高可用的" class="headerlink" title="MySQL 是怎么保证高可用的"></a>MySQL 是怎么保证高可用的</h2><h2 id="MySQL如何优化千万级的大表？"><a href="#MySQL如何优化千万级的大表？" class="headerlink" title="MySQL如何优化千万级的大表？"></a>MySQL如何优化千万级的大表？</h2><ol>
+<li>优化SQL和索引；</li>
+<li>加缓存，比如Memcached或Redis；</li>
+<li>主从复制或主主复制，实现读写分离<br>可以在应用层做，效率高<br>也可以用三方工具，如360的atlas</li>
+<li>使用MySQL自带的分区表<br>优点是对应用透明，但是SQL需要针对分区表做一些优化，sql条件中要带上分区条件的列，从而使查询定位到少量的分区上，否则就会扫描全部分区。</li>
+<li>垂直拆分，根据模块耦合情况将一个大系统分为多个小系统</li>
+<li>水平切分，选择合适的sharding key将大表数据拆分到多个小表上</li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zero-gg/p/9057092.html">MySQL 5.7 半同步复制技术</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://tallate.github.io/f2150593.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1423,191 +1627,6 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e13f9e03.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/e13f9e03.html" class="post-title-link" itemprop="url">MySQL5_1高可用集群</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-05-29 10:18:28" itemprop="dateCreated datePublished" datetime="2020-05-29T10:18:28+08:00">2020-05-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<h1 id="主从同步"><a href="#主从同步" class="headerlink" title="主从同步"></a>主从同步</h1><p>MySQL的主从同步是基于bin log实现的。</p>
-<h2 id="bin-log-同步流程"><a href="#bin-log-同步流程" class="headerlink" title="bin log 同步流程"></a>bin log 同步流程</h2><p><img src="/imgs/MySQL/MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png" alt="MySQL主从复制" title="MySQL主从复制"><br>备库 B 和主库 A 之间维持了一个长连接，主库 A 内部有一个线程专门服务于与 B 的 bin log 同步，一个事务日志同步的过程如下：</p>
-<ol>
-<li>在备库 B 上通过 change master 命令，设置主库 A 的 IP、端口、用户名、密码，以及要从哪个位置开始请求 binlog，这个位置包含文件名和日志偏移量；</li>
-<li>在备库 B 上执行 start slave 命令，这时候备库会启动两个线程，就是图中的 <code>io_thread</code> 和 <code>sql_thread</code>。其中 io_thread 负责与主库建立连接。</li>
-<li>主库 A 校验完用户名、密码后，开始按照备库 B 传过来的位置，从本地读取 bin log，发给 B。</li>
-<li>备库 B 拿到 bin log 后，写到本地文件，称为中转日志（relay log）。</li>
-<li>sql_thread 读取中转日志，解析出日志里的命令，并执行。</li>
-</ol>
-<h2 id="binlog格式"><a href="#binlog格式" class="headerlink" title="binlog格式"></a>binlog格式</h2><p>MySQL的bin log主要支持三种格式，分别是statement、row以及mixed。MySQL是在5.1.5版本开始支持row的、在5.1.8版本中开始支持mixed。</p>
-<ul>
-<li>statement：binlog中记录的是SQL语句的原文<br>容易引起<strong>主从不一致</strong>，因为binlog是按事务提交顺序记录的，但是两个并发执行的事务中update语句可能是乱序的。</li>
-<li>row：记录原数据</li>
-</ul>
-<h2 id="主备延迟"><a href="#主备延迟" class="headerlink" title="主备延迟"></a>主备延迟</h2><p>产生主备延迟的可能情况：</p>
-<ol>
-<li>备库所在的机器性能较主库差；</li>
-<li>备库的压力较大，比如因为备库不跑业务，所以很多人会随意执行一些特别耗时的操作，这些查询耗费大量的 CPU 资源，影响了同步速度，造成主备延迟。</li>
-<li>出现了大事务，比如，一次性用 delete 语句删除大量数据，或者大表的 DDL。</li>
-<li>一个服务器开放N个链接给客户端来连接，但是Slave里读取binlog的线程只有一个，当某个SQL在Slave上执行的时间稍长或由于某个SQL要进行锁表就会导致Master的SQL大量积压，未被同步到Slave，这就导致了主从不一致，也就是主从延迟。</li>
-</ol>
-<h2 id="并行复制策略"><a href="#并行复制策略" class="headerlink" title="并行复制策略"></a>并行复制策略</h2><p>为了避免备库追不上主库的情况，MySQL 利用并行复制策略提高复制的效率，从上面的<strong>主备同步流程图</strong>可知，并行化可以加到客户端连接和写入数据两个过程中。</p>
-<ol>
-<li>按表分发策略<br>如果两个事务更新不同的表，它们就可以并行。因为数据是存储在表里的，所以按表分发，可以保证两个 worker 不会更新同一行。<br>当然，如果有跨表的事务，还是要把两张表放在一起考虑的。</li>
-<li>按行分发策略<br>按表复制存在热点表的并行复制问题，即热点表会被分配给一个 worker 执行复制，这样就会退化成单线程复制。<br>按行复制的核心思路是：如果两个事务没有更新相同的行，则它们在备库上可以并行执行，为了知道具体修改了哪些行，这种模式需要设置 binlog 的格式为 row（因为 statement 格式直接记录更新语句，row 记录的是受影响的具体数据的 ID）。</li>
-</ol>
-<h2 id="半同步"><a href="#半同步" class="headerlink" title="半同步"></a>半同步</h2><p>在 MySQL 5.5 版本之前一直采用的是上述的异步复制方案，主库的事务执行不会管备库的同步进度，如果备库落后，主库不幸 crash，那么就会导致数据丢失。<br>于是在 MySQL 在 5.5 中就顺其自然地引入了半同步复制，主库在应答客户端提交的事务前需要保证至少一个从库接收并写到 relay log 中。</p>
-<h3 id="异步-半同步-全同步"><a href="#异步-半同步-全同步" class="headerlink" title="异步 &amp; 半同步 &amp; 全同步"></a>异步 &amp; 半同步 &amp; 全同步</h3><ul>
-<li>对于异步复制，主库将事务 Binlog 事件写入到 bin log 文件中，此时主库只会通知一下 Dump 线程发送这些新的 Binlog，然后主库就会继续处理提交操作，而此时不会保证这些 Binlog 传到任何一个从库节点上。</li>
-<li>对于全同步复制，当主库提交事务之后，所有的从库节点必须收到，APPLY 并且提交这些事务，然后主库线程才能继续做后续操作。这里面有一个很明显的缺点就是，主库完成一个事务的时间被拉长，性能降低。</li>
-<li>对于半同步复制，是介于全同步复制和异步复制之间的一种，主库只需要等待至少一个从库节点收到并且 Flush Binlog 到 Relay Log 文件即可，主库不需要等待所有从库给主库反馈。同时，这里只是一个收到的反馈，而不是已经完全执行并且提交的反馈，这样就节省了很多时间。</li>
-</ul>
-<h1 id="主备切换"><a href="#主备切换" class="headerlink" title="主备切换"></a>主备切换</h1><p>主备功能主要是通过 bin log 实现的。</p>
-<h2 id="主备切换流程"><a href="#主备切换流程" class="headerlink" title="主备切换流程"></a>主备切换流程</h2><p><img src="/imgs/MySQL/MySQL-%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2%E6%B5%81%E7%A8%8B.png" alt="MySQL-主备切换流程" title="MySQL-主备切换流程"><br>如图示，客户端的读写都是直接访问的节点 A，而节点 B 是 A 的备库，通常是只读的，只是将 A 的更新同步过来到本地执行，节点 A 的 update 同步到节点 B 的流程图如下所示：<br><img src="/imgs/MySQL/MySQL-%E4%B8%BB%E5%A4%87%E5%90%8C%E6%AD%A5%E6%B5%81%E7%A8%8B%E5%9B%BE.png" alt="MySQL-主备同步流程图" title="MySQL-主备同步流程图"></p>
-<ol>
-<li>主库接收到客户端的更新请求后，执行内部事务的更新逻辑，同时写 binlog；</li>
-<li>备库 B 跟主库 A 之间维持了一个长连接，专门用于服务备库 B 的事务日志同步；</li>
-</ol>
-<p>当需要切换时，切换到状态 2，这时候客户端读写访问的都是节点 B，而节点 A 是 B 的备库；</p>
-<h2 id="双-M-架构"><a href="#双-M-架构" class="headerlink" title="双 M 架构"></a>双 M 架构</h2><p>实际生产中更多采用的是双 M 架构：<br><img src="/imgs/MySQL/MySQL-%E5%8F%8CM%E6%9E%B6%E6%9E%84%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2%E6%B5%81%E7%A8%8B.png" alt="MySQL-双M架构主备切换流程" title="MySQL-双M架构主备切换流程"><br>与原先的方案相比，只是节点 A 和 B 之间多了一条线，这样，节点 A 和 B 之间总是互为主备关系，在切换的时候就不用再修改主备关系。</p>
-<h3 id="可靠性优先策略"><a href="#可靠性优先策略" class="headerlink" title="可靠性优先策略"></a>可靠性优先策略</h3><p>双 M 结构的可靠性优先主备切换流程如下：</p>
-<ol>
-<li>判断备库 B 现在的 <code>seconds_behind_master</code>，如果小于某个值（比如 5 秒）继续下一步，否则持续重试这一步；</li>
-<li>把主库 A 改成只读状态，即把 readonly 设置为 true；</li>
-<li>判断备库 B 的 seconds_behind_master 的值，直到这个值变成 0 为止；</li>
-<li>把备库 B 改成可读写状态，也就是把 readonly 设置为 false；</li>
-<li>把业务请求切到备库 B。</li>
-</ol>
-<p>这个切换流程一般由专门的 HA 系统来完成，称为<strong>可靠性优先流程</strong>。<br>注意：</p>
-<ol>
-<li>这个过程中，比较耗时的是第 3 步，可能会耗费好几秒的时间，因此一般会先在第 1 步中做判断，确保 seconds_behind_master 足够小后才执行。</li>
-</ol>
-<h3 id="可用性优先策略"><a href="#可用性优先策略" class="headerlink" title="可用性优先策略"></a>可用性优先策略</h3><p>可靠性优先策略中，同步流程中存在一段系统不可用的时间，如果强行把步骤 4、5 调整到最开始执行，也就是说不等主备数据同步，直接把连接切到备库 B，并且让备库 B 可以读写，那么系统几乎就没有不可用时间了，这个流程称为可用性优先策略。</p>
-<h2 id="一主多从"><a href="#一主多从" class="headerlink" title="一主多从"></a>一主多从</h2><p>平时使用数据库一般都是读多写少，在发展过程中很可能会先遇到读性能问题，为了解决读性能问题，在架构上的解决方式是<strong>一主多从</strong>。<br><img src="/imgs/MySQL/MySQL-%E4%B8%80%E4%B8%BB%E5%A4%9A%E4%BB%8E%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84.png" alt="MySQL-一主多从基本结构" title="MySQL-一主多从基本结构"><br>其中：</p>
-<ul>
-<li>A 和 A’互为主备；</li>
-<li>从库 B、C、D 指向主库 A，主库负责所有写入和一部分读，其他的读请求由从库分担。</li>
-</ul>
-<p><img src="/imgs/MySQL/MySQL-%E4%B8%80%E4%B8%BB%E5%A4%9A%E4%BB%8E%E7%9A%84%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2.png" alt="MySQL-一主多从的主备切换" title="MySQL-一主多从的主备切换"></p>
-<ul>
-<li>主备切换后，A’将成为新的主库；</li>
-<li>从库 B、C、D 改成连接到 A’。</li>
-</ul>
-<h1 id="读写分离"><a href="#读写分离" class="headerlink" title="读写分离"></a>读写分离</h1><p>上述的主从结构其实形成了一种读写分离的架构，连接信息一般保存到客户端，由客户端执行负载均衡。<br>另一种读写分离架构在客户端和服务器之间架设了一个代理层 proxy，客户端全部连接到这个 proxy，由 proxy 根据请求类型和上下文执行请求的路由分发。<br><img src="/imgs/MySQL/MySQL-%E5%B8%A6proxy%E7%9A%84%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E6%9E%B6%E6%9E%84.png" alt="MySQL-带proxy的读写分离架构" title="MySQL-带proxy的读写分离架构"></p>
-<ul>
-<li>直连的架构，少了一层 proxy，因此性能稍微更好一点，排查问题也更方便，但是主备切换库迁移时客户端会感知到，所以客户端需要一个后端管理组件，比如 Zookeeper。</li>
-<li>带 proxy 架构，对客户端友好，但是同时 proxy 架构也更加复杂。</li>
-</ul>
-<h2 id="“过期读”问题"><a href="#“过期读”问题" class="headerlink" title="“过期读”问题"></a>“过期读”问题</h2><p>当客户端先写入再读取时可能会读到修改前的值，因为写入是对主库写入，读取是对从库读，而主从同步存在延迟，刚写入主库的数据可能还没有同步到所有的从库。<br>解决过期读问题的方案：</p>
-<ul>
-<li>强制走主库方案；<br>一些必须拿到最新结果的请求，可以强制将其发到主库上，比如用户支付后需要马上看到商品是否已经购买成功，这个请求需要马上拿到最新的结果，因此最好走主库；<br>一些请求没有必要立刻拿到最新的结果，比如商户发布商品后，用户即使没有马上看到商品也是可以的，因此用户读取商品列表的请求完全可以路由到从库上去。</li>
-<li>sleep 方案；<br>不大靠谱，但是一定程度上还是可以解决问题的。</li>
-<li>判断主备无延迟方案；<br>判断 <code>show slave status</code> 结果里的 <code>seconds_behind_master</code> 参数的值，等于 0 才执行查询请求，这个参数可以表明从库是否已经完全同步。</li>
-<li>配合 semi-sync 方案；</li>
-<li>等主库位点方案；</li>
-<li>等 GTID 方案。</li>
-</ul>
-<h1 id="探活"><a href="#探活" class="headerlink" title="探活"></a>探活</h1><p>在一主一备的双 M 架构里，主备切换只需要把客户端流量切到备库；而在一主多从架构里，主备切换除了要把客户端流量切到备库外，还需要把从库接到新主库上。<br>主备切换有两种场景：主动切换和被动切换，其中被动切换往往是因为主库出问题而由 HA 系统发起的。</p>
-<h2 id="select-1"><a href="#select-1" class="headerlink" title="select 1"></a>select 1</h2><p><code>select 1</code>只能用于判断该数据库进程仍能执行，但是<strong>不能说明主库没有问题</strong>，比如，数据库线程池（由参数 innodb_thread_concurrency 控制）被打满的情况下，虽然<code>select 1</code>能执行，但是线程池还是会被堵住。</p>
-<blockquote>
-<p>innodb_thread_concurrency 控制的是并发查询，而不是并发连接，因为并发连接多只是多占用一些内存空间，并不会占用 CPU 资源。</p>
-</blockquote>
-<h2 id="查表判断"><a href="#查表判断" class="headerlink" title="查表判断"></a>查表判断</h2><p>为了知道线程池是否被打满，我们可以创建一张<code>health_check</code>表，里面只放一条数据，然后定时执行：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from mysql.health_check;</span><br></pre></td></tr></table></figure>
-<p>这种方法的缺点是，<strong>不能用于判断磁盘空间是否满了</strong>，因为如果磁盘空间满了，所有的更新语句和事务提交语句都会被堵塞，但是查询语句仍能执行。</p>
-<h2 id="更新判断"><a href="#更新判断" class="headerlink" title="更新判断"></a>更新判断</h2><p>更新一行数据，一般会放一个 timestamp 字段，用来表示最后一次执行检测的时间。<br>但是要注意如果主备都要检测，就不能只有一行数据了，因为会产生<strong>行冲突</strong>，导致主备同步的停止。一般会采用数据库实例的 server_id 作为主键，因为 MySQL 规定了主备服务器的 server_id 必须不同，这样就能保证主备的检测命令不会冲突了。<br>这种方式仍然存在一种问题：这种更新语句占用的 IO 资源很少，即使当时 IO 已经 100%，检测语句仍可以获得 IO 资源来执行，但系统可能已经出问题了，也就是说，这种检测存在随机性。</p>
-<h2 id="内部统计"><a href="#内部统计" class="headerlink" title="内部统计"></a>内部统计</h2><p>前面几种方法都是通过外部调用来发现问题的，更好的方式是利用 MySQL 本身的统计数据：<code>performance_schema</code>库的<code>file_summary_by_event_name</code>表。</p>
-<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><h2 id="主从同步的流程"><a href="#主从同步的流程" class="headerlink" title="主从同步的流程"></a>主从同步的流程</h2><p>主备服务器之间维持了一个长连接，备库上回启动两个线程，一个 io_thread 负责与主库建立连接并读取 bin log，另一个 sql_thread 负责解析命令并执行。</p>
-<h2 id="MySQL-是怎么保证数据不丢失的"><a href="#MySQL-是怎么保证数据不丢失的" class="headerlink" title="MySQL 是怎么保证数据不丢失的"></a>MySQL 是怎么保证数据不丢失的</h2><h2 id="MySQL-是怎么保证高可用的"><a href="#MySQL-是怎么保证高可用的" class="headerlink" title="MySQL 是怎么保证高可用的"></a>MySQL 是怎么保证高可用的</h2><h2 id="MySQL如何优化千万级的大表？"><a href="#MySQL如何优化千万级的大表？" class="headerlink" title="MySQL如何优化千万级的大表？"></a>MySQL如何优化千万级的大表？</h2><ol>
-<li>优化SQL和索引；</li>
-<li>加缓存，比如Memcached或Redis；</li>
-<li>主从复制或主主复制，实现读写分离<br>可以在应用层做，效率高<br>也可以用三方工具，如360的atlas</li>
-<li>使用MySQL自带的分区表<br>优点是对应用透明，但是SQL需要针对分区表做一些优化，sql条件中要带上分区条件的列，从而使查询定位到少量的分区上，否则就会扫描全部分区。</li>
-<li>垂直拆分，根据模块耦合情况将一个大系统分为多个小系统</li>
-<li>水平切分，选择合适的sharding key将大表数据拆分到多个小表上</li>
-</ol>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zero-gg/p/9057092.html">MySQL 5.7 半同步复制技术</a></li>
-</ol>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://tallate.github.io/f312680c.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1644,7 +1663,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+      <time title="修改时间：2023-10-05 01:23:12" itemprop="dateModified" datetime="2023-10-05T01:23:12+08:00">2023-10-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1668,6 +1687,37 @@
     <div class="post-body" itemprop="articleBody">
           <span id="more"></span>
 
+<blockquote class="pullquote mindmap mindmap-md"><ul>
+<li>锁 &#x2F; 封锁<ul>
+<li>锁的类型<ul>
+<li>排他锁 &#x2F; X锁</li>
+<li>共享锁 &#x2F; S锁</li>
+</ul>
+</li>
+<li>封锁协议<ul>
+<li>一级封锁：对应读未提交</li>
+<li>二级封锁：对应读已提交</li>
+<li>三级封锁：对应可重复读</li>
+</ul>
+</li>
+<li>MySQL 并发安全<ul>
+<li>行锁 + 间隙锁 + MVCC</li>
+<li>隔离级别实现<ul>
+<li>读已提交：二级封锁协议（行锁）+MVCC</li>
+<li>可重复读：三级封锁协议+MVCC</li>
+<li>解决幻读：Next-Key Locks &#x3D; 行锁 + 间隙锁</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>死锁</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+
+
+
 <h2 id="封锁（Blockade）"><a href="#封锁（Blockade）" class="headerlink" title="封锁（Blockade）"></a>封锁（Blockade）</h2><p>封锁是数据库原理范畴内的概念，封锁分为排它锁、共享锁、活锁、死锁这4种，以及封锁协议定义了数据库如何使用这些锁来保证并发安全。<br>所谓封锁就是事务在对某个数据对象例如表、记录等操作之前，先向系统发出请求对其加锁。<br>加锁后事务 T 就对该数据对象有了一定的控制，在事务 T 释放它的锁之前，其他事务不能更新此数据对象。例如，事务 T1 要修改 A，若在读出 A 之前先锁住 A，其他事务就不能再读取和修改 A 了，直到 T1 修改并写回 A 后解除了对 A 的封锁为止。这样，就不会丢失 T1 的修改。<br>确切的控制由封锁的类型决定。基本的封锁类型有两种：排他锁(exclusive locks,简称 X 锁)和共享锁(share locks,简称 S 锁)</p>
 <ul>
 <li>**X 锁(排他写锁)**：若事务 T1 对数据对象 A 加上 X 锁，则只允许 T 读取和修改 A，其他任何事物都不能再对 A 加任何类型的锁，直到 T 释放 A 上的锁为止。这就保证了其他事务在 T 释放 A 上的锁之前不能再读取和修改 A；</li>
@@ -1683,12 +1733,6 @@
 <li>二级封锁协议<br>在一级加锁协议的基础上增加事务 T 在读取数据 R 之前必须先对其加 S 锁，读完后即可释放 S 锁；<br>二级加锁协议除防止了丢失修改，还可进一步防止读脏数据。例如：事务 T1 正在对数据对象 R 进行修改，此前已经对 R 加上了 X 锁，此时事务 T2 想读取 R，就必须对 R 加上 S 锁，但是 T2 发现 R 已经被 T1 加上了 X 锁，于是 T2 只能等待 T1 释放了在 R 上加的锁之后才能对 R 加 S 锁并读取。这能防止 T2 读取到 T1 未提交的数据，从而避免了脏读。<br>但是在二级封锁协议中，由于读完数据后即可释放 S 锁，所以它不能保证可重复读。</li>
 <li>三级封锁协议<br>三级封锁协议是指，在一级封锁协议的基础上增加事务 T 在读取数据 R 之前对其加 S 锁直至事务结束才释放。<br>三级封锁协议除了防止丢失修改和读“脏”数据之外，还进一步防止了不可重复读。<br>上述三级协议的主要区别在于什么操作需要申请加锁，以及何时释放锁(即锁的持有时间)。不同的封锁协议使事务达到的一致性是不同的，封锁协议越高，一致性程度越强。</li>
 </ol>
-<p>封锁与 MVCC 之间的关系：<br>封锁与 MVCC 并不是互斥的，MySQL 实现隔离级别时结合了这二者，比如：</p>
-<ul>
-<li>读已提交：二级封锁协议+MVCC，二级封锁协议在读之前加 S 锁，读完之后就释放 S 锁，所以不能保证不可重复读与幻读；</li>
-<li>可重复读：三级封锁协议+MVCC，读完之后不会立刻释放 S 锁，直到事务提交时才会释放，可以解决可重复读。</li>
-</ul>
-<p>封锁协议+MVCC 并不能解决幻读问题，在 MVCC 中是通过 <strong>Next-Key Lock</strong> 解决的。</p>
 <h3 id="封锁粒度"><a href="#封锁粒度" class="headerlink" title="封锁粒度"></a>封锁粒度</h3><p>封锁粒度指的是封锁对象的大小。<br>封锁粒度与系统的并发度和并发控制的开销有关：封锁粒度越大，数据库能封锁的数据单元越少，并发度越小，系统开销也变小。<br>一般来说，处理个别元组的事务以元组为封锁粒度；处理某个关系的大量元组的事务以关系为封锁粒度；处理多个关系的大量元组的事务以数据库为封锁粒度。</p>
 <p>在一个系统中，提供多种封锁粒度给不同的事务选择，这种封锁方法称为<strong>多粒度封锁（ multiple granularity locking）</strong>。</p>
 <ul>
@@ -1701,7 +1745,7 @@
 <li>意向排他锁（IX锁）：<br>对一个数据对象加IX锁，表示它的后裔结点拟（意向）加X锁。<br>事务T1对数据对象A加上IX锁后，事务T2只能继续加IS或IX锁。</li>
 <li>共享意向排他锁（SIX &#x3D; S+IX锁）：<br>对一个数据对象先加S锁，再加IX锁。例如对某个表加SIX锁，则表示该事务要读（S）整个表，同时会更新（IX）个别元组。<br>事务T1对数据对象A加上SIX锁后，事务T2只能加IS锁。</li>
 </ol>
-<h3 id="死锁和死锁"><a href="#死锁和死锁" class="headerlink" title="死锁和死锁"></a>死锁和死锁</h3><p>封锁可能引起活锁和死锁问题。</p>
+<h3 id="活锁和死锁"><a href="#活锁和死锁" class="headerlink" title="活锁和死锁"></a>活锁和死锁</h3><p>封锁可能引起活锁和死锁问题。</p>
 <h4 id="活锁"><a href="#活锁" class="headerlink" title="活锁"></a>活锁</h4><p>根据事务的优先级顺序，可能会出现某个事务永远在等待封锁的情况，即事务T1封锁了数据对象A后，T2、T3陆续请求封锁，但是T1释放锁后，系统优先批准了T3的请求，T2仍然在等待。<br>最简单的解决方法就是先来先服务（FCFS），不考虑事务的优先级。</p>
 <h4 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h4><p>事务T1封锁了数据A，事务T2封锁了数据B，然后T1请求封锁B，与此同时T2也请求封锁A，但因为两个事务的请求都需要等待对方释放锁，这样就出现了永远在等待对方的死锁。<br>在数据库中，解决死锁问题主要有两类方法：预防和诊断解除。</p>
 <h4 id="死锁预防"><a href="#死锁预防" class="headerlink" title="死锁预防"></a>死锁预防</h4><ol>
@@ -1721,12 +1765,53 @@
 <p>预防死锁的<strong>一次封锁法</strong>遵守两段锁协议；但是两段锁协议并不要求事务必须一次将所有要使用的数据全部加锁，因此遵守两段锁协议的事务可能发生死锁。</p>
 <p>由于两阶段锁协议的存在，如果我们的事务中需要锁住多个行，最好把最可能造成锁冲突、最可能影响并发度的锁尽量往后放。</p>
 <h2 id="MySQL-如何保证并发安全"><a href="#MySQL-如何保证并发安全" class="headerlink" title="MySQL 如何保证并发安全"></a>MySQL 如何保证并发安全</h2><h3 id="latch-和-lock"><a href="#latch-和-lock" class="headerlink" title="latch 和 lock"></a>latch 和 lock</h3><p>MySQL 中的锁主要分为<strong>闩锁（latch）</strong>和<strong>锁（lock）</strong>。<br>latch对象是除了数据库对象外的其他对象，包括操作缓冲池汇总的LRU列表、删除、添加、移动LRU列表中的元素，为了保证一致性必须要有锁介入，因此引入了latch锁。latch是轻量级的锁，因为它要求锁定的时间必须非常短，主要用于保护临界资源的线程安全。<br>lock对象是事务，用来锁定数据库中的对象，如表、行、页。一般lock的对象仅在事务commit或rollback后进行释放。lock有死锁机制。</p>
-<ul>
-<li>| lock | latch</li>
-<li>| - | -<br>对象 | 事务 | 线程<br>保护 | 数据库内容 | 内存数据结构<br>持续时间 | 整个事务过程 | 临界资源<br>模式 | 行锁、表锁、意向锁 | 读写锁、互斥量<br>死锁 | 通过 waits-for graph、time out 等机制进行死锁检测与处理 | 无死锁检测与处理机制，仅通过控制应用程序加锁顺序（lock leveling）来保证无死锁发生<br>存在位置 | Lock Manager 的哈希表中 | 每个数据结构的对象中</li>
-</ul>
+<table>
+<thead>
+<tr>
+<th>-</th>
+<th>lock</th>
+<th>latch</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>对象</td>
+<td>事务</td>
+<td>线程</td>
+</tr>
+<tr>
+<td>保护</td>
+<td>数据库内容</td>
+<td>内存数据结构</td>
+</tr>
+<tr>
+<td>持续时间</td>
+<td>整个事务过程</td>
+<td>临界资源</td>
+</tr>
+<tr>
+<td>模式</td>
+<td>行锁、表锁、意向锁</td>
+<td>读写锁、互斥量</td>
+</tr>
+<tr>
+<td>死锁</td>
+<td>通过 waits-for graph、time out 等机制进行死锁检测与处理</td>
+<td>无死锁检测与处理机制，仅通过控制应用程序加锁顺序（lock leveling）来保证无死锁发生</td>
+</tr>
+<tr>
+<td>存在位置</td>
+<td>Lock Manager 的哈希表中</td>
+<td>每个数据结构的对象中</td>
+</tr>
+</tbody></table>
 <p>latch 不能显式添加，而是线程在获取行锁时前，先对行所在的页面添加 latch，然后再对行添加 lock，添加完行 lock 后再释放页面的 latch。<br>如果行被其他线程占有，则线程会先释放页面 latch，等待行锁，待获取行锁后会再次对页面添加 latch，查看页面数据是否有改动，再次获取改动后的行。<br>这种机制主要是为了保证线程获取的行数据的一致性和完整性。</p>
 <h3 id="MVCC"><a href="#MVCC" class="headerlink" title="MVCC"></a>MVCC</h3><p>MySQL 的特色之一是提供了 <strong>MVCC（多版本并发控制）</strong>机制，MVCC 给每行数据增加了版本号，事务在执行读操作时只能读到数据的历史版本，因此可以避免脏读等问题。<br>MVCC 与事务紧密关联，因此我放到<a href="https://tallate.github.io/86b66af2.html">事务小节</a>中去论述了。</p>
+<h4 id="封锁与-MVCC-之间的关系"><a href="#封锁与-MVCC-之间的关系" class="headerlink" title="封锁与 MVCC 之间的关系"></a>封锁与 MVCC 之间的关系</h4><p>封锁与 MVCC 并不是互斥的，MySQL 实现隔离级别时结合了这二者，比如：</p>
+<ul>
+<li>读已提交：二级封锁协议+MVCC，二级封锁协议在读之前加 S 锁，读完之后就释放 S 锁，所以不能保证不可重复读与幻读；</li>
+<li>可重复读：三级封锁协议+MVCC，读完之后不会立刻释放 S 锁，直到事务提交时才会释放，可以解决可重复读。</li>
+</ul>
+<p>封锁协议+MVCC 并不能解决幻读问题，在 MVCC 中是通过 <strong>Next-Key Lock</strong> 解决的。</p>
 <h3 id="Record-Locks（行锁）"><a href="#Record-Locks（行锁）" class="headerlink" title="Record Locks（行锁）"></a>Record Locks（行锁）</h3><p>该锁的官方类型名为 LOCK_REC_NOT_GAP。<br>和前面提到的表锁一样，分 S 锁和 X 锁，只是作用粒度精确到行了。</p>
 <h3 id="Gap-Locks（间隙锁）"><a href="#Gap-Locks（间隙锁）" class="headerlink" title="Gap Locks（间隙锁）"></a>Gap Locks（间隙锁）</h3><p>该锁的官方类型名为 LOCK_GAP。<br>MySQL 解决幻读问题有两种方案：<br>第一种是 MVCC，因为新插入的数据事务 ID 必然不在 ReadView 内，因此读取这些记录后会被直接忽略，但是快照读只在普通读操作中生效，如果发生了当前读仍然会有幻读问题；<br>第二种是加锁，但是加锁有一个问题，就是事务没法给尚不存在的记录加锁。<br>如果我们希望为 number 值为 8 的记录加 gap 锁，则该记录的前后间隙都不允许别的事务立即插入记录：<br><img src="/imgs/MySQL/MySQL-gap%E9%94%81.png" alt="MySQL-gap锁" title="MySQL-gap锁"><br>如图中为 number 值为 8 的记录加了 gap 锁，意味着不允许别的事务在 number 值为 8 的记录前边的间隙插入新记录，其实就是 number 列的值(3, 8)这个区间的新记录是不允许立即插入的。比方说有另外一个事务再想插入一条 number 值为 4 的新记录，它定位到该条新记录的下一条记录的 number 值为 8，而这条记录上又有一个 gap 锁，所以就会阻塞插入操作，直到拥有这个 gap 锁的事务提交了之后，number 列的值在区间(3, 8)中的新记录才可以被插入。<br>另外，如何为(20, +∞)这个区间加 gap 锁？其实是为数据页中的 Infimum 和 Supremum 记录加上了 gap 锁。<br>比如假设此时表里有 5、25 这两条数据，则<code>SELECT c1 FROM t WHERE c1 BETWEEN 10 and 20 FOR UPDATE</code>查询 10 到 20 范围内的记录，并加上范围<code>(5, 10)</code>、<code>[10, 20]</code>、<code>(20, 25]</code>以内的 gap 锁。<br>比如假设此时表里有 102、105、107 三个值，则<code>select * from test where n = 105 for update;</code>这个语句会对<code>(102, 105)</code>、<code>(105, 107]</code>这两个区间加 gap 锁。</p>
 <p>间隙锁可以通过innodb_locks_unsafe_for_binlog参数来开启关闭：</p>
@@ -1892,7 +1977,7 @@
 <h4 id="insert-into-…-on-duplicate-key-update"><a href="#insert-into-…-on-duplicate-key-update" class="headerlink" title="insert into … on duplicate key update"></a>insert into … on duplicate key update</h4><p>上面的例子是主键冲突后直接报错，如果写成如下形式：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into t values(11,10,10) on duplicate key update d=100;</span><br></pre></td></tr></table></figure>
 <p>则会给索引c上<code>(5, 10]</code>加一个排他的next-key lock（写锁）。</p>
-<h2 id="加锁场景（InnoDB）"><a href="#加锁场景（InnoDB）" class="headerlink" title="加锁场景（InnoDB）"></a>加锁场景（InnoDB）</h2><ol>
+<h2 id="加锁场景例举（InnoDB）"><a href="#加锁场景例举（InnoDB）" class="headerlink" title="加锁场景例举（InnoDB）"></a>加锁场景例举（InnoDB）</h2><ol>
 <li>原则 1：加锁的基本单位是 next-key lock。<blockquote>
 <p>next-key lock 是前开后闭区间。</p>
 </blockquote>
@@ -1924,18 +2009,6 @@
 <ul>
 <li>初始化：当对这样的表进行插入操作时，这个计数器会被初始化。</li>
 <li>更新：插入操作根据这个自增长计数器值加 1 赋予自增长列，对该计数器的更新需要保证线程安全，这可以通过设置使用<strong>表锁</strong>还是<strong>互斥量</strong>来实现。</li>
-</ul>
-<h2 id="锁结构"><a href="#锁结构" class="headerlink" title="锁结构"></a>锁结构</h2><p>MySQL 中锁是通过共享内存实现的，当一个事务希望对一条记录做修改操作时，首先会看看内存中有没有与这条记录关联的锁结构，当没有的时候就会在内存中生成一个锁结构与之关联，这个锁结构中有两个主要属性：</p>
-<ul>
-<li>trx：代表生成该锁结构的事务；</li>
-<li>is_waiting：代表当前事务是否在等待。</li>
-</ul>
-<p>获取锁成功（加锁成功）可以描述为：修改一条记录前生成了一个锁结构与之关联，因为之前没有别的记录为这条记录加锁，所以 is_waiting 为 false；<br><img src="https://user-gold-cdn.xitu.io/2019/4/29/16a680105d9425c2?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"><br>获取锁失败可以描述为：在事务对一条记录进行修改前，已经有另一个事务创建了锁结构与之关联，那么当前事务需要生成一个锁结构且 is_waiting 为 true，表示当前事务需要等待。<br><img src="https://user-gold-cdn.xitu.io/2019/4/29/16a680105e955d9a?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"><br>释放锁时，就是把当前事务的锁结构释放掉，然后看有没有其他事务正在等待获取锁，并把正在等待的事务对应的锁结构的 is_waiting 置为 false，然后将该事务对应的线程唤醒。<br><img src="https://user-gold-cdn.xitu.io/2019/4/29/16a680105f387885?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"></p>
-<p>总结地说：</p>
-<ul>
-<li>不加锁<br>意思就是不需要在内存中生成对应的锁结构，可以直接执行操作。</li>
-<li>获取锁成功，或者加锁成功<br>意思就是在内存中生成了对应的锁结构，而且锁结构的 is_waiting 属性为 false，也就是事务可以继续执行操作。</li>
-<li>获取锁失败，或者加锁失败，或者没有获取到锁<br>意思就是在内存中生成了对应的锁结构，不过锁结构的 is_waiting 属性为 true，也就是事务需要等待，不可以继续执行操作。</li>
 </ul>
 <h2 id="活锁、死锁与死锁检测"><a href="#活锁、死锁与死锁检测" class="headerlink" title="活锁、死锁与死锁检测"></a>活锁、死锁与死锁检测</h2><h3 id="活锁-1"><a href="#活锁-1" class="headerlink" title="活锁"></a>活锁</h3><p>活锁：如果事务 T1 封锁了数据 R，事务 T2 又请求封锁 R，于是 T2 等待。T3 也请求封锁 R，当 T1 释放了 R 上的锁之后系统首先批准了 T3 的请求，T2 继续等待；然后 T4 又请求封锁 R，T3 在释放 R 上的锁之后系统又批准了 T4 的请求，T2 有可能永远等待，这就是活锁的情形。<br>避免活锁的简单方法就是采用先来先服务的策略。当多个事务请求封锁同一数据对象时，封锁子系统按请求锁的先后次序对事务进行排队，数据对象上的锁一旦释放就批准批准申请队列中第一个事务获得锁。</p>
 <h3 id="死锁-1"><a href="#死锁-1" class="headerlink" title="死锁"></a>死锁</h3><p><a href="#refer-anchor"><sup>1</sup></a><br>死锁在许多操作系统书中都有描述，简而言之，就是多个线程出现循环资源依赖，涉及的线程都在等待别的线程释放资源时，都会导致这些线程都进入无限等待的状态，称为死锁。<br>在 InnoDB 中，也会出现两个事务互相等待对方释放某条记录的行锁的情况，从而导致进入死锁状态。死锁可以预防，也可以等发生死锁后再作处理。</p>
@@ -2003,35 +2076,17 @@
 <li>A、B在执行insert语句时希望获得(3, 10)的排他间隙锁，于是出现死锁。<br>可以使用<code>show engine innodb status;</code>命令来查看死锁情况。<br><img src="/imgs/MySQL/%E6%AD%BB%E9%94%81%E7%A4%BA%E4%BE%8B3_%E5%B9%B6%E5%8F%91%E9%97%B4%E9%9A%99%E9%94%81%E7%9A%84%E6%AD%BB%E9%94%81.png" alt="死锁示例3_并发间隙锁的死锁" title="死锁示例3_并发间隙锁的死锁"></li>
 <li>检测到死锁后，事务2自动回滚了，报错：<code>insert into t values(8)	Error Code: 1213. Deadlock found when trying to get lock; try restarting transaction</code><br>同时，事务1将执行成功。</li>
 </ul>
-<h2 id="锁的内存结构"><a href="#锁的内存结构" class="headerlink" title="锁的内存结构"></a>锁的内存结构</h2><p>InnoDB 中，不是获取多少记录就给多少记录加锁，如果符合下边这些条件则这些记录的锁就会被放到一个锁结构中：<br>1、在同一个事务中进行加锁操作<br>2、被加锁的记录在同一个页面中<br>3、加锁的类型是一样的<br>4、等待状态是一样的</p>
-<p>具体的，InnoDB 中的锁结构如下所示：<br><img src="https://user-gold-cdn.xitu.io/2019/4/29/16a68cda54348429?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"></p>
-<ul>
-<li>锁所在的事务信息：<br>不论是表锁还是行锁，都是在事务执行过程中生成的，哪个事务生成了这个锁结构，这里就记载着这个事务的信息。</li>
-<li>索引信息：<br>对于行锁来说，需要记录一下加锁的记录是属于哪个索引的。</li>
-<li>表锁／行锁信息：<br>表锁结构和行锁结构在这个位置的内容是不同的：<br>表锁：记载着这是对哪个表加的锁，还有其他的一些信息。<br>行锁记载了三个重要的信息：<br>Space ID：记录所在表空间。<br>Page Number：记录所在页号。<br>n_bits：对于行锁来说，一条记录就对应着一个比特位，一个页面中包含很多记录，用不同的比特位来区分到底是哪一条记录加了锁。为此在行锁结构的末尾放置了一堆比特位，这个 n_bits 属性代表使用了多少比特位，n_bits 一般会比实际数据量大一些，避免每次插入记录都需要重新分配内存。</li>
-<li>type_mode：<br>这是一个 32 位的数，被分成了 lock_mode、lock_type 和 rec_lock_type 三个部分，如图所示：<br><img src="https://user-gold-cdn.xitu.io/2019/5/5/16a864f3298df751?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"><ul>
-<li>锁的模式（lock_mode），占用低 4 位，可选的值如下：<br>  LOCK_IS（十进制的 0）：表示共享意向锁，也就是 IS 锁，属于表级锁。<br>  LOCK_IX（十进制的 1）：表示独占意向锁，也就是 IX 锁，属于表级锁。<br>  LOCK_S（十进制的 2）：表示共享锁，也就是 S 锁，既可以属于表级锁也可以属于行级锁。<br>  LOCK_X（十进制的 3）：表示独占锁，也就是 X 锁，既可以属于表级锁也可以属于行级锁。<br>  LOCK_AUTO_INC（十进制的 4）：表示 AUTO-INC 锁，属于表级锁。</li>
-<li>锁的类型（lock_type），占用第 5～8 位，不过现阶段只有第 5 位和第 6 位被使用：<br>  LOCK_TABLE（十进制的 16），也就是当第 5 个比特位置为 1 时，表示表级锁。<br>  LOCK_REC（十进制的 32），也就是当第 6 个比特位置为 1 时，表示行级锁。</li>
-<li>行锁的具体类型（rec_lock_type），使用其余的位来表示。只有在 lock_type 的值为 LOCK_REC 时，也就是只有在该锁为行级锁时，才会被细分为更多的类型：<br>  LOCK_ORDINARY（十进制的 0）：表示 next-key 锁。<br>  LOCK_GAP（十进制的 512）：也就是当第 10 个比特位置为 1 时，表示 gap 锁。<br>  LOCK_REC_NOT_GAP（十进制的 1024）：也就是当第 11 个比特位置为 1 时，表示正经记录锁。<br>  LOCK_INSERT_INTENTION（十进制的 2048）：也就是当第 12 个比特位置为 1 时，表示插入意向锁。<br>  其他的类型：还有一些不常用的类型我们就不多说了。<br>  怎么还没看见 is_waiting 属性呢？这主要还是设计 InnoDB 的大叔太抠门了，一个比特位也不想浪费，所以他们把 is_waiting 属性也放到了 type_mode 这个 32 位的数字中：<br>  LOCK_WAIT（十进制的 256） ：也就是当第 9 个比特位置为 1 时，表示 is_waiting 为 true，也就是当前事务尚未获取到锁，处在等待状态；当这个比特位为 0 时，表示 is_waiting 为 false，也就是当前事务获取锁成功。</li>
-</ul>
-</li>
-<li>其他信息</li>
-<li>一堆比特位<br>如果是行锁结构的话，在该结构末尾还放置了一堆比特位，比特位的数量是由上边提到的 n_bits 属性表示的。我们前边唠叨 InnoDB 记录结构的时候说过，页面中的每条记录在记录头信息中都包含一个 heap_no 属性，伪记录 Infimum 的 heap_no 值为 0，Supremum 的 heap_no 值为 1，之后每插入一条记录，heap_no 值就增 1。锁结构最后的一堆比特位就对应着一个页面中的记录，一个比特位映射一个 heap_no，不过为了编码方便，映射方式有点怪。<br><img src="https://user-gold-cdn.xitu.io/2019/4/29/16a69c2f7b413698?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"></li>
-</ul>
-<h2 id="锁优化"><a href="#锁优化" class="headerlink" title="锁优化"></a>锁优化</h2><ol>
-<li>如果你的事务中需要锁多个行，要把最可能造成锁冲突、最可能影响并发度的锁尽量往后放。<br>比如用户买电影票的场景中，扣减用户账户余额和给影院账户余额加钱，显然后者的竞争更加频繁，因此对其的加锁应该放在事务更靠后的位置。</li>
-</ol>
-<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><h2 id="如何安全地给表加字段"><a href="#如何安全地给表加字段" class="headerlink" title="如何安全地给表加字段"></a>如何安全地给表加字段</h2><p>首先需要处理掉长事务，因为长事务不提交的话会一直占用 MDL 锁。</p>
+<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><h3 id="如何安全地给表加字段"><a href="#如何安全地给表加字段" class="headerlink" title="如何安全地给表加字段"></a>如何安全地给表加字段</h3><p>首先需要处理掉长事务，因为长事务不提交的话会一直占用 MDL 锁。</p>
 <blockquote>
 <p>information_schema 库的 innodb_trx 表中可以看到当前执行中的长事务。<br>但是如果这样的事务比较多，kill 掉并不一定管用，因为新的请求总是会源源不断地到来，所以最好的方法是在 alter table 语句里面设定等待时间，如果在这个指定的等待时间里面能够拿到 MDL 写锁最好，拿不到也不要阻塞后面的业务语句，先放弃：</p>
 </blockquote>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE tbl_name NOWAIT add column ...</span><br><span class="line">ALTER TABLE tbl_name WAIT N add column ... </span><br></pre></td></tr></table></figure>
 
-<h2 id="MySQL-连接池被打满怎么办"><a href="#MySQL-连接池被打满怎么办" class="headerlink" title="MySQL 连接池被打满怎么办"></a>MySQL 连接池被打满怎么办</h2><p>这里的连接池指的是应用服务器里访问 MySQL 服务的连接池，比如 Druid，</p>
-<h2 id="以下哪些场景会导致语句Q1-select-from-t1-limit-1被堵住？"><a href="#以下哪些场景会导致语句Q1-select-from-t1-limit-1被堵住？" class="headerlink" title="以下哪些场景会导致语句Q1: select * from t1 limit 1被堵住？"></a>以下哪些场景会导致语句<code>Q1: select * from t1 limit 1</code>被堵住？</h2><ol>
+<h3 id="MySQL-连接池被打满怎么办"><a href="#MySQL-连接池被打满怎么办" class="headerlink" title="MySQL 连接池被打满怎么办"></a>MySQL 连接池被打满怎么办</h3><p>这里的连接池指的是应用服务器里访问 MySQL 服务的连接池，比如 Druid，</p>
+<h3 id="以下哪些场景会导致语句Q1-select-from-t1-limit-1被堵住？"><a href="#以下哪些场景会导致语句Q1-select-from-t1-limit-1被堵住？" class="headerlink" title="以下哪些场景会导致语句Q1: select * from t1 limit 1被堵住？"></a>以下哪些场景会导致语句<code>Q1: select * from t1 limit 1</code>被堵住？</h3><ol>
 <li>另一个线程在Q1执行前，执行了<code>alter table t1 add index(f1)</code>，当前正处于拷贝数据到临时表阶段。</li>
 </ol>
-<h2 id="以下什么情况会发生”等待行锁”的状态？"><a href="#以下什么情况会发生”等待行锁”的状态？" class="headerlink" title="以下什么情况会发生”等待行锁”的状态？"></a>以下什么情况会发生”等待行锁”的状态？</h2><p>RR隔离级别下，表t的建表结构和初始化数据如下：</p>
+<h3 id="以下什么情况会发生”等待行锁”的状态？"><a href="#以下什么情况会发生”等待行锁”的状态？" class="headerlink" title="以下什么情况会发生”等待行锁”的状态？"></a>以下什么情况会发生”等待行锁”的状态？</h3><p>RR隔离级别下，表t的建表结构和初始化数据如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">create table t (id int primary key, c int) engine = innoDB;</span><br><span class="line">insert into t values (1, 1), (11, 11), (21, 21);</span><br></pre></td></tr></table></figure>
 <p>在会话1中执行如下语句：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from t lock in share mode;</span><br></pre></td></tr></table></figure>
@@ -2044,7 +2099,13 @@
 </ol>
 <div id="refer-anchor"></div>
 
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<h3 id="DB的CPU打满怎么排查？"><a href="#DB的CPU打满怎么排查？" class="headerlink" title="DB的CPU打满怎么排查？"></a>DB的CPU打满怎么排查？</h3><p>有很多情况都可能引起DB的CPU打满</p>
+<ol>
+<li>业务量上涨了<br>现象：如果是突发的业务上涨，业务监控（接口、API）应该会有报警，其次就是看有没有执行次数特别多的SQL<br>解决：临时可以对SQL进行限流，后续可以对具体业务做下限流、或DB做扩容</li>
+<li>慢SQL<br>现象：有SQL执行速度特别慢，慢SQL一般只是表象，引起慢SQL背后的原因可能有很多，比如死锁、扫描行数过多&#x2F;读取数据过多（没命中索引）等<br>解决：如果有SQL一直在运行中，可以先把对应的线程kill掉，排查这个sql产生的原因，进行优化。</li>
+<li>热点行更新导致行锁过多<br>现象：用相关工具查看DB中的行锁数量是否出现异常上涨，行锁过多是有可能把CPU打满的<br>解决：排查是否有具体业务场景会导致多线程同时更新同一行数据。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
 <li>[1] <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/437140380">Mysql造成死锁的原因有哪些呢？如何避免？</a></li>
 <li>[2] <a target="_blank" rel="noopener" href="https://www.cnblogs.com/jay-huaxiao/p/11456921.html">Mysql 死锁如何排查：insert on duplicate 死锁一次排查分析过程</a></li>
 </ol>

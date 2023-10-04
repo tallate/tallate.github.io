@@ -19,25 +19,19 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="封锁（Blockade）封锁是数据库原理范畴内的概念，封锁分为排它锁、共享锁、活锁、死锁这4种，以及封锁协议定义了数据库如何使用这些锁来保证并发安全。所谓封锁就是事务在对某个数据对象例如表、记录等操作之前，先向系统发出请求对其加锁。加锁后事务 T 就对该数据对象有了一定的控制，在事务 T 释放它的锁之前，其他事务不能更新此数据对象。例如，事务 T1 要修改 A，若在读出 A 之前先锁住 A，其">
+    <meta name="description" content="锁 &#x2F; 封锁 锁的类型 排他锁 &#x2F; X锁 共享锁 &#x2F; S锁   封锁协议 一级封锁：对应读未提交 二级封锁：对应读已提交 三级封锁：对应可重复读   MySQL 并发安全 行锁 + 间隙锁 + MVCC 隔离级别实现 读已提交：二级封锁协议（行锁）+MVCC 可重复读：三级封锁协议+MVCC 解决幻读：Next-Key Locks &#x3D; 行锁 + 间隙锁">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MySQL4_2锁">
 <meta property="og:url" content="https://tallate.github.io/f312680c.html">
 <meta property="og:site_name" content="Tallate">
-<meta property="og:description" content="封锁（Blockade）封锁是数据库原理范畴内的概念，封锁分为排它锁、共享锁、活锁、死锁这4种，以及封锁协议定义了数据库如何使用这些锁来保证并发安全。所谓封锁就是事务在对某个数据对象例如表、记录等操作之前，先向系统发出请求对其加锁。加锁后事务 T 就对该数据对象有了一定的控制，在事务 T 释放它的锁之前，其他事务不能更新此数据对象。例如，事务 T1 要修改 A，若在读出 A 之前先锁住 A，其">
+<meta property="og:description" content="锁 &#x2F; 封锁 锁的类型 排他锁 &#x2F; X锁 共享锁 &#x2F; S锁   封锁协议 一级封锁：对应读未提交 二级封锁：对应读已提交 三级封锁：对应可重复读   MySQL 并发安全 行锁 + 间隙锁 + MVCC 隔离级别实现 读已提交：二级封锁协议（行锁）+MVCC 可重复读：三级封锁协议+MVCC 解决幻读：Next-Key Locks &#x3D; 行锁 + 间隙锁">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://tallate.github.io/imgs/MySQL/MySQL-gap%E9%94%81.png">
 <meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/5/1/16a72bf8133eb1dc?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/4/29/16a680105d9425c2?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/4/29/16a680105e955d9a?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/4/29/16a680105f387885?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="og:image" content="https://tallate.github.io/imgs/MySQL/%E6%AD%BB%E9%94%81%E7%A4%BA%E4%BE%8B1_%E9%97%B4%E9%9A%99%E9%94%81%E4%BA%92%E6%96%A5.png">
 <meta property="og:image" content="https://tallate.github.io/imgs/MySQL/%E6%AD%BB%E9%94%81%E7%A4%BA%E4%BE%8B3_%E5%B9%B6%E5%8F%91%E9%97%B4%E9%9A%99%E9%94%81%E7%9A%84%E6%AD%BB%E9%94%81.png">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/4/29/16a68cda54348429?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/5/5/16a864f3298df751?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
-<meta property="og:image" content="https://user-gold-cdn.xitu.io/2019/4/29/16a69c2f7b413698?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
 <meta property="article:published_time" content="2020-05-28T02:18:28.000Z">
-<meta property="article:modified_time" content="2023-08-20T12:17:42.830Z">
+<meta property="article:modified_time" content="2023-10-04T17:23:12.047Z">
 <meta property="article:author" content="tallate">
 <meta property="article:tag" content="MySQL">
 <meta name="twitter:card" content="summary">
@@ -151,7 +145,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%81%E9%94%81%EF%BC%88Blockade%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">封锁（Blockade）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E9%94%81%E7%A7%8D%E7%B1%BB"><span class="nav-number">1.1.</span> <span class="nav-text">封锁种类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E9%94%81%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.2.</span> <span class="nav-text">封锁协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E9%94%81%E7%B2%92%E5%BA%A6"><span class="nav-number">1.3.</span> <span class="nav-text">封锁粒度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%84%8F%E5%90%91%E9%94%81"><span class="nav-number">1.4.</span> <span class="nav-text">意向锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E5%92%8C%E6%AD%BB%E9%94%81"><span class="nav-number">1.5.</span> <span class="nav-text">死锁和死锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B4%BB%E9%94%81"><span class="nav-number">1.5.1.</span> <span class="nav-text">活锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81"><span class="nav-number">1.5.2.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E9%A2%84%E9%98%B2"><span class="nav-number">1.5.3.</span> <span class="nav-text">死锁预防</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E8%AF%8A%E6%96%AD%E5%92%8C%E8%A7%A3%E9%99%A4"><span class="nav-number">1.5.4.</span> <span class="nav-text">死锁诊断和解除</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E6%AE%B5%E9%94%81%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.</span> <span class="nav-text">两段锁协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E4%B8%B2%E8%A1%8C%E5%8C%96%E8%B0%83%E5%BA%A6"><span class="nav-number">2.1.</span> <span class="nav-text">可串行化调度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E6%AE%B5%E9%94%81%E5%8D%8F%E8%AE%AE-1"><span class="nav-number">2.2.</span> <span class="nav-text">两段锁协议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8"><span class="nav-number">3.</span> <span class="nav-text">MySQL 如何保证并发安全</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#latch-%E5%92%8C-lock"><span class="nav-number">3.1.</span> <span class="nav-text">latch 和 lock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVCC"><span class="nav-number">3.2.</span> <span class="nav-text">MVCC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Record-Locks%EF%BC%88%E8%A1%8C%E9%94%81%EF%BC%89"><span class="nav-number">3.3.</span> <span class="nav-text">Record Locks（行锁）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gap-Locks%EF%BC%88%E9%97%B4%E9%9A%99%E9%94%81%EF%BC%89"><span class="nav-number">3.4.</span> <span class="nav-text">Gap Locks（间隙锁）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Next-Key-Locks"><span class="nav-number">3.5.</span> <span class="nav-text">Next-Key Locks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%84%8F%E5%90%91%E9%94%81-1"><span class="nav-number">3.6.</span> <span class="nav-text">意向锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Insert-Intention-Locks%EF%BC%88%E6%8F%92%E5%85%A5%E6%84%8F%E5%90%91%E9%94%81%EF%BC%89"><span class="nav-number">3.7.</span> <span class="nav-text">Insert Intention Locks（插入意向锁）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%90%E5%BC%8F%E9%94%81"><span class="nav-number">3.8.</span> <span class="nav-text">隐式锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A8%E9%94%81"><span class="nav-number">3.9.</span> <span class="nav-text">表锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A8%E9%94%81%E7%A7%8D%E7%B1%BB"><span class="nav-number">3.9.1.</span> <span class="nav-text">表锁种类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8D%E4%BC%9A%E5%8A%A0%E8%A1%A8%E9%94%81%E7%9A%84%E6%83%85%E5%86%B5"><span class="nav-number">3.9.2.</span> <span class="nav-text">不会加表锁的情况</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL-%E5%85%A8%E5%B1%80%E9%94%81"><span class="nav-number">3.10.</span> <span class="nav-text">MySQL 全局锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E4%B8%AD%E7%9A%84%E9%94%81"><span class="nav-number">3.11.</span> <span class="nav-text">其他存储引擎中的锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%93%8D%E4%BD%9C%E5%88%A9%E7%94%A8%E9%94%81%E6%96%B9%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">常见操作利用锁方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E8%AF%BB%EF%BC%88Consistent-Reads%E3%80%81%E4%B8%80%E8%87%B4%E6%80%A7%E6%97%A0%E9%94%81%E8%AF%BB%E3%80%81%E5%BF%AB%E7%85%A7%E8%AF%BB%EF%BC%89"><span class="nav-number">4.1.</span> <span class="nav-text">一致性读（Consistent Reads、一致性无锁读、快照读）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81%E5%AE%9A%E8%AF%BB%EF%BC%88Locking-Reads%EF%BC%89"><span class="nav-number">4.2.</span> <span class="nav-text">锁定读（Locking Reads）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E6%93%8D%E4%BD%9C%EF%BC%88write%EF%BC%89%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8%E9%94%81"><span class="nav-number">4.3.</span> <span class="nav-text">写操作（write）如何利用锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DELETE"><span class="nav-number">4.3.1.</span> <span class="nav-text">DELETE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UPDATE"><span class="nav-number">4.3.2.</span> <span class="nav-text">UPDATE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#INSERT"><span class="nav-number">4.3.3.</span> <span class="nav-text">INSERT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#insert-%E2%80%A6-select-%E8%AF%AD%E5%8F%A5"><span class="nav-number">4.3.4.</span> <span class="nav-text">insert … select 语句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#insert-%E5%94%AF%E4%B8%80%E9%94%AE%E5%86%B2%E7%AA%81"><span class="nav-number">4.3.5.</span> <span class="nav-text">insert 唯一键冲突</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#insert-into-%E2%80%A6-on-duplicate-key-update"><span class="nav-number">4.3.6.</span> <span class="nav-text">insert into … on duplicate key update</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E9%94%81%E5%9C%BA%E6%99%AF%EF%BC%88InnoDB%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">加锁场景（InnoDB）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B-1%E3%80%81%E7%AD%89%E5%80%BC%E6%9F%A5%E8%AF%A2%E9%97%B4%E9%9A%99%E9%94%81"><span class="nav-number">5.1.</span> <span class="nav-text">例 1、等值查询间隙锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B-2%E3%80%81%E4%B8%BB%E9%94%AE%E4%B8%8D%E6%98%8E%E7%A1%AE%E5%AF%BC%E8%87%B4%E9%94%81%E8%A1%A8"><span class="nav-number">5.2.</span> <span class="nav-text">例 2、主键不明确导致锁表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B-3%E3%80%81update%E6%9C%AA%E5%91%BD%E4%B8%AD%E8%A1%8C%E8%A7%A6%E5%8F%91%E9%97%B4%E9%9A%99%E9%94%81"><span class="nav-number">5.3.</span> <span class="nav-text">例 3、update未命中行触发间隙锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B-4%E3%80%81%E8%87%AA%E5%A2%9E%E9%95%BF%E4%B8%8E%E9%94%81"><span class="nav-number">5.4.</span> <span class="nav-text">例 4、自增长与锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%81%E7%BB%93%E6%9E%84"><span class="nav-number">6.</span> <span class="nav-text">锁结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B4%BB%E9%94%81%E3%80%81%E6%AD%BB%E9%94%81%E4%B8%8E%E6%AD%BB%E9%94%81%E6%A3%80%E6%B5%8B"><span class="nav-number">7.</span> <span class="nav-text">活锁、死锁与死锁检测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B4%BB%E9%94%81-1"><span class="nav-number">7.1.</span> <span class="nav-text">活锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E9%94%81-1"><span class="nav-number">7.2.</span> <span class="nav-text">死锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E6%AD%BB%E9%94%81"><span class="nav-number">7.2.1.</span> <span class="nav-text">如何处理死锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E9%A2%84%E9%98%B2-1"><span class="nav-number">7.2.2.</span> <span class="nav-text">死锁预防</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E6%A3%80%E6%B5%8B%E4%B8%8E%E8%A7%A3%E9%99%A4"><span class="nav-number">7.2.3.</span> <span class="nav-text">死锁检测与解除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E8%83%BD%E5%8F%91%E7%94%9F%E6%AD%BB%E9%94%81%E7%9A%84%E6%83%85%E5%86%B5"><span class="nav-number">7.2.4.</span> <span class="nav-text">可能发生死锁的情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B%E6%AD%BB%E9%94%81"><span class="nav-number">7.2.5.</span> <span class="nav-text">如何查看死锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E7%A4%BA%E4%BE%8B1-%E9%97%B4%E9%9A%99%E9%94%81%E4%BA%92%E6%96%A5"><span class="nav-number">7.2.6.</span> <span class="nav-text">死锁示例1 - 间隙锁互斥</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E7%A4%BA%E4%BE%8B2-%E5%85%B1%E4%BA%AB%E6%8E%92%E4%BB%96%E9%94%81%E6%AD%BB%E9%94%81"><span class="nav-number">7.2.7.</span> <span class="nav-text">死锁示例2 - 共享排他锁死锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E7%A4%BA%E4%BE%8B3-%E5%B9%B6%E5%8F%91%E9%97%B4%E9%9A%99%E9%94%81%E7%9A%84%E6%AD%BB%E9%94%81"><span class="nav-number">7.2.8.</span> <span class="nav-text">死锁示例3 - 并发间隙锁的死锁</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%81%E7%9A%84%E5%86%85%E5%AD%98%E7%BB%93%E6%9E%84"><span class="nav-number">8.</span> <span class="nav-text">锁的内存结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%81%E4%BC%98%E5%8C%96"><span class="nav-number">9.</span> <span class="nav-text">锁优化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#QA"><span class="nav-number"></span> <span class="nav-text">QA</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AE%89%E5%85%A8%E5%9C%B0%E7%BB%99%E8%A1%A8%E5%8A%A0%E5%AD%97%E6%AE%B5"><span class="nav-number">1.</span> <span class="nav-text">如何安全地给表加字段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-%E8%BF%9E%E6%8E%A5%E6%B1%A0%E8%A2%AB%E6%89%93%E6%BB%A1%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="nav-number">2.</span> <span class="nav-text">MySQL 连接池被打满怎么办</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A5%E4%B8%8B%E5%93%AA%E4%BA%9B%E5%9C%BA%E6%99%AF%E4%BC%9A%E5%AF%BC%E8%87%B4%E8%AF%AD%E5%8F%A5Q1-select-from-t1-limit-1%E8%A2%AB%E5%A0%B5%E4%BD%8F%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">以下哪些场景会导致语句Q1: select * from t1 limit 1被堵住？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A5%E4%B8%8B%E4%BB%80%E4%B9%88%E6%83%85%E5%86%B5%E4%BC%9A%E5%8F%91%E7%94%9F%E2%80%9D%E7%AD%89%E5%BE%85%E8%A1%8C%E9%94%81%E2%80%9D%E7%9A%84%E7%8A%B6%E6%80%81%EF%BC%9F"><span class="nav-number">4.</span> <span class="nav-text">以下什么情况会发生”等待行锁”的状态？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number"></span> <span class="nav-text">参考</span></a></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%81%E9%94%81%EF%BC%88Blockade%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">封锁（Blockade）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E9%94%81%E7%A7%8D%E7%B1%BB"><span class="nav-number">1.1.</span> <span class="nav-text">封锁种类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E9%94%81%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.2.</span> <span class="nav-text">封锁协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%81%E9%94%81%E7%B2%92%E5%BA%A6"><span class="nav-number">1.3.</span> <span class="nav-text">封锁粒度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%84%8F%E5%90%91%E9%94%81"><span class="nav-number">1.4.</span> <span class="nav-text">意向锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B4%BB%E9%94%81%E5%92%8C%E6%AD%BB%E9%94%81"><span class="nav-number">1.5.</span> <span class="nav-text">活锁和死锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B4%BB%E9%94%81"><span class="nav-number">1.5.1.</span> <span class="nav-text">活锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81"><span class="nav-number">1.5.2.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E9%A2%84%E9%98%B2"><span class="nav-number">1.5.3.</span> <span class="nav-text">死锁预防</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E8%AF%8A%E6%96%AD%E5%92%8C%E8%A7%A3%E9%99%A4"><span class="nav-number">1.5.4.</span> <span class="nav-text">死锁诊断和解除</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%A4%E6%AE%B5%E9%94%81%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.</span> <span class="nav-text">两段锁协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E4%B8%B2%E8%A1%8C%E5%8C%96%E8%B0%83%E5%BA%A6"><span class="nav-number">2.1.</span> <span class="nav-text">可串行化调度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E6%AE%B5%E9%94%81%E5%8D%8F%E8%AE%AE-1"><span class="nav-number">2.2.</span> <span class="nav-text">两段锁协议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8"><span class="nav-number">3.</span> <span class="nav-text">MySQL 如何保证并发安全</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#latch-%E5%92%8C-lock"><span class="nav-number">3.1.</span> <span class="nav-text">latch 和 lock</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVCC"><span class="nav-number">3.2.</span> <span class="nav-text">MVCC</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%81%E9%94%81%E4%B8%8E-MVCC-%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">3.2.1.</span> <span class="nav-text">封锁与 MVCC 之间的关系</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Record-Locks%EF%BC%88%E8%A1%8C%E9%94%81%EF%BC%89"><span class="nav-number">3.3.</span> <span class="nav-text">Record Locks（行锁）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gap-Locks%EF%BC%88%E9%97%B4%E9%9A%99%E9%94%81%EF%BC%89"><span class="nav-number">3.4.</span> <span class="nav-text">Gap Locks（间隙锁）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Next-Key-Locks"><span class="nav-number">3.5.</span> <span class="nav-text">Next-Key Locks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%84%8F%E5%90%91%E9%94%81-1"><span class="nav-number">3.6.</span> <span class="nav-text">意向锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Insert-Intention-Locks%EF%BC%88%E6%8F%92%E5%85%A5%E6%84%8F%E5%90%91%E9%94%81%EF%BC%89"><span class="nav-number">3.7.</span> <span class="nav-text">Insert Intention Locks（插入意向锁）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%90%E5%BC%8F%E9%94%81"><span class="nav-number">3.8.</span> <span class="nav-text">隐式锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A8%E9%94%81"><span class="nav-number">3.9.</span> <span class="nav-text">表锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A8%E9%94%81%E7%A7%8D%E7%B1%BB"><span class="nav-number">3.9.1.</span> <span class="nav-text">表锁种类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8D%E4%BC%9A%E5%8A%A0%E8%A1%A8%E9%94%81%E7%9A%84%E6%83%85%E5%86%B5"><span class="nav-number">3.9.2.</span> <span class="nav-text">不会加表锁的情况</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL-%E5%85%A8%E5%B1%80%E9%94%81"><span class="nav-number">3.10.</span> <span class="nav-text">MySQL 全局锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E%E4%B8%AD%E7%9A%84%E9%94%81"><span class="nav-number">3.11.</span> <span class="nav-text">其他存储引擎中的锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%93%8D%E4%BD%9C%E5%88%A9%E7%94%A8%E9%94%81%E6%96%B9%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">常见操作利用锁方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E8%AF%BB%EF%BC%88Consistent-Reads%E3%80%81%E4%B8%80%E8%87%B4%E6%80%A7%E6%97%A0%E9%94%81%E8%AF%BB%E3%80%81%E5%BF%AB%E7%85%A7%E8%AF%BB%EF%BC%89"><span class="nav-number">4.1.</span> <span class="nav-text">一致性读（Consistent Reads、一致性无锁读、快照读）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81%E5%AE%9A%E8%AF%BB%EF%BC%88Locking-Reads%EF%BC%89"><span class="nav-number">4.2.</span> <span class="nav-text">锁定读（Locking Reads）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E6%93%8D%E4%BD%9C%EF%BC%88write%EF%BC%89%E5%A6%82%E4%BD%95%E5%88%A9%E7%94%A8%E9%94%81"><span class="nav-number">4.3.</span> <span class="nav-text">写操作（write）如何利用锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DELETE"><span class="nav-number">4.3.1.</span> <span class="nav-text">DELETE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UPDATE"><span class="nav-number">4.3.2.</span> <span class="nav-text">UPDATE</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#INSERT"><span class="nav-number">4.3.3.</span> <span class="nav-text">INSERT</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#insert-%E2%80%A6-select-%E8%AF%AD%E5%8F%A5"><span class="nav-number">4.3.4.</span> <span class="nav-text">insert … select 语句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#insert-%E5%94%AF%E4%B8%80%E9%94%AE%E5%86%B2%E7%AA%81"><span class="nav-number">4.3.5.</span> <span class="nav-text">insert 唯一键冲突</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#insert-into-%E2%80%A6-on-duplicate-key-update"><span class="nav-number">4.3.6.</span> <span class="nav-text">insert into … on duplicate key update</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E9%94%81%E5%9C%BA%E6%99%AF%E4%BE%8B%E4%B8%BE%EF%BC%88InnoDB%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">加锁场景例举（InnoDB）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B-1%E3%80%81%E7%AD%89%E5%80%BC%E6%9F%A5%E8%AF%A2%E9%97%B4%E9%9A%99%E9%94%81"><span class="nav-number">5.1.</span> <span class="nav-text">例 1、等值查询间隙锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B-2%E3%80%81%E4%B8%BB%E9%94%AE%E4%B8%8D%E6%98%8E%E7%A1%AE%E5%AF%BC%E8%87%B4%E9%94%81%E8%A1%A8"><span class="nav-number">5.2.</span> <span class="nav-text">例 2、主键不明确导致锁表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B-3%E3%80%81update%E6%9C%AA%E5%91%BD%E4%B8%AD%E8%A1%8C%E8%A7%A6%E5%8F%91%E9%97%B4%E9%9A%99%E9%94%81"><span class="nav-number">5.3.</span> <span class="nav-text">例 3、update未命中行触发间隙锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B-4%E3%80%81%E8%87%AA%E5%A2%9E%E9%95%BF%E4%B8%8E%E9%94%81"><span class="nav-number">5.4.</span> <span class="nav-text">例 4、自增长与锁</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B4%BB%E9%94%81%E3%80%81%E6%AD%BB%E9%94%81%E4%B8%8E%E6%AD%BB%E9%94%81%E6%A3%80%E6%B5%8B"><span class="nav-number">6.</span> <span class="nav-text">活锁、死锁与死锁检测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B4%BB%E9%94%81-1"><span class="nav-number">6.1.</span> <span class="nav-text">活锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E9%94%81-1"><span class="nav-number">6.2.</span> <span class="nav-text">死锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E6%AD%BB%E9%94%81"><span class="nav-number">6.2.1.</span> <span class="nav-text">如何处理死锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E9%A2%84%E9%98%B2-1"><span class="nav-number">6.2.2.</span> <span class="nav-text">死锁预防</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E6%A3%80%E6%B5%8B%E4%B8%8E%E8%A7%A3%E9%99%A4"><span class="nav-number">6.2.3.</span> <span class="nav-text">死锁检测与解除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AF%E8%83%BD%E5%8F%91%E7%94%9F%E6%AD%BB%E9%94%81%E7%9A%84%E6%83%85%E5%86%B5"><span class="nav-number">6.2.4.</span> <span class="nav-text">可能发生死锁的情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B%E6%AD%BB%E9%94%81"><span class="nav-number">6.2.5.</span> <span class="nav-text">如何查看死锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E7%A4%BA%E4%BE%8B1-%E9%97%B4%E9%9A%99%E9%94%81%E4%BA%92%E6%96%A5"><span class="nav-number">6.2.6.</span> <span class="nav-text">死锁示例1 - 间隙锁互斥</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E7%A4%BA%E4%BE%8B2-%E5%85%B1%E4%BA%AB%E6%8E%92%E4%BB%96%E9%94%81%E6%AD%BB%E9%94%81"><span class="nav-number">6.2.7.</span> <span class="nav-text">死锁示例2 - 共享排他锁死锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E7%A4%BA%E4%BE%8B3-%E5%B9%B6%E5%8F%91%E9%97%B4%E9%9A%99%E9%94%81%E7%9A%84%E6%AD%BB%E9%94%81"><span class="nav-number">6.2.8.</span> <span class="nav-text">死锁示例3 - 并发间隙锁的死锁</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QA"><span class="nav-number">7.</span> <span class="nav-text">QA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AE%89%E5%85%A8%E5%9C%B0%E7%BB%99%E8%A1%A8%E5%8A%A0%E5%AD%97%E6%AE%B5"><span class="nav-number">7.1.</span> <span class="nav-text">如何安全地给表加字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL-%E8%BF%9E%E6%8E%A5%E6%B1%A0%E8%A2%AB%E6%89%93%E6%BB%A1%E6%80%8E%E4%B9%88%E5%8A%9E"><span class="nav-number">7.2.</span> <span class="nav-text">MySQL 连接池被打满怎么办</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A5%E4%B8%8B%E5%93%AA%E4%BA%9B%E5%9C%BA%E6%99%AF%E4%BC%9A%E5%AF%BC%E8%87%B4%E8%AF%AD%E5%8F%A5Q1-select-from-t1-limit-1%E8%A2%AB%E5%A0%B5%E4%BD%8F%EF%BC%9F"><span class="nav-number">7.3.</span> <span class="nav-text">以下哪些场景会导致语句Q1: select * from t1 limit 1被堵住？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A5%E4%B8%8B%E4%BB%80%E4%B9%88%E6%83%85%E5%86%B5%E4%BC%9A%E5%8F%91%E7%94%9F%E2%80%9D%E7%AD%89%E5%BE%85%E8%A1%8C%E9%94%81%E2%80%9D%E7%9A%84%E7%8A%B6%E6%80%81%EF%BC%9F"><span class="nav-number">7.4.</span> <span class="nav-text">以下什么情况会发生”等待行锁”的状态？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DB%E7%9A%84CPU%E6%89%93%E6%BB%A1%E6%80%8E%E4%B9%88%E6%8E%92%E6%9F%A5%EF%BC%9F"><span class="nav-number">7.5.</span> <span class="nav-text">DB的CPU打满怎么排查？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -238,7 +232,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+      <time title="修改时间：2023-10-05 01:23:12" itemprop="dateModified" datetime="2023-10-05T01:23:12+08:00">2023-10-05</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -261,6 +255,37 @@
     
     <div class="post-body" itemprop="articleBody"><span id="more"></span>
 
+<blockquote class="pullquote mindmap mindmap-md"><ul>
+<li>锁 &#x2F; 封锁<ul>
+<li>锁的类型<ul>
+<li>排他锁 &#x2F; X锁</li>
+<li>共享锁 &#x2F; S锁</li>
+</ul>
+</li>
+<li>封锁协议<ul>
+<li>一级封锁：对应读未提交</li>
+<li>二级封锁：对应读已提交</li>
+<li>三级封锁：对应可重复读</li>
+</ul>
+</li>
+<li>MySQL 并发安全<ul>
+<li>行锁 + 间隙锁 + MVCC</li>
+<li>隔离级别实现<ul>
+<li>读已提交：二级封锁协议（行锁）+MVCC</li>
+<li>可重复读：三级封锁协议+MVCC</li>
+<li>解决幻读：Next-Key Locks &#x3D; 行锁 + 间隙锁</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>死锁</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+
+
+
 <h2 id="封锁（Blockade）"><a href="#封锁（Blockade）" class="headerlink" title="封锁（Blockade）"></a>封锁（Blockade）</h2><p>封锁是数据库原理范畴内的概念，封锁分为排它锁、共享锁、活锁、死锁这4种，以及封锁协议定义了数据库如何使用这些锁来保证并发安全。<br>所谓封锁就是事务在对某个数据对象例如表、记录等操作之前，先向系统发出请求对其加锁。<br>加锁后事务 T 就对该数据对象有了一定的控制，在事务 T 释放它的锁之前，其他事务不能更新此数据对象。例如，事务 T1 要修改 A，若在读出 A 之前先锁住 A，其他事务就不能再读取和修改 A 了，直到 T1 修改并写回 A 后解除了对 A 的封锁为止。这样，就不会丢失 T1 的修改。<br>确切的控制由封锁的类型决定。基本的封锁类型有两种：排他锁(exclusive locks,简称 X 锁)和共享锁(share locks,简称 S 锁)</p>
 <ul>
 <li>**X 锁(排他写锁)**：若事务 T1 对数据对象 A 加上 X 锁，则只允许 T 读取和修改 A，其他任何事物都不能再对 A 加任何类型的锁，直到 T 释放 A 上的锁为止。这就保证了其他事务在 T 释放 A 上的锁之前不能再读取和修改 A；</li>
@@ -276,12 +301,6 @@
 <li>二级封锁协议<br>在一级加锁协议的基础上增加事务 T 在读取数据 R 之前必须先对其加 S 锁，读完后即可释放 S 锁；<br>二级加锁协议除防止了丢失修改，还可进一步防止读脏数据。例如：事务 T1 正在对数据对象 R 进行修改，此前已经对 R 加上了 X 锁，此时事务 T2 想读取 R，就必须对 R 加上 S 锁，但是 T2 发现 R 已经被 T1 加上了 X 锁，于是 T2 只能等待 T1 释放了在 R 上加的锁之后才能对 R 加 S 锁并读取。这能防止 T2 读取到 T1 未提交的数据，从而避免了脏读。<br>但是在二级封锁协议中，由于读完数据后即可释放 S 锁，所以它不能保证可重复读。</li>
 <li>三级封锁协议<br>三级封锁协议是指，在一级封锁协议的基础上增加事务 T 在读取数据 R 之前对其加 S 锁直至事务结束才释放。<br>三级封锁协议除了防止丢失修改和读“脏”数据之外，还进一步防止了不可重复读。<br>上述三级协议的主要区别在于什么操作需要申请加锁，以及何时释放锁(即锁的持有时间)。不同的封锁协议使事务达到的一致性是不同的，封锁协议越高，一致性程度越强。</li>
 </ol>
-<p>封锁与 MVCC 之间的关系：<br>封锁与 MVCC 并不是互斥的，MySQL 实现隔离级别时结合了这二者，比如：</p>
-<ul>
-<li>读已提交：二级封锁协议+MVCC，二级封锁协议在读之前加 S 锁，读完之后就释放 S 锁，所以不能保证不可重复读与幻读；</li>
-<li>可重复读：三级封锁协议+MVCC，读完之后不会立刻释放 S 锁，直到事务提交时才会释放，可以解决可重复读。</li>
-</ul>
-<p>封锁协议+MVCC 并不能解决幻读问题，在 MVCC 中是通过 <strong>Next-Key Lock</strong> 解决的。</p>
 <h3 id="封锁粒度"><a href="#封锁粒度" class="headerlink" title="封锁粒度"></a>封锁粒度</h3><p>封锁粒度指的是封锁对象的大小。<br>封锁粒度与系统的并发度和并发控制的开销有关：封锁粒度越大，数据库能封锁的数据单元越少，并发度越小，系统开销也变小。<br>一般来说，处理个别元组的事务以元组为封锁粒度；处理某个关系的大量元组的事务以关系为封锁粒度；处理多个关系的大量元组的事务以数据库为封锁粒度。</p>
 <p>在一个系统中，提供多种封锁粒度给不同的事务选择，这种封锁方法称为<strong>多粒度封锁（ multiple granularity locking）</strong>。</p>
 <ul>
@@ -294,7 +313,7 @@
 <li>意向排他锁（IX锁）：<br>对一个数据对象加IX锁，表示它的后裔结点拟（意向）加X锁。<br>事务T1对数据对象A加上IX锁后，事务T2只能继续加IS或IX锁。</li>
 <li>共享意向排他锁（SIX &#x3D; S+IX锁）：<br>对一个数据对象先加S锁，再加IX锁。例如对某个表加SIX锁，则表示该事务要读（S）整个表，同时会更新（IX）个别元组。<br>事务T1对数据对象A加上SIX锁后，事务T2只能加IS锁。</li>
 </ol>
-<h3 id="死锁和死锁"><a href="#死锁和死锁" class="headerlink" title="死锁和死锁"></a>死锁和死锁</h3><p>封锁可能引起活锁和死锁问题。</p>
+<h3 id="活锁和死锁"><a href="#活锁和死锁" class="headerlink" title="活锁和死锁"></a>活锁和死锁</h3><p>封锁可能引起活锁和死锁问题。</p>
 <h4 id="活锁"><a href="#活锁" class="headerlink" title="活锁"></a>活锁</h4><p>根据事务的优先级顺序，可能会出现某个事务永远在等待封锁的情况，即事务T1封锁了数据对象A后，T2、T3陆续请求封锁，但是T1释放锁后，系统优先批准了T3的请求，T2仍然在等待。<br>最简单的解决方法就是先来先服务（FCFS），不考虑事务的优先级。</p>
 <h4 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h4><p>事务T1封锁了数据A，事务T2封锁了数据B，然后T1请求封锁B，与此同时T2也请求封锁A，但因为两个事务的请求都需要等待对方释放锁，这样就出现了永远在等待对方的死锁。<br>在数据库中，解决死锁问题主要有两类方法：预防和诊断解除。</p>
 <h4 id="死锁预防"><a href="#死锁预防" class="headerlink" title="死锁预防"></a>死锁预防</h4><ol>
@@ -314,12 +333,53 @@
 <p>预防死锁的<strong>一次封锁法</strong>遵守两段锁协议；但是两段锁协议并不要求事务必须一次将所有要使用的数据全部加锁，因此遵守两段锁协议的事务可能发生死锁。</p>
 <p>由于两阶段锁协议的存在，如果我们的事务中需要锁住多个行，最好把最可能造成锁冲突、最可能影响并发度的锁尽量往后放。</p>
 <h2 id="MySQL-如何保证并发安全"><a href="#MySQL-如何保证并发安全" class="headerlink" title="MySQL 如何保证并发安全"></a>MySQL 如何保证并发安全</h2><h3 id="latch-和-lock"><a href="#latch-和-lock" class="headerlink" title="latch 和 lock"></a>latch 和 lock</h3><p>MySQL 中的锁主要分为<strong>闩锁（latch）</strong>和<strong>锁（lock）</strong>。<br>latch对象是除了数据库对象外的其他对象，包括操作缓冲池汇总的LRU列表、删除、添加、移动LRU列表中的元素，为了保证一致性必须要有锁介入，因此引入了latch锁。latch是轻量级的锁，因为它要求锁定的时间必须非常短，主要用于保护临界资源的线程安全。<br>lock对象是事务，用来锁定数据库中的对象，如表、行、页。一般lock的对象仅在事务commit或rollback后进行释放。lock有死锁机制。</p>
-<ul>
-<li>| lock | latch</li>
-<li>| - | -<br>对象 | 事务 | 线程<br>保护 | 数据库内容 | 内存数据结构<br>持续时间 | 整个事务过程 | 临界资源<br>模式 | 行锁、表锁、意向锁 | 读写锁、互斥量<br>死锁 | 通过 waits-for graph、time out 等机制进行死锁检测与处理 | 无死锁检测与处理机制，仅通过控制应用程序加锁顺序（lock leveling）来保证无死锁发生<br>存在位置 | Lock Manager 的哈希表中 | 每个数据结构的对象中</li>
-</ul>
+<table>
+<thead>
+<tr>
+<th>-</th>
+<th>lock</th>
+<th>latch</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>对象</td>
+<td>事务</td>
+<td>线程</td>
+</tr>
+<tr>
+<td>保护</td>
+<td>数据库内容</td>
+<td>内存数据结构</td>
+</tr>
+<tr>
+<td>持续时间</td>
+<td>整个事务过程</td>
+<td>临界资源</td>
+</tr>
+<tr>
+<td>模式</td>
+<td>行锁、表锁、意向锁</td>
+<td>读写锁、互斥量</td>
+</tr>
+<tr>
+<td>死锁</td>
+<td>通过 waits-for graph、time out 等机制进行死锁检测与处理</td>
+<td>无死锁检测与处理机制，仅通过控制应用程序加锁顺序（lock leveling）来保证无死锁发生</td>
+</tr>
+<tr>
+<td>存在位置</td>
+<td>Lock Manager 的哈希表中</td>
+<td>每个数据结构的对象中</td>
+</tr>
+</tbody></table>
 <p>latch 不能显式添加，而是线程在获取行锁时前，先对行所在的页面添加 latch，然后再对行添加 lock，添加完行 lock 后再释放页面的 latch。<br>如果行被其他线程占有，则线程会先释放页面 latch，等待行锁，待获取行锁后会再次对页面添加 latch，查看页面数据是否有改动，再次获取改动后的行。<br>这种机制主要是为了保证线程获取的行数据的一致性和完整性。</p>
 <h3 id="MVCC"><a href="#MVCC" class="headerlink" title="MVCC"></a>MVCC</h3><p>MySQL 的特色之一是提供了 <strong>MVCC（多版本并发控制）</strong>机制，MVCC 给每行数据增加了版本号，事务在执行读操作时只能读到数据的历史版本，因此可以避免脏读等问题。<br>MVCC 与事务紧密关联，因此我放到<a href="https://tallate.github.io/86b66af2.html">事务小节</a>中去论述了。</p>
+<h4 id="封锁与-MVCC-之间的关系"><a href="#封锁与-MVCC-之间的关系" class="headerlink" title="封锁与 MVCC 之间的关系"></a>封锁与 MVCC 之间的关系</h4><p>封锁与 MVCC 并不是互斥的，MySQL 实现隔离级别时结合了这二者，比如：</p>
+<ul>
+<li>读已提交：二级封锁协议+MVCC，二级封锁协议在读之前加 S 锁，读完之后就释放 S 锁，所以不能保证不可重复读与幻读；</li>
+<li>可重复读：三级封锁协议+MVCC，读完之后不会立刻释放 S 锁，直到事务提交时才会释放，可以解决可重复读。</li>
+</ul>
+<p>封锁协议+MVCC 并不能解决幻读问题，在 MVCC 中是通过 <strong>Next-Key Lock</strong> 解决的。</p>
 <h3 id="Record-Locks（行锁）"><a href="#Record-Locks（行锁）" class="headerlink" title="Record Locks（行锁）"></a>Record Locks（行锁）</h3><p>该锁的官方类型名为 LOCK_REC_NOT_GAP。<br>和前面提到的表锁一样，分 S 锁和 X 锁，只是作用粒度精确到行了。</p>
 <h3 id="Gap-Locks（间隙锁）"><a href="#Gap-Locks（间隙锁）" class="headerlink" title="Gap Locks（间隙锁）"></a>Gap Locks（间隙锁）</h3><p>该锁的官方类型名为 LOCK_GAP。<br>MySQL 解决幻读问题有两种方案：<br>第一种是 MVCC，因为新插入的数据事务 ID 必然不在 ReadView 内，因此读取这些记录后会被直接忽略，但是快照读只在普通读操作中生效，如果发生了当前读仍然会有幻读问题；<br>第二种是加锁，但是加锁有一个问题，就是事务没法给尚不存在的记录加锁。<br>如果我们希望为 number 值为 8 的记录加 gap 锁，则该记录的前后间隙都不允许别的事务立即插入记录：<br><img src="/imgs/MySQL/MySQL-gap%E9%94%81.png" alt="MySQL-gap锁" title="MySQL-gap锁"><br>如图中为 number 值为 8 的记录加了 gap 锁，意味着不允许别的事务在 number 值为 8 的记录前边的间隙插入新记录，其实就是 number 列的值(3, 8)这个区间的新记录是不允许立即插入的。比方说有另外一个事务再想插入一条 number 值为 4 的新记录，它定位到该条新记录的下一条记录的 number 值为 8，而这条记录上又有一个 gap 锁，所以就会阻塞插入操作，直到拥有这个 gap 锁的事务提交了之后，number 列的值在区间(3, 8)中的新记录才可以被插入。<br>另外，如何为(20, +∞)这个区间加 gap 锁？其实是为数据页中的 Infimum 和 Supremum 记录加上了 gap 锁。<br>比如假设此时表里有 5、25 这两条数据，则<code>SELECT c1 FROM t WHERE c1 BETWEEN 10 and 20 FOR UPDATE</code>查询 10 到 20 范围内的记录，并加上范围<code>(5, 10)</code>、<code>[10, 20]</code>、<code>(20, 25]</code>以内的 gap 锁。<br>比如假设此时表里有 102、105、107 三个值，则<code>select * from test where n = 105 for update;</code>这个语句会对<code>(102, 105)</code>、<code>(105, 107]</code>这两个区间加 gap 锁。</p>
 <p>间隙锁可以通过innodb_locks_unsafe_for_binlog参数来开启关闭：</p>
@@ -485,7 +545,7 @@
 <h4 id="insert-into-…-on-duplicate-key-update"><a href="#insert-into-…-on-duplicate-key-update" class="headerlink" title="insert into … on duplicate key update"></a>insert into … on duplicate key update</h4><p>上面的例子是主键冲突后直接报错，如果写成如下形式：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into t values(11,10,10) on duplicate key update d=100;</span><br></pre></td></tr></table></figure>
 <p>则会给索引c上<code>(5, 10]</code>加一个排他的next-key lock（写锁）。</p>
-<h2 id="加锁场景（InnoDB）"><a href="#加锁场景（InnoDB）" class="headerlink" title="加锁场景（InnoDB）"></a>加锁场景（InnoDB）</h2><ol>
+<h2 id="加锁场景例举（InnoDB）"><a href="#加锁场景例举（InnoDB）" class="headerlink" title="加锁场景例举（InnoDB）"></a>加锁场景例举（InnoDB）</h2><ol>
 <li>原则 1：加锁的基本单位是 next-key lock。<blockquote>
 <p>next-key lock 是前开后闭区间。</p>
 </blockquote>
@@ -517,18 +577,6 @@
 <ul>
 <li>初始化：当对这样的表进行插入操作时，这个计数器会被初始化。</li>
 <li>更新：插入操作根据这个自增长计数器值加 1 赋予自增长列，对该计数器的更新需要保证线程安全，这可以通过设置使用<strong>表锁</strong>还是<strong>互斥量</strong>来实现。</li>
-</ul>
-<h2 id="锁结构"><a href="#锁结构" class="headerlink" title="锁结构"></a>锁结构</h2><p>MySQL 中锁是通过共享内存实现的，当一个事务希望对一条记录做修改操作时，首先会看看内存中有没有与这条记录关联的锁结构，当没有的时候就会在内存中生成一个锁结构与之关联，这个锁结构中有两个主要属性：</p>
-<ul>
-<li>trx：代表生成该锁结构的事务；</li>
-<li>is_waiting：代表当前事务是否在等待。</li>
-</ul>
-<p>获取锁成功（加锁成功）可以描述为：修改一条记录前生成了一个锁结构与之关联，因为之前没有别的记录为这条记录加锁，所以 is_waiting 为 false；<br><img src="https://user-gold-cdn.xitu.io/2019/4/29/16a680105d9425c2?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"><br>获取锁失败可以描述为：在事务对一条记录进行修改前，已经有另一个事务创建了锁结构与之关联，那么当前事务需要生成一个锁结构且 is_waiting 为 true，表示当前事务需要等待。<br><img src="https://user-gold-cdn.xitu.io/2019/4/29/16a680105e955d9a?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"><br>释放锁时，就是把当前事务的锁结构释放掉，然后看有没有其他事务正在等待获取锁，并把正在等待的事务对应的锁结构的 is_waiting 置为 false，然后将该事务对应的线程唤醒。<br><img src="https://user-gold-cdn.xitu.io/2019/4/29/16a680105f387885?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"></p>
-<p>总结地说：</p>
-<ul>
-<li>不加锁<br>意思就是不需要在内存中生成对应的锁结构，可以直接执行操作。</li>
-<li>获取锁成功，或者加锁成功<br>意思就是在内存中生成了对应的锁结构，而且锁结构的 is_waiting 属性为 false，也就是事务可以继续执行操作。</li>
-<li>获取锁失败，或者加锁失败，或者没有获取到锁<br>意思就是在内存中生成了对应的锁结构，不过锁结构的 is_waiting 属性为 true，也就是事务需要等待，不可以继续执行操作。</li>
 </ul>
 <h2 id="活锁、死锁与死锁检测"><a href="#活锁、死锁与死锁检测" class="headerlink" title="活锁、死锁与死锁检测"></a>活锁、死锁与死锁检测</h2><h3 id="活锁-1"><a href="#活锁-1" class="headerlink" title="活锁"></a>活锁</h3><p>活锁：如果事务 T1 封锁了数据 R，事务 T2 又请求封锁 R，于是 T2 等待。T3 也请求封锁 R，当 T1 释放了 R 上的锁之后系统首先批准了 T3 的请求，T2 继续等待；然后 T4 又请求封锁 R，T3 在释放 R 上的锁之后系统又批准了 T4 的请求，T2 有可能永远等待，这就是活锁的情形。<br>避免活锁的简单方法就是采用先来先服务的策略。当多个事务请求封锁同一数据对象时，封锁子系统按请求锁的先后次序对事务进行排队，数据对象上的锁一旦释放就批准批准申请队列中第一个事务获得锁。</p>
 <h3 id="死锁-1"><a href="#死锁-1" class="headerlink" title="死锁"></a>死锁</h3><p><a href="#refer-anchor"><sup>1</sup></a><br>死锁在许多操作系统书中都有描述，简而言之，就是多个线程出现循环资源依赖，涉及的线程都在等待别的线程释放资源时，都会导致这些线程都进入无限等待的状态，称为死锁。<br>在 InnoDB 中，也会出现两个事务互相等待对方释放某条记录的行锁的情况，从而导致进入死锁状态。死锁可以预防，也可以等发生死锁后再作处理。</p>
@@ -596,35 +644,17 @@
 <li>A、B在执行insert语句时希望获得(3, 10)的排他间隙锁，于是出现死锁。<br>可以使用<code>show engine innodb status;</code>命令来查看死锁情况。<br><img src="/imgs/MySQL/%E6%AD%BB%E9%94%81%E7%A4%BA%E4%BE%8B3_%E5%B9%B6%E5%8F%91%E9%97%B4%E9%9A%99%E9%94%81%E7%9A%84%E6%AD%BB%E9%94%81.png" alt="死锁示例3_并发间隙锁的死锁" title="死锁示例3_并发间隙锁的死锁"></li>
 <li>检测到死锁后，事务2自动回滚了，报错：<code>insert into t values(8)	Error Code: 1213. Deadlock found when trying to get lock; try restarting transaction</code><br>同时，事务1将执行成功。</li>
 </ul>
-<h2 id="锁的内存结构"><a href="#锁的内存结构" class="headerlink" title="锁的内存结构"></a>锁的内存结构</h2><p>InnoDB 中，不是获取多少记录就给多少记录加锁，如果符合下边这些条件则这些记录的锁就会被放到一个锁结构中：<br>1、在同一个事务中进行加锁操作<br>2、被加锁的记录在同一个页面中<br>3、加锁的类型是一样的<br>4、等待状态是一样的</p>
-<p>具体的，InnoDB 中的锁结构如下所示：<br><img src="https://user-gold-cdn.xitu.io/2019/4/29/16a68cda54348429?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"></p>
-<ul>
-<li>锁所在的事务信息：<br>不论是表锁还是行锁，都是在事务执行过程中生成的，哪个事务生成了这个锁结构，这里就记载着这个事务的信息。</li>
-<li>索引信息：<br>对于行锁来说，需要记录一下加锁的记录是属于哪个索引的。</li>
-<li>表锁／行锁信息：<br>表锁结构和行锁结构在这个位置的内容是不同的：<br>表锁：记载着这是对哪个表加的锁，还有其他的一些信息。<br>行锁记载了三个重要的信息：<br>Space ID：记录所在表空间。<br>Page Number：记录所在页号。<br>n_bits：对于行锁来说，一条记录就对应着一个比特位，一个页面中包含很多记录，用不同的比特位来区分到底是哪一条记录加了锁。为此在行锁结构的末尾放置了一堆比特位，这个 n_bits 属性代表使用了多少比特位，n_bits 一般会比实际数据量大一些，避免每次插入记录都需要重新分配内存。</li>
-<li>type_mode：<br>这是一个 32 位的数，被分成了 lock_mode、lock_type 和 rec_lock_type 三个部分，如图所示：<br><img src="https://user-gold-cdn.xitu.io/2019/5/5/16a864f3298df751?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"><ul>
-<li>锁的模式（lock_mode），占用低 4 位，可选的值如下：<br>  LOCK_IS（十进制的 0）：表示共享意向锁，也就是 IS 锁，属于表级锁。<br>  LOCK_IX（十进制的 1）：表示独占意向锁，也就是 IX 锁，属于表级锁。<br>  LOCK_S（十进制的 2）：表示共享锁，也就是 S 锁，既可以属于表级锁也可以属于行级锁。<br>  LOCK_X（十进制的 3）：表示独占锁，也就是 X 锁，既可以属于表级锁也可以属于行级锁。<br>  LOCK_AUTO_INC（十进制的 4）：表示 AUTO-INC 锁，属于表级锁。</li>
-<li>锁的类型（lock_type），占用第 5～8 位，不过现阶段只有第 5 位和第 6 位被使用：<br>  LOCK_TABLE（十进制的 16），也就是当第 5 个比特位置为 1 时，表示表级锁。<br>  LOCK_REC（十进制的 32），也就是当第 6 个比特位置为 1 时，表示行级锁。</li>
-<li>行锁的具体类型（rec_lock_type），使用其余的位来表示。只有在 lock_type 的值为 LOCK_REC 时，也就是只有在该锁为行级锁时，才会被细分为更多的类型：<br>  LOCK_ORDINARY（十进制的 0）：表示 next-key 锁。<br>  LOCK_GAP（十进制的 512）：也就是当第 10 个比特位置为 1 时，表示 gap 锁。<br>  LOCK_REC_NOT_GAP（十进制的 1024）：也就是当第 11 个比特位置为 1 时，表示正经记录锁。<br>  LOCK_INSERT_INTENTION（十进制的 2048）：也就是当第 12 个比特位置为 1 时，表示插入意向锁。<br>  其他的类型：还有一些不常用的类型我们就不多说了。<br>  怎么还没看见 is_waiting 属性呢？这主要还是设计 InnoDB 的大叔太抠门了，一个比特位也不想浪费，所以他们把 is_waiting 属性也放到了 type_mode 这个 32 位的数字中：<br>  LOCK_WAIT（十进制的 256） ：也就是当第 9 个比特位置为 1 时，表示 is_waiting 为 true，也就是当前事务尚未获取到锁，处在等待状态；当这个比特位为 0 时，表示 is_waiting 为 false，也就是当前事务获取锁成功。</li>
-</ul>
-</li>
-<li>其他信息</li>
-<li>一堆比特位<br>如果是行锁结构的话，在该结构末尾还放置了一堆比特位，比特位的数量是由上边提到的 n_bits 属性表示的。我们前边唠叨 InnoDB 记录结构的时候说过，页面中的每条记录在记录头信息中都包含一个 heap_no 属性，伪记录 Infimum 的 heap_no 值为 0，Supremum 的 heap_no 值为 1，之后每插入一条记录，heap_no 值就增 1。锁结构最后的一堆比特位就对应着一个页面中的记录，一个比特位映射一个 heap_no，不过为了编码方便，映射方式有点怪。<br><img src="https://user-gold-cdn.xitu.io/2019/4/29/16a69c2f7b413698?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"></li>
-</ul>
-<h2 id="锁优化"><a href="#锁优化" class="headerlink" title="锁优化"></a>锁优化</h2><ol>
-<li>如果你的事务中需要锁多个行，要把最可能造成锁冲突、最可能影响并发度的锁尽量往后放。<br>比如用户买电影票的场景中，扣减用户账户余额和给影院账户余额加钱，显然后者的竞争更加频繁，因此对其的加锁应该放在事务更靠后的位置。</li>
-</ol>
-<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><h2 id="如何安全地给表加字段"><a href="#如何安全地给表加字段" class="headerlink" title="如何安全地给表加字段"></a>如何安全地给表加字段</h2><p>首先需要处理掉长事务，因为长事务不提交的话会一直占用 MDL 锁。</p>
+<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><h3 id="如何安全地给表加字段"><a href="#如何安全地给表加字段" class="headerlink" title="如何安全地给表加字段"></a>如何安全地给表加字段</h3><p>首先需要处理掉长事务，因为长事务不提交的话会一直占用 MDL 锁。</p>
 <blockquote>
 <p>information_schema 库的 innodb_trx 表中可以看到当前执行中的长事务。<br>但是如果这样的事务比较多，kill 掉并不一定管用，因为新的请求总是会源源不断地到来，所以最好的方法是在 alter table 语句里面设定等待时间，如果在这个指定的等待时间里面能够拿到 MDL 写锁最好，拿不到也不要阻塞后面的业务语句，先放弃：</p>
 </blockquote>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE tbl_name NOWAIT add column ...</span><br><span class="line">ALTER TABLE tbl_name WAIT N add column ... </span><br></pre></td></tr></table></figure>
 
-<h2 id="MySQL-连接池被打满怎么办"><a href="#MySQL-连接池被打满怎么办" class="headerlink" title="MySQL 连接池被打满怎么办"></a>MySQL 连接池被打满怎么办</h2><p>这里的连接池指的是应用服务器里访问 MySQL 服务的连接池，比如 Druid，</p>
-<h2 id="以下哪些场景会导致语句Q1-select-from-t1-limit-1被堵住？"><a href="#以下哪些场景会导致语句Q1-select-from-t1-limit-1被堵住？" class="headerlink" title="以下哪些场景会导致语句Q1: select * from t1 limit 1被堵住？"></a>以下哪些场景会导致语句<code>Q1: select * from t1 limit 1</code>被堵住？</h2><ol>
+<h3 id="MySQL-连接池被打满怎么办"><a href="#MySQL-连接池被打满怎么办" class="headerlink" title="MySQL 连接池被打满怎么办"></a>MySQL 连接池被打满怎么办</h3><p>这里的连接池指的是应用服务器里访问 MySQL 服务的连接池，比如 Druid，</p>
+<h3 id="以下哪些场景会导致语句Q1-select-from-t1-limit-1被堵住？"><a href="#以下哪些场景会导致语句Q1-select-from-t1-limit-1被堵住？" class="headerlink" title="以下哪些场景会导致语句Q1: select * from t1 limit 1被堵住？"></a>以下哪些场景会导致语句<code>Q1: select * from t1 limit 1</code>被堵住？</h3><ol>
 <li>另一个线程在Q1执行前，执行了<code>alter table t1 add index(f1)</code>，当前正处于拷贝数据到临时表阶段。</li>
 </ol>
-<h2 id="以下什么情况会发生”等待行锁”的状态？"><a href="#以下什么情况会发生”等待行锁”的状态？" class="headerlink" title="以下什么情况会发生”等待行锁”的状态？"></a>以下什么情况会发生”等待行锁”的状态？</h2><p>RR隔离级别下，表t的建表结构和初始化数据如下：</p>
+<h3 id="以下什么情况会发生”等待行锁”的状态？"><a href="#以下什么情况会发生”等待行锁”的状态？" class="headerlink" title="以下什么情况会发生”等待行锁”的状态？"></a>以下什么情况会发生”等待行锁”的状态？</h3><p>RR隔离级别下，表t的建表结构和初始化数据如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">create table t (id int primary key, c int) engine = innoDB;</span><br><span class="line">insert into t values (1, 1), (11, 11), (21, 21);</span><br></pre></td></tr></table></figure>
 <p>在会话1中执行如下语句：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from t lock in share mode;</span><br></pre></td></tr></table></figure>
@@ -637,7 +667,13 @@
 </ol>
 <div id="refer-anchor"></div>
 
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<h3 id="DB的CPU打满怎么排查？"><a href="#DB的CPU打满怎么排查？" class="headerlink" title="DB的CPU打满怎么排查？"></a>DB的CPU打满怎么排查？</h3><p>有很多情况都可能引起DB的CPU打满</p>
+<ol>
+<li>业务量上涨了<br>现象：如果是突发的业务上涨，业务监控（接口、API）应该会有报警，其次就是看有没有执行次数特别多的SQL<br>解决：临时可以对SQL进行限流，后续可以对具体业务做下限流、或DB做扩容</li>
+<li>慢SQL<br>现象：有SQL执行速度特别慢，慢SQL一般只是表象，引起慢SQL背后的原因可能有很多，比如死锁、扫描行数过多&#x2F;读取数据过多（没命中索引）等<br>解决：如果有SQL一直在运行中，可以先把对应的线程kill掉，排查这个sql产生的原因，进行优化。</li>
+<li>热点行更新导致行锁过多<br>现象：用相关工具查看DB中的行锁数量是否出现异常上涨，行锁过多是有可能把CPU打满的<br>解决：排查是否有具体业务场景会导致多线程同时更新同一行数据。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
 <li>[1] <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/437140380">Mysql造成死锁的原因有哪些呢？如何避免？</a></li>
 <li>[2] <a target="_blank" rel="noopener" href="https://www.cnblogs.com/jay-huaxiao/p/11456921.html">Mysql 死锁如何排查：insert on duplicate 死锁一次排查分析过程</a></li>
 </ol>
@@ -662,8 +698,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/e13f9e03.html" rel="next" title="MySQL5_1高可用集群">
-                  MySQL5_1高可用集群 <i class="fa fa-angle-right"></i>
+                <a href="/f2150593.html" rel="next" title="Netty 原理总结">
+                  Netty 原理总结 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>

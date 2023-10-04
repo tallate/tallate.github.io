@@ -184,7 +184,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/bf6c261d.html">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/459b2cfd.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -202,7 +202,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/bf6c261d.html" class="post-title-link" itemprop="url">Dubbo的SPI原理</a>
+          <a href="/459b2cfd.html" class="post-title-link" itemprop="url">Dubbo的网络通信</a>
         </h2>
 
         <div class="post-meta-container">
@@ -220,7 +220,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-10-09 16:58:44" itemprop="dateModified" datetime="2022-10-09T16:58:44+08:00">2022-10-09</time>
+      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -244,41 +244,43 @@
     <div class="post-body" itemprop="articleBody">
           <span id="more"></span>
 
-
-
-<h2 id="接口扩展策略注解-SPI"><a href="#接口扩展策略注解-SPI" class="headerlink" title="接口扩展策略注解 @SPI"></a>接口扩展策略注解 @SPI</h2><p>Dubbo中的很多扩展接口，如 Protocol、Transporter、Filter 等，都是通过 JDK 的 SPI 机制实现的，也就是说这些功能都可被用户自定义的扩展所替换，接口扩展点由注解<code>@SPI</code>定义。<br>JDK 中 SPI（Service Provider Interface）的设计与策略模式如出一辙，开发者可以替换掉 Dubbo 原扩展接口的默认实现，完成自定义需求，即可以自定义实现策略。<br>Dubbo 在 JDK 现有 SPI 实现的基础上做了如下改进：</p>
-<ol>
-<li>JDK 标准的 SPI 会一次性实例化扩展点所有实现，如果有扩展实现初始化很耗时，但如果没用上也加载，会很浪费资源。</li>
-<li>如果扩展点加载失败，连扩展点的名称都拿不到了。比如：JDK 标准的 ScriptEngine，通过 getName();获取脚本类型的名称，但如果 RubyScriptEngine 因为所依赖的 jruby.jar 不存在，导致 RubyScriptEngine 类加载失败，这个失败原因被吃掉了，和 ruby 对应不起来，当用户执行 ruby 脚本时，会报不支持 ruby，而不是真正失败的原因。</li>
-<li>增加了对扩展点 IoC 和 AOP 的支持，一个扩展点可以直接 setter 注入其它扩展点。</li>
-</ol>
-<p>那么 Dubbo 的 SPI 机制是怎么实现的呢？以协议扩展为例，Dubbo 中协议被抽象为 Protocol 接口。</p>
-<h3 id="读取扩展点"><a href="#读取扩展点" class="headerlink" title="读取扩展点"></a>读取扩展点</h3><p>ServiceConfig#protocol</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Protocol protocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension()</span><br></pre></td></tr></table></figure>
-
-<p>Dubbo 使用 ExtensionLoader 实现扩展点加载。</p>
-<ul>
-<li>ExtensionLoader#getExtensionLoader()<br>获取 ExtensionLoader 实现，保证每种扩展点一个单例。</li>
-<li>ExtensionLoader#getAdaptiveExtension()<br>根据不同的 SPI 扩展点，即不同的 interface，生成不同的 Adaptive 实例的代码。<br>-&gt; getAdaptiveExtensionClass()<br>-&gt; getExtensionClasses()<br>-&gt; loadExtensionClasses()<br>加载所有的扩展点实现，直到扩展点方法执行时才决定调用是一个扩展点实现，即从众多的实现策略中决定具体使用哪一个策略。<br>ExtensionLoader 会依次从<code>META-INF/dubbo/internal</code>（Dubbo 内部实现）、<code>META-INF/dubbo/</code>（开发者自定义策略）、<code>META-INF/services/</code>这几个目录下读取扩展点实现，目录下的同名文件配置了对应扩展点的实现策略，调用 loadFile 来加载对应的扩展策略。<br>-&gt; loadFile(Map&lt;String, Class&lt;?&gt;&gt; extensionClasses, String dir)</li>
+<p>Dubbo 支持多种协议，如下图所示：<br><img src="/imgs/Dubbo/Protocol%E6%89%A9%E5%B1%95.png" alt="Protocol扩展" title="Protocol扩展"><br>在通信过程中，不同的服务等级一般对应着不同的服务质量，那么选择合适的协议便是一件非常重要的事情，需要根据应用的特征来选择。例如，使用 RMI 协议，一般会受到防火墙的限制，所以对于外部与内部进行通信的场景，就不要使用 RMI 协议，而是基于 HTTP 协议或者 Hessian 协议。</p>
+<h3 id="Hessian-协议"><a href="#Hessian-协议" class="headerlink" title="Hessian 协议"></a>Hessian 协议</h3><ul>
+<li>连接个数：多连接</li>
+<li>连接方式：短连接</li>
+<li>传输协议：HTTP</li>
+<li>传输方式：同步传输</li>
+<li>序列化：Hessian 二进制序列化</li>
+<li>适用范围：传入传出参数数据包较大，提供者比消费者个数多，提供者压力较大，可传文件。</li>
+<li>适用场景：页面传输，文件传输，Hessian 是 Caucho 开源的一个 RPC 框架，其通讯效率高于 WebService 和 Java 自带的序列化，Hessian 底层采用 Http 通讯，采用 Servlet 暴露服务，Dubbo 缺省内嵌 Jetty 作为服务器实现。</li>
 </ul>
-<h3 id="生成-Adaptive-实例"><a href="#生成-Adaptive-实例" class="headerlink" title="生成 Adaptive 实例"></a>生成 Adaptive 实例</h3><ul>
-<li>ExtensionLoader#loadFile<br>-&gt; String fileName &#x3D; dir + type.getName()<br>拼接文件路径<br>-&gt; ClassLoader classLoader &#x3D; findClassLoader()<br>拿到 ExtensionLoader 的类加载器。<br>-&gt; Class&lt;?&gt; clazz &#x3D; Class.forName(line, true, classLoader);<br>文件每行是一个实现类的全路径名，通过反射加载并拿到具体类型。<br>-&gt; extensionClasses.put(n, clazz)<br>添加到 map 里返回。</li>
-<li>ExtensionLoader#cachedClasses<br>-&gt; cachedClasses.set(classes)<br>添加到缓存。</li>
-<li>ExtensionLoader#createAdaptiveExtensionClass<br>-&gt; ExtensionLoader#createAdaptiveExtensionClassCode<br>生成 Adaptive 类。<br>-&gt; compiler &#x3D; ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.common.compiler.Compiler.class).getAdaptiveExtension()<br>拿到编译接口扩展点的一个具体实现，dubbo 内部支持 jdk 和 javassist，默认是 javassist。<br>-&gt; compiler.compile(code, classLoader)<br>编译代码，生成 Adaptive 实例类。</li>
-</ul>
-<p>上面提到 Compiler 也是一个扩展点，同样也依赖这个流程来实例化，在运行时生成 Adaptive 实例的时候，需要生成 Compiler 接口的 Adaptive 实例，即运行生成 Adaptive 实例的时候需要先有一个 Compiler 接口的 Adaptive 实例，那这样岂不是陷入了死循环，这里就要提到显示指定 Adaptive 实例的情况。<code>@Adaptive</code>注解支持类级别和方法级别：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、类级别：只能拥有一个，注解打在接口实现类上，显示的注册一个Adaptive实例，在编译期就存在，如`AdaptiveCompiler`，解决了上面的死循环问题，由`AdaptiveCompiler`依据dubbo配置决定使用哪个编译类；</span><br><span class="line">2、方法级别：在运行期动态的生成Adaptive实例。</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--定义 hessian 协议 --&gt;</span><br><span class="line">&lt;dubbo:protocol name=&quot;hessian&quot; port=&quot;8080&quot; server=&quot;jetty&quot; /&gt;</span><br><span class="line">&lt;!--设置默认协议 --&gt;</span><br><span class="line">&lt;dubbo:service protocol=&quot;hessian&quot; /&gt;</span><br><span class="line">&lt;!--设置 service 协议 --&gt;</span><br><span class="line">&lt;dubbo:service protocol=&quot;hessian&quot; /&gt;</span><br><span class="line"></span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.caucho&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;hessian&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;4.0.33&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
 
-<h3 id="通过-URL-动态选择协议"><a href="#通过-URL-动态选择协议" class="headerlink" title="通过 URL 动态选择协议"></a>通过 URL 动态选择协议</h3><p>ExtensionLoader#createAdaptiveExtensionClassCode<br>生成的 Protocol 的 Adaptive 实例类，依据 URL 中 protocol key-value 的值，选择对应的 Protocol 策略来暴露和引用服务。<br>扩展点方法调用会有 URL 参数（或是参数有 URL 成员），这样依赖的扩展点可以从 URL 拿到配置信息，所有的扩展点自己定好配置的 Key 后，配置信息从 URL 上从最外层传入，URL 在配置传递上即是一条总线。<br>以 dubbo+zookeeper 为例，暴露和引用远程服务都是注册在 zookeeper 上的，服务注册在 zookeeper 上本质其实是一个 URL，远程服务调用的过程中依据 URL 的 key-value 来动态决定执行 Protocol、Filter 等接口扩展点的执行策略。<br>下面是 Provider 端暴露 HelloService 服务时在 zookeeper 上注册的 URL，在 zookeeper 上的路径为&#x2F;dubbo&#x2F;com.dubbo.test.service.HelloService&#x2F;providers，URL 表示了采用 dubbo 协议，接口为 com.dubbo.test.service.HelloService，方法为 say，要执行的 Filter 为 whiteFilter 等。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[zk： localhost：2181(CONNECTED) 1] Is /dubbo/com.dubbo.test.service.HelloService/providers</span><br><span class="line">[dubbo://127.0.0.1:2O881/com.dubbo.test.service.HelloService?anyhost=true&amp;application=dubbo-test-service&amp;dubbo=2.4.10&amp;group=test-prod&amp;interface=com.dubbo.test.service.HelloService&amp;methods=say&amp;pid=21242&amp;revision=l.0&amp;service.filter=whiteFilter&amp;side=providerxtamp=1495436105078&amp;version=l.0]</span><br></pre></td></tr></table></figure>
-
-<h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><ul>
-<li>volatile Class&lt;~&gt; cachedAdaptiveClass<br>这个是缓存 AdaptiveClass，如果一个扩展类的类上面带有 @Adaptive 注解，那么这个类就会被缓存在这个地方，每一种类型的扩展类只有一个 AdaptiveClass，如果发现有多个，则会报错。另外，当通过 getAdaptiveExtensionClass 来获取自适应扩展类时，如果当前还没有 AdaptiveClass，则会自动创建一个（动态生成 Java 代码，再编译，典型的比如 Protocol$Adaptive 就是这么生成的）</li>
-<li>Set&lt;~&gt; cachedWrapperClasses<br>这个是缓存包装类的，Dubbo 判断一个扩展类是否是包装类比较简单，通过构造函数来判断，如果这个扩展类有一个构造函数，其中参数是当前扩展类的类型，那么就是包装类，举个例子，ProtocolFilterWrapper 就是 protocol 扩展类的包装类，因为有这个构造函数：<code>public ProtocolFilterWrapper(Protocol protocol)</code></li>
-<li>Map&lt;~&gt; cachedActivates<br>这个是缓存激活的扩展类，当然，@Activate 注解还可以规定激活的条件和时机</li>
-<li>Holder&lt;~&gt; cachedClasses<br>这个是缓存 Adaptive 和 Wrapper 扩展类之外的普通扩展类</li>
+<h3 id="Http-协议"><a href="#Http-协议" class="headerlink" title="Http 协议"></a>Http 协议</h3><ul>
+<li>连接个数：多连接</li>
+<li>连接方式：短连接</li>
+<li>传输协议：HTTP</li>
+<li>传输方式：同步传输</li>
+<li>序列化：表单序列化</li>
+<li>适用范围：传入传出参数数据包大小混合，提供者比消费者个数多，可用浏览器查看，可用表单或 URL 传入参数，暂不支持传文件。</li>
+<li>适用场景：需同时给应用程序和浏览器 JS 使用的服务。</li>
 </ul>
-<p>扩展类被加载后会根据一定的规则放入以上 4 个缓存中，比如带有 @Adaptive 注解的会被放入 cachedAdaptiveClass。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--配置协议 --&gt;</span><br><span class="line">&lt;dubbo:protocol name=&quot;http&quot; port=&quot;8080&quot; /&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Thrift-协议"><a href="#Thrift-协议" class="headerlink" title="Thrift 协议"></a>Thrift 协议</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.apache.thrift&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;libthrift&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;0.8.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">&lt;dubbo:protocol name=&quot;thrift&quot; port=&quot;3030&quot; /&gt;</span><br></pre></td></tr></table></figure>
+<p>Dubbo 使用的 Thrift 和原生的 Thrift 协议不兼容，在原生协议的基础上添加了一些额外的头信息，比如 service name，magic number 等。</p>
+<h3 id="Rest-协议"><a href="#Rest-协议" class="headerlink" title="Rest 协议"></a>Rest 协议</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 用rest协议在8080端口暴露服务 --&gt;</span><br><span class="line">&lt;dubbo:protocol name=&quot;rest&quot; port=&quot;8080&quot;/&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- 声明需要暴露的服务接口 --&gt;</span><br><span class="line">&lt;dubbo:service interface=&quot;com.service.OrderService&quot; ref=&quot;orderService&quot;/&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- 和本地bean一样实现服务 --&gt;</span><br><span class="line">&lt;bean id=&quot;orderService&quot; class=&quot;com.service.OrderServiceImpl&quot; /&gt;</span><br></pre></td></tr></table></figure>
+<p>在代码中需要通过注解指定访问路径：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class OrderService &#123;    </span><br><span class="line">   void createOrder(Order order);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Path(&quot;orders&quot;) // 访问Url的相对路径</span><br><span class="line">public class OrderServiceImpl implements OrderService &#123;</span><br><span class="line"></span><br><span class="line">    @POST</span><br><span class="line">    @Path(&quot;create&quot;) // 访问Url的相对路径</span><br><span class="line">    // 将传递过来的JSON数据反序列化为Order对象</span><br><span class="line">    @Consumes(&#123;MediaType.APPLICATION_JSON&#125;) </span><br><span class="line">    public void createOrder(Order order) &#123;</span><br><span class="line">        // create the order...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="长连接-OR-短连接"><a href="#长连接-OR-短连接" class="headerlink" title="长连接 OR 短连接"></a>长连接 OR 短连接</h3><p>Dubbo 协议缺省每服务每提供者每消费者使用单一长连接，如果数据量较大，可以使用多个连接。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 表示该服务使用 JVM 共享长连接 --&gt;</span><br><span class="line">&lt;dubbo:service connections=&quot;0&quot;&gt; </span><br><span class="line">&lt;dubbo:reference connections=&quot;0&quot;&gt;</span><br><span class="line">&lt;!-- 表示该服务使用独立长连接 --&gt;</span><br><span class="line">&lt;dubbo:service connections=&quot;1&quot;&gt; </span><br><span class="line">&lt;dubbo:reference connections=&quot;1&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="为什么要消费者比提供者个数多"><a href="#为什么要消费者比提供者个数多" class="headerlink" title="为什么要消费者比提供者个数多"></a>为什么要消费者比提供者个数多</h3><p>因为 dubbo 协议采用单一长连接，假设网络为千兆网卡 3，根据测试经验数据每条连接最多只能压满 7MByte（不同的环境可能不一样），理论上 1 个服务提供者需要 20 个服务消费者才能压满网卡。</p>
+<h3 id="为什么不能传大包"><a href="#为什么不能传大包" class="headerlink" title="为什么不能传大包"></a>为什么不能传大包</h3><p>因 dubbo 协议采用单一长连接，如果每次请求的数据包大小为 500KByte，假设网络为千兆网卡 3，每条连接最大 7MByte(不同的环境可能不一样，供参考)，单个服务提供者的 TPS(每秒处理事务数)最大为：128MByte &#x2F; 500KByte &#x3D; 262。单个消费者调用单个服务提供者的 TPS(每秒处理事务数)最大为：7MByte &#x2F; 500KByte &#x3D; 14。如果能接受，可以考虑使用，否则网络将成为瓶颈。</p>
+<h3 id="为什么采用异步单一长连接"><a href="#为什么采用异步单一长连接" class="headerlink" title="为什么采用异步单一长连接"></a>为什么采用异步单一长连接</h3><p>因为服务的现状大都是服务提供者少，通常只有几台机器，而服务的消费者多，可能整个网站都在访问该服务，比如 Morgan 的提供者只有 6 台提供者，却有上百台消费者，每天有 1.5 亿次调用，如果采用常规的 hessian 服务，服务提供者很容易就被压跨，通过单一连接，保证单一消费者不会压死提供者，长连接，减少连接握手验证等，并使用异步 IO，复用线程池，防止 C10K 问题（服务器无法服务 1w 左右的并发连接）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 配置协议端口和服务提供方最大连接数，防止服务被压垮 --&gt;</span><br><span class="line">&lt;dubbo:protocol name=&quot;dubbo&quot; port=&quot;20880&quot; accepts=&quot;1000&quot; /&gt;</span><br><span class="line">&lt;!--配置dubbo默认协议 --&gt;</span><br><span class="line">&lt;dubbo:provider protocol=&quot;dubbo&quot; /&gt;</span><br><span class="line">&lt;!--配置dubbo设置服务协议 --&gt;</span><br><span class="line">&lt;dubbo:service protocol=&quot;dubbo&quot; /&gt;</span><br></pre></td></tr></table></figure>
+
 <script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
     </div>
