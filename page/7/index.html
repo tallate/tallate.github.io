@@ -1549,7 +1549,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e13f9e03.html">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/f2150593.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1567,7 +1567,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/e13f9e03.html" class="post-title-link" itemprop="url">MySQL5_1高可用集群</a>
+          <a href="/f2150593.html" class="post-title-link" itemprop="url">Netty 原理总结</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1593,7 +1593,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+          <a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
         </span>
     </span>
 
@@ -1609,104 +1609,219 @@
     <div class="post-body" itemprop="articleBody">
           <span id="more"></span>
 
-<h1 id="主从同步"><a href="#主从同步" class="headerlink" title="主从同步"></a>主从同步</h1><p>MySQL的主从同步是基于bin log实现的。</p>
-<h2 id="bin-log-同步流程"><a href="#bin-log-同步流程" class="headerlink" title="bin log 同步流程"></a>bin log 同步流程</h2><p><img src="/imgs/MySQL/MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png" alt="MySQL主从复制" title="MySQL主从复制"><br>备库 B 和主库 A 之间维持了一个长连接，主库 A 内部有一个线程专门服务于与 B 的 bin log 同步，一个事务日志同步的过程如下：</p>
-<ol>
-<li>在备库 B 上通过 change master 命令，设置主库 A 的 IP、端口、用户名、密码，以及要从哪个位置开始请求 binlog，这个位置包含文件名和日志偏移量；</li>
-<li>在备库 B 上执行 start slave 命令，这时候备库会启动两个线程，就是图中的 <code>io_thread</code> 和 <code>sql_thread</code>。其中 io_thread 负责与主库建立连接。</li>
-<li>主库 A 校验完用户名、密码后，开始按照备库 B 传过来的位置，从本地读取 bin log，发给 B。</li>
-<li>备库 B 拿到 bin log 后，写到本地文件，称为中转日志（relay log）。</li>
-<li>sql_thread 读取中转日志，解析出日志里的命令，并执行。</li>
+
+<h1 id="为什么使用-Netty"><a href="#为什么使用-Netty" class="headerlink" title="为什么使用 Netty"></a>为什么使用 Netty</h1><ol>
+<li>实现协议的局限性<br>今天，我们使用通用的应用程序或者类库来实现互相通讯，比如，我们经常使用一个 HTTP 客户端库来从 web 服务器上获取信息，或者通过 web 服务来执行一个远程的调用。<br>然而，有时候一个通用的协议或他的实现并没有很好的满足需求。比如我们无法使用一个通用的 HTTP 服务器来处理大文件、电子邮件以及近实时消息，比如金融信息和多人游戏数据。我们需要一个高度优化的协议来处理一些特殊的场景。例如你可能想实现一个优化了的 Ajax 的聊天应用、媒体流传输或者是大文件传输器，你甚至可以自己设计和实现一个全新的协议来准确地实现你的需求。<br>另一个不可避免的情况是当你不得不处理遗留的专有协议来确保与旧系统的互操作性。在这种情况下，重要的是我们如何才能快速实现协议而不牺牲应用的稳定性和性能。</li>
+<li>使用 Netty 可以有效改善这种情况<br>Netty 是一个提供 asynchronous event-driven （异步事件驱动）的网络应用框架，是一个用以快速开发高性能、高可靠性协议的服务器和客户端。<br>换句话说，Netty 是一个 NIO 客户端服务器框架，使用它可以快速简单地开发网络应用程序，比如服务器和客户端的协议。Netty 大大简化了网络程序的开发过程比如 TCP 和 UDP 的 socket 服务的开发。<br>“快速和简单”并不意味着应用程序会有难维护和性能低的问题，Netty 是一个精心设计的框架，它从许多协议的实现中吸收了很多的经验比如 FTP、SMTP、HTTP、许多二进制和基于文本的传统协议.因此，Netty 已经成功地找到一个方式,在不失灵活性的前提下来实现开发的简易性，高性能，稳定性。<br>有一些用户可能已经发现其他的一些网络框架也声称自己有同样的优势，所以你可能会问是 Netty 和它们的不同之处。答案就是 Netty 的哲学设计理念。Netty 从开始就为用户提供了用户体验最好的 API 以及实现设计。正是因为 Netty 的哲学设计理念，才让您得以轻松地阅读本指南并使用 Netty。</li>
 </ol>
-<h2 id="binlog格式"><a href="#binlog格式" class="headerlink" title="binlog格式"></a>binlog格式</h2><p>MySQL的bin log主要支持三种格式，分别是statement、row以及mixed。MySQL是在5.1.5版本开始支持row的、在5.1.8版本中开始支持mixed。</p>
+<h1 id="架构总览"><a href="#架构总览" class="headerlink" title="架构总览"></a>架构总览</h1><p><img src="/imgs/Netty/Netty%E6%9E%B6%E6%9E%84%E6%80%BB%E8%A7%88.png" alt="Netty架构总览" title="Netty架构总览"><br>Netty 的架构由三部分组成——缓冲（buffer），通道（channel），事件模型（event model）——所有的高级特性都构建在这三个核心组件之上。</p>
+<h2 id="NIO"><a href="#NIO" class="headerlink" title="NIO"></a>NIO</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/q/1010000010446129">想了解 Aio 与 Nio 的利弊，为什么 Netty 没有采用 Aio 实现？</a></li>
+</ol>
+<p>NIO 基于传输层，可以自定义数据处理逻辑来作为应用层，或者基于现有的 HTTP 组件进行升级，在线上环境这样的升级会带来一些兼容性问题，HTTP 已有相应的协议升级机制：<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Protocol_upgrade_mechanism">Protocol upgrade mechanism</a>。</p>
+<p>NIO 相对 BIO 优势：</p>
+<ol>
+<li>零拷贝<br>零拷贝减少线程上下文切换次数，且数据直接拷贝到内核空间，不占用 JVM 堆空间；</li>
+<li>减少线程资源浪费<br>NIO 可以一个线程监听多个 Socket 的连接、读、写请求，而不是像 BIO 那样每个 Socket 创建一个线程，但是同时会有一个问题：</li>
+</ol>
+<h2 id="Netty-核心组件"><a href="#Netty-核心组件" class="headerlink" title="Netty 核心组件"></a>Netty 核心组件</h2><ol>
+<li>Channel 和 ChannelHandler</li>
+<li>ByteBuf</li>
+<li>Pipeline</li>
+</ol>
+<h1 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h1><p><img src="/imgs/Netty/Netty%E6%B5%81%E7%A8%8B.png" alt="Netty流程" title="Netty流程"></p>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>下面是一个启动Netty服务端的代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">ServerBootstrap bootstrap = new ServerBootstrap();</span><br><span class="line">        bootstrap.group(bossGroup(), workerGroup())</span><br><span class="line">                .channel(NioServerSocketChannel.class)</span><br><span class="line">                .childHandler(new ChannelInitializer&lt;SocketChannel&gt;() &#123;</span><br><span class="line"></span><br><span class="line">                    @Override</span><br><span class="line">                    protected void initChannel(SocketChannel ch) throws Exception &#123;</span><br><span class="line">                        // 空闲检测</span><br><span class="line">                        ch.pipeline().addLast(&quot;idleStateHandler&quot;, new IdleStateHandler(15, 0, 0,</span><br><span class="line">                                TimeUnit.MINUTES));</span><br><span class="line"></span><br><span class="line">                        // 半包/粘包分解器</span><br><span class="line">                        ch.pipeline().addLast(</span><br><span class="line">                                new DelimiterBasedFrameDecoder(2048, true, getFirstBytes()</span><br><span class="line">                                ));</span><br><span class="line">                        ch.pipeline().addLast(其他Handler比如解码之类的);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;).option(ChannelOption.SO_BACKLOG, 1024);</span><br><span class="line">bootstrap.bind(10885).sync()</span><br></pre></td></tr></table></figure>
+
+<h2 id="创建EventLoop"><a href="#创建EventLoop" class="headerlink" title="创建EventLoop"></a>创建EventLoop</h2><p>在上面的代码中，出现了<strong>bossGroup</strong>和<strong>workerGroup</strong>，bossGroup主要负责监听连接，拿到连接后，交给workerGroup中的线程来监听读或写事件。<br><code>io.netty.util.concurrent.MultithreadEventExecutorGroup#MultithreadEventExecutorGroup</code><br><code>EventExecutorGroup</code>会给每个线程创建一个<code>EventLoop</code>。</p>
+<p><code>io.netty.channel.nio.NioEventLoop#NioEventLoop</code><br><code>newChild()</code>创建EventLoop实例，其默认实现是<code>NioEventLoop</code>。</p>
+<p><code>io.netty.util.concurrent.MultithreadEventExecutorGroup#MultithreadEventExecutorGroup(int, java.util.concurrent.Executor, io.netty.util.concurrent.EventExecutorChooserFactory, java.lang.Object...)</code><br>服务器初始化过程中创建了个线程池<code>ThreadPerTaskExecutor</code>：</p>
 <ul>
-<li>statement：binlog中记录的是SQL语句的原文<br>容易引起<strong>主从不一致</strong>，因为binlog是按事务提交顺序记录的，但是两个并发执行的事务中update语句可能是乱序的。</li>
-<li>row：记录原数据</li>
+<li>每次执行任务都会构造一个线程执行<br><code>io.netty.util.concurrent.ThreadPerTaskExecutor#execute</code></li>
 </ul>
-<h2 id="主备延迟"><a href="#主备延迟" class="headerlink" title="主备延迟"></a>主备延迟</h2><p>产生主备延迟的可能情况：</p>
-<ol>
-<li>备库所在的机器性能较主库差；</li>
-<li>备库的压力较大，比如因为备库不跑业务，所以很多人会随意执行一些特别耗时的操作，这些查询耗费大量的 CPU 资源，影响了同步速度，造成主备延迟。</li>
-<li>出现了大事务，比如，一次性用 delete 语句删除大量数据，或者大表的 DDL。</li>
-<li>一个服务器开放N个链接给客户端来连接，但是Slave里读取binlog的线程只有一个，当某个SQL在Slave上执行的时间稍长或由于某个SQL要进行锁表就会导致Master的SQL大量积压，未被同步到Slave，这就导致了主从不一致，也就是主从延迟。</li>
-</ol>
-<h2 id="并行复制策略"><a href="#并行复制策略" class="headerlink" title="并行复制策略"></a>并行复制策略</h2><p>为了避免备库追不上主库的情况，MySQL 利用并行复制策略提高复制的效率，从上面的<strong>主备同步流程图</strong>可知，并行化可以加到客户端连接和写入数据两个过程中。</p>
-<ol>
-<li>按表分发策略<br>如果两个事务更新不同的表，它们就可以并行。因为数据是存储在表里的，所以按表分发，可以保证两个 worker 不会更新同一行。<br>当然，如果有跨表的事务，还是要把两张表放在一起考虑的。</li>
-<li>按行分发策略<br>按表复制存在热点表的并行复制问题，即热点表会被分配给一个 worker 执行复制，这样就会退化成单线程复制。<br>按行复制的核心思路是：如果两个事务没有更新相同的行，则它们在备库上可以并行执行，为了知道具体修改了哪些行，这种模式需要设置 binlog 的格式为 row（因为 statement 格式直接记录更新语句，row 记录的是受影响的具体数据的 ID）。</li>
-</ol>
-<h2 id="半同步"><a href="#半同步" class="headerlink" title="半同步"></a>半同步</h2><p>在 MySQL 5.5 版本之前一直采用的是上述的异步复制方案，主库的事务执行不会管备库的同步进度，如果备库落后，主库不幸 crash，那么就会导致数据丢失。<br>于是在 MySQL 在 5.5 中就顺其自然地引入了半同步复制，主库在应答客户端提交的事务前需要保证至少一个从库接收并写到 relay log 中。</p>
-<h3 id="异步-半同步-全同步"><a href="#异步-半同步-全同步" class="headerlink" title="异步 &amp; 半同步 &amp; 全同步"></a>异步 &amp; 半同步 &amp; 全同步</h3><ul>
-<li>对于异步复制，主库将事务 Binlog 事件写入到 bin log 文件中，此时主库只会通知一下 Dump 线程发送这些新的 Binlog，然后主库就会继续处理提交操作，而此时不会保证这些 Binlog 传到任何一个从库节点上。</li>
-<li>对于全同步复制，当主库提交事务之后，所有的从库节点必须收到，APPLY 并且提交这些事务，然后主库线程才能继续做后续操作。这里面有一个很明显的缺点就是，主库完成一个事务的时间被拉长，性能降低。</li>
-<li>对于半同步复制，是介于全同步复制和异步复制之间的一种，主库只需要等待至少一个从库节点收到并且 Flush Binlog 到 Relay Log 文件即可，主库不需要等待所有从库给主库反馈。同时，这里只是一个收到的反馈，而不是已经完全执行并且提交的反馈，这样就节省了很多时间。</li>
-</ul>
-<h1 id="主备切换"><a href="#主备切换" class="headerlink" title="主备切换"></a>主备切换</h1><p>主备功能主要是通过 bin log 实现的。</p>
-<h2 id="主备切换流程"><a href="#主备切换流程" class="headerlink" title="主备切换流程"></a>主备切换流程</h2><p><img src="/imgs/MySQL/MySQL-%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2%E6%B5%81%E7%A8%8B.png" alt="MySQL-主备切换流程" title="MySQL-主备切换流程"><br>如图示，客户端的读写都是直接访问的节点 A，而节点 B 是 A 的备库，通常是只读的，只是将 A 的更新同步过来到本地执行，节点 A 的 update 同步到节点 B 的流程图如下所示：<br><img src="/imgs/MySQL/MySQL-%E4%B8%BB%E5%A4%87%E5%90%8C%E6%AD%A5%E6%B5%81%E7%A8%8B%E5%9B%BE.png" alt="MySQL-主备同步流程图" title="MySQL-主备同步流程图"></p>
-<ol>
-<li>主库接收到客户端的更新请求后，执行内部事务的更新逻辑，同时写 binlog；</li>
-<li>备库 B 跟主库 A 之间维持了一个长连接，专门用于服务备库 B 的事务日志同步；</li>
-</ol>
-<p>当需要切换时，切换到状态 2，这时候客户端读写访问的都是节点 B，而节点 A 是 B 的备库；</p>
-<h2 id="双-M-架构"><a href="#双-M-架构" class="headerlink" title="双 M 架构"></a>双 M 架构</h2><p>实际生产中更多采用的是双 M 架构：<br><img src="/imgs/MySQL/MySQL-%E5%8F%8CM%E6%9E%B6%E6%9E%84%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2%E6%B5%81%E7%A8%8B.png" alt="MySQL-双M架构主备切换流程" title="MySQL-双M架构主备切换流程"><br>与原先的方案相比，只是节点 A 和 B 之间多了一条线，这样，节点 A 和 B 之间总是互为主备关系，在切换的时候就不用再修改主备关系。</p>
-<h3 id="可靠性优先策略"><a href="#可靠性优先策略" class="headerlink" title="可靠性优先策略"></a>可靠性优先策略</h3><p>双 M 结构的可靠性优先主备切换流程如下：</p>
-<ol>
-<li>判断备库 B 现在的 <code>seconds_behind_master</code>，如果小于某个值（比如 5 秒）继续下一步，否则持续重试这一步；</li>
-<li>把主库 A 改成只读状态，即把 readonly 设置为 true；</li>
-<li>判断备库 B 的 seconds_behind_master 的值，直到这个值变成 0 为止；</li>
-<li>把备库 B 改成可读写状态，也就是把 readonly 设置为 false；</li>
-<li>把业务请求切到备库 B。</li>
-</ol>
-<p>这个切换流程一般由专门的 HA 系统来完成，称为<strong>可靠性优先流程</strong>。<br>注意：</p>
-<ol>
-<li>这个过程中，比较耗时的是第 3 步，可能会耗费好几秒的时间，因此一般会先在第 1 步中做判断，确保 seconds_behind_master 足够小后才执行。</li>
-</ol>
-<h3 id="可用性优先策略"><a href="#可用性优先策略" class="headerlink" title="可用性优先策略"></a>可用性优先策略</h3><p>可靠性优先策略中，同步流程中存在一段系统不可用的时间，如果强行把步骤 4、5 调整到最开始执行，也就是说不等主备数据同步，直接把连接切到备库 B，并且让备库 B 可以读写，那么系统几乎就没有不可用时间了，这个流程称为可用性优先策略。</p>
-<h2 id="一主多从"><a href="#一主多从" class="headerlink" title="一主多从"></a>一主多从</h2><p>平时使用数据库一般都是读多写少，在发展过程中很可能会先遇到读性能问题，为了解决读性能问题，在架构上的解决方式是<strong>一主多从</strong>。<br><img src="/imgs/MySQL/MySQL-%E4%B8%80%E4%B8%BB%E5%A4%9A%E4%BB%8E%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84.png" alt="MySQL-一主多从基本结构" title="MySQL-一主多从基本结构"><br>其中：</p>
+<h2 id="创建及初始化-ServerSocketChannel"><a href="#创建及初始化-ServerSocketChannel" class="headerlink" title="创建及初始化 ServerSocketChannel"></a>创建及初始化 ServerSocketChannel</h2><p>Netty 有一个叫做 <strong>Channel</strong> 的统一的异步 I&#x2F;O 编程接口，这个编程接口抽象了所有点对点的通信操作。也就是说，如果你的应用是基于 Netty 的某一种传输实现，那么同样的，你的应用也可以运行在 Netty 的另一种传输实现上。Netty 提供了几种拥有相同编程接口的基本传输实现：</p>
 <ul>
-<li>A 和 A’互为主备；</li>
-<li>从库 B、C、D 指向主库 A，主库负责所有写入和一部分读，其他的读请求由从库分担。</li>
+<li>基于 NIO 的 TCP&#x2F;IP 传输 (见 io.netty.channel.nio),</li>
+<li>基于 OIO 的 TCP&#x2F;IP 传输 (见 io.netty.channel.oio),</li>
+<li>基于 OIO 的 UDP&#x2F;IP 传输, 和</li>
+<li>本地传输 (见 io.netty.channel.local).</li>
 </ul>
-<p><img src="/imgs/MySQL/MySQL-%E4%B8%80%E4%B8%BB%E5%A4%9A%E4%BB%8E%E7%9A%84%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2.png" alt="MySQL-一主多从的主备切换" title="MySQL-一主多从的主备切换"></p>
+<p>切换不同的传输实现通常只需对代码进行几行的修改调整，例如选择一个不同的 <strong>ChannelFactory</strong> 实现。<br>此外，你甚至可以利用新的传输实现没有写入的优势，只需替换一些构造器的调用方法即可，例如串口通信。而且由于核心 API 具有高度的可扩展性，你还可以完成自己的传输实现。</p>
+<ol>
+<li>入口<br><code>io.netty.bootstrap.AbstractBootstrap#bind(int)</code><br>用户代码调用bind绑定端口时会触发Channel的创建和初始化</li>
+</ol>
+<p><code>io.netty.bootstrap.ServerBootstrap#init</code><br>对Channel的使用可以追溯到这个init方法，包括Channel的创建、属性等的设置。</p>
+<ol>
+<li><p>创建<br><code>NioServerSocketChannel</code>的构造方法 -&gt; <code>io.netty.channel.socket.nio.NioServerSocketChannel#newSocket</code><br>可以看到，Netty中的<code>ServerSocketChannel</code>其实就对应JDK NIO中的<code>ServerSocketChannel</code>，在创建<code>NioServerSocketChannel</code>的同时创建了一个NIO中的<code>ServerSocketChannel</code>。</p>
+</li>
+<li><p>初始化<br>中间包含对<code>childOptions</code>和<code>childAttrs</code>等的设置。</p>
+</li>
+<li><p>添加一个连接处理器<code>ServerBootstrapAcceptor</code>。</p>
+</li>
+</ol>
+<h2 id="注册Selector"><a href="#注册Selector" class="headerlink" title="注册Selector"></a>注册Selector</h2><p>紧接着上面的初始化过程，接下来是注册NIO中的Selector。<br><code>io.netty.channel.EventLoopGroup#register(io.netty.channel.Channel)</code><br>总而言之最终还是使用NIO注册了 Selector。<br><code>io.netty.channel.nio.AbstractNioChannel#doRegister</code></p>
+<h3 id="启动-NioEventLoop"><a href="#启动-NioEventLoop" class="headerlink" title="启动 NioEventLoop"></a>启动 NioEventLoop</h3><p><code>io.netty.bootstrap.AbstractBootstrap#doBind0</code><br>绑定端口号的同时，执行一个线程。<br><code>io.netty.util.concurrent.SingleThreadEventExecutor#startThread</code><br>NioEventLoop启动流程的最终启动了一个线程。<br><code>io.netty.channel.nio.NioEventLoop#run</code><br>该线程任务根据EventLoop的实现不同而有所不同，在<code>NioEventLoop</code>中，主要任务为以下3步：</p>
+<ol>
+<li><p>接收事件（selectionKey）<br><code>io.netty.channel.nio.NioEventLoop#select</code><br>当检查没有需要处理的selectionKey时就会发生空轮询，Netty在轮询时会记录空轮询次数，<strong>当空轮询达到一定次数时，将之前注册的事件先取消，从而避免了NIO的空轮询Bug</strong>。</p>
+</li>
+<li><p>检测新连接并创建NioSocketChannel<br><code>io.netty.channel.nio.NioEventLoop#processSelectedKeys</code><br>处理连接请求，并分发请求到<strong>pipeline</strong><br><code>io.netty.channel.nio.AbstractNioMessageChannel.NioMessageUnsafe#read</code></p>
 <ul>
-<li>主备切换后，A’将成为新的主库；</li>
-<li>从库 B、C、D 改成连接到 A’。</li>
+<li>每个连接创建一个<strong>ServerSocketChannel</strong>。<br> <code>io.netty.channel.socket.nio.NioServerSocketChannel#doReadMessages</code></li>
+<li>读取数据并分发到<strong>pipeline</strong><br> <code>io.netty.channel.ChannelPipeline#fireChannelReadComplete</code></li>
 </ul>
-<h1 id="读写分离"><a href="#读写分离" class="headerlink" title="读写分离"></a>读写分离</h1><p>上述的主从结构其实形成了一种读写分离的架构，连接信息一般保存到客户端，由客户端执行负载均衡。<br>另一种读写分离架构在客户端和服务器之间架设了一个代理层 proxy，客户端全部连接到这个 proxy，由 proxy 根据请求类型和上下文执行请求的路由分发。<br><img src="/imgs/MySQL/MySQL-%E5%B8%A6proxy%E7%9A%84%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E6%9E%B6%E6%9E%84.png" alt="MySQL-带proxy的读写分离架构" title="MySQL-带proxy的读写分离架构"></p>
+</li>
+<li><p>执行线程任务<br><code>io.netty.util.concurrent.SingleThreadEventExecutor#runAllTasks(long)</code></p>
+</li>
+</ol>
+<h2 id="pipeline中的第一个ChannelHandler"><a href="#pipeline中的第一个ChannelHandler" class="headerlink" title="pipeline中的第一个ChannelHandler"></a>pipeline中的第一个ChannelHandler</h2><p>pipeline的第一个Handler为<code>ServerBootstrapAcceptor</code>，它的主要任务包括：</p>
+<ol>
+<li><p>将用户自定义<code>ChannelHandler</code>添加到pipeline</p>
+</li>
+<li><p>选择一个<code>NioEventLoop</code>传播事件<br><code>io.netty.channel.MultithreadEventLoopGroup#register(io.netty.channel.Channel)</code></p>
+</li>
+<li><p>注册selector<br>代码流程非常长，但是最终可以跟到<code>doRegister</code>这个方法，可以发现最后还是调用了JDK的SocketChannel注册Selector。<br><code>io.netty.channel.AbstractChannel.AbstractUnsafe#register0</code> -&gt; <code>io.netty.channel.nio.AbstractNioChannel#doRegister</code></p>
+</li>
+<li><p>注册读事件<br>代码最后判断第一次连接则触发连接激活事件，代码位置仍然是上边的<code>register0</code>。<br><code>io.netty.channel.AbstractChannel.AbstractUnsafe#register0</code><br>继续往下看可以看到最终将读事件（selectionKey）注册到了Selector<br><code>io.netty.channel.DefaultChannelPipeline.HeadContext#channelActive</code><br>-&gt; <code>io.netty.channel.DefaultChannelPipeline.HeadContext#readIfIsAutoRead</code><br>-&gt; <code>io.netty.channel.nio.AbstractNioChannel#doBeginRead</code></p>
+</li>
+</ol>
+<p>选择EventLoop：<br><code>io.netty.util.concurrent.MultithreadEventExecutorGroup#chooser</code><br>每当有客户端连接进来时，Netty需要决定选择哪个EventLoop，这个工作是由<code>EventExecutorChooser</code>负责的：</p>
 <ul>
-<li>直连的架构，少了一层 proxy，因此性能稍微更好一点，排查问题也更方便，但是主备切换库迁移时客户端会感知到，所以客户端需要一个后端管理组件，比如 Zookeeper。</li>
-<li>带 proxy 架构，对客户端友好，但是同时 proxy 架构也更加复杂。</li>
+<li><code>GenericEventExecutorChooser</code>：循环选择。</li>
+<li><code>PowerOfTwoEventExecutorChooser</code>：也是循环选择，只不过<code>GenericEventExecutorChooser</code>使用了取模运算，而<code>PowerOfTwoEventExecutorChooser</code>是通过位运算实现的。</li>
 </ul>
-<h2 id="“过期读”问题"><a href="#“过期读”问题" class="headerlink" title="“过期读”问题"></a>“过期读”问题</h2><p>当客户端先写入再读取时可能会读到修改前的值，因为写入是对主库写入，读取是对从库读，而主从同步存在延迟，刚写入主库的数据可能还没有同步到所有的从库。<br>解决过期读问题的方案：</p>
-<ul>
-<li>强制走主库方案；<br>一些必须拿到最新结果的请求，可以强制将其发到主库上，比如用户支付后需要马上看到商品是否已经购买成功，这个请求需要马上拿到最新的结果，因此最好走主库；<br>一些请求没有必要立刻拿到最新的结果，比如商户发布商品后，用户即使没有马上看到商品也是可以的，因此用户读取商品列表的请求完全可以路由到从库上去。</li>
-<li>sleep 方案；<br>不大靠谱，但是一定程度上还是可以解决问题的。</li>
-<li>判断主备无延迟方案；<br>判断 <code>show slave status</code> 结果里的 <code>seconds_behind_master</code> 参数的值，等于 0 才执行查询请求，这个参数可以表明从库是否已经完全同步。</li>
-<li>配合 semi-sync 方案；</li>
-<li>等主库位点方案；</li>
-<li>等 GTID 方案。</li>
-</ul>
-<h1 id="探活"><a href="#探活" class="headerlink" title="探活"></a>探活</h1><p>在一主一备的双 M 架构里，主备切换只需要把客户端流量切到备库；而在一主多从架构里，主备切换除了要把客户端流量切到备库外，还需要把从库接到新主库上。<br>主备切换有两种场景：主动切换和被动切换，其中被动切换往往是因为主库出问题而由 HA 系统发起的。</p>
-<h2 id="select-1"><a href="#select-1" class="headerlink" title="select 1"></a>select 1</h2><p><code>select 1</code>只能用于判断该数据库进程仍能执行，但是<strong>不能说明主库没有问题</strong>，比如，数据库线程池（由参数 innodb_thread_concurrency 控制）被打满的情况下，虽然<code>select 1</code>能执行，但是线程池还是会被堵住。</p>
+<h2 id="Pipeline"><a href="#Pipeline" class="headerlink" title="Pipeline"></a>Pipeline</h2><ol>
+<li><p>创建Pipeline<br>创建NioSocketChannel时会创建Pipeline：<br><code>io.netty.channel.AbstractChannel#AbstractChannel</code><br>Pipeline本身是一个<strong>双向链表</strong>的结构，且有两个哨兵节点<code>head</code>和<code>tail</code>。</p>
+</li>
+<li><p>添加Pipeline<br>添加到链表<br><code>io.netty.channel.ChannelPipeline#addLast(io.netty.channel.ChannelHandler...)</code><br>检查是否重复添加，如果加了<code>@Sharable</code>注解是可以重复添加的<br><code>io.netty.channel.DefaultChannelPipeline#checkMultiplicity</code><br>添加到链表末尾，也就是添加到<code>tail</code>节点的前面。<br><code>io.netty.channel.DefaultChannelPipeline#addLast0</code></p>
+</li>
+<li><p>删除Pipeline<br>有时候我们需要删除一个Pipeline上的某些ChannelHandler，比如已经进行过了授权校验，那下次就不需要再执行授权校验了，我们就可以直接把授权相关的那些ChannelHandler删除掉。<br>首先遍历Pipeline找到目标ChannelHandler。<br><code>io.netty.channel.DefaultChannelPipeline#getContextOrDie</code><br>然后从Pipeline中移除。<br><code>io.netty.channel.DefaultChannelPipeline#remove(AbstractChannelHandlerContext)</code></p>
+</li>
+<li><p>inBound事件传播<br>ChannelHandler中每个事件都有一个接口，<code>ChannelInboundHandler</code>专门处理输入事件，以<code>channelRead</code>为例。<br>EventLoop会将读事件传给Pipeline，然后按责任链模式的逻辑从<code>head</code>节点开始传播事件。<br><code>io.netty.channel.nio.AbstractNioByteChannel.NioByteUnsafe#read</code></p>
+</li>
+<li><p>outBound事件传播<br><code>ChannelOutboundHandler</code>专门用于处理输出事件，以<code>write</code>为例。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class EchoServerOutHandler extends ChannelOutboundHandlerAdapter &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception &#123;</span><br><span class="line">        ctx.channel().write(&quot;Hello&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当我们在Handler中调用Context的write方法时，就是将写事件传给了Pipeline，Pipeline会从<code>tail</code>节点开始往前传播。<br><code>io.netty.channel.AbstractChannelHandlerContext#write</code></p>
+</li>
+</ol>
+<h2 id="心跳检测"><a href="#心跳检测" class="headerlink" title="心跳检测"></a>心跳检测</h2><p>应用协议层的心跳是必须的，它和 tcp keepalive 是完全不同的概念。应用层协议层的心跳检测的是连接双方的存活性，兼而连接质量，而 keepalive 检测的是连接本身的存活性。而且后者的超时时间默认过长，完全不能适应现代的网络环境。<br>Netty 内置通过增加 <code>IdleStateHandler</code> 产生 IDLE 事件进行便捷的心跳控制。你要处理的，就是心跳超时的逻辑，比如延迟重连。但它的轮训时间是固定的，无法动态修改，高级功能需要自己定制。<br>不同场景下需要切换不同的保活机制，在一些客户端比如 Android，频繁心跳的唤起会浪费大量的网络和电量，它的心跳策略会更加复杂一些。</p>
+<h2 id="优雅退出"><a href="#优雅退出" class="headerlink" title="优雅退出"></a>优雅退出</h2><p>Java 的优雅停机通常通过注册 JDK ShutdownHook 来实现。<br>Runtime.getRuntime().addShutdownHook();<br>一般通过 kill -15 进行 java 进程的关闭，以便在进程死亡之前进行一些清理工作。</p>
 <blockquote>
-<p>innodb_thread_concurrency 控制的是并发查询，而不是并发连接，因为并发连接多只是多占用一些内存空间，并不会占用 CPU 资源。</p>
+<p>注意：kill -9 会立马杀死进程，不给遗言的机会，比较危险。</p>
 </blockquote>
-<h2 id="查表判断"><a href="#查表判断" class="headerlink" title="查表判断"></a>查表判断</h2><p>为了知道线程池是否被打满，我们可以创建一张<code>health_check</code>表，里面只放一条数据，然后定时执行：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from mysql.health_check;</span><br></pre></td></tr></table></figure>
-<p>这种方法的缺点是，<strong>不能用于判断磁盘空间是否满了</strong>，因为如果磁盘空间满了，所有的更新语句和事务提交语句都会被堵塞，但是查询语句仍能执行。</p>
-<h2 id="更新判断"><a href="#更新判断" class="headerlink" title="更新判断"></a>更新判断</h2><p>更新一行数据，一般会放一个 timestamp 字段，用来表示最后一次执行检测的时间。<br>但是要注意如果主备都要检测，就不能只有一行数据了，因为会产生<strong>行冲突</strong>，导致主备同步的停止。一般会采用数据库实例的 server_id 作为主键，因为 MySQL 规定了主备服务器的 server_id 必须不同，这样就能保证主备的检测命令不会冲突了。<br>这种方式仍然存在一种问题：这种更新语句占用的 IO 资源很少，即使当时 IO 已经 100%，检测语句仍可以获得 IO 资源来执行，但系统可能已经出问题了，也就是说，这种检测存在随机性。</p>
-<h2 id="内部统计"><a href="#内部统计" class="headerlink" title="内部统计"></a>内部统计</h2><p>前面几种方法都是通过外部调用来发现问题的，更好的方式是利用 MySQL 本身的统计数据：<code>performance_schema</code>库的<code>file_summary_by_event_name</code>表。</p>
-<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><h2 id="主从同步的流程"><a href="#主从同步的流程" class="headerlink" title="主从同步的流程"></a>主从同步的流程</h2><p>主备服务器之间维持了一个长连接，备库上回启动两个线程，一个 io_thread 负责与主库建立连接并读取 bin log，另一个 sql_thread 负责解析命令并执行。</p>
-<h2 id="MySQL-是怎么保证数据不丢失的"><a href="#MySQL-是怎么保证数据不丢失的" class="headerlink" title="MySQL 是怎么保证数据不丢失的"></a>MySQL 是怎么保证数据不丢失的</h2><h2 id="MySQL-是怎么保证高可用的"><a href="#MySQL-是怎么保证高可用的" class="headerlink" title="MySQL 是怎么保证高可用的"></a>MySQL 是怎么保证高可用的</h2><h2 id="MySQL如何优化千万级的大表？"><a href="#MySQL如何优化千万级的大表？" class="headerlink" title="MySQL如何优化千万级的大表？"></a>MySQL如何优化千万级的大表？</h2><ol>
-<li>优化SQL和索引；</li>
-<li>加缓存，比如Memcached或Redis；</li>
-<li>主从复制或主主复制，实现读写分离<br>可以在应用层做，效率高<br>也可以用三方工具，如360的atlas</li>
-<li>使用MySQL自带的分区表<br>优点是对应用透明，但是SQL需要针对分区表做一些优化，sql条件中要带上分区条件的列，从而使查询定位到少量的分区上，否则就会扫描全部分区。</li>
-<li>垂直拆分，根据模块耦合情况将一个大系统分为多个小系统</li>
-<li>水平切分，选择合适的sharding key将大表数据拆分到多个小表上</li>
+<p>虽然 netty 做了很多优雅退出的工作，通过 EventLoopGroup 的 shutdownGracefully 方法对 nio 进行了一些状态设置，但在很多情况下，这还不够多。它只负责单机环境的优雅关闭。<br>流量可能还会通过外层的路由持续进入，造成无效请求。一种可行的做法是首先在外层路由进行一次本地实例的摘除，把流量截断，然后再进行 netty 本身的优雅关闭。</p>
+<h2 id="示例协议实现"><a href="#示例协议实现" class="headerlink" title="示例协议实现"></a>示例协议实现</h2><p>不少中间件会实现自己的协议，比如 Redis、MySQL，MyCat、TiDB 用的就是 MySQL 协议。<br>netty 默认实现了 dns、haproxy、http、http2、memcache、mqtt、redis、smtp、socks、stomp、xml 等协议。<br>协议分为两种：</p>
+<ul>
+<li>文本协议在调试起来是比较直观和容易的，但安全性欠佳；</li>
+<li>二进制协议就需要依赖日志、wireshark 等其他方式进行分析，增加了开发难度。</li>
+</ul>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/io/netty/example/echo/package-summary.html">示例协议 - echo</a></li>
+<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/io/netty/example/discard/package-summary.html">示例协议 - discard</a></li>
+<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/io/netty/example/uptime/package-summary.html">示例协议 - uptime</a></li>
+<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/io/netty/example/factorial/package-summary.html">示例二进制协议 - factorial</a></li>
+<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/io/netty/example/telnet/package-summary.html">示例文本协议 - telnet</a></li>
 </ol>
+<h1 id="数据结构-ByteBuf"><a href="#数据结构-ByteBuf" class="headerlink" title="数据结构 - ByteBuf"></a>数据结构 - ByteBuf</h1><p>Netty 使用自建的 buffer API，而不是使用 NIO 的 <a target="_blank" rel="noopener" href="http://docs.oracle.com/javase/7/docs/api/java/nio/ByteBuffer.html?is-external=true">ByteBuffer</a> 来表示一个连续的字节序列。与 ByteBuffer 相比这种方式拥有明显的优势。Netty 使用新的 buffer 类型 <a target="_blank" rel="noopener" href="http://netty.io/4.0/api/io/netty/buffer/ByteBuf.html">ByteBuf</a>，被设计为一个可从底层解决 ByteBuffer 问题，并可满足日常网络应用开发需要的缓冲类型。这些很酷的特性包括：</p>
+<ul>
+<li>如果需要，允许使用自定义的缓冲类型。</li>
+<li>复合缓冲类型中内置的透明的零拷贝实现。</li>
+<li>开箱即用的动态缓冲类型，具有像 StringBuffer 一样的动态缓冲能力。</li>
+<li>不再需要调用的 flip()方法。</li>
+<li>正常情况下具有比 ByteBuffer 更快的响应速度。</li>
+</ul>
+<p><img src="/imgs/Netty/ByteBuf%E7%BB%93%E6%9E%84.png" alt="ByteBuf结构" title="ByteBuf结构"><br>以上就是一个 ByteBuf 的结构图，从上面这幅图可以看到</p>
+<ol>
+<li>ByteBuf 是一个字节容器，容器里面的的数据分为三个部分，第一个部分是已经丢弃的字节，这部分数据是无效的；第二部分是可读字节，这部分数据是 ByteBuf 的主体数据， 从 ByteBuf 里面读取的数据都来自这一部分;最后一部分的数据是可写字节，所有写到 ByteBuf 的数据都会写到这一段。最后一部分虚线表示的是该 ByteBuf 最多还能扩容多少容量</li>
+<li>以上三段内容是被两个指针给划分出来的，从左到右，依次是读指针（readerIndex）、写指针（writerIndex），然后还有一个变量 capacity，表示 ByteBuf 底层内存的总容量</li>
+<li>从 ByteBuf 中每读取一个字节，readerIndex 自增 1，ByteBuf 里面总共有 writerIndex-readerIndex 个字节可读, 由此可以推论出当 readerIndex 与 writerIndex 相等的时候，ByteBuf 不可读</li>
+<li>写数据是从 writerIndex 指向的部分开始写，每写一个字节，writerIndex 自增 1，直到增到 capacity，这个时候，表示 ByteBuf 已经不可写了</li>
+<li>ByteBuf 里面其实还有一个参数 maxCapacity，当向 ByteBuf 写数据的时候，如果容量不足，那么这个时候可以进行扩容，直到 capacity 扩容到 maxCapacity，超过 maxCapacity 就会报错</li>
+</ol>
+<p>使用 ByteBuf 有以下好处：</p>
+<ol>
+<li>可以有效地区分可读数据和可写数据，读写之间相互没有冲突</li>
+<li>Extensibility 可扩展性<br>ByteBuf 具有丰富的操作集,可以快速的实现协议的优化。例如，ByteBuf 提供各种操作用于访问无符号值和字符串，以及在缓冲区搜索一定的字节序列。你也可以扩展或包装现有的缓冲类型用来提供方便的访问。自定义缓冲式仍然实现自 ByteBuf 接口，而不是引入一个不兼容的类型</li>
+<li>Transparent Zero Copy 透明的零拷贝<br>网络应用中需要减少内存拷贝操作次数。你可能有一组缓冲区可以被组合以形成一个完整的消息。网络提供了一种复合缓冲，允许你从现有的任意数的缓冲区创建一个新的缓冲区而无需内存拷贝。例如，一个信息可以由两部分组成：header 和 body。在一个模块化的应用，当消息发送出去时，这两部分可以由不同的模块生产和装配。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+--------+------+</span><br><span class="line">| header | body |</span><br><span class="line">+--------+------+</span><br></pre></td></tr></table></figure>
+ 如果你使用的是 ByteBuffer ，你必须要创建一个新的大缓存区用来拷贝这两部分到这个新缓存区中。或者，你可以在 NIO做一个收集写操作，但限制你将复合缓冲类型作为 ByteBuffer 的数组而不是一个单一的缓冲区，这样打破了抽象，并且引入了复杂的状态管理。此外，如果你不从 NIO channel 读或写，它是没有用的。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 复合类型与组件类型不兼容。</span><br><span class="line">ByteBuffer[] message = new ByteBuffer[] &#123; header, body &#125;;</span><br></pre></td></tr></table></figure>
+ 通过对比， ByteBuf 不会有警告，因为它是完全可扩展并有一个内置的复合缓冲区。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 复合类型与组件类型是兼容的。</span><br><span class="line">ByteBuf message = Unpooled.wrappedBuffer(header, body);</span><br><span class="line">// 因此，你甚至可以通过混合复合类型与普通缓冲区来创建一个复合类型。</span><br><span class="line">ByteBuf messageWithFooter = Unpooled.wrappedBuffer(message, footer);</span><br><span class="line">// 由于复合类型仍是 ByteBuf，访问其内容很容易，</span><br><span class="line">//并且访问方法的行为就像是访问一个单独的缓冲区，</span><br><span class="line">//即使你想访问的区域是跨多个组件。</span><br><span class="line">//这里的无符号整数读取位于 body 和 footer</span><br><span class="line">messageWithFooter.getUnsignedInt(</span><br><span class="line">     messageWithFooter.readableBytes() - footer.readableBytes() - 1);</span><br></pre></td></tr></table></figure></li>
+<li>Automatic Capacity Extension 自动容量扩展<br>许多协议定义可变长度的消息，这意味着没有办法确定消息的长度，直到你构建的消息。或者，在计算长度的精确值时，带来了困难和不便。这就像当你建立一个字符串。你经常估计得到的字符串的长度，让 StringBuffer 扩大了其本身的需求。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 一种新的动态缓冲区被创建。在内部，实际缓冲区是被“懒”创建，从而避免潜在的浪费内存空间。</span><br><span class="line">ByteBuf b = Unpooled.buffer(4);</span><br><span class="line">// 当第一个执行写尝试，内部指定初始容量 4 的缓冲区被创建</span><br><span class="line">b.writeByte(&#x27;1&#x27;);</span><br><span class="line">b.writeByte(&#x27;2&#x27;);</span><br><span class="line">b.writeByte(&#x27;3&#x27;);</span><br><span class="line">b.writeByte(&#x27;4&#x27;);</span><br><span class="line">// 当写入的字节数超过初始容量 4 时，</span><br><span class="line">//内部缓冲区自动分配具有较大的容量</span><br><span class="line">b.writeByte(&#x27;5&#x27;);</span><br></pre></td></tr></table></figure></li>
+<li>Better Performance 更好的性能<br>最频繁使用的缓冲区 ByteBuf 的实现是一个非常薄的字节数组包装器（比如，一个字节）。与 ByteBuffer 不同，它没有复杂的边界和索引检查补偿，因此对于 JVM 优化缓冲区的访问更加简单。更多复杂的缓冲区实现是用于拆分或者组合缓存，并且比 ByteBuffer 拥有更好的性能。</li>
+</ol>
+<h2 id="粘包拆包和半包合并"><a href="#粘包拆包和半包合并" class="headerlink" title="粘包拆包和半包合并"></a>粘包拆包和半包合并</h2><p>基于流的传输比如 TCP&#x2F;IP, 接收到数据是存在 socket 接收的 buffer 中。不幸的是，基于流的传输并不是一个数据包队列，而是一个字节队列。造成粘包的原因，主要是由于缓冲区的介入，所以需要严格约定去所传输的包的格式——何时开始何时结束。意味着，即使你发送了 2 个独立的数据包，操作系统也不会作为 2 个消息处理而仅仅是作为一连串的字节而言。因此这是不能保证你远程写入的数据就会准确地读取。举个例子，让我们假设操作系统的 TCP&#x2F;TP 协议栈已经接收了 3 个数据包，在应用程序中读取数据的时候可能被分成下面的片段：<br><img src="/imgs/Netty/%E7%B2%98%E5%8C%85%E5%92%8C%E5%8D%8A%E5%8C%85%E9%97%AE%E9%A2%98.png" alt="粘包和半包问题" title="粘包和半包问题"><br>因此，一个接收方不管他是客户端还是服务端，都应该把接收到的数据整理成一个或者多个更有意义并且能够让程序的业务逻辑更好理解的数据。<br>在没有 Netty 的情况下，用户如果自己需要拆包，基本原理就是不断从 TCP 缓冲区中读取数据，每次读取完都需要判断是否是一个完整的数据包</p>
+<ul>
+<li>半包：如果当前读取的数据不足以拼接成一个完整的业务数据包，那就保留该数据，继续从 TCP 缓冲区中读取，直到得到一个完整的数据包。</li>
+<li>粘包：如果当前读到的数据加上已经读取的数据足够拼接成一个数据包，那就将已经读取的数据拼接上本次读取的数据，构成一个完整的业务数据包传递到业务逻辑，多余的数据仍然保留，以便和下次读到的数据尝试拼接。</li>
+</ul>
+<h2 id="解码器-ByteToMessageDecoder"><a href="#解码器-ByteToMessageDecoder" class="headerlink" title="解码器 - ByteToMessageDecoder"></a>解码器 - ByteToMessageDecoder</h2><p>入口：<code>io.netty.handler.codec.ByteToMessageDecoder#channelRead</code></p>
+<ol>
+<li>累加字节流<br>累加器累加已读入的字节数，如果超过<code>ByteBuf</code>当前可读入的空间大小，则执行扩容。<br><code>io.netty.handler.codec.ByteToMessageDecoder.Cumulator#cumulate</code></li>
+<li>调用子类的decode方法进行解析（模板方法）<br><code>io.netty.handler.codec.ByteToMessageDecoder#callDecode</code></li>
+<li>将子类解析出的ByteBuf向下传播<br><code>io.netty.handler.codec.ByteToMessageDecoder#fireChannelRead(io.netty.channel.ChannelHandlerContext, io.netty.handler.codec.CodecOutputList, int)</code></li>
+</ol>
+<h2 id="Netty中的一些拆箱即用的解码器"><a href="#Netty中的一些拆箱即用的解码器" class="headerlink" title="Netty中的一些拆箱即用的解码器"></a>Netty中的一些拆箱即用的解码器</h2><p>如果要自己实现所有协议的拆包无疑是非常麻烦的，实际上 Netty 已经自带了一些开箱即用的拆包器：</p>
+<ol>
+<li>固定长度的拆包器 <code>FixedLengthFrameDecoder</code><br>如果你的应用层协议非常简单，每个数据包的长度都是固定的，比如 100，那么只需要把这个拆包器加到 pipeline 中，Netty 会把一个个长度为 100 的数据包 (ByteBuf) 传递到下一个 channelHandler。</li>
+<li>行拆包器 <code>LineBasedFrameDecoder</code><br>从字面意思来看，发送端发送数据包的时候，每个数据包之间以<strong>换行符</strong>作为分隔，接收端通过 LineBasedFrameDecoder 将粘过的 ByteBuf 拆分成一个个完整的应用层数据包。</li>
+<li>分隔符拆包器 <code>DelimiterBasedFrameDecoder</code><br>DelimiterBasedFrameDecoder 是行拆包器的通用版本，只不过我们可以自定义分隔符。</li>
+<li>基于长度域拆包器 <code>LengthFieldBasedFrameDecoder</code><br>最后一种拆包器是最通用的一种拆包器，只要你的自定义协议中包含长度域字段，均可以使用这个拆包器来实现应用层拆包。由于上面三种拆包器比较简单，读者可以自行写出 demo，接下来，我们就结合我们小册的自定义协议，来学习一下如何使用基于长度域的拆包器来拆解我们的数据包。</li>
+</ol>
+<h2 id="编码-MessageToByteEncoder"><a href="#编码-MessageToByteEncoder" class="headerlink" title="编码 - MessageToByteEncoder"></a>编码 - MessageToByteEncoder</h2><p>编码器是一个ChannelHandler，一般是第一个添加到Pipeline内，然后write的最后会将数据进行编码再输出。</p>
+<ol>
+<li>匹配对象<br><code>io.netty.handler.codec.MessageToByteEncoder#acceptOutboundMessage</code></li>
+<li>内存分配<br><code>io.netty.handler.codec.MessageToByteEncoder#allocateBuffer</code></li>
+<li>调用子类的编码实现<br><code>io.netty.handler.codec.MessageToByteEncoder#encode</code></li>
+<li>释放内存<br><code>io.netty.util.ReferenceCountUtil#release(java.lang.Object)</code></li>
+<li>放到Pipeline里传播<br>默认情况下会一直传播到<code>head</code>节点<br><code>io.netty.channel.ChannelHandlerContext#write(java.lang.Object, io.netty.channel.ChannelPromise)</code><br><code>io.netty.channel.Channel.Unsafe#write</code></li>
+<li>输出<br>将数据暂存到ByteBuf，将堆内对象转换为堆外内存<br><code>io.netty.channel.nio.AbstractNioByteChannel#filterOutboundMessage</code><br>插入写队列<br><code>io.netty.channel.ChannelOutboundBuffer#addMessage</code><br>TODO: 什么时候刷新buffer队列？</li>
+</ol>
+<h1 id="自定义数据处理逻辑"><a href="#自定义数据处理逻辑" class="headerlink" title="自定义数据处理逻辑"></a>自定义数据处理逻辑</h1><h2 id="基于拦截链模式的事件模型-pipeline"><a href="#基于拦截链模式的事件模型-pipeline" class="headerlink" title="基于拦截链模式的事件模型 - pipeline"></a>基于拦截链模式的事件模型 - pipeline</h2><p>一个定义良好并具有扩展能力的事件模型是事件驱动开发的必要条件。Netty 具有定义良好的 I&#x2F;O 事件模型。由于严格的层次结构区分了不同的事件类型，因此 Netty 也允许你在不破坏现有代码的情况下实现自己的事件类型。这是与其他框架相比另一个不同的地方。很多 NIO 框架没有或者仅有有限的事件模型概念；在你试图添加一个新的事件类型的时候常常需要修改已有的代码，或者根本就不允许你进行这种扩展。<br>在 Netty 中一条连接对应一个 Channel，该 Channel 的所有处理逻辑都在一个 ChannelPipeline 对象内，ChannelPipeline 是一个双向链表结构，在一个 ChannelPipeline 内部一个 <a href="../%E6%8A%80%E6%9C%AF%E7%82%B9%E6%80%BB%E7%BB%93">ChannelEvent</a> 被一组 ChannelHandler 处理。这个管道是 Intercepting Filter (拦截过滤器)模式的一种高级形式的实现，因此对于一个事件如何被处理以及管道内部处理器间的交互过程，你都将拥有绝对的控制力。例如，你可以定义一个从 socket 读取到数据后的操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class MyReadHandler implements SimpleChannelHandler &#123;</span><br><span class="line">     public void messageReceived(ChannelHandlerContext ctx, MessageEvent evt) &#123;</span><br><span class="line">         Object message = evt.getMessage();</span><br><span class="line">         // Do something with the received message.</span><br><span class="line">            ...</span><br><span class="line">         // And forward the event to the next handler.</span><br><span class="line">         ctx.sendUpstream(evt);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同时你也可以定义一种操作响应其他处理器的写操作请求：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class MyWriteHandler implements SimpleChannelHandler &#123;</span><br><span class="line">    public void writeRequested(ChannelHandlerContext ctx, MessageEvent evt) &#123;</span><br><span class="line">        Object message = evt.getMessage();</span><br><span class="line">        // Do something with the message to be written.</span><br><span class="line">            ...</span><br><span class="line">        // And forward the event to the next handler.</span><br><span class="line">        ctx.sendDownstream(evt);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ChannelHandler 分为两种：</p>
+<ul>
+<li>ChannelInboundHandler<br>处理读数据逻辑，核心方法是 channelRead。</li>
+<li>ChannelOutBoundHandler<br>处理些数据逻辑，核心方法是 write，在链式处理中总是位于 ChannelInboundHandler 之后。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">serverBootstrap</span><br><span class="line">        .childHandler(new ChannelInitializer&lt;NioSocketChannel&gt;() &#123;</span><br><span class="line">            protected void initChannel(NioSocketChannel ch) &#123;</span><br><span class="line">                // inBound，处理读数据的逻辑链</span><br><span class="line">                ch.pipeline().addLast(new InBoundHandlerA());</span><br><span class="line">                ch.pipeline().addLast(new InBoundHandlerB());</span><br><span class="line">                ch.pipeline().addLast(new InBoundHandlerC());</span><br><span class="line">                </span><br><span class="line">                // outBound，处理写数据的逻辑链</span><br><span class="line">                ch.pipeline().addLast(new OutBoundHandlerA());</span><br><span class="line">                ch.pipeline().addLast(new OutBoundHandlerB());</span><br><span class="line">                ch.pipeline().addLast(new OutBoundHandlerC());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>其执行顺序如下图所示：<br><img src="/imgs/Netty/pipeline%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F.png" alt="pipeline执行顺序" title="pipeline执行顺序"></p>
+<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p>netty 由于其异步化的开发方式，以及其事件机制，在异常处理方面就显得异常重要。为了保证连接的高可靠性，许多异常需要静悄悄的忽略，或者在用户态没有感知。<br>netty 的异常会通过 pipeline 进行传播，所以在任何一层进行处理都是可行的，但编程习惯上，习惯性抛到最外层集中处理。<br>为了最大限度的区别异常信息，通常会定义大量的异常类，不同的错误会抛出不同的异常。发生异常后，可以根据不同的类型选择断线重连（比如一些二进制协议的编解码紊乱问题)，或者调度到其他节点。</p>
+<h2 id="Codec-框架"><a href="#Codec-框架" class="headerlink" title="Codec 框架"></a>Codec 框架</h2><p>我们可以使用 POJO 代替 ChannelBuffer，从业务逻辑代码中分离协议处理部分总是一个很不错的想法。然而如果一切从零开始便会遭遇到实现上的复杂性。你不得不处理分段的消息。一些协议是多层的（例如构建在其他低层协议之上的协议）。一些协议过于复杂以致难以在一台独立状态机上实现。<br>因此，一个好的网络应用框架应该提供一种可扩展，可重用，可单元测试并且是多层的 codec 框架，为用户提供易维护的 codec 代码。<br>Netty 提供了一组构建在其核心模块之上的 codec 实现，这些简单的或者高级的 codec 实现帮你解决了大部分在你进行协议处理开发过程会遇到的问题，无论这些协议是简单的还是复杂的，二进制的或是简单文本的。</p>
+<h2 id="SSL-TLS-支持"><a href="#SSL-TLS-支持" class="headerlink" title="SSL &#x2F; TLS 支持"></a>SSL &#x2F; TLS 支持</h2><p>不同于传统阻塞式的 I&#x2F;O 实现，在 NIO 模式下支持 SSL 功能是一个艰难的工作。你不能只是简单的包装一下流数据并进行加密或解密工作，你不得不借助于 javax.net.ssl.SSLEngine，SSLEngine 是一个有状态的实现，其复杂性不亚于 SSL 自身。你必须管理所有可能的状态，例如密码套件，密钥协商（或重新协商），证书交换以及认证等。此外，与通常期望情况相反的是 SSLEngine 甚至不是一个绝对的线程安全实现。<br>在 Netty 内部，<a target="_blank" rel="noopener" href="http://netty.io/4.0/api/io/netty/handler/ssl/SslHandler.html">SslHandler</a> 封装了所有艰难的细节以及使用 SSLEngine 可 能带来的陷阱。你所做的仅是配置并将该 SslHandler 插入到你的 ChannelPipeline 中。同样 Netty 也允许你实现像 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Opportunistic_TLS">StartTlS</a> 那样所拥有的高级特性，这很容易。</p>
+<h2 id="HTTP-实现"><a href="#HTTP-实现" class="headerlink" title="HTTP 实现"></a>HTTP 实现</h2><p>HTTP 无 疑是互联网上最受欢迎的协议，并且已经有了一些例如 Servlet 容器这样的 HTTP 实现。因此，为什么 Netty 还要在其核心模块之上构建一套 HTTP 实现？<br>与现有的 HTTP 实现相比 Netty 的 HTTP 实现是相当与众不同的。在 HTTP 消息的低层交互过程中你将拥有绝对的控制力。这是因为 Netty 的 HTTP 实现只是一些 HTTP codec 和 HTTP 消息类的简单组合，这里不存在任何限制——例如那种被迫选择的线程模型。你可以随心所欲的编写那种可以完全按照你期望的工作方式工作的客户端或服务器端代码。这包括线程模型，连接生命期，快编码，以及所有 HTTP 协议允许你做的，所有的一切，你都将拥有绝对的控制力。<br>由于这种高度可定制化的特性，你可以开发一个非常高效的 HTTP 服务器，例如：</p>
+<ul>
+<li>要求持久化链接以及服务器端推送技术的聊天服务（如，<a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Comet_%28programming%29">Comet</a> )</li>
+<li>需要保持链接直至整个文件下载完成的媒体流服务（如，2 小时长的电影）</li>
+<li>需要上传大文件并且没有内存压力的文件服务（如，上传 1GB 文件的请求）</li>
+<li>支持大规模混合客户端应用用于连接以万计的第三方异步 web 服务。</li>
+</ul>
+<h2 id="WebSockets-实现"><a href="#WebSockets-实现" class="headerlink" title="WebSockets 实现"></a>WebSockets 实现</h2><p><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/WebSockets">WebSockets</a> 允许双向，全双工通信信道，在 TCP socket 中。它被设计为允许一个 Web 浏览器和 Web 服务器之间通过数据流交互。<br>WebSocket 协议已经被 IETF 列为 <a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc6455">RFC 6455</a> 规范。<br>Netty 已经实现了 WebSocket 和一些老版本的规范：<a target="_blank" rel="noopener" href="http://netty.io/4.0/api/io/netty/handler/codec/http/websocketx/package-frame.html">http://netty.io/4.0/api/io/netty/handler/codec/http/websocketx/package-frame.html</a></p>
+<h2 id="Google-Protocol-Buffer-整合"><a href="#Google-Protocol-Buffer-整合" class="headerlink" title="Google Protocol Buffer 整合"></a>Google Protocol Buffer 整合</h2><p><a target="_blank" rel="noopener" href="http://code.google.com/apis/protocolbuffers/docs/overview.html">Google Protocol Buffers</a> 是快速实现一个高效的二进制协议的理想方案。通过使用 <a target="_blank" rel="noopener" href="http://netty.io/4.0/api/io/netty/handler/codec/protobuf/ProtobufEncoder.html">ProtobufEncoder</a> 和 <a target="_blank" rel="noopener" href="http://netty.io/4.0/api/io/netty/handler/codec/protobuf/ProtobufDecoder.html">ProtobufDecoder</a>，你可以把 Google Protocol Buffers 编译器 (protoc) 生成的消息类放入到 Netty 的 codec 实现中。请参考“<a target="_blank" rel="noopener" href="http://docs.jboss.org/netty/3.2/xref/org/jboss/netty/example/localtime/package-summary.html">LocalTime</a>”实例，这个例子也同时显示出开发一个由简单协议定义 的客户及服务端是多么的容易。</p>
+<h1 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h1><h2 id="FastThreadLocal"><a href="#FastThreadLocal" class="headerlink" title="FastThreadLocal"></a>FastThreadLocal</h2><p>重写了JDK的ThreadLocal，但是速度更快</p>
+<h2 id="Recycle"><a href="#Recycle" class="headerlink" title="Recycle"></a>Recycle</h2><p>对象池</p>
+<h2 id="单机百万连接"><a href="#单机百万连接" class="headerlink" title="单机百万连接"></a>单机百万连接</h2><h2 id="Netty应用级别性能优化"><a href="#Netty应用级别性能优化" class="headerlink" title="Netty应用级别性能优化"></a>Netty应用级别性能优化</h2><h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><h2 id="如何使用-Netty"><a href="#如何使用-Netty" class="headerlink" title="如何使用 Netty"></a>如何使用 Netty</h2><p>Netty 是 Java 中的一个 NIO 框架：</p>
+<ol>
+<li>易用的 API；</li>
+<li>NIO 模型相对 BIO 更高效。</li>
+<li>解决了 Java 原生 NIO 接口存在的一些问题。<br>包括粘包半包问题、心跳检测等问题。</li>
+</ol>
+<h2 id="ServerBootstrap-默认情况下Netty服务端会起多个线程？又是什么时候启动这些线程的？"><a href="#ServerBootstrap-默认情况下Netty服务端会起多个线程？又是什么时候启动这些线程的？" class="headerlink" title="ServerBootstrap - 默认情况下Netty服务端会起多个线程？又是什么时候启动这些线程的？"></a>ServerBootstrap - 默认情况下Netty服务端会起多个线程？又是什么时候启动这些线程的？</h2><p>Netty中线程主要用于执行EventLoop的for循环任务，当ServerBootstrap<br>默认情况下创建2倍CPU核心线程数的线程。<br><code>io.netty.channel.MultithreadEventLoopGroup#MultithreadEventLoopGroup(int, java.util.concurrent.Executor, java.lang.Object...)</code><br>可以看到最终创建了个线程池<code>ThreadPerTaskExecutor</code><br><code>io.netty.util.concurrent.MultithreadEventExecutorGroup#MultithreadEventExecutorGroup(int, java.util.concurrent.Executor, io.netty.util.concurrent.EventExecutorChooserFactory, java.lang.Object...)</code></p>
+<h2 id="ServerBootstrap-Netty是如何解决JDK的空轮询Bug的？"><a href="#ServerBootstrap-Netty是如何解决JDK的空轮询Bug的？" class="headerlink" title="ServerBootstrap - Netty是如何解决JDK的空轮询Bug的？"></a>ServerBootstrap - Netty是如何解决JDK的空轮询Bug的？</h2><p>NioEventLoop</p>
+<h2 id="ServerBootstrap-Netty是如何保证异步串行无锁化的？"><a href="#ServerBootstrap-Netty是如何保证异步串行无锁化的？" class="headerlink" title="ServerBootstrap - Netty是如何保证异步串行无锁化的？"></a>ServerBootstrap - Netty是如何保证异步串行无锁化的？</h2><p>执行需要保证并发安全的操作时先判断是否是刚开始创建的线程，如果不是则放入一个单线程的线程池中执行。<br>线程创建位置：<code>SingleThreadEventExecutor</code>的构造方法<br>判断位置：<code>io.netty.util.concurrent.AbstractEventExecutor#inEventLoop</code></p>
+<h2 id="NioEventLoop-Netty如何检测新连接的接入？"><a href="#NioEventLoop-Netty如何检测新连接的接入？" class="headerlink" title="NioEventLoop - Netty如何检测新连接的接入？"></a>NioEventLoop - Netty如何检测新连接的接入？</h2><p>初始化ServerBootstrap时</p>
+<h2 id="NioEventLoop-新连接怎样被注册NioEventLoop线程？"><a href="#NioEventLoop-新连接怎样被注册NioEventLoop线程？" class="headerlink" title="NioEventLoop - 新连接怎样被注册NioEventLoop线程？"></a>NioEventLoop - 新连接怎样被注册NioEventLoop线程？</h2><p>调用bind时会启动一个NioEventLoop线程，用于监听连接请求。</p>
+<h2 id="pipeline-Netty如何判断ChannelHandler类型？"><a href="#pipeline-Netty如何判断ChannelHandler类型？" class="headerlink" title="pipeline - Netty如何判断ChannelHandler类型？"></a>pipeline - Netty如何判断ChannelHandler类型？</h2><p>ChannelHandler分为Inbound类型和Outbound类型，在Netty中将ChannelHandler添加到Pipeline时会判断这个ChannelHandler的类型，然后设置到一个bool类型的成员变量里，在传播时使用。<br><code>io.netty.channel.DefaultChannelHandlerContext#isInbound</code><br><code>io.netty.channel.DefaultChannelHandlerContext#isOutbound</code></p>
+<h2 id="pipeline-对ChannelHandler的添加会遵循什么样的顺序？"><a href="#pipeline-对ChannelHandler的添加会遵循什么样的顺序？" class="headerlink" title="pipeline - 对ChannelHandler的添加会遵循什么样的顺序？"></a>pipeline - 对ChannelHandler的添加会遵循什么样的顺序？</h2><p>根据Pipeline的传播逻辑可以看出，Inbound类型的ChannelHandler按添加顺序传播，而Outbound类型的ChannelHandler是按逆顺序传播的。</p>
+<h2 id="pipeline-用户手动触发事件传播，不同的触发方式有什么区别？"><a href="#pipeline-用户手动触发事件传播，不同的触发方式有什么区别？" class="headerlink" title="pipeline - 用户手动触发事件传播，不同的触发方式有什么区别？"></a>pipeline - 用户手动触发事件传播，不同的触发方式有什么区别？</h2><p>如果是在Pipeline中间的某个ChannelHandler中调用了read，则就是从这个节点开始往后传播，如果是write，就是从这个节点开始往前传播。</p>
+<h2 id="ByteBuf-内存的类别有哪些？"><a href="#ByteBuf-内存的类别有哪些？" class="headerlink" title="ByteBuf - 内存的类别有哪些？"></a>ByteBuf - 内存的类别有哪些？</h2><h2 id="ByteBuf-如何减少多线程之间内存分配的竞争？"><a href="#ByteBuf-如何减少多线程之间内存分配的竞争？" class="headerlink" title="ByteBuf - 如何减少多线程之间内存分配的竞争？"></a>ByteBuf - 如何减少多线程之间内存分配的竞争？</h2><h2 id="ByteBuf-不同大小的内存是如何进行分配的？"><a href="#ByteBuf-不同大小的内存是如何进行分配的？" class="headerlink" title="ByteBuf - 不同大小的内存是如何进行分配的？"></a>ByteBuf - 不同大小的内存是如何进行分配的？</h2><h2 id="ByteBuf-粘包半包问题是什么"><a href="#ByteBuf-粘包半包问题是什么" class="headerlink" title="ByteBuf - 粘包半包问题是什么"></a>ByteBuf - 粘包半包问题是什么</h2><h2 id="解码器抽象的解码过程？"><a href="#解码器抽象的解码过程？" class="headerlink" title="解码器抽象的解码过程？"></a>解码器抽象的解码过程？</h2><h2 id="Netty里面有哪些拆箱即用的解码器？"><a href="#Netty里面有哪些拆箱即用的解码器？" class="headerlink" title="Netty里面有哪些拆箱即用的解码器？"></a>Netty里面有哪些拆箱即用的解码器？</h2><h2 id="如何把对象变成字节流，并最终写到socket底层？"><a href="#如何把对象变成字节流，并最终写到socket底层？" class="headerlink" title="如何把对象变成字节流，并最终写到socket底层？"></a>如何把对象变成字节流，并最终写到socket底层？</h2><h2 id="如何使用Netty实现长短连接？"><a href="#如何使用Netty实现长短连接？" class="headerlink" title="如何使用Netty实现长短连接？"></a>如何使用Netty实现长短连接？</h2><p>长连接是为了复用连接资源，长连接下，多个请求可以使用同一个连接传输数据包。</p>
+<h2 id="如何使用Netty实现长短轮询？"><a href="#如何使用Netty实现长短轮询？" class="headerlink" title="如何使用Netty实现长短轮询？"></a>如何使用Netty实现长短轮询？</h2><p>长轮询的特点是请求发到服务器上时若没有资源（比如库存），请求会被挂起，直到资源充足后才返回。</p>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zero-gg/p/9057092.html">MySQL 5.7 半同步复制技术</a></li>
+<li><a target="_blank" rel="noopener" href="https://wiki.jikexueyuan.com/project/netty-4-user-guide/">Netty 4.x 用户指南</a></li>
+<li><a target="_blank" rel="noopener" href="https://netty.io/wiki/user-guide-for-4.x.html">User guide for 4.x（上面这个文档的英文原版）</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/netty/netty">github - netty &#x2F; netty</a></li>
+<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/overview-summary.html">Netty Source Xref (4.0.56.Final)（同上为源码）</a></li>
 </ol>
 <script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
