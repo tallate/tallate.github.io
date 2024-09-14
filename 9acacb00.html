@@ -28,7 +28,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://tallate.github.io/imgs/Kubernetes/scaling.svg">
 <meta property="article:published_time" content="2019-07-20T12:34:48.000Z">
-<meta property="article:modified_time" content="2023-08-20T12:17:42.831Z">
+<meta property="article:modified_time" content="2024-08-31T10:19:14.097Z">
 <meta property="article:author" content="tallate">
 <meta property="article:tag" content="Kubernetes">
 <meta name="twitter:card" content="summary">
@@ -91,7 +91,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">189</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">79</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">192</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -142,7 +142,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#kubectl-%E7%9A%84%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">kubectl 的安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kubernetes-%E5%90%AB%E4%B9%89"><span class="nav-number">2.</span> <span class="nav-text">kubernetes 含义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Kubernetes-Master"><span class="nav-number">2.1.</span> <span class="nav-text">Kubernetes Master</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Node"><span class="nav-number">2.2.</span> <span class="nav-text">Node</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#kubelet"><span class="nav-number">2.2.1.</span> <span class="nav-text">kubelet</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kube-proxy"><span class="nav-number">2.2.2.</span> <span class="nav-text">kube-proxy</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pod"><span class="nav-number">2.3.</span> <span class="nav-text">Pod</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service"><span class="nav-number">2.4.</span> <span class="nav-text">Service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Volumes"><span class="nav-number">2.5.</span> <span class="nav-text">Volumes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Namespaces"><span class="nav-number">2.6.</span> <span class="nav-text">Namespaces</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deployments"><span class="nav-number">2.7.</span> <span class="nav-text">Deployments</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DaemonSet"><span class="nav-number">2.8.</span> <span class="nav-text">DaemonSet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#StatefulSets"><span class="nav-number">2.9.</span> <span class="nav-text">StatefulSets</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ReplicaSet"><span class="nav-number">2.10.</span> <span class="nav-text">ReplicaSet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Jobs"><span class="nav-number">2.11.</span> <span class="nav-text">Jobs</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kubernetes-%E4%BD%BF%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">kubernetes 使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BACluster"><span class="nav-number">3.1.</span> <span class="nav-text">创建Cluster</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE"><span class="nav-number">3.2.</span> <span class="nav-text">访问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service-1"><span class="nav-number">3.3.</span> <span class="nav-text">Service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#app-%E6%89%A9%E5%B1%95"><span class="nav-number">3.4.</span> <span class="nav-text">app 扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BB%9A%E5%8A%A8%E6%9B%B4%E6%96%B0%EF%BC%88Rolling-Update%EF%BC%89"><span class="nav-number">3.5.</span> <span class="nav-text">滚动更新（Rolling Update）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#kubectl-%E7%9A%84%E5%AE%89%E8%A3%85"><span class="nav-number">1.</span> <span class="nav-text">kubectl 的安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kubernetes-%E5%90%AB%E4%B9%89"><span class="nav-number">2.</span> <span class="nav-text">kubernetes 含义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Kubernetes-Master"><span class="nav-number">2.1.</span> <span class="nav-text">Kubernetes Master</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Node"><span class="nav-number">2.2.</span> <span class="nav-text">Node</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#kubelet"><span class="nav-number">2.2.1.</span> <span class="nav-text">kubelet</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#kube-proxy"><span class="nav-number">2.2.2.</span> <span class="nav-text">kube-proxy</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pod"><span class="nav-number">2.3.</span> <span class="nav-text">Pod</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service"><span class="nav-number">2.4.</span> <span class="nav-text">Service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Volumes"><span class="nav-number">2.5.</span> <span class="nav-text">Volumes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Namespaces"><span class="nav-number">2.6.</span> <span class="nav-text">Namespaces</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deployments"><span class="nav-number">2.7.</span> <span class="nav-text">Deployments</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DaemonSet"><span class="nav-number">2.8.</span> <span class="nav-text">DaemonSet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#StatefulSets"><span class="nav-number">2.9.</span> <span class="nav-text">StatefulSets</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ReplicaSet"><span class="nav-number">2.10.</span> <span class="nav-text">ReplicaSet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Jobs"><span class="nav-number">2.11.</span> <span class="nav-text">Jobs</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kubernetes-%E4%BD%BF%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">kubernetes 使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BACluster"><span class="nav-number">3.1.</span> <span class="nav-text">创建Cluster</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BF%E9%97%AE"><span class="nav-number">3.2.</span> <span class="nav-text">访问</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service-1"><span class="nav-number">3.3.</span> <span class="nav-text">Service</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#app-%E6%89%A9%E5%B1%95"><span class="nav-number">3.4.</span> <span class="nav-text">app 扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BB%9A%E5%8A%A8%E6%9B%B4%E6%96%B0%EF%BC%88Rolling-Update%EF%BC%89"><span class="nav-number">3.5.</span> <span class="nav-text">滚动更新（Rolling Update）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#k8s-Helm"><span class="nav-number">3.6.</span> <span class="nav-text">k8s Helm</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">3.6.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95"><span class="nav-number">3.6.2.</span> <span class="nav-text">语法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E6%88%98"><span class="nav-number">3.6.3.</span> <span class="nav-text">实战</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -155,7 +155,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">189</span>
+          <span class="site-state-item-count">192</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -166,7 +166,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-count">79</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -229,7 +229,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+      <time title="修改时间：2024-08-31 18:19:14" itemprop="dateModified" datetime="2024-08-31T18:19:14+08:00">2024-08-31</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -321,8 +321,47 @@
 <li>验证更新<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 确认应用正在运行中</span><br><span class="line">kubectl describe services/kubernetes-bootcamp</span><br><span class="line"># 用一个NODE_PORT环境变量保存Node暴露的端口，然后用curl确认暴露的服务可以使用</span><br><span class="line">export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template=&#x27;&#123;&#123;(index .spec.ports 0).nodePort&#125;&#125;&#x27;)</span><br><span class="line">echo NODE_PORT=$NODE_PORT</span><br><span class="line">curl $(minikube ip):$NODE_PORT</span><br><span class="line"># 更新同样可以使用rollout status命令来确认</span><br><span class="line">kubectl rollout status deployments/kubernetes-bootcamp</span><br><span class="line"># 查看应用当前使用的镜像的版本</span><br><span class="line">kubectl describe pods</span><br></pre></td></tr></table></figure></li>
 <li>回滚（Rollback）<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 设置镜像进行更新，但是这个镜像的v10版本是不存在的，因此会引起更新失败</span><br><span class="line">kubectl set image deployments/kubernetes-bootcamp kubernetes-bootcamp=gcr.io/google-samples/kubernetes-bootcamp:v10</span><br><span class="line"># 查看Deployment的当前状态，会发现某些Pod运行不正常</span><br><span class="line">kubectl get deployments</span><br><span class="line"># 查看Pod状态，describe能提供更多信息</span><br><span class="line">kubectl get pods</span><br><span class="line">kubectl describe pods</span><br><span class="line"># 发现问题，可以使用rollout undo命令来回滚，rollout命令会复原deployment到上一已知状态。实际上所有更新操作都是版本化的，并且每次更新都可以回滚到之前的任意版本</span><br><span class="line">kubectl rollout undo deployments/kubernetes-bootcamp</span><br><span class="line"># 接下来再查看Pod的状态可以发现所有的Pod都已经恢复运行了</span><br><span class="line">kubectl get pods</span><br><span class="line">kubectl describe pods</span><br></pre></td></tr></table></figure></li>
 </ol>
+<h3 id="k8s-Helm"><a href="#k8s-Helm" class="headerlink" title="k8s Helm"></a>k8s Helm</h3><p>Helm是k8s的包管理工具</p>
+<ul>
+<li>Chart：每个包称为一个 Chart，一个 Chart 是一个目录（一般情况下会将目录进行打包压缩，形成 name-version.tgz 格式的单一文件，方便传输和存储）。</li>
+<li>Tiller：Tiller 是 Helm 的服务端，部署在 Kubernetes 集群中。Tiller 用于接收 Helm 的请求，并根据 Chart 生成 Kubernetes 的部署文件（ Helm 称为 Release ），然后提交给 Kubernetes 创建应用。Tiller 还提供了 Release 的升级、删除、回滚等一系列功能。</li>
+<li>Repository：Helm 的软件仓库，Repository 本质上是一个 Web 服务器，该服务器保存了一系列的 Chart 软件包以供用户下载，并且提供了一个该 Repository 的 Chart 包的清单文件以供查询。Helm 可以同时管理多个不同的 Repository。首次安装 Helm 时，它已预配置为使用官方 Kubernetes chart 存储库 repo。该 repo 包含许多精心设计和维护的 charts。此 charts repo 默认以 stable 命名。</li>
+<li>Release：使用 helm install 命令在 Kubernetes 集群中部署的 Chart 的一个实例称为 Release。在同一个集群上，一个 Chart 可以安装很多次。每次安装都会创建一个新的 release。例如一个 MySQL Chart，如果想在服务器上运行两个数据库，就可以把这个 Chart 安装两次。每次安装都会生成自己的 Release，会有自己的 Release 名称。</li>
+</ul>
+<h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><p>Chart Install 过程：</p>
+<ol>
+<li>Helm 从指定的目录或者 tgz 文件中解析出 Chart 结构信息</li>
+<li>Helm 将指定的 Chart 结构和 Values 信息通过 gRPC 传递给 Tiller</li>
+<li>Tiller 根据 Chart 和 Values 生成一个 Release</li>
+<li>Tiller 将 Release 发送给 Kubernetes 用于生成 Release</li>
+</ol>
+<p>Chart Update 过程：</p>
+<ol>
+<li>Helm 从指定的目录或者 tgz 文件中解析出 Chart 结构信息</li>
+<li>Helm 将要更新的 Release 的名称和 Chart 结构，Values 信息传递给 Tiller</li>
+<li>Tiller 生成 Release 并更新指定名称的 Release 的 History</li>
+<li>Tiller 将 Release 发送给 Kubernetes 用于更新 Release</li>
+</ol>
+<p>Chart Rollback 过程：</p>
+<ol>
+<li>Helm 将要回滚的 Release 的名称传递给 Tiller</li>
+<li>Tiller 根据 Release 的名称查找 History</li>
+<li>Tiller 从 History 中获取上一个 Release</li>
+<li>Tiller 将上一个 Release 发送给 Kubernetes 用于替换当前 Release</li>
+</ol>
+<h4 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h4><p>表达式<br>模版表达式： <br>模版表达式：， 表示去掉表达式输出结果前面和后面的空格。去掉前面空格可以这么写，去掉后面空格 </p>
+<blockquote>
+<p>待补充</p>
+</blockquote>
+<h4 id="实战"><a href="#实战" class="headerlink" title="实战"></a>实战</h4><p>实战中可以将配置单独存放一个代码库，主要包含：</p>
+<ul>
+<li>镜像版本配置</li>
+<li>中间件配置</li>
+<li>外部依赖</li>
+<li>业务配置</li>
+</ul>
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/">Tutorials</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/kubernetes-basics/">Learn Kubernetes Basics</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/">Configuring Redis using a ConfigMap</a><br>使用 k8s 搭建 Redis 集群<br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address/">Exposing an External IP Address to Access an Application in a Cluster</a><br>如何使用 k8s 搭建一个无状态服务<br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/">StatefulSet Basics</a><br>如何使用 k8s 搭建一个有状态服务<br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/clusters/apparmor/">AppArmor</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/services/source-ip/">Using Source IP</a><br><a href="linux.com/tutorials/set-cicd-pipeline-kubernetes-part-1-overview/">CICD</a><br><a target="_blank" rel="noopener" href="https://www.linux.com/tutorials/set-cicd-pipeline-jenkins-pod-kubernetes-part-2/">https://www.linux.com/tutorials/set-cicd-pipeline-jenkins-pod-kubernetes-part-2/</a><br><a target="_blank" rel="noopener" href="https://www.linux.com/tutorials/run-and-scale-distributed-crossword-puzzle-app-cicd-kubernetes-part-3/">https://www.linux.com/tutorials/run-and-scale-distributed-crossword-puzzle-app-cicd-kubernetes-part-3/</a><br><a target="_blank" rel="noopener" href="https://www.linux.com/tutorials/set-cicd-distributed-crossword-puzzle-app-kubernetes-part-4/">https://www.linux.com/tutorials/set-cicd-distributed-crossword-puzzle-app-kubernetes-part-4/</a></li>
+<li><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/">Tutorials</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/kubernetes-basics/">Learn Kubernetes Basics</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/">Configuring Redis using a ConfigMap</a><br>使用 k8s 搭建 Redis 集群<br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address/">Exposing an External IP Address to Access an Application in a Cluster</a><br>如何使用 k8s 搭建一个无状态服务<br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/">StatefulSet Basics</a><br>如何使用 k8s 搭建一个有状态服务<br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/clusters/apparmor/">AppArmor</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/services/source-ip/">Using Source IP</a><br><a href="linux.com/tutorials/set-cicd-pipeline-kubernetes-part-1-overview/">CICD</a><br><a target="_blank" rel="noopener" href="https://www.linux.com/tutorials/set-cicd-pipeline-jenkins-pod-kubernetes-part-2/">https://www.linux.com/tutorials/set-cicd-pipeline-jenkins-pod-kubernetes-part-2/</a><br><a target="_blank" rel="noopener" href="https://www.linux.com/tutorials/run-and-scale-distributed-crossword-puzzle-app-cicd-kubernetes-part-3/">https://www.linux.com/tutorials/run-and-scale-distributed-crossword-puzzle-app-cicd-kubernetes-part-3/</a><br><a target="_blank" rel="noopener" href="https://www.linux.com/tutorials/set-cicd-distributed-crossword-puzzle-app-kubernetes-part-4/">https://www.linux.com/tutorials/set-cicd-distributed-crossword-puzzle-app-kubernetes-part-4/</a><br><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/1157069">Helm</a></li>
 </ol>
 <script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
     </div>

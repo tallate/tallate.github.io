@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">189</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">79</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">192</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">189</span>
+          <span class="site-state-item-count">192</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -158,7 +158,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-count">79</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -175,6 +175,840 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/ad5b98b9.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/ad5b98b9.html" class="post-title-link" itemprop="url">JVM 的结构</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-05 20:56:12" itemprop="dateCreated datePublished" datetime="2019-10-05T20:56:12+08:00">2019-10-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+
+<p><img src="/imgs/JVM/JVM%E7%BB%93%E6%9E%84.png" alt="JVM结构" title="JVM结构"><br>JVM 特指用于运行由 Java 虚拟机规范规定的字节码的运行时系统，它具有以下特征：</p>
+<ul>
+<li>平台无关性<br>JVM 本身是平台相关的，只是对不同平台都有实现，所以我们编译成的字节码才可以在各个平台上执行，因此称 Java 平台无关指的是字节码是平台无关的。</li>
+<li>高度抽象<br>JVM 提供了编译器、类加载、动态内存管理、线程等一套工具，作为虚拟机，程序经编译后运行在 JVM 上时，几乎完全不必担心平台的兼容性。<br>本地方法接口只是作为一个扩展功能提供，并不是必须的，实际上除了对性能严格要求的场合，本地方法一般不会被使用。<blockquote>
+<p>编译器严格来说和虚拟机并无太大关联，JVM 可以供 Groovy、Kotlin、Scala 等一系列语言作为运行时环境，</p>
+</blockquote>
+</li>
+</ul>
+<p>下图表示 JVM 的系统结构，包括与 Class 文件打交道的类装载系统、进行运行时数据管理的系统、进行方法执行的系统、本地方法接口（JNI）和本地方法库这些部分。</p>
+<h3 id="类装载子系统"><a href="#类装载子系统" class="headerlink" title="类装载子系统"></a>类装载子系统</h3><p>类装载子系统负责查找并装载类型，类装载器主要包含两种：<strong>启动类装载器（Java 虚拟机实现的一部分）</strong>和<strong>用户自定义类装载器（Java 程序的一部分）</strong>。</p>
+<p>启动类装载器 – Java 虚拟机必须有一个启动类装载器，用于装载受信任的类，如 Java API 的 class 文件。<br>用户自定义类装载器 – 继承自 ClassLoader 类，ClassLoader 的如下四个方法，是通往 Java 虚拟机的通道。</p>
+<ul>
+<li>protected final Class defineClass(String name, byte data[], int offset, int length); &#x2F;&#x2F; data 为二进制的 Java Class 文件数据，表示一个新的可用类型，之后把这个类型导入到方法区中</li>
+<li>protected final Class defineClass(String name, byte data[], int offset, int length, ProtectionDomain protectionDomain);</li>
+<li>protected final Class findSystemClass(String name); &#x2F;&#x2F; 参数为全限定名，通过类装载器进行装载</li>
+<li>protected final void resolveClass(Class c); &#x2F;&#x2F; 参数为 Class 实例，完成连接初始化操作</li>
+</ul>
+<p>类装载子系统负责<strong>定位和导入二进制 class 文件，并且保证导入类的正确性，为类变量分配并初始化内存，以及帮助解析符号引用</strong>。类装载器必须严格按照如下顺序进行类的装载。</p>
+<ol>
+<li>装载 – 查找并装载类型的二进制数据</li>
+<li>连接 – 执行验证，准备，以及解析（可选），连接分为如下三个步骤<br> 验证 – 确保被导入类型的正确性<br> 准备 – 为类变量（static）分配内存，并将其初始化为默认值<br> 解析 – 把类型中的符号引用转换为直接引用</li>
+<li>初始化 – 把类变量初始化为正确初始值</li>
+</ol>
+<h2 id="内存管理系统"><a href="#内存管理系统" class="headerlink" title="内存管理系统"></a>内存管理系统</h2><h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><p>方法区是线程共享的内存区域，用于存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据，当方法区无法满足内存分配需求时，将抛出 OutOfMemoryError。<br>类信息包括：</p>
+<ol>
+<li>类型全限定名。</li>
+<li>类型的直接超类的全限定名（除非这个类型是 java.lang.Object，它没有超类）。</li>
+<li>类型是类类型还是接口类型。</li>
+<li>类型的访问修饰符（public、abstract、final 的某个子集）。</li>
+<li>任何直接超接口的全限定名的有序列表。</li>
+<li>类型的常量池。</li>
+<li>字段信息。</li>
+<li>方法信息。</li>
+<li>除了常量以外的所有类（静态）变量。</li>
+<li>一个到类 ClassLoader 的引用。</li>
+<li>一个到 Class 类的引用。</li>
+</ol>
+<p>着重介绍<strong>常量池</strong>，虚拟机必须要为每个被装载的类型维护一个常量池。常量池就是该类型所用常量的一个有序集合，包括直接常量和对其他类型、字段和方法的符号引用。它在 Java 程序的<strong>动态连接</strong>（运行时解析字节码中使用到的符号引用）中起着核心作用。<br>除了以上结构外，JVM 的实现者还可以添加一些其他的数据结构，如方法表：对每个加载的非抽象类的类信息中都添加一个方法表，方法表是一组对类实例方法的直接引用——包括从父类继承的方法，JVM 可以通过方法表快速找到实例方法。</p>
+<blockquote>
+<p>C++中 virtual 函数是通过虚函数表实现的，Java 中所有方法都是 virtual 的，因此也就不需要再标注虚拟了，正像 Java 虽然宣称没有指针，但是 Java 里其实全是指针。Java 中类似的检查机制不少，这体现了 Java 的一种设计思想：始终将安全放在效率之上。</p>
+</blockquote>
+<h3 id="元空间"><a href="#元空间" class="headerlink" title="元空间"></a>元空间</h3><p>JDK1.8 的一大改动是方法区变成了元空间，其实就是放开了类空间的大小，容量取决于是 32 位或是 64 位操作系统的可用虚拟内存大小，32 位系统本地最多有 4G 虚拟内存空间，物理内存取决于操作系统的配置。新参数<code>MaxMetaspaceSize</code>用于限制本地内存分配给类元数据的大小，如果没有指定这个参数，元空间会在运行时根据需要动态调整，大小随意。对于没用的类及类加载器的垃圾回收将在元数据使用达到 MaxMetaspaceSize 参数的设定值时进行。</p>
+<h3 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h3><p>一个虚拟机实例只对应一个堆空间，堆是<strong>线程共享</strong>的，当然还有可能会划分出多个线程私有的分配缓冲区（<strong>TLAB</strong>）。堆空间是存放对象实例的地方，几乎所有对象实例都在这里分配。堆也是<strong>垃圾收集器</strong>管理的主要区域，因此也被称为“GC 堆”。<br>堆可以处于物理上不连续的内存空间中，只要逻辑上连续即可，就像磁盘空间一样。<br>当堆中没有足够的内存进行对象实例分配时，并且堆也无法扩展时，会抛出 OutOfMemoryError 异常。<br>对 OOM 的排查通常是先通过内存映像分析工具对 Dump 出来的堆转储快照进行分析，重点是确认内存中的对象是否是必要的，也就是要先分清楚到底是出现了<strong>内存泄漏</strong>还是<strong>内存溢出</strong>。</p>
+<ul>
+<li>如果是内存泄漏，可进一步通过工具查看泄露对象到 GC Roots 的引用链。于是就能找到泄露对象的类型信息及 GC Roots 引用链的信息，就可以比较准确地定位出泄露代码的位置。</li>
+<li>如果不存在泄露，就是内存中的对象确实都还必须存活着，那就应当检查虚拟机的堆参数（-Xmx 与 -Xms），与机器物理内存对比看是否还可以调大，从代码上检查是否存在某些对象生命周期过长、持有状态时间过长的情况，尝试减少程序运行期的内存消耗。</li>
+</ul>
+<h3 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h3><p>每个线程拥有自己的程序计数器，线程之间的程序计数器互不影响，在任何一个确定的时刻，一个处理器（对于多核处理器来说是一个内核）都只会执行一条线程中的指令。<br>PC 寄存器的内容总是下一条将被执行指令的”地址”，这里的”地址”可以是一个本地指针，也可以是在方法字节码中相对于该方法起始指令的偏移量。</p>
+<ul>
+<li>如果该线程正在执行一个本地方法，则程序计数器内容为 undefined。</li>
+<li>此区域在 Java 虚拟机规范中没有规定任何 OutOfMemoryError 情况的区域。</li>
+</ul>
+<h3 id="虚拟机栈"><a href="#虚拟机栈" class="headerlink" title="虚拟机栈"></a>虚拟机栈</h3><p>我们一般会把 Java 内存区分为堆内存和栈内存，而所指的“栈”就是这里的虚拟机栈，或者说是虚拟机栈中局部变量表部分。<br>Java 栈也是线程私有的，虚拟机只会对栈进行两种操作，以帧为单位的<strong>入栈</strong>和<strong>出栈</strong>。每个方法在执行时都会创建一个<strong>栈帧</strong>，并入栈，成为当前帧，每一个方法从调用直至执行完成的过程，就对应着一个栈帧在虚拟机栈中从入栈到出栈的过程。栈帧由三部分组成：局部变量区、操作数栈、帧数据区。<br><strong>局部变量区</strong>被组织为一个以字长为单位、从 0 开始计数的数组。字节码指令通过从 0 开始的索引来使用其中的数据。类型为 int、float、reference 和 returnAddress 的值在数组中只占据一项，而类型为 byte、short 和 char 的值存入时都会转化为 int 类型，也占一项，而 long、double 则连续占据两项。<br><strong>操作数栈</strong>也常被称为操作栈，它是一个后入先出栈。当一个方法刚刚执行的时候，这个方法的操作数栈是空的，在方法执行的过程中，会有各种字节码指令向操作数栈中写入和提取值，也就是入栈与出栈操作。在使用操作数栈时需要注意实例方法和类方法：<br>    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class Example &#123;</span><br><span class="line">    // 类方法</span><br><span class="line">    public static int classMethod(int i, long l, float f, double d, Object o, byte b) &#123;</span><br><span class="line">        return 0;</span><br><span class="line">    &#125;</span><br><span class="line">    // 实例方法</span><br><span class="line">    public int instanceMethod(char c, double d, short s, boolean b) &#123;</span><br><span class="line">        return 0;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>类方法和实例方法栈帧结构有所不同，从图中可以看到它们之间的区别：</p>
+<ul>
+<li>类方法帧里没有隐含的 this 引用，而实例方法帧中会隐含一个 this 引用；</li>
+</ul>
+<p>并且注意：</p>
+<ul>
+<li>byte,char,short,boolean 类型存入局部变量区的时候都会被转化成 int 类型值，当被存回堆或者方法区时，才会转化回原来的类型；</li>
+<li>returnAddress 类型数据是指向字节码的指针（方法区的字节码指令），它只存在于字节码层面，与编程语言无关，我们在 Java 语言中是不会直接与 returnAddress 类型数据打交道的。<blockquote>
+<p>每个线程所持有的程序计数器（pc）实际上就是 returnAddress 类型的数据，当线程执行 native 方法时，pc 中的值为 undefied。</p>
+</blockquote>
+</li>
+<li>操作数栈被组织成一个以字长为单位的数组，它是通过标准的栈操作——即入栈和出栈来进行访问，而不是通过索引访问。入栈和出栈也会存在类型的转化；</li>
+<li>当一个方法执行完毕之后，要返回之前调用它的地方，因此在栈帧中必须保存一个方法返回地址。方法退出的过程实际上等同于把当前栈帧出栈，因此退出时可能执行的操作有：恢复上层方法的局部变量表和操作数栈，把返回值(如果有的话)压入调用都栈帧的操作数栈中，调用 PC 计数器的值以指向方法调用指令后面的一条指令等。</li>
+<li>每个栈帧都包含一个指向运行时常量池中该栈帧所属方法的引用，持有这个引用是为了支持方法调用过程中的动态连接。在 Class 文件的常量池中存有大量的符号引用，字节码中的方法调用指令就以常量池中指向方法的符号引用为参数。这些符号引用一部分会在类加载阶段或第一次使用的时候转化为直接引用，这种转化称为静态解析。另外一部分将在每一次的运行期期间转化为直接引用，这部分称为动态连接。</li>
+</ul>
+<p><strong>栈数据区</strong>存放一些用于支持常量池解析、正常方法返回以及异常派发机制的信息。即将常量池的符号引用转化为直接地址引用、恢复发起调用的方法的帧进行正常返回，发生异常时转交异常表进行处理。</p>
+<ul>
+<li>虚拟机规范允许具体的虚拟机实现增加一些规范里没有描述的信息到栈帧中，例如与高度相关的信息，这部分信息完全取决于具体的虚拟机实现。在实际开发中，一般会把动态连接，方法返回地址与其它附加信息全部归为一类，称为<strong>栈帧信息</strong>。</li>
+</ul>
+<p>在 Java 虚拟机规范中，规定了两种异常状况：如果线程请求的栈深度大于虚拟机所允许的深度，将抛出 StackOverflowError 异常；如果虚拟机栈可以动态扩展，当扩展时无法申请到足够的内存，就会抛出 OutOfMemoryError 异常。</p>
+<p>系统分配给每个进程的内存是有限制的，除去 Java 堆、方法区、程序计数器，如果虚拟机进程本身耗费的内存不计算在内，剩下内存就由虚拟机栈和本地方法栈“瓜分”了。每个线程分配到的栈容量越大，可以建立的线程数量自然就越少，建立线程时就越容易把剩下的内存耗尽，出现<strong>虚拟机栈溢出</strong>的情况。</p>
+<ul>
+<li>如果线程请求的栈深度大于虚拟机所允许的最大深度，将抛出 StackOverflowError 异常，出现 StackOverflowError 异常时有错误栈可以阅读，栈深度在大多数情况下达到 1000~2000 完全没有问题，对于正常的方法调用（包括递归），这个深度在一半情况下完全够用。</li>
+<li>如果虚拟机在扩展栈（建立更多的线程）时无法申请到足够的内存空间，则抛出 OutOfMemoryError 异常，在不能减少线程数或者更换 64 位虚拟机的情况下，就只能通过减少最大堆和减少栈容量来换取更多的线程。</li>
+</ul>
+<p>一般可以认为 Java 中的一切变量都是引用，实际的对象存储在堆中，但是基础类型比较特殊，它们可以直接使用操作符进行算数运算，不过基础类型也带来了一些问题，比如装箱拆箱过程中可能产生空指针异常。Java 中引入基础类型的动机应该是性能与空间利用率，毕竟使用引用时还得通过<strong>指针碰撞</strong>或<strong>空闲列表</strong>方法（根据垃圾收集器不同而不同）来找到实际对象，而且基础类型本身占用的空间不多，如果用引用势必占用的空间会加倍。<br>基础类型并不是都分配在栈上，具体有以下几种情况：</p>
+<ol>
+<li>在方法中声明的变量，即该变量是局部变量，每当程序调用方法时，系统都会为该方法建立一个方法栈，其所在方法中声明的变量就放在方法栈中，当方法结束系统会释放方法栈，其对应在该方法中声明的变量随着栈的销毁而结束，这就局部变量只能在方法中有效的原因<br>在方法中声明的变量可以是基本类型的变量，也可以是引用类型的变量。<ul>
+<li>当声明是基本类型的变量的时，其变量名及值（变量名及值是两个概念）是放在方法栈中</li>
+<li>当声明的是引用变量时，所声明的变量（该变量实际上是在方法中存储的是内存地址值）是放在方法的栈中，该变量所指向的对象是放在堆类存中的。</li>
+</ul>
+</li>
+<li>在类中声明的变量是成员变量，也叫全局变量，放在堆中的（因为全局变量不会随着某个方法执行结束而销毁）。<br>同样在类中声明的变量即可是基本类型的变量 也可是引用类型的变量<ul>
+<li>当声明的是基本类型的变量其变量名及值是放在堆中的</li>
+<li>引用类型时，其声明的变量仍然会存储一个内存地址值，该内存地址值指向所引用的对象。引用变量名和对应的对象仍然存储在相应的堆中</li>
+</ul>
+</li>
+</ol>
+<h3 id="堆外内存"><a href="#堆外内存" class="headerlink" title="堆外内存"></a>堆外内存</h3><h4 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 分配一块1024字节的堆外内存</span><br><span class="line">ByteBuffer buffer = ByteBuffer.allocateDirect(1024);</span><br><span class="line">System.out.println(buffer.capacity());</span><br><span class="line">buffer.putInt(0, 2018);</span><br><span class="line">System.out.println(buffer.getInt(0));</span><br></pre></td></tr></table></figure>
+
+<h4 id="为什么要使用堆外内存"><a href="#为什么要使用堆外内存" class="headerlink" title="为什么要使用堆外内存"></a>为什么要使用堆外内存</h4><p>主要是因为堆外内存在 IO 操作方面的优势，举一个例子：在通信中，将存在于堆内存中的数据 flush 到远程时，需要首先将堆内存中的数据拷贝到堆外内存中，然后再写入 Socket 中；如果直接将数据存到堆外内存中就可以避免上述拷贝操作，提升性能。类似的例子还有读写文件。<br>但是需要注意的是，直接访问堆外内存并不会比访问 Java 堆更快：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/njCKlx8mBh6kSP2lC9mT4g">哪个更快：Java 堆还是本地内存</a>。堆外内存更适合用于操作大块的数据（&gt;2G）、可以直接使用操作系统提供的本地 IO 进行操作。</p>
+<h4 id="可用的堆外内存额度"><a href="#可用的堆外内存额度" class="headerlink" title="可用的堆外内存额度"></a>可用的堆外内存额度</h4><ol>
+<li>可以通过设定 <code>-XX:MaxDirectMemorySize</code> 来显式指定最大的堆外内存。</li>
+<li>设定 <code>-Dsun.nio.MaxDirectMemorySize</code> 来显式指定：如果该属性为-1，则取<code>directMemory = Runtime.getRuntime().maxMemory()</code>，即 JVM 运行时的最大内存；否则，如果指定这个属性等于-1，则默认为 64M。<br>如果是 JDK8，具体代码见<code>VM.saveAndRemoveProperties()</code>，如果是 JDK8 之前，则代码见<code>VM.maxDirectMemory()</code>。<br>另外，<code>Runtime.getRuntime().maxMemory()</code>是一个 native 方法，HotSpot 中对应的 C++代码如下所示：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">JNIEXPORT jlong JNICALL</span><br><span class="line">Java_java_lang_Runtime_maxMemory(JNIEnv *env, jobject this)</span><br><span class="line">&#123;</span><br><span class="line">    return JVM_MaxMemory();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">JVM_ENTRY_NO_ENV(jlong, JVM_MaxMemory(void))</span><br><span class="line">  JVMWrapper(&quot;JVM_MaxMemory&quot;);</span><br><span class="line">  size_t n = Universe::heap()-&gt;max_capacity();</span><br><span class="line">  return convert_size_t_to_jlong(n);</span><br><span class="line">JVM_END</span><br></pre></td></tr></table></figure>
+其中 max_capacity() 实际返回的是 –Xmx 设置值减去一个 survivor space 的预留区大小，与堆内大小存很接近。</li>
+</ol>
+<h4 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h4><ol>
+<li>分配<br>ByteBuffer.allocateDirect<br>DirectByteBuffer(int)<br>-&gt; Bits.reserveMemory 在系统中保存总分配内存（按页分配）的大小和实际内存的大小<br> -&gt; Bits.tryReserveMemory 判断系统内存（堆外内存）是否足够，Bits 有一个全局 totalCapacity 变量记录当前已经使用的堆外内存量<br> -&gt; JavaLangRefAccess.tryHandlePendingReference 非阻塞，将已经被 JVM 垃圾回收的 DirectBuffer 对象的堆外内存释放。<br> -&gt; System.gc 触发一次 FullGC，<code>System.gc</code>并不能保证 FullGC 被马上执行，如果设置了<code>-XX:+DisableExplicitGC</code>则这种显式的 GC 会被禁用<br> -&gt; Bits.tryReserveMemory 为了等待 FullGC 释放足够的空间，之后还会重试最多 9 次 tryReserveMemory，每次重试会 sleep 1, 2, 4, 8, 16, 32, 64, 128, 256ms，也就是说最多可以等 0.5s<br> -&gt; throw new OutOfMemoryError 分配空间失败，抛出 OOM 异常<br>-&gt; Unsafe.allocateMemory native 方法，通过 JNI 调用 C++函数分配堆外内存，并返回内存基地址<br>-&gt; Unsafe.setMemory(base, size, (byte) 0) 将分配的内存清零<br>-&gt; Cleaner.create 创建一个 Cleaner 用于释放堆空间</li>
+<li>释放<br>Cleaner.create Cleaner 内部维护了一个 static 的 Cleaner 对象的链表，create 调用创建了一个 Cleaner 对象并将其加入到该链表中<br>-&gt; new Cleaner(DirectByteBuffer, new Deallocator(base, size, cap))</li>
+</ol>
+<p>Cleaner 实现 GC 回收堆外内存的原理是<code>PhantomReference（虚引用）</code>，虚引用必须和引用队列（ReferenceQueue）一起使用，一般用于实现追踪垃圾收集器的回收动作。虚引用不会影响 JVM 是否要 GC 这个对象的判断，当 GC 某个对象时，如果有此对象上还有虚引用，会将虚引用对象插入 <code>ReferenceQueue</code> 队列。<br>对于 Cleaner 对象，当 GC 时发现它除了虚引用外已不可达（持有它的 DirectByteBuffer 对象在 GC 中被回收了，此时，只有 Cleaner 对象唯一保存了堆外内存的数据），就会把它放进 Reference 类的 <code>pending</code> 静态变量里。<br>PhantomReference 的父类是 Reference，Reference 类内部的 static 块会启动 ReferenceHandler 线程，线程优先级很高，这个线程是用来处理 JVM 在 GC 过程中交接过来的 reference（<code>pending</code>）。<br>下面是该线程的大致执行流程：<br>ReferenceHandler.run() 死循环处理 JVM 提交的 reference，如果是 Clearner 则调用其 clean 方法<br>-&gt; Cleaner.clean<br>    -&gt; Cleaner.remove(Cleaner) 首先将 Cleaner 从链表中移除，以便 Cleaner 自身可被 GC 回收掉<br>    -&gt; DirectByteBuffer.Deallocator.run()<br>        -&gt; Unsafe.freeMemory 释放分配的堆外内存<br>        -&gt; Bits.unreserveMemory 更新 Bits.totalCapacity</p>
+<h4 id="手动释放堆外内存"><a href="#手动释放堆外内存" class="headerlink" title="手动释放堆外内存"></a>手动释放堆外内存</h4><p>如前面所述，可以通过编码调用 DirectByteBuffer 的 cleaner 的 clean 方法来释放堆外内存。但需要注意：cleaner 是 private 访问权限，所以，需使用反射来实现。</p>
+<h4 id="MappedByteBuffer"><a href="#MappedByteBuffer" class="headerlink" title="MappedByteBuffer"></a>MappedByteBuffer</h4><p>MappedByteBuffer 是用来访问大文件的，其实是利用操作系统的 mapedfile 的机制，把一个大文件映射到物理内存，然后用户进程像访问内存一样访问文件，背后操作系统会把磁盘文件映射到内存中来，这是操作系统预估你想存取哪块提前为你准备好的。</p>
+<h3 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h3><p>访问本地方式时使用到的栈，为本地方法服务，与虚拟机栈一样，本地方法区域也会抛出 StackOverflowError 和 OutOfMemoryError 异常。</p>
+<h2 id="方法执行引擎"><a href="#方法执行引擎" class="headerlink" title="方法执行引擎"></a>方法执行引擎</h2><p>用户所编写的程序如何表现正确的行为需要执行引擎的支持，执行引擎执行字节码指令，完成程序的功能。</p>
+<h2 id="本地方法接口（JNI）"><a href="#本地方法接口（JNI）" class="headerlink" title="本地方法接口（JNI）"></a>本地方法接口（JNI）</h2><p>本地方法接口称为 JNI，是为可移植性准备的。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>《Hotspot 实战》</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/column/details/14851.html">GC 性能优化</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/lirenzuo/column/info/17179">JVM 菜鸟进阶高手之路</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jvms/se8/html/index.html">The Java® Virtual Machine Specification</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jls/se8/html/index.html">The Java® Language Specification</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7f6832d61880">Java 和操作系统交互细节</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/807599f6.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/807599f6.html" class="post-title-link" itemprop="url">JVM调优</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-05 20:56:12" itemprop="dateCreated datePublished" datetime="2019-10-05T20:56:12+08:00">2019-10-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+
+<p>了解 JVM 中内存管理的原理后，下一步就是如何调优了。</p>
+<h2 id="JVM参数"><a href="#JVM参数" class="headerlink" title="JVM参数"></a>JVM参数</h2><h3 id="D、-X、-XX-区别"><a href="#D、-X、-XX-区别" class="headerlink" title="-D、-X、-XX 区别"></a>-D、-X、-XX 区别</h3><p>其一是标准参数（-），所有的 JVM 实现都必须实现这些参数的功能，而且向后兼容；（包括-D 等）JVM 的标准参数都是以”-“开头，通过输入”java -help”或者”java -?”，可以查看 JVM 标准参数列表<br>其二是非标准参数（-X），默认 jvm 实现这些参数的功能，但是并不保证所有 jvm 实现都满足，且不保证向后兼容；但是列出来的都是当前可用的。<br>其三是非 Stable 参数（-XX），此类参数各个 jvm 实现会有所不同，将来可能会随时取消，需要慎重使用；</p>
+<h3 id="栈大小"><a href="#栈大小" class="headerlink" title="栈大小"></a>栈大小</h3><ul>
+<li>Xss512k：用来设置每个线程的堆栈大小；</li>
+</ul>
+<h3 id="堆空间结构调整"><a href="#堆空间结构调整" class="headerlink" title="堆空间结构调整"></a>堆空间结构调整</h3><p><img src="/imgs/JVM/%E5%A0%86%E7%A9%BA%E9%97%B4%E7%BB%93%E6%9E%84%E8%B0%83%E6%95%B4.png" alt="堆空间结构调整" title="堆空间结构调整"></p>
+<ul>
+<li>Xmx4g：JVM 最大允许分配的堆内存，按需分配；</li>
+<li>Xms4g：JVM 初始分配的堆内存，一般和 Xmx 配置成一样以避免每次 gc 后 JVM 重新分配内存；</li>
+<li>XX：MetaspaceSize&#x3D;64m 初始化元空间大小；</li>
+<li>XX：MaxMetaspaceSize&#x3D;128m 最大化元空间大小。</li>
+</ul>
+<p>Metaspace 建议不要设置，一般让 JVM 自己启动的时候动态扩容就好了，没必要自己去设置。如果不动态加载 class ，当启动起来的时候，一般是很少有变化的。<br>从这个角度我们可以认为我们的 JVM 内存的大小是堆+Metaspace+io(运行时产生的大小)。</p>
+<ul>
+<li>-Xms<heap size>[g|m|k]</li>
+<li>-Xmx<heap size>[g|m|k] 堆大小</li>
+<li>-Xmn<young size>[g|m|k]  年轻代大小</li>
+<li>-XX:NewRatio&#x3D;老年代&#x2F;新生代  比例</li>
+<li>-XX:MaxMetaspaceSize&#x3D;<metaspace size>[unit]  元空间</li>
+<li>-XX:NewSize&#x3D;<young size>[unit]  初始年轻代大小</li>
+<li>-XX:SurvivorRatio&#x3D;<ratio>  # 代表分代回收算法新生代中 Eden:Survivor 的比例，注意 Survivor 是有两块的，如果 Eden:Survivor &#x3D; 3，则新生代将被分割为 5 份，Eden 占 3 份</li>
+</ul>
+<p>堆的最大和最小限制，网上很多资料都将二者设置成一样的值，我觉得这是不好的习惯，因为 JVM 只有在内存使用量达到-Xms 的值时才会开始 gc，设置成一样的值也就是说只有在 JVM 使用完内存后才会开始 gc，这会导致最大暂停时间偏长，用户体验不好，当然设置成一样也可以减轻堆伸缩带来的压力。当然这些都是直观的看法，根据 [3] 的说法，这个调整策略和 JVM 中使用的垃圾回收算法相关，如果是 IBM JVM（采用 sweep-compact），设置不一样较好；如果是 Sun JVM（采用分代回收），设置成一样较好。</p>
+<h3 id="选择哪个-GC-收集器"><a href="#选择哪个-GC-收集器" class="headerlink" title="选择哪个 GC 收集器"></a>选择哪个 GC 收集器</h3><ul>
+<li>-XX:+UseSerialGC</li>
+<li>-XX:+UseParallelGC</li>
+<li>-XX:+USeParNewGC</li>
+<li>-XX:+UseG1GC</li>
+<li>-XX:-UseConcMarkSweepGC<br>对老生代采用并发标记交换算法进行 GC</li>
+</ul>
+<h3 id="GC-的时候生成文件"><a href="#GC-的时候生成文件" class="headerlink" title="GC 的时候生成文件"></a>GC 的时候生成文件</h3><ul>
+<li>-XX:+UseGCLogFileRotation  用文件循环策略</li>
+<li>-XX:NumberOfGCLogFiles&#x3D;10  最大文件数</li>
+<li>-XX:GCLogFileSize&#x3D;50M      文件大小</li>
+<li>-Xloggc:&#x2F;home&#x2F;user&#x2F;log&#x2F;gc.log  位置</li>
+</ul>
+<h3 id="OOM后排错"><a href="#OOM后排错" class="headerlink" title="OOM后排错"></a>OOM后排错</h3><ul>
+<li>-XX:+HeapDumpOnOutOfMemoryError  打出 dump 文件当发生 out of memory</li>
+<li>-XX:HeapDumpPath&#x3D;.&#x2F;java_pid<pid>.hprof  文件名</li>
+<li>-XX:OnOutOfMemoryError&#x3D;”&lt; cmd args &gt;;&lt; cmd args &gt;”  发生异常的时候执行的命令</li>
+<li>-XX:+UseGCOverheadLimit  在 GC 之前</li>
+</ul>
+<h3 id="Java-Management-Extensions"><a href="#Java-Management-Extensions" class="headerlink" title="Java Management Extensions"></a>Java Management Extensions</h3><p>Java 管理扩展，打开 JMX 端口，就可以用标准的端口来监控 server 端的 jvm 了。<br>-Djava.rmi.server.hostname&#x3D;<external IP><br>-Dcom.sun.management.jmxremote.port&#x3D;<port><br>-Dcom.sun.management.jmxremote.authenticate&#x3D;false<br>-Dcom.sun.management.jmxremote.ssl&#x3D;false</p>
+<h3 id="print-所有-XX-参数（Java6-后）"><a href="#print-所有-XX-参数（Java6-后）" class="headerlink" title="print 所有+XX 参数（Java6 后）"></a>print 所有+XX 参数（Java6 后）</h3><p>-XX:+PrintFlagsFinal<br>-XX:+PrintFlagsInitial</p>
+<h3 id="生产环境参数设置"><a href="#生产环境参数设置" class="headerlink" title="生产环境参数设置"></a>生产环境参数设置</h3><ol>
+<li>实际生产中很少去设置 gc 相关的详细参数，一般只要把 thread dump 处理好(及异常的时候生成 demp 文件)和 jmx 端口打开；</li>
+<li>能设置好几个分代的内存空间就不错了。这个可以通过 jvm 的监控来设置根据 cpu 和 gc 的情况；</li>
+<li>因为随着 JVM 的版本的升级，jvm 垃圾回收会也来越智能，但是我们必须要了解这些，因为面试的时候大牛为了显摆自己会问这些问题。</li>
+<li>根据我们上面介绍的就算你设置+XX 有的时候也不一定有用，说不定哪个小版本里面就失灵了。jdk1.8 关于 gc 的最多开启+XX:+UseConcMarkSweepGC。</li>
+</ol>
+<h2 id="调优工具"><a href="#调优工具" class="headerlink" title="调优工具"></a>调优工具</h2><p>对 JVM 的监控可以分为以下几个方面：</p>
+<ul>
+<li>内存状况分析（GC）</li>
+<li>线程状态分析</li>
+</ul>
+<p>关于 GC 的监控，比较重要的有三个方面：</p>
+<ul>
+<li>各个区的容量，主要是堆中新生代与老年代的内存分配。</li>
+<li>Full GC、Young GC 发生的次数，原则上尽量避免发生 Full GC，Young GC 能少则少。</li>
+<li>当前系统的内存比、CPU 使用率。</li>
+</ul>
+<h3 id="jps"><a href="#jps" class="headerlink" title="jps"></a>jps</h3><p>jps 列出正在运行的虚拟机进程<br>包括 PID、主类、jar 包等</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jps -ml</span><br></pre></td></tr></table></figure>
+
+<h3 id="jinfo"><a href="#jinfo" class="headerlink" title="jinfo"></a>jinfo</h3><p>Java 配置信息工具，并且支持运行时动态修改部分参数<br>查看某些配置值或开关是否打开：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jinfo -flag MaxTenuringThreshold 8737</span><br><span class="line">jinfo -flag PrintGCDetails 8737</span><br></pre></td></tr></table></figure>
+<p>打开开关</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jinfo -flag MaxTenuringThreshold=10 8737</span><br><span class="line">jinfo -flag +PrintGCDetails 8737</span><br></pre></td></tr></table></figure>
+<p>查看虚拟机的默认配置参数还可以在运行时打开虚拟机的 PrintFlagsFinal 开关</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+PrintFlagsFinal Test</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="jstat"><a href="#jstat" class="headerlink" title="jstat"></a>jstat</h3><p>常用选项</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstat -gcutil # 垃圾收集统计数据</span><br></pre></td></tr></table></figure>
+<p>统计数据列含义：</p>
+<table>
+<thead>
+<tr>
+<th>数据列</th>
+<th>描述</th>
+<th>支持的 jstat 选项</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>S0C</td>
+<td>Survivor0 的当前容量</td>
+<td>-gc -gccapacity -gcnew -gcnewcapacity</td>
+</tr>
+<tr>
+<td>S1C</td>
+<td>S1 的当前容量</td>
+<td>-gc -gccapacity -gcnew -gcnewcapacity</td>
+</tr>
+<tr>
+<td>S0U</td>
+<td>S0的使用量</td>
+<td>-gc-gcnew</td>
+</tr>
+<tr>
+<td>S1U</td>
+<td>S1 的使用量</td>
+<td>-gc-gcnew</td>
+</tr>
+<tr>
+<td>EC</td>
+<td>Eden 区的当前容量</td>
+<td>-gc -gccapacity -gcnew -gcnewcapacity</td>
+</tr>
+<tr>
+<td>EU</td>
+<td>Eden 区的使用量</td>
+<td>-gc -gcnew</td>
+</tr>
+<tr>
+<td>OC</td>
+<td>old 区的当前容量</td>
+<td>-gc -gccapacity -gcnew -gcnewcapacity</td>
+</tr>
+<tr>
+<td>OU</td>
+<td>old区的使用量</td>
+<td>-gc-gcnew</td>
+</tr>
+<tr>
+<td>PC</td>
+<td>方法区的当前容量</td>
+<td>-gc-gccapacity -gcold -gcoldcapacity -gcpermcapacity</td>
+</tr>
+<tr>
+<td>PU</td>
+<td>方法区的使用量</td>
+<td>-gc -gcold</td>
+</tr>
+<tr>
+<td>YGC</td>
+<td>Young GC 次数</td>
+<td>-gc -gccapacity -gcnew -gcnewcapacity -gcold -gcoldcapacity -gcpermcapacity -gcutil -gccause</td>
+</tr>
+<tr>
+<td>YGCT</td>
+<td>Young GC 累积耗时</td>
+<td>-gc -gcnew -gcutil -gccause</td>
+</tr>
+<tr>
+<td>FGC</td>
+<td>Full GC次数</td>
+<td>-gc -gccapacity -gcnew -gcnewcapacity -gcold -gcoldcapacity -gcpermcapacity -gcutil -gccause</td>
+</tr>
+<tr>
+<td>FGCT</td>
+<td>Full GC 累积耗时</td>
+<td>-gc-gcold -gcoldcapacity -gcpermcapacity -gcutil -gccause</td>
+</tr>
+<tr>
+<td>GCT</td>
+<td>GC 总的累积耗时</td>
+<td>-gc -gcold -gcoldcapacity -gccapacity -gcpermcapacity -gcutil -gccause</td>
+</tr>
+<tr>
+<td>NGCMN</td>
+<td>新生代最小容量</td>
+<td>-gccapacity -gcnewcapacity</td>
+</tr>
+<tr>
+<td>NGCMX</td>
+<td>新生代最大容量</td>
+<td>-gccapacity -gcnewcapacity</td>
+</tr>
+<tr>
+<td>NGC</td>
+<td>新生代当前容量</td>
+<td>-gccapacity -gcnewcapacity</td>
+</tr>
+<tr>
+<td>OGCMN</td>
+<td>老年代最小容量</td>
+<td>-gccapacity -gcoldcapacity</td>
+</tr>
+<tr>
+<td>OGCMX</td>
+<td>老年代最大容量</td>
+<td>-gccapacity -gcoldcapacity</td>
+</tr>
+<tr>
+<td>OGC</td>
+<td>老年代当前容量</td>
+<td>-gccapacity -gcoldcapacity</td>
+</tr>
+<tr>
+<td>PGCMN</td>
+<td>方法区最小容量</td>
+<td>-gccapacity -gcpermcapacity</td>
+</tr>
+<tr>
+<td>PGCMX</td>
+<td>方法区最大容量</td>
+<td>-gccapacity -gcpermcapacity</td>
+</tr>
+<tr>
+<td>PGC</td>
+<td>方法区当前容量</td>
+<td>-gccapacity -gcpermcapacity</td>
+</tr>
+<tr>
+<td>PC</td>
+<td>方法区的当前容量</td>
+<td>-gccapacity -gcpermcapacity</td>
+</tr>
+<tr>
+<td>PU</td>
+<td>方法区使用量</td>
+<td>-gccapacity -gcold</td>
+</tr>
+<tr>
+<td>LGCC</td>
+<td>上一次 GC 发生的原因</td>
+<td>-gccause</td>
+</tr>
+<tr>
+<td>GCC</td>
+<td>当前 GC 发生的原因</td>
+<td>-gccause</td>
+</tr>
+<tr>
+<td>TT</td>
+<td>存活阀值，如果对象在新生代移动次数超过此阀值，则会被移到老年代</td>
+<td>-gcnew</td>
+</tr>
+<tr>
+<td>MTT</td>
+<td>最大存活阀值，如果对象在新生代移动次数超过此阀值，则会被移到老年代</td>
+<td>-gcnew</td>
+</tr>
+<tr>
+<td>DSS</td>
+<td>survivor 区的理想容量</td>
+<td>-gcnew</td>
+</tr>
+</tbody></table>
+<h3 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jmap -histo pid -F</span><br><span class="line">jmap -dump:format=b, file=heap.bin pid</span><br></pre></td></tr></table></figure>
+
+<h3 id="JConsole"><a href="#JConsole" class="headerlink" title="JConsole"></a>JConsole</h3><p>略</p>
+<h3 id="JVisualVM"><a href="#JVisualVM" class="headerlink" title="JVisualVM"></a>JVisualVM</h3><p>略</p>
+<h3 id="GC日志"><a href="#GC日志" class="headerlink" title="GC日志"></a>GC日志</h3><p>关于输出 GC 日志的参数有以下几种：</p>
+<ul>
+<li>-XX:+PrintGC 输出 GC 日志</li>
+<li>-XX:+PrintGCDetails 输出 GC 的详细日志</li>
+<li>-XX:+PrintGCTimeStamps 输出 GC 的时间戳（以基准时间的形式）</li>
+<li>-XX:+PrintGCDateStamps 输出 GC 的时间戳（以日期的形式，如 2013-05-04T21:53:59.234+0800）</li>
+<li>-XX:+PrintHeapAtGC 在进行 GC 的前后打印出堆的信息</li>
+<li>-Xloggc:..&#x2F;logs&#x2F;gc.log 日志文件的输出路径</li>
+</ul>
+<p>比如对 PrintGCDetails 这个参数：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class GCLogTest &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        int _1m = 1024 * 1024;</span><br><span class="line">        byte[] data = new byte[_1m];</span><br><span class="line">        // 将data置null让其可被回收</span><br><span class="line">        data = null;</span><br><span class="line">        System.gc();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 IDE 中设置 VM 参数<code>-XX:+PrintGCDetails</code>，再运行，可以得到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[GC (System.gc()) [PSYoungGen: 5051K-&gt;776K(38400K)] 5051K-&gt;784K(125952K), 0.0014035 secs] [Times: user=0.01 sys=0.00, real=0.00 secs] </span><br><span class="line">[Full GC (System.gc()) Disconnected from the target VM, address: &#x27;127.0.0.1:55472&#x27;, transport: &#x27;socket&#x27;</span><br><span class="line">[PSYoungGen: 776K-&gt;0K(38400K)] [ParOldGen: 8K-&gt;684K(87552K)] 784K-&gt;684K(125952K), [Metaspace: 2980K-&gt;2980K(1056768K)], 0.0040080 secs] [Times: user=0.01 sys=0.00, real=0.00 secs] </span><br><span class="line">Heap</span><br><span class="line"> PSYoungGen      total 38400K, used 333K [0x0000000795580000, 0x0000000798000000, 0x00000007c0000000)</span><br><span class="line">  eden space 33280K, 1% used [0x0000000795580000,0x00000007955d34a8,0x0000000797600000)</span><br><span class="line">  from space 5120K, 0% used [0x0000000797600000,0x0000000797600000,0x0000000797b00000)</span><br><span class="line">  to   space 5120K, 0% used [0x0000000797b00000,0x0000000797b00000,0x0000000798000000)</span><br><span class="line"> ParOldGen       total 87552K, used 684K [0x0000000740000000, 0x0000000745580000, 0x0000000795580000)</span><br><span class="line">  object space 87552K, 0% used [0x0000000740000000,0x00000007400ab0d0,0x0000000745580000)</span><br><span class="line"> Metaspace       used 2988K, capacity 4568K, committed 4864K, reserved 1056768K</span><br><span class="line">  class space    used 318K, capacity 392K, committed 512K, reserved 1048576K</span><br></pre></td></tr></table></figure>
+<p>第一行是 YoungGC，其结构如下图所示：<br><img src="/imgs/JVM/JVM-YoungGC%E6%97%A5%E5%BF%97.jpg" alt="JVM-YoungGC日志" title="JVM-YoungGC日志"><br>第二行是 FullGC，其结构如下图所示：<br><img src="/imgs/JVM/JVM-FullGC%E6%97%A5%E5%BF%97.jpg" alt="JVM-FullGC日志" title="JVM-FullGC日志"></p>
+<ul>
+<li>GC日志开头的<code>[GC</code>和<code>[Full GC</code>说明了这次垃圾收集的停顿类型，如果有<code>Full</code>，说明这次 GC 发生了<code>Stop-The-World</code>。因为是调用了<code>System.gc()</code>方法触发的收集，所以会显示<code>[Full GC (System.gc())</code>，不然是没有后面的<code>(System.gc())</code>的。 </li>
+<li><code>[PSYoungGen</code>和<code>[ParOldGen</code>是指 GC 发生的区域。</li>
+<li>在方括号中<code>PSYoungGen:</code>后面的<code>5051K-&gt;776K(38400K)</code>代表的是<code>GC前该内存区域已使用的容量-&gt;GC后该内存区域已使用的容量(该内存区域总容量)</code></li>
+<li>在方括号之外的<code>5051K-&gt;784K(125952K)</code>代表的是<code>GC前Java堆已使用容量-&gt;GC后Java堆已使用容量(Java堆总容量)</code>，注意已使用容量是减掉一个 Servivor 区、线程栈等区域后的大小。</li>
+<li>再往后的<code>0.0014035 secs</code>代表该内存区域 GC 所占用的时间，单位是秒。</li>
+<li>再后面的<code>[Times: user=0.01 sys=0.00, real=0.00 secs]</code>，user 代表进程在用户态消耗的 CPU 时间，sys 代表进程在内核态消耗的 CPU 时间、real 代表程序从开始到结束所用的时钟时间。这个时间包括其他进程使用的时间片和进程阻塞的时间（比如等待 I&#x2F;O 完成）。</li>
+<li>至于后面的<code>eden</code>代表的是 Eden 空间，还有<code>from</code>和<code>to</code>代表的是 Survivor 空间。</li>
+</ul>
+<h2 id="问题排查"><a href="#问题排查" class="headerlink" title="问题排查"></a>问题排查</h2><h3 id="OOM"><a href="#OOM" class="headerlink" title="OOM"></a>OOM</h3><p>有两种情况可能导致 OOM：</p>
+<ol>
+<li>内存泄露（Memory Leak），某些对象是需要被释放的但是却由于某些原因释放不了，查看泄露对象对 GC Roots 的引用链，再追本溯源进行分析；</li>
+<li>内存溢出（Memory Overflow），对象太多了导致堆放不下了，查看堆是否可以调大，或者某些对象活太久了。</li>
+</ol>
+<p>产生 OutOfMemoryError 错误的具体原因有以下几种：</p>
+<ul>
+<li>java.lang.OutOfMemoryError: Java heap space 表示 Java 堆空间不足。当应用程序申请更多的内存时，若 Java 堆内存已经无法满足应用程序的需要，则将抛出这种异常。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">VM Args: -Xms20m -Xmx20m -XX:+HeapDumpOnOutOfMemoryError</span><br><span class="line"> */</span><br><span class="line">public class HeapOOM &#123;</span><br><span class="line">    static class OOMObject &#123;&#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        List&lt;OOMObject&gt; list = new ArrayList&lt;&gt;();</span><br><span class="line">        while(true) &#123;</span><br><span class="line">            list.add(new OOMObject());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>java.lang.OutOfMemoryError: PermGen space，表示 Java 永久代（方法区）的空间不足。永久代用于存放类的字节码和常量池，类的字节码被加载后存放在这个区域，这和存放对象实例的堆区是不同的。大多数 JVM 的实现都不会对永久代进行垃圾回收，因此，只要类加载过多就会出现这个问题。一般的应用程序都不会产生这个错误，然而，对于 Web 服务器会产生大量的 JSP，JSP 在运行时被动态地编译为 Java Servlet 类，然后加载到方法区，因此，有很多 JSP 的 Web 工程可能会产生这个异常。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">VM Args: -XX:PermSize=10M -XX:MaxPermSize=10M</span><br><span class="line"> */</span><br><span class="line">public class RuntimeConstantPoolOOM &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        // 使用List保持对常量池的引用，避免Full GC回收常量池</span><br><span class="line">        List&lt;String&gt; list = new ArrayList&lt;String&gt;();</span><br><span class="line">        for(int i = 0;; i++) &#123;</span><br><span class="line">            list.add(String.valueOf(i).intern());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+使用 intern 测试运行时常量池是“永久代”的还是“元空间”的：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String str1 = new StringBuilder(&quot;计算机&quot;).append(&quot;软件&quot;).toString();</span><br><span class="line">System.out.println(str1.intern() == str1);</span><br><span class="line">String str2 = new StringBuilder(&quot;ja&quot;).append(&quot;va&quot;).toString();</span><br><span class="line">System.out.println(str2.intern() == str2);</span><br></pre></td></tr></table></figure>
+方法区溢出测试（使用 CGLib 动态生成类）：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">VM Args: -XX:PermSize=10M -XX:MaxPermSize=10M</span><br><span class="line">*/</span><br><span class="line">public class MethodAreaOOM &#123;</span><br><span class="line">    static class OOMObject &#123;&#125;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        while(true) &#123;</span><br><span class="line">            Enhancer enhancer = new Enhancer();</span><br><span class="line">            enhancer.setSuperclass(HeapOOM.OOMObject.class);</span><br><span class="line">            enhancer.setUseCache(false);</span><br><span class="line">            enhancer.setCallback(new MethodInterceptor() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public Object intercept(Object o, Method method,</span><br><span class="line">                                        Object[] objects, MethodProxy proxy) throws Throwable &#123;</span><br><span class="line">                    return proxy.invokeSuper(o, args);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">            enhancer.create();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+jdk1.6 及之前版本，因为 HotSpot 实行“永久代”（PermGen），方法区保存到永久代中，虽然逻辑上属于堆，但是在这块空间上并没有实行 GC。在这种情况下，上面代码发生堆溢出是必然的。<br>jdk1.7 及之后版本，因为“去永久代”，引入了“元空间”（Metaspace），这种策略使得大部分类元数据都保存在本地内存中，元空间使用一个全局空闲组块列表（一个大数组）表示，每创建一个类加载器都会从这个列表中获取一个自己的组块，用处当然是存储元信息（指针碰撞方式分配），当一个类加载器不再活动后，其所持有的组块列表也就返还给全局组块列表了，也就是说，类也是可能会被 GC 回收掉的。<br>  运行时常量池是分配于方法区的，所以可以这么认为：1.6 及之前常量是分配在一个“全局静态区”的，而 1.7 及之后则在堆中分配。<br>运行时常量池导致的溢出不常见，上面的例子感觉也有点极端。<br>方法区导致的溢出在实际应用中常见：一些框架 Spring、Hibernate 在对类进行增强时会使用到 CGLib 这类字节码技术；JVM 上的动态语言（Groovy）会持续创建类来实现语言的动态特性；拥有大量 JSP 页面或会动态生成 JSP 文件的应用（JSP 第一次运行时会被编译为 Servlet）；基于 OSGi 的应用（即使是同一个类文件，被不同的加载器加载也会视为不同的类）等。</li>
+<li>java.lang.OutOfMemoryError: unable to create new native thread，本质原因是创建了太多的线程，而系统允许创建的线程数是有限制的。</li>
+<li>java.lang.OutOfMemoryError：GC overhead limit exceeded，是并行（或者并发）垃圾回收器的 GC 回收时间过长、超过 98%的时间用来做 GC 并且回收了不到 2%的堆内存时抛出的这种异常，用来提前预警，避免内存过小导致应用不能正常工作。</li>
+<li>栈溢出<br>可以先使用-Xoss 参数设置本地方法栈大小（在 HotSpot 中无效，因为它将两个栈合并了），-Xss 参数设置栈容量大小，设得稍微小一些都没有问题。<br>实验非常简单，就是定义并调用一个无限递归的方法，在调用深度到达一定程度后就会报错，并且使用一个 stackLength 成员变量记录栈深度<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">VM Args: -Xss228k</span><br><span class="line"> */</span><br><span class="line">public class StackSOF &#123;</span><br><span class="line">    private int stackLength = 1;</span><br><span class="line"></span><br><span class="line">    public void stackLeak() &#123;</span><br><span class="line">        stackLength++;</span><br><span class="line">        stackLeak();</span><br><span class="line">    &#125;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        StackSOF oom = new StackSOF();</span><br><span class="line">        try &#123;</span><br><span class="line">            oom.stackLeak();</span><br><span class="line">        &#125; catch (Throwable e) &#123;</span><br><span class="line">            System.out.println(&quot;stack length:&quot; + oom.stackLength);</span><br><span class="line">            throw e;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">/*</span><br><span class="line">VM Args: -Xss2M</span><br><span class="line"> */</span><br><span class="line">public class StackOOM &#123;</span><br><span class="line">    private void dontstop() &#123;</span><br><span class="line">        while(true) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    public void stackLeakByThread() &#123;</span><br><span class="line">        while(true) &#123;</span><br><span class="line">            new Thread(new Runnable() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public void run() &#123;</span><br><span class="line">                    dontstop();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        new StackOOM().stackLeakByThread();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+有两种可能的错误，第一种是线程请求的栈深度超出了虚拟机的允许范围，会产生 StackOverflowError 异常，第二种是虚拟机在扩展栈时无法申请到足够空间，会产生 OutOfMemoryError 异常。<br>注意，一个 java 进程的内存容量是由操作系统决定的，Windows 下限制为 2GB，减去 Xmx（最大堆容量）、MaxPermSize（最大方法区容量）、程序计数器（很小）、虚拟机本身耗费的内存，剩下的就由虚拟机栈和本地方法栈瓜分了。<br>前者比较容易找出错误，因为会有错误堆栈可以分析；<br>后者往往是因为线程分配过多了，导致操作系统分配的内存用尽，事实上，每个线程的主要空间都被栈（虚拟机栈和本地方法栈）占用了，所以为了可以分配更多的线程，可以减少最大堆容量或者减少栈容量。</li>
+<li>本机直接内存溢出<br>这个例子比较复杂，首先-XX:MaxDirectMemorySize 指定了直接内存大小（默认是-Xmx），然后越过了 DirectByteBuffer，反射获取 Unsafe 实例进行内存分配，allocateMemory 等价于 malloc<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">VM Args: -Xmx20M -XX:MaxDirectMemorySize=10M</span><br><span class="line"> */</span><br><span class="line">public class DirectMemoryOOM &#123;</span><br><span class="line">    private static final int _1MB = 1024 * 1024;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws IllegalAccessException &#123;</span><br><span class="line">        Field unsafeField = Unsafe.class.getDeclaredFields()[0];</span><br><span class="line">        unsafeField.setAccessible(true);</span><br><span class="line">        Unsafe unsafe = (Unsafe) unsafeField.get(null);</span><br><span class="line">        while(true) &#123;</span><br><span class="line">            unsafe.allocateMemory(_1MB);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+直接内存，或者说堆外内存，不是在 java 虚拟机规范中定义的存储区域，一般是不受虚拟机控制的，但是 NIO 提供了 Native 函数库可以直接分配堆外内存。<br>由 DirectMemory 导致的内存溢出在 Heap Dump 中不会有明显的异常，如果 OOM 之后 Dump 文件很小，且程序中又直接或间接使用了 NIO，就可以考虑是这方面的问题。</li>
+</ul>
+<h3 id="分析内存"><a href="#分析内存" class="headerlink" title="分析内存"></a>分析内存</h3><p>为排查内存泄露、young gc耗时过长等问题，我们需要分析内存结构。</p>
+<h3 id="判断死锁"><a href="#判断死锁" class="headerlink" title="判断死锁"></a>判断死锁</h3><p>使用 jstack 判断死锁，下面是一段测试用的死锁代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">public class DeadLockTest &#123;</span><br><span class="line"></span><br><span class="line">    private static Object obj1 = new Object();</span><br><span class="line">    private static Object obj2 = new Object();</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        new Thread(new Thread1()).start();</span><br><span class="line">        new Thread(new Thread2()).start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static class Thread1 implements Runnable &#123;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        public void run() &#123;</span><br><span class="line">            synchronized (obj1) &#123;</span><br><span class="line">                System.out.println(&quot;Thread1 拿到了 obj1 的锁！&quot;);</span><br><span class="line">                try &#123;</span><br><span class="line">                    // 停顿2秒的意义在于，让Thread2线程拿到obj2的锁</span><br><span class="line">                    Thread.sleep(2000);</span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                synchronized (obj2) &#123;</span><br><span class="line">                    System.out.println(&quot;Thread1 拿到了 obj2 的锁！&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static class Thread2 implements Runnable &#123;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        public void run() &#123;</span><br><span class="line">            synchronized (obj2) &#123;</span><br><span class="line">                System.out.println(&quot;Thread2 拿到了 obj2 的锁！&quot;);</span><br><span class="line">                try &#123;</span><br><span class="line">                    // 停顿2秒的意义在于，让Thread1线程拿到obj1的锁</span><br><span class="line">                    Thread.sleep(2000);</span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                synchronized (obj1) &#123;</span><br><span class="line">                    System.out.println(&quot;Thread2 拿到了 obj1 的锁！&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用 jps 查看 Java 进程：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># jps</span><br><span class="line"></span><br><span class="line">4098 Jps</span><br><span class="line">2644 </span><br><span class="line">3991 Launcher</span><br><span class="line">3992 DeadLockTest</span><br><span class="line">2859 RemoteMavenServer</span><br></pre></td></tr></table></figure>
+<p>使用 jstack 查看 Java 进程中的所有线程：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># jstack 3992</span><br><span class="line"></span><br><span class="line">结果见下图</span><br></pre></td></tr></table></figure>
+<p><img src="/imgs/JVM/JVM%E6%AD%BB%E9%94%81.png" alt="JVM死锁" title="JVM死锁"></p>
+<h3 id="服务器-CPU-打满怎么排查"><a href="#服务器-CPU-打满怎么排查" class="headerlink" title="服务器 CPU 打满怎么排查"></a>服务器 CPU 打满怎么排查</h3><p>CPU 打满会导致服务器响应速度变慢甚至夯住，一般查看内存没有明显问题后我们就可以怀疑是有线程运行将 CPU 打满了。<br>1、查 CPU 占用率较高的进程<br>top 命令查进程占用 CPU<br>2、查该进程占用 CPU 最高的线程<br><code>top -H -p &lt;查出的进程号&gt;</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">root@app02:~# top -H -p 1153</span><br><span class="line">top - 21:04:21 up 227 days,  6:52,  1 user,  load average: 0.78, 0.75, 0.85</span><br><span class="line">Threads: 1007 total,   0 running, 1007 sleeping,   0 stopped,   0 zombie</span><br><span class="line">%Cpu(s):  3.2 us,  0.8 sy,  0.0 ni, 95.8 id,  0.1 wa,  0.0 hi,  0.0 si,  0.0 st</span><br><span class="line">KiB Mem : 49049564 total,   295072 free, 42779556 used,  5974936 buff/cache</span><br><span class="line">KiB Swap:  8191996 total,   431488 free,  7760508 used.  4009280 avail Mem</span><br><span class="line"></span><br><span class="line">   PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND</span><br><span class="line">  1487 root      20   0 19.158g 1.113g   6664 S  6.2  2.4   0:36.42 java</span><br><span class="line">  1153 root      20   0 19.158g 1.113g   6664 S  0.0  2.4   0:00.00 java</span><br><span class="line">  1155 root      20   0 19.158g 1.113g   6664 S  0.0  2.4   0:00.57 java</span><br><span class="line">  1160 root      20   0 19.158g 1.113g   6664 S  0.0  2.4   2:01.54 java</span><br></pre></td></tr></table></figure>
+<p>转成 16 进制：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hero@app02:~$ printf &quot;%x\n&quot; 1487</span><br><span class="line">5cf</span><br></pre></td></tr></table></figure>
+<p>之后我们会用到这个值，因为 jstack 输出的 log 中使用十六进制表示线程编号。<br>3、输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@app02:~# jstack 1153 &gt; test_jstack.txt</span><br></pre></td></tr></table></figure>
+<p>从结果中可以搜到上面给出的线程编码<code>5cf</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">11179 &quot;New I/O worker #168&quot; #299 daemon prio=5 os_prio=0 tid=0x00007f3a75127000 nid=0x5cf runnable [0x00007f37278f7000]</span><br><span class="line">11180    java.lang.Thread.State: RUNNABLE</span><br><span class="line">11181     at sun.nio.ch.EPollArrayWrapper.epollWait(Native Method)</span><br><span class="line">11182     at sun.nio.ch.EPollArrayWrapper.poll(EPollArrayWrapper.java:269)</span><br><span class="line">11183     at sun.nio.ch.EPollSelectorImpl.doSelect(EPollSelectorImpl.java:79)</span><br><span class="line">11184     at sun.nio.ch.SelectorImpl.lockAndDoSelect(SelectorImpl.java:86)</span><br><span class="line">11185     - locked &lt;0x00000000e4669320&gt; (a sun.nio.ch.Util$2)</span><br><span class="line">11186     - locked &lt;0x00000000e4669310&gt; (a java.util.Collections$UnmodifiableSet)</span><br><span class="line">11187     - locked &lt;0x00000000e46691e8&gt; (a sun.nio.ch.EPollSelectorImpl)</span><br><span class="line">11188     at sun.nio.ch.SelectorImpl.select(SelectorImpl.java:97)</span><br><span class="line">11189     at org.jboss.netty.channel.socket.nio.SelectorUtil.select(SelectorUtil.java:68)</span><br><span class="line">11190     at org.jboss.netty.channel.socket.nio.AbstractNioSelector.select(AbstractNioSelector.java:434)</span><br><span class="line">11191     at org.jboss.netty.channel.socket.nio.AbstractNioSelector.run(AbstractNioSelector.java:212)</span><br><span class="line">11192     at org.jboss.netty.channel.socket.nio.AbstractNioWorker.run(AbstractNioWorker.java:89)</span><br><span class="line">11193     at org.jboss.netty.channel.socket.nio.NioWorker.run(NioWorker.java:178)</span><br><span class="line">11194     at org.jboss.netty.util.ThreadRenamingRunnable.run(ThreadRenamingRunnable.java:108)</span><br><span class="line">11195     at org.jboss.netty.util.internal.DeadLockProofWorker$1.run(DeadLockProofWorker.java:42)</span><br><span class="line">11196     at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)</span><br><span class="line">11197     at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)</span><br><span class="line">11198     at java.lang.Thread.run(Thread.java:745)</span><br></pre></td></tr></table></figure>
+
+<h3 id="SWAP-影响-GC"><a href="#SWAP-影响-GC" class="headerlink" title="SWAP 影响 GC"></a>SWAP 影响 GC</h3><p>SWAP 和 GC 同时发生会导致 GC 时间很长，JVM 严重卡顿，甚至导致服务崩溃。<br>JVM 进行 GC 时，需要对相应堆分区的已用内存进行遍历；假如 GC 的时候，有堆的一部分内容被交换到 SWAP 中，遍历到这部分的时候就需要将其交换回内存，同时由于内存空间不足，就需要把内存中堆的另外一部分换到 SWAP 中去；于是在遍历堆分区的过程中，(极端情况下)会把整个堆分区轮流往 SWAP 写一遍。</p>
+<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><h2 id="栈溢出和由栈引起的OOM有什么关系？"><a href="#栈溢出和由栈引起的OOM有什么关系？" class="headerlink" title="栈溢出和由栈引起的OOM有什么关系？"></a>栈溢出和由栈引起的OOM有什么关系？</h2><p>虽然都是由递归调用引起的，但是这两种异常引起的条件并不相同：</p>
+<ol>
+<li>栈溢出（StackOverflowError）<br>方法调用栈深度超出了虚拟机的允许范围。</li>
+<li>栈引起的OOM<br>虚拟机在扩展栈时无法申请到足够空间。</li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/dcdf6e0b.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/dcdf6e0b.html" class="post-title-link" itemprop="url">JVM 与类加载</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-29 19:12:49" itemprop="dateCreated datePublished" datetime="2019-09-29T19:12:49+08:00">2019-09-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+
+<h2 id="类文件结构"><a href="#类文件结构" class="headerlink" title="类文件结构"></a>类文件结构</h2><p>类文件结构比较繁琐，我暂时没有整理的兴趣，看一下《深入理解 Java 虚拟机上》上的介绍就可以了。</p>
+<h2 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h2><p>Java 类结构是在运行时而不是在编译时确定的，而是由类加载器在运行期间加载的，因此称类的加载过程是<strong>动态加载</strong>，当调用某个类型对象的方法时，具体调用哪个方法是在运行期间决定的，因此称之为<strong>动态连接</strong>。<br><strong>类加载器（ClassLoader）</strong>不是 Java 虚拟机的组成部分，它由外部调用，执行加载过程。<br>类加载器用于加载类，任何类都需要由加载它的类加载器和这个类一同确立其在 Java 虚拟机中的唯一性，每一个类加载器，都有一个独立的类<strong>名称空间</strong>，因此由不同类加载器加载的类、就算它们真的是一个 class 出来的，也不算是同一个类型的，也不能直接进行交互（可以通过反射进行交互）。实现上，实际上 jvm 将类加载器的引用作为类型信息的一部分保存在方法区，作为判断两个类相同的依据。</p>
+<h3 id="写一个自定义的类加载器"><a href="#写一个自定义的类加载器" class="headerlink" title="写一个自定义的类加载器"></a>写一个自定义的类加载器</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">import java.io.ByteArrayOutputStream;</span><br><span class="line">import java.io.FileInputStream;</span><br><span class="line"></span><br><span class="line">public class MyClassLoader extends ClassLoader &#123;</span><br><span class="line"></span><br><span class="line">    private String rootPath;</span><br><span class="line"></span><br><span class="line">    public MyClassLoader(String rootPath) &#123;</span><br><span class="line">        this.rootPath = rootPath;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected Class&lt;?&gt; findClass(String name) &#123;</span><br><span class="line">        Class&lt;?&gt; clz = findLoadedClass(name);</span><br><span class="line">        if (clz != null) &#123;</span><br><span class="line">            return clz;</span><br><span class="line">        &#125;</span><br><span class="line">        byte[] classData = getData(name);</span><br><span class="line">        clz = defineClass(&quot;Hello&quot;, classData, 0, classData.length);</span><br><span class="line">        return clz;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private byte[] getData(String className) &#123;</span><br><span class="line">        String pathName = rootPath + className.replace(&quot;.&quot;, &quot;/&quot;) + &quot;.class&quot;;</span><br><span class="line">        System.out.println(&quot;加载的类路径: &quot; + pathName);</span><br><span class="line">        byte[] bytes = null;</span><br><span class="line">        try (FileInputStream fis = new FileInputStream(pathName);</span><br><span class="line">             ByteArrayOutputStream bos = new ByteArrayOutputStream()) &#123;</span><br><span class="line">            byte[] flush = new byte[1024 * 1024];</span><br><span class="line">            int len;</span><br><span class="line">            while (-1 != (len = fis.read(flush))) &#123;</span><br><span class="line">                bos.write(flush, 0, len);</span><br><span class="line">            &#125;</span><br><span class="line">            bytes = bos.toByteArray();</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        return bytes;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws IllegalAccessException, InstantiationException &#123;</span><br><span class="line">        MyClassLoader classLoader = new MyClassLoader(&quot;/tmp/&quot;);</span><br><span class="line">        Class&lt;?&gt; helloClass = classLoader.findClass(&quot;Hello&quot;);</span><br><span class="line">        Object hello = helloClass.newInstance();</span><br><span class="line">        System.out.println(hello);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个类加载器：</p>
+<ol>
+<li><code>findClass</code>的时候，先判断之前是否已经加载过这个类，如果加载过就直接返回了（双亲委派）；</li>
+<li>从<code>/tmp</code>目录下面读类文件，对读进的二进制流数据使用<code>defineClass</code>转换为类对象。</li>
+</ol>
+<p>测试类：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">import java.util.StringJoiner;</span><br><span class="line"></span><br><span class="line">public class Hello &#123;</span><br><span class="line"></span><br><span class="line">    private int a = 10;</span><br><span class="line"></span><br><span class="line">    static &#123;</span><br><span class="line">        System.out.println(&quot;123&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String toString() &#123;</span><br><span class="line">        return new StringJoiner(&quot;, &quot;, Hello.class.getSimpleName() + &quot;[&quot;, &quot;]&quot;)</span><br><span class="line">                .add(&quot;a=&quot; + a)</span><br><span class="line">                .toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用<code>javac</code>命令编译后，将<code>Hello.class</code>文件移动到<code>/tmp</code>目录下。</p>
+<h3 id="类从哪里来"><a href="#类从哪里来" class="headerlink" title="类从哪里来"></a>类从哪里来</h3><p>除了从文件加载以外，Java 的类加载机制还支持从网络读取，其实只要根据自己的需要实现类加载器，就能将任何二进制数据作为字节码数据进行加载。</p>
+<ul>
+<li><p><code>-XX:+TraceClassLoading</code><br>跟踪类加载过程，结果形如：<code>[Loaded java.lang.invoke.MethodHandleImpl$Lazy from D:\programme\jdk\jdk8U74\jre\lib\rt.jar]</code></p>
+</li>
+<li><p>mvn dependency:tree &gt; ~&#x2F;dependency.txt<br>打出所有依赖</p>
+</li>
+<li><p>mvn dependency:tree -Dverbose -Dincludes&#x3D;groupId:artifactId<br>只打出指定 groupId 和 artifactId 的依赖关系</p>
+</li>
+<li><p>-XX:+TraceClassLoading<br>vm 启动脚本加入。在 tomcat 启动脚本中可见加载类的详细信息</p>
+</li>
+<li><p>-verbose<br>vm 启动脚本加入。在 tomcat 启动脚本中可见加载类的详细信息</p>
+</li>
+<li><p>greys:sc<br>greys 的 sc 命令也能清晰的看到当前类是从哪里加载过来的</p>
+</li>
+<li><p>tomcat-classloader-locate<br>通过以下 url 可以获知当前类是从哪里加载的<br>curl <a target="_blank" rel="noopener" href="http://localhost:8006/classloader/locate?class=org.apache.xerces.xs.XSObject">http://localhost:8006/classloader/locate?class=org.apache.xerces.xs.XSObject</a></p>
+</li>
+</ul>
+<h3 id="类加载器的种类"><a href="#类加载器的种类" class="headerlink" title="类加载器的种类"></a>类加载器的种类</h3><p>从虚拟机角度看，只存在两种类加载器：1. 启动类加载器。2. 其他类加载器。<br>从开发人员角度看，包括如下类加载器：1. 启动类加载器。2. 扩展类加载器。3. 应用程序类加载器。4. 自定义类加载器。</p>
+<ul>
+<li>启动类加载器，用于加载 Java API，加载<code>&lt;JAVA_HOME&gt;/lib</code> 目录下的类库。</li>
+<li>扩展类加载类，由 <code>sun.misc.Launcher$ExtClassLoader</code> 实现，用于加载<code>&lt;JAVA_HOME&gt;/lib/ext</code> 目录下或者被 <code>java.ext.dirs</code> 系统变量指定路径下的类库。</li>
+<li>应用程序类加载器，也成为系统类加载器，由 <code>sun.misc.Launcher$AppClassLoader</code> 实现，用于加载用户类路径(ClassPath)上所指定的类库。</li>
+<li>自定义类加载器，继承系统类加载器，实现用户自定义加载逻辑。</li>
+</ul>
+<h3 id="双亲委派模型"><a href="#双亲委派模型" class="headerlink" title="双亲委派模型"></a>双亲委派模型</h3><p><img src="/imgs/JVM/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.png" alt="类加载器执行过程" title="类加载器执行过程"><br>Java 设计者推荐所有自定义加载器都组合一个父加载器，加载类时先委派父加载器去尝试加载，若不成，再由自身去加载。所以一些基类总是由基加载器去加载，可以避免一个程序中有多个 java.lang.Object 类的情况<br>注意<strong>各个类加载器之间是组合关系，并非继承关系</strong>。<br>当一个类加载器收到类加载的请求，它将这个加载请求委派给父类加载器进行加载，每一层加载器都是如此，最终，所有的请求都会传送到启动类加载器中。只有当父类加载器自己无法完成加载请求时，子类加载器才会尝试自己加载。<br>双亲委派模型可以确保安全性，可以<strong>保证所有的 Java 类库都是由启动类加载器加载</strong>。如用户编写的 java.lang.Object，加载请求传递到启动类加载器，启动类加载的是系统中的 Object 对象，而用户编写的 java.lang.Object 不会被加载。如用户编写的 java.lang.virus 类，加载请求传递到启动类加载器，启动类加载器发现 virus 类并不是核心 Java 类，无法进行加载，将会由具体的子类加载器进行加载，而经过不同加载器进行加载的类是无法访问彼此的。由不同加载器加载的类处于不同的运行时包。所有的访问权限都是基于同一个运行时包而言的。</p>
+<h3 id="类的加载时机"><a href="#类的加载时机" class="headerlink" title="类的加载时机"></a>类的加载时机</h3><p>Java 虚拟机规范没有强制规定类的加载时机，但是严格规定了以下 5 种情况必须立即对类进行“初始化”（而加载、验证、准备自然需要在此之前开始）  </p>
+<ol>
+<li>遇到字节码指令 new（实例化对象时）、getstatic、putstatic（读取或设置一个类的静态字段）、invokestatic（调用一个类的静态方法）；</li>
+<li>遇到反射调用 java.lang.reflect 对类进行反射调用；</li>
+<li>初始化一个类时，其父类还未初始化，则先初始化其父类（对接口不适用，即初始化子接口并不会导致父接口初始化）；</li>
+<li>主类（main）；</li>
+<li>JDK7 的动态语言支持，java.lang.invoke.MethodHandle 实例最后的解析结果 REF_getStatic、REF_putStatic、REF_invokeStatic 方法句柄，并且这个方法句柄对应的类没有进行初始化，则需要先进行初始化。</li>
+</ol>
+<p>上边的情况统称为<strong>主动引用</strong>，其他情况都是<strong>被动引用</strong>，被动引用都<strong>不会触发类的初始化</strong>。</p>
+<ul>
+<li>被动引用的示例如下，主要是使用 <strong>类初始化块</strong> 进行验证的（即 static 块），只输出了”Super!”，原因是不满足上边的条件，子类是否被加载完全由虚拟机实现说了算    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">class SuperClass &#123;</span><br><span class="line">    public static int value = 123;</span><br><span class="line">    static &#123;</span><br><span class="line">        System.out.println(&quot;Super!&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">class SubClass &#123;</span><br><span class="line">    static &#123;</span><br><span class="line">        System.out.println(&quot;Sub!&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        System.out.println(SubClass.value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>书上举了另外一个例子说明 <strong>数组类初始化</strong> 的问题，下面代码并不会触发 SuperClass 类的初始化，而是初始化了一个对应的数组类，可以通过加-XX:+TraceClassLoading 的运行时参数来跟踪类的加载过程    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class NotInitialization &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SuperClass[] sca = new SuperClass[10];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>还有一个例子来说明 <strong>常量传播优化</strong> 会导致的混淆情况，即使用常量字段（static final）时不会触发初始化，编译时会将常量值保存到调用者的类常量池中，所以在调用时就和被调用者没关系了，下面的代码并不会触发 ConstClass 类的加载   <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">class ConstClass &#123;</span><br><span class="line">    static &#123;</span><br><span class="line">        System.out.println(&quot;ConstClass!&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    public static final String HELLOWORLD = &quot;hello world&quot;;</span><br><span class="line">&#125;</span><br><span class="line">public class NotInitialization &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        System.out.println(ConstClass.HELLOWORLD);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="类的加载过程"><a href="#类的加载过程" class="headerlink" title="类的加载过程"></a>类的加载过程</h3><p><img src="/imgs/JVM/%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.png" alt="类的加载过程" title="类的加载过程"></p>
+<h4 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h4><ol>
+<li>通过类的完全限定名获取表示类的二进制流；</li>
+<li>转换为方法区中的类结构；</li>
+<li>在 Java 堆中生成一个代表这个类的 java.lang.Class 对象，作为方法区这些数据的访问入口</li>
+</ol>
+<p>对于数组类而言，<strong>数组类由 java 虚拟机直接创建，不通过类加载器创建</strong>。数组类的创建过程如下：</p>
+<ol>
+<li>如果数组元素类型是引用类型，就采用双亲委派模型进行加载(之后会介绍)，数组类将在加载该元素类型的类名称空间上被标识。</li>
+<li>如果数组元素类型为基本类型，数组类被标记为与引导类加载器关联。</li>
+<li>数组类的可见性与其元素类型可见性一致，如果元素类型不是引用类型，那数组类的可见性默认为 public。</li>
+</ol>
+<h4 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h4><p>此阶段的<strong>主要目的是确保 class 文件的字节流包含的信息符合虚拟机的要求</strong>，进行一部分的语义分析，主要是防止字节码中存在一些危险操作（数组越界、错误转型、跳转过头等），后来的 Java 虚拟机规范还规定了文件格式、符号引用等的验证。<br>不同的虚拟机，对类验证的实现可能有所不同，但大致都会完成下面四个阶段的验证：</p>
+<ol>
+<li><strong>文件格式验证</strong>，是要验证字节流是否符合 Class 文件格式的规范，并且能被当前版本的虚拟机处理。如验证魔数是否为 0xCAFEBABE；主、次版本号是否正在当前虚拟机处理范围之内；常量池的常量中是否有不被支持的常量类型。<br>该验证阶段的主要目的是保证输入的字节流能正确地解析并存储于方法区中，经过这个阶段的验证后，字节流才会进入内存的方法区中存储，所以后面的三个验证阶段都是基于方法区的存储结构进行的。</li>
+<li><strong>元数据验证</strong>，对字节码描述的信息进行语义分析，以保证其描述的信息符合 Java 语言规范的要求。可能包括的验证如：这个类是否有父类；这个类的父类是否继承了不允许被继承的类；如果这个类不是抽象类，是否实现了其父类或接口中要求实现的所有方法……</li>
+<li><strong>字节码验证</strong>，主要工作是进行数据流和控制流分析，保证被校验类的方法在运行时不会做出危害虚拟机安全的行为。如果一个类方法体的字节码没有通过字节码验证，那肯定是有问题的；但如果一个方法体通过了字节码验证，也不能说明其一定就是安全的。</li>
+<li><strong>符号引用验证</strong>，发生在虚拟机将符号引用转化为直接引用的时候，这个转化动作将在“解析阶段”中发生。验证符号引用中通过字符串描述的权限定名是否能找到对应的类；在指定类中是否存在符合方法字段的描述符及简单名称所描述的方法和字段；符号引用中的类、字段和方法的访问性(private、protected、public、default)是否可被当前类访问。</li>
+</ol>
+<p>验证阶段对于虚拟机的类加载机制来说，不一定是必要的阶段。<strong>如果所运行的全部代码确认是安全的，可以使用-Xverify：none 参数来关闭大部分的类验证措施，以缩短虚拟机类加载时间</strong>。</p>
+<h4 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h4><p>为类变量（static 变量）分配内存和并初始化为默认值，它们被分配在方法区中。<br>准备阶段不分配类中的实例变量的内存，实例变量将会在对象实例化时随着对象一起分配在 Java 堆中。<br>比如<code>static int a = 1;</code>在准备阶段后 a 的值为 0，在初始化阶段后才变成 1，但是对常量字段（static final），在准备阶段会直接赋予用户设定的值。</p>
+<h4 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h4><p>将常量池内的符号引用替换为直接引用，类似于将一个字面量 hash 到一个确定的槽中。<br><strong>符号引用（Symbolic Reference）</strong>：符号引用以一组符号来描述所引用的目标，符号可以是任何形式的字面量，只要使用时能无歧义地定位到目标即可。符号引用与虚拟机实现的内存布局无关，引用的目标并不一定已经加载到内存中。<br><strong>直接引用（Direct Reference）</strong>：直接引用可以是直接指向目标的指针、相对偏移量或是一个能间接定位到目标的句柄。直接引用是与虚拟机实现的内存布局相关的，如果有了直接引用，那么引用的目标必定已经在内存中存在。指向类型、类变量、类方法的直接引用可能是指向方法区的本地指针。</p>
+<p>常见的符号引用包括类或接口的全限定名、字段名和描述符、方法名和描述符。类型的直接引用可能简单地指向保存类型数据的方法区中的与实现相关的数据结构。类变量的直接引用可以指向方法区中保存的类变量的值。类方法的直接引用可以指向方法区中的一段数据结构方法区中包含调用方法的必要数据。指向实例变量和实例方法的直接引用都是偏移量。实例变量的直接引用可能是从对象的映像开始算起到这个实例变量位置的偏移量。实例方法的直接引用可能是到方法表的偏移量。</p>
+<p>为了加快解析效率，可以对解析结果进行缓存，之后再解析符号引用时直接返回即可，但是对于 invokedynamic 则不能进行缓存。解析主要是针对 CONSTANT_Class_info、CONSTANT_Fieldref_info、CONSTANT_Methodref_info、CONSTANT_InterfaceMethodref_info、CONSTANT_MethodType_info、CONSTANT_MethodHandle_info、CONSTANT_InvokeDynamic_info 七种常量类型。</p>
+<ol>
+<li>类或接口的解析<br>将符号引用替换为直接引用包括如下几步。假设符号引用记为 S，当前类记为 C，S 对应的类或接口记为 I。<ul>
+<li>若 S 不是数组类型，则把 S 传递给当前类 C 的类加载器进行加载，这个过程可能会触发其他的加载，这个过程一旦出现异常，则解析失败。</li>
+<li>若 S 是数组类型，并且数组元素类型为对象，则 S 的描述符会形如[java&#x2F;lang&#x2F;String，按照第一条去加载该类型，如果 S 的描述符符合，则需要加载的类型就是 java.lang.String，接着有虚拟机生成一个代表此数组唯独和元素的数组对象。</li>
+<li>若以上两个步骤没有出现异常，即 I 已经存在于内存中了，但是解析完成时还需要进行符号引用验证，确认 C 是否具备对 I 的访问权限。若不具备，则抛出 java.lang.IllegalAccessError 异常。</li>
+</ul>
+</li>
+<li>字段解析<br>首先将 CONSTANT_Fieldref_info 中的 class_index 索引的 CONSTANT_Class_info 符号引用进行解析，即解析字段所在类或接口，若解析出现异常，则字段解析失败。如解析成功，则进行下面的解析步骤。假设该字段所属的类或接口标记为 C。<ul>
+<li>如果 C 包含了字段的简单名和描述符与目标相匹配的字段，则返回这个字段的直接引用，查找结束。</li>
+<li>（字段解析对接口优先搜索）否则，如果 C 实现了接口，按照继承关系从下往上递归搜索各个接口和它的父接口，看是否存在相匹配的字段。存在，则返回直接引用，查找结束。</li>
+<li>否则，如果 C 不是 Object 对象，按照继承关系从下往上递归搜索父类，看是否存在相匹配的字段。存在，则返回直接引用，查找结束。</li>
+<li>否则，查找失败，抛出 java.lang.NoSuchFieldError 异常。</li>
+</ul>
+</li>
+<li>类方法解析<br>首先将 CONSTANT_Methodref_info 中的 class_index 索引的 CONSTANT_Class_info 符号引用进行解析，即解析方法所在的类或接口，若解析出现异常，则方法解析失败；如解析成功，则进行下面解析步骤。假设该方法所属的类标记为 C。<ul>
+<li>如果在方法表中发现 CONSTANT_Class_info 中索引的 C 是一个接口而不是一个类，则抛出 java.lang.IncompatibleClassChangeError 异常。</li>
+<li>否则，如果 C 中包含了方法的简单名和描述符与目标相匹配的字段，则返回这个方法的直接引用，查找结束。</li>
+<li>（方法解析对父类优先搜索）否则，在 C 的父类中递归搜索，看是否存在相匹配的方法，存在，则返回直接引用，查找结束。</li>
+<li>否则，在 C 实现的接口列表及父接口中递归搜索，看是否存在相匹配的方法，存在，说明 C 是一个抽象类（没有实现该方法，否则，在第一步就查找成功），抛出 java.lang.AbstractMethodError 异常。</li>
+<li>否则，查找失败，抛出 java.lang.NoSuchMethodError 异常。</li>
+<li>若查找过程成功，则对方法进行权限验证，如果发现不具备对此方法的访问权限，则抛出 java.lang.lllegalAccessError 异常。</li>
+</ul>
+</li>
+<li>接口方法解析<br>首先将 CONSTANT_InterfaceMethodref_info 中的 class_index 索引的 CONSTANT_Class_info 符号引用进行解析，即解析方法所在的类或接口，若解析出现异常，则方法解析失败；如解析成功，则进行下面解析步骤。假设该方法所属的类标记为 C。<ul>
+<li>如果在方法表中发现 CONSTANT_Class_info 中索引的 C 是一个类而不是接口，则抛出 java.lang.IncompatibleClassChangeError 异常。</li>
+<li>否则，如果 C 中包含了方法的简单名和描述符与目标相匹配的字段，则返回这个方法的直接引用，查找结束。</li>
+<li>否则，在 C 的父接口中递归搜索，直到 Object 类，看是否存在相匹配的方法，存在，则返回直接引用，查找结束。</li>
+<li>否则，查找失败，抛出 java.lang.NoSuchMethodError 异常。</li>
+<li>若查找过程成功，不需要进行权限验证，因为接口方法为 public，不会抛出 java.lang.IllegalAccessError 异常。</li>
+</ul>
+</li>
+</ol>
+<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p>类初始化是类加载过程的最后一步，前面的类加载过程，除了在加载阶段用户应用程序可以通过自定义类加载器参与之外，其余动作完全由虚拟机主导和控制，到了初始化阶段，才真正开始执行类中定义的 Java 程序代码。<br>初始化是执行类构造器&lt;clinit&gt;()的过程，<clinit>()方法是由编译器自动<strong>收集类中的所有类变量的赋值动作和静态语句块(static{}块&#x2F;类初始化块)中的语句合并产生的</strong>。具体地说，应该有以下几条规则：</p>
+<ul>
+<li>由编译器收集类中的所有类变量的赋值动作（如果仅仅只是声明，不会被收集）和静态语句块中的语句合并产生的，收集顺序按照语句在源文件中出现的顺序所决定；在静态语句块中只能访问定义在静态语句之前的变量；而对于定义在静态语句块之后的变量，可以进行赋值，但是不能够访问。</li>
+<li>不需要显示调用父类构造器，虚拟机会保证在子类的<clinit>()方法执行之前，父类的<clinit>()方法已经执行完毕，所以，第一个被执行的<clinit>()方法的类肯定是 java.lang.Object。</li>
+<li>父类中定义的静态语句块优先于子类的静态语句。</li>
+<li>此方法对类和接口都不是必须的，若类中没有静态语句块和静态变量赋值操作，则不会生成<clinit>()方法。</li>
+<li>接口会生成此方法，因为对接口的字段可以进行赋值操作。执行接口的<clinit>()方法不需要先执行父接口的<clinit>()方法，只有在使用父接口的变量时，才会进行初始化；接口的实现类在初始化时也不会执行接口的<clinit>()方法。</li>
+<li>此方法在多线程环境中会被正确的加锁、同步。</li>
+</ul>
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><p>完成了初始化阶段后，我们就可以使用对象了，在程序中可以随意进行访问，只要类还没有被卸载。</p>
+<h4 id="卸载"><a href="#卸载" class="headerlink" title="卸载"></a>卸载</h4><p>GC 能够对方法区内无用对象进行回收，启动类加载的类型永远是可触及的，回收的是由用户自定义加加载器加载的类，具体内容等到 GC 部分再说。</p>
+<h3 id="接口的加载过程"><a href="#接口的加载过程" class="headerlink" title="接口的加载过程"></a>接口的加载过程</h3><p>接口的加载和类的加载是类似的，只是接口要初始化时并不会连带父接口一块初始化，只有在真正用到父接口时才会执行初始化。 </p>
+<h3 id="定义类加载器和初始类加载器"><a href="#定义类加载器和初始类加载器" class="headerlink" title="定义类加载器和初始类加载器"></a>定义类加载器和初始类加载器</h3><p>我们知道不同类加载器加载的类位于不同的命名空间，它们之间是相互隔离的，这里说的隔离仅仅指它们存储位置隔离，并不是说一个自定义的类 A 使用了 java.util.List 类就会报错。<br>自定义的类 A 一般会使用系统类加载器加载，而 java.util.List 则会由启动类加载器加载，当加载类 A 时如果遇到了 java.util.List，会首先尝试通过系统类加载器加载，在它发现自己无法加载后，通过双亲委派模型交给父加载器加载。<br><img src="/imgs/JVM/%E5%88%9D%E5%A7%8B%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E5%92%8C%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8.png" alt="初始类加载器和定义类加载器" title="初始类加载器和定义类加载器"><br>如上图所示：</p>
+<ul>
+<li>A 是由系统类加载器加载的，因此系统类加载器是其定义类加载器兼初始类加载器；</li>
+<li>系统类加载器加载过 java.util.List，因此是其初始类加载器；</li>
+<li>启动类加载器实际加载了 java.util.List，因此是其定义类加载器。</li>
+</ul>
+<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><ol>
+<li>为什么下面的执行结果为 0？<br>说明类加载器在加载一个类时，父类的成员变量就算被覆盖，其存储空间依然还存在。  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">class A &#123;</span><br><span class="line">    int a;</span><br><span class="line">&#125;</span><br><span class="line">public class JavaTest extends A &#123;</span><br><span class="line">    int a;</span><br><span class="line">    @Test</span><br><span class="line">    public void test() &#123;</span><br><span class="line">        a = 1;</span><br><span class="line">        System.out.println(super.a);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>为什么下面的报错？<br>类的初始化阶段有一个细节：类初始化块不能访问定义在其之后的变量  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class JavaTest &#123;</span><br><span class="line">    static &#123;</span><br><span class="line">        i = 0;</span><br><span class="line">        System.out.println(i); // 报错</span><br><span class="line">    &#125;</span><br><span class="line">    static int i = 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>为什么输出两个’A’？<br>当我们 new A()时，首先为 A 分配内存空间，此时 A 已经存在了，只是还未初始化，然后调用 A 的构造函数，A 的构造函数又隐式调用了父类的构造函数。<br>在父类构造函数中使用 this 调用 draw()，this 实际上指向了 a 对象，平常调用方法时 this 也是隐含的。  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">class B &#123;</span><br><span class="line">    int a;</span><br><span class="line">    B() &#123;</span><br><span class="line">        this.draw();</span><br><span class="line">    &#125;</span><br><span class="line">    void draw() &#123;</span><br><span class="line">        System.out.println(&quot;B&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">class A extends B &#123;</span><br><span class="line">    int a;</span><br><span class="line">    A() &#123;</span><br><span class="line">        draw();</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    void draw() &#123;</span><br><span class="line">        System.out.println(&quot;A&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        A a = new A();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>为什么最后输出的 count2 为 0？<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">class SingleTon &#123;</span><br><span class="line">    private static SingleTon singleTon = new SingleTon();</span><br><span class="line">    public static int count1;</span><br><span class="line">    public static int count2 = 0;</span><br><span class="line">    private SingleTon() &#123;</span><br><span class="line">        count1++;</span><br><span class="line">        count2++;</span><br><span class="line">    &#125;</span><br><span class="line">    public static SingleTon getInstance() &#123;</span><br><span class="line">        return singleTon;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">public class Test &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SingleTon singleTon = SingleTon.getInstance();</span><br><span class="line">        System.out.println(&quot;count1=&quot; + singleTon.count1);</span><br><span class="line">        System.out.println(&quot;count2=&quot; + singleTon.count2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+这里有问题的应该是 static 变量的初始化和构造方法被调用的顺序，实际上构造方法是先被调用的。</li>
+<li>SingleTon singleTon &#x3D; SingleTon.getInstance();调用了类的 SingleTon 调用了类的静态方法，触发类的初始化（主动引用）</li>
+<li>类加载的时候在准备过程中为类的静态变量分配内存并初始化默认值 singleton&#x3D;null count1&#x3D;0,count2&#x3D;0（准备）</li>
+<li>类初始化，为类的静态变量赋值和执行静态代码快。singleton 赋值为 new SingleTon()调用类的构造方法（初始化）</li>
+<li>调用类的构造方法后 count&#x3D;1;count2&#x3D;1</li>
+<li>继续为 count1 与 count2 赋值,此时 count1 没有赋值操作,所有 count1 为 1,但是 count2 执行赋值操作就变为 0</li>
+<li>读下面的类加载器应用代码，为什么输出 false？<br>myLoader 加载的类和虚拟机的默认类加载器（Bootstrap ClassLoader）将加载的类保存在不同的命名空间中，它们相当于不同的类。  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public class JavaTest &#123;</span><br><span class="line">    @Test</span><br><span class="line">    public void test() throws ClassNotFoundException, IllegalAccessException, InstantiationException &#123;</span><br><span class="line">        ClassLoader myLoader = new ClassLoader() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public Class&lt;?&gt; loadClass(String name) throws ClassNotFoundException &#123;</span><br><span class="line">                String fileName = name.substring(</span><br><span class="line">                        name.lastIndexOf(&quot;.&quot;) + 1) + &quot;.class&quot;;</span><br><span class="line">                InputStream is = getClass().getResourceAsStream(fileName);</span><br><span class="line">                if(is == null) &#123; return super.loadClass(name); &#125;</span><br><span class="line">                try &#123;</span><br><span class="line">                    byte[] b = new byte[is.available()]; // 进行验证</span><br><span class="line">                    is.read(b);</span><br><span class="line">                    return defineClass(name, b, 0, b.length);</span><br><span class="line">                &#125; catch (IOException e) &#123;</span><br><span class="line">                    throw new ClassNotFoundException(name);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        Object obj = myLoader.loadClass(&quot;com.tallate.JavaTest&quot;)</span><br><span class="line">                .newInstance();</span><br><span class="line">        System.out.println(obj.getClass());</span><br><span class="line">        System.out.println(obj instanceof com.tallate.JavaTest); // false？</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>JVM 怎么知道哪些类应该委托给父加载器加载？<br>每个类装载器都有一个 URLClassPath 对象用于保存类路径，在加载时会先在这个路径下查找该类，找不到再返回 null。  </li>
+<li>不同命名空间的类为什么能互相使用？<br>双亲委派模型中，一个类装载器总是会先委托父类去进行装载，所有这些被委托的类装载器都被称为<strong>初始类装载器</strong>，而实际装载的被称为<strong>定义类装载器</strong>，所有初始装载器间的类型是共享的  </li>
+<li>可以不可以自己写个 String 类？<br>不能，因为根据类加载的双亲委派机制，会去加载父类，父类发现冲突了 String 就不再加载了。</li>
+<li>Tomcat 的应用隔离原理是什么？<br>Tomcat 实现了两种隔离技术：用于线程隔离的线程池和用于代码隔离的 WebAppClassLoader。<br>前者不必赘述，对于后者，大家比较感兴趣的是 Tomcat 中对双亲委派模型的违背，因为它不是先委托父加载器去加载目标类，因为 Tomcat 一个进程可以运行多个 web 服务器，两个 web 项目中可能会出现两个声明完全一致的类，它们必须所处的命名空间必须隔离开，不然可能会发生一个项目启动后调到另一个项目中的代码的情况，这样就乱套了。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><h3 id="类文件结构-1"><a href="#类文件结构-1" class="headerlink" title="类文件结构"></a>类文件结构</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/leesf456/p/5263764.html">【JVM】JVM 系列之 Class 文件（三）</a></li>
+</ol>
+<h3 id="对象分配"><a href="#对象分配" class="headerlink" title="对象分配"></a>对象分配</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.programcreek.com/2011/11/what-do-java-objects-look-like-in-memory/">What do Java objects look like in memory during run-time?</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.programcreek.com/2013/04/what-does-a-java-array-look-like-in-memory/">What does a Java array look like in memory?</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -744,7 +1578,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
+      <time title="修改时间：2024-09-02 00:56:43" itemprop="dateModified" datetime="2024-09-02T00:56:43+08:00">2024-09-02</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -820,7 +1654,7 @@
 <h3 id="高可用"><a href="#高可用" class="headerlink" title="高可用"></a>高可用</h3><p>使用了 MQ 之后，我们肯定是希望 MQ 有高可用特性，因为不可能接受机器宕机了，就无法收发消息的情况。<br>这一块我们也是基于 RabbitMQ 这种经典的 MQ 来说明一下：<br>RabbitMQ 是比较有代表性的，因为是基于主从做高可用性的，我们就以他为例子讲解第一种 MQ 的高可用性怎么实现。<br>rabbitmq 有三种模式：单机模式，普通集群模式，镜像集群模式<br>单机模式<br>单机模式就是 demo 级别的，就是说只有一台机器部署了一个 RabbitMQ 程序。<br>这个会存在单点问题，宕机就玩完了，没什么高可用性可言。一般就是你本地启动了玩玩儿的，没人生产用单机模式。<br>普通集群模式<br>这个模式的意思就是在多台机器上启动多个 rabbitmq 实例。类似的 master-slave 模式一样。<br>但是创建的 queue，只会放在一个 master rabbtimq 实例上，其他实例都同步那个接收消息的 RabbitMQ 元数据。<br>在消费消息的时候，如果你连接到的 RabbitMQ 实例不是存放 Queue 数据的实例，这个时候 RabbitMQ 就会从存放 Queue 数据的实例上拉去数据，然后返回给客户端。<br>总的来说，这种方式有点麻烦，没有做到真正的分布式，每次消费者连接一个实例后拉取数据，如果连接到不是存放 queue 数据的实例，这个时候会造成额外的性能开销。如果从放 Queue 的实例拉取，会导致单实例性能瓶颈。<br>如果放 queue 的实例宕机了，会导致其他实例无法拉取数据，这个集群都无法消费消息了，没有做到真正的高可用。<br>所以这个事儿就比较尴尬了，这就没有什么所谓的高可用性可言了，这方案主要是提高吞吐量的，就是说让集群中多个节点来服务某个 queue 的读写操作。<br>镜像集群模式<br>镜像集群模式才是真正的 rabbitmq 的高可用模式，跟普通集群模式不一样的是：创建的 queue 无论元数据还是 queue 里的消息都会存在于多个实例上，<br>每次写消息到 queue 的时候，都会自动把消息到多个实例的 queue 里进行消息同步。<br>这样的话任何一个机器宕机了别的实例都可以用提供服务，这样就做到了真正的高可用了。<br>但是也存在着不好之处：</p>
 <ul>
 <li>性能开销过高，消息需要同步所有机器，会导致网络带宽压力和消耗很重</li>
-<li>扩展性低：无法解决某个 queue 数据量特别大的情况，导致 queue 无法线性拓展。 就算加了机器，那个机器也会包含 queue 的所有数据，queue 的数据没有做到分布式存储。<br>对于 RabbitMQ 的高可用一般的做法都是开启镜像集群模式，这样起码来说做到了高可用，一个节点宕机了，其他节点可以继续提供服务。</li>
+<li>扩展性低：无法解决某个 queue 数据量特别大的情况，导致 queue 无法线性拓展。就算加了机器，那个机器也会包含 queue 的所有数据，queue 的数据没有做到分布式存储。<br>对于 RabbitMQ 的高可用一般的做法都是开启镜像集群模式，这样起码来说做到了高可用，一个节点宕机了，其他节点可以继续提供服务。</li>
 </ul>
 <h3 id="高性能"><a href="#高性能" class="headerlink" title="高性能"></a>高性能</h3><ul>
 <li>对于内存操作的线程分离，大部分中间件做法是将数据文件缓存与内存中，通过异步线程 flush 至硬盘</li>
@@ -1249,334 +2083,6 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/a2b16944.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/a2b16944.html" class="post-title-link" itemprop="url">Redis 持久化</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-09-22 12:21:48" itemprop="dateCreated datePublished" datetime="2019-09-22T12:21:48+08:00">2019-09-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BC%93%E5%AD%98/" itemprop="url" rel="index"><span itemprop="name">缓存</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>Redis 为了达到最快的读写速度将数据都读到内存中，并通过异步的方式将数据写入磁盘。所以 redis 具有快速和数据持久化的特征。如果不将数据放在内存中，磁盘 I&#x2F;O 速度为严重影响 redis 的性能。在内存越来越便宜的今天，redis 将会越来越受欢迎。<br>如果设置了最大使用的内存，则数据已有记录数达到内存限值后不能继续插入新值。<br>不过 Redis 也提供了持久化的选项。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/a2b16944.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/df2941e1.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/df2941e1.html" class="post-title-link" itemprop="url">Redis 概述</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-09-22 12:21:48" itemprop="dateCreated datePublished" datetime="2019-09-22T12:21:48+08:00">2019-09-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BC%93%E5%AD%98/" itemprop="url" rel="index"><span itemprop="name">缓存</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<p><img src="/imgs/Redis/Redis%E6%9E%B6%E6%9E%84%E5%9B%BE.jpg" alt="Redis架构图" title="Redis架构图"><br><img src="/imgs/Redis/Redis%E7%9F%A5%E8%AF%86%E6%A1%86%E6%9E%B6.jpeg" alt="Redis知识框架" title="Redis知识框架"><br><img src="/imgs/Redis/Redis%E9%97%AE%E9%A2%98%E7%94%BB%E5%83%8F.jpg" alt="Redis问题画像" title="Redis问题画像"></p>
-<blockquote>
-<p>以上图片来自极客时间的《Redis核心技术与实战》。<br>对原理的分析都是基于Redis3.0版本的代码，现在最新的版本应该是6.0，很多功能都是后面的版本引入的，因此这篇里不会描述多线程这些功能。</p>
-</blockquote>
-<h2 id="为什么使用-Redis"><a href="#为什么使用-Redis" class="headerlink" title="为什么使用 Redis"></a>为什么使用 Redis</h2><h3 id="Redis-的缺点-优点"><a href="#Redis-的缺点-优点" class="headerlink" title="Redis 的缺点 &amp; 优点"></a>Redis 的缺点 &amp; 优点</h3><p>特性及优势：</p>
-<ol>
-<li>内存数据库，吞吐率不受磁盘影响；</li>
-<li>每秒可以处理超过 10 万次读写操作；</li>
-<li>多数据结构支持，包括 string、hash、list、set、zset、Bitmaps、Hyperloglog、Geo、Pub&#x2F;Sub、Redis Module、BloomFilter、RedisSearch、Redis-ML 等，支持绝大多数应用场景；</li>
-<li>Replication（复制）；</li>
-<li>lua（支持服务端执行复杂的业务逻辑）；</li>
-<li>LRU eviction（缓存淘汰）；</li>
-<li>Transactions；</li>
-<li>Persistence（持久化），包括 rdb（快照）和 AOF 两种；</li>
-<li>Sentinel（哨兵）；</li>
-<li>Cluster（分区）。</li>
-</ol>
-<p>但是也不能忽略 Redis 本身的一些缺点：</p>
-<ol>
-<li>数据库容量受到物理内存的限制，不能用作海量数据的高性能读写，因此 Redis 适合的场景主要局限在较小数据量的高性能操作和运算上；</li>
-<li>缓存和数据库双写一致性问题；</li>
-<li>缓存雪崩问题；</li>
-<li>缓存击穿问题；</li>
-<li>缓存的并发竞争问题。</li>
-</ol>
-<h3 id="Redis-Memcached"><a href="#Redis-Memcached" class="headerlink" title="Redis &amp; Memcached"></a>Redis &amp; Memcached</h3><p>Redis 相对 Memcached 来说有以下优点：</p>
-<ol>
-<li>memcached 所有的值均是简单的字符串，redis 作为其替代者，支持更为丰富的数据类型 </li>
-<li>redis 的速度比 memcached 快很多</li>
-<li>redis 可以持久化其数据</li>
-</ol>
-<p>Redis 和 Memcached 之间存在以下区别：</p>
-<ol>
-<li>存储方式 Memecache 把数据全部存在内存之中，断电后会挂掉，数据不能超过内存大小。 Redis 有部份存在硬盘上，这样能保证数据的持久性。 </li>
-<li>数据支持类型 Memcache 对数据类型支持相对简单。 Redis 有复杂的数据类型。 </li>
-<li>使用底层模型不同 它们之间底层实现方式 以及与客户端之间通信的应用协议不一样。 Redis 直接自己构建了 VM 机制 ，因为一般的系统调用系统函数的话，会浪费一定的时间去移动和请求。</li>
-</ol>
-<h3 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h3><ol>
-<li>会话缓存（Session Cache）<br>最常用的一种使用 Redis 的情景是会话缓存（session cache）。用 Redis 缓存会话比其他存储（如 Memcached）的优势在于：Redis 提供持久化。当维护一个不是严格要求一致性的缓存时，如果用户的购物车信息全部丢失，大部分人都会不高兴的，现在，他们还会这样吗？<br>幸运的是，随着 Redis 这些年的改进，很容易找到怎么恰当的使用 Redis 来缓存会话的文档。甚至广为人知的商业平台 Magento 也提供 Redis 的插件。</li>
-<li>全页缓存（FPC）<br>除基本的会话 token 之外，Redis 还提供很简便的 FPC 平台。回到一致性问题，即使重启了 Redis 实例，因为有磁盘的持久化，用户也不会看到页面加载速度的下降，这是一个极大改进，类似 PHP 本地 FPC。<br>再次以 Magento 为例，Magento 提供一个插件来使用 Redis 作为全页缓存后端。<br>此外，对 WordPress 的用户来说，Pantheon 有一个非常好的插件 wp-redis，这个插件能帮助你以最快速度加载你曾浏览过的页面。</li>
-<li>队列<br>Reids 在内存存储引擎领域的一大优点是提供 list 和 set 操作，这使得 Redis 能作为一个很好的消息队列平台来使用。Redis 作为队列使用的操作，就类似于本地程序语言（如 Python）对 list 的 push&#x2F;pop 操作。<br>当然要将 Redis 作为消息队列投入生产环境还有很多设计要点，比如采用 sleep 一段时间重试还是 blpop 阻塞、主题订阅、如何应对消费者下线导致的消息丢失问题（如何保证消息一定能被消费）等。<br>Redis 作为消息队列坑比较多，如果希望少点麻烦且对服务质量有一定要求，最好还是采用 RocketMQ 这些比较成熟的方案。</li>
-<li>延时队列<br>使用 zset，时间戳作为 score，消费者用 zrangebyscore 指令获取 N 秒之前的数据轮询进行处理，这种思路和 JDK 中的 ScheduledThreadPoolExecutor 有点像。</li>
-<li>排行榜&#x2F;计数器<br>Redis 在内存中对数字进行递增或递减的操作实现的非常好。集合（Set）和有序集合（Sorted Set）也使得我们在执行这些操作的时候变的非常简单，Redis 只是正好提供了这两种数据结构。所以，我们要从排序集合中获取到排名最靠前的 10 个用户–我们<br>称之为“user_scores”，我们只需要像下面一样执行即可：<br>当然，这是假定你是根据你用户的分数做递增的排序。如果你想返回用户及用户的分数，你需要这样执行：<br>ZRANGE user_scores 0 10 WITHSCORES<br>Agora Games 就是一个很好的例子，用 Ruby 实现的，它的排行榜就是使用 Redis 来存储数据的，你可以在这里看到。</li>
-<li>发布&#x2F;订阅<br>最后（但肯定不是最不重要的）是 Redis 的发布&#x2F;订阅功能。发布&#x2F;订阅的使用场景确实非常多。我已看见人们在社交网络连接中使用，还可作为基于发布&#x2F;订阅的脚本触发器，甚至用 Redis 的发布&#x2F;订阅功能来建立聊天系统！（不，这是真的，你可以去核实）。<br>Redis 提供的所有特性中，我感觉这个是喜欢的人最少的一个，虽然它为用户提供如果此多功能。</li>
-<li>分布式锁<br>不要用 setnx+expire，因为如果进程 crash 或重启这个锁就直接失效了。实际上 set 命令本身就包含超时和 cas 的设置。</li>
-<li>扫描<br>如果 Redis 中有 1 亿多个 key，其中有 10W+个 key 有固定的前缀（这种场景非常常见），如何将它们全部找出来？<br>由于 Redis 的单线程特性，使用 keys 可能会阻塞 Redis 进程，最好换成 scan 命令，不过可能提取出的部分 key 是重复的，需要客户端做去重。</li>
-</ol>
-<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><h3 id="Redis与其他KV存储有何不同？"><a href="#Redis与其他KV存储有何不同？" class="headerlink" title="Redis与其他KV存储有何不同？"></a>Redis与其他KV存储有何不同？</h3><ul>
-<li>更多复杂的数据结构，支持更多特殊的场景；</li>
-<li>Redis是内存数据库，但是支持持久化到磁盘。</li>
-</ul>
-<h3 id="有人说-Redis-只适合用来做缓存，当数据库来用并不合适，为什么？"><a href="#有人说-Redis-只适合用来做缓存，当数据库来用并不合适，为什么？" class="headerlink" title="有人说 Redis 只适合用来做缓存，当数据库来用并不合适，为什么？"></a>有人说 Redis 只适合用来做缓存，当数据库来用并不合适，为什么？</h3><p>Redis 的事务并不严格：<br>    * A(原子性)：Redis 支持事务，所有命令会被保存到一个事务队列中，服务器接收到 exec 时才会被真正执行，注意如果中间出错，事务不会回滚，后面的指令还会继续执行；而且如果涉及到复杂的逻辑判断，则只能通过<strong>lua 脚本</strong>实现“伪原子性”，说它是“伪原子性”是因为虽然脚本可以一次性执行多条命令，如果中间某个命令出错还是会无法保证“要么全部执行，要么都不执行”的要求。<br>    * I(隔离性)：Redis 是单线程模型，因此可以保证隔离性。<br>    * D(持久性)：Redis 是内存数据库，服务器意外崩溃会导致内存中的数据丢失，除非开启 AOF，并且配置成每次写入都记日志，但是这样又会极大地影响效率，所以一般会配置成混合模式的持久化。</p>
-<h3 id="Redis会占用多少内存空间？"><a href="#Redis会占用多少内存空间？" class="headerlink" title="Redis会占用多少内存空间？"></a>Redis会占用多少内存空间？</h3><ul>
-<li>An empty instance uses ~ 3MB of memory.</li>
-<li>1 Million small Keys -&gt; String Value pairs use ~ 85MB of memory.<br>那么10亿个kv，大概就会占用85G的内存了。</li>
-<li>1 Million Keys -&gt; Hash value, representing an object with 5 fields, use ~ 160 MB of memory.</li>
-</ul>
-<p>64位机器会占用比32位机器更多的内存，因为指针在64位机器上占用更多空间，但同时64位机器也可以有更大的内存空间。</p>
-<h3 id="Redis-的底层数据结构有哪些"><a href="#Redis-的底层数据结构有哪些" class="headerlink" title="Redis 的底层数据结构有哪些"></a>Redis 的底层数据结构有哪些</h3><p>sds：string 使用，变长字符串，不够的情况下重新分配空间并将老字符串数据拷贝过去；<br>dict：字典应用很多，包括 Redis 数据库中保存所有 key-value、hash、set、zset。dict 类似 Java 中的 HashMap，将 key 散列到哈希桶数组中，每个哈希桶都是一个链表，插入就是插入到链表头部，当元素超过了容量的一半后会启动渐进式 rehash 进行扩容。<br>ziplist：相当于一个数组，查询时需要遍历一次，每次插入都需要 realloc 重新分配一个新的更大的数组，然后把老数组内容拷贝过去。<br>quicklist：由于 linkedlist 附加空间成本高且容易产生碎片，因此 Redis 里的 quicklist 设计成了 linkedlist 和 ziplist 的结合，它将 linkedlist 按段切分，每一段使用 ziplist 存储；<br>skiplist：skiplist 用于实现 zset 中按 score 排序的要求，插入时先自顶向下查位置，然后按概率计算该节点应该分配到几层。</p>
-<h3 id="存储数据选择-string-还是-hash？"><a href="#存储数据选择-string-还是-hash？" class="headerlink" title="存储数据选择 string 还是 hash？"></a>存储数据选择 string 还是 hash？</h3><p>从业务层面来看，如果要存好多字段的对象、而且这个对象的每个字段都会单独拿出来用，则可以考虑使用 hash，否则没有太多限制条件。<br>从性能角度来看，如果存的字段少，hash 会使用 ziplist 结构存储，性能多少受点影响，而且还要考虑转换结构和渐进式扩容对性能的损耗。<br>从节约空间的角度来看，string 的 key 一般都会加个前缀，一般会比 hash 占用更多的空间，不过差距不大。</p>
-<h3 id="设计-redis-排序，数据结构是金额-花钱的时间，金额越大，时间越早越靠前"><a href="#设计-redis-排序，数据结构是金额-花钱的时间，金额越大，时间越早越靠前" class="headerlink" title="设计 redis 排序，数据结构是金额+花钱的时间，金额越大，时间越早越靠前"></a>设计 redis 排序，数据结构是金额+花钱的时间，金额越大，时间越早越靠前</h3><p>用 zset 存，score 是金额拼上时间，金额放高位，MAX_INT 和时间作差放低位，查询时使用<code>ZREVRANGE</code>命令查询。</p>
-<h3 id="hash-中哈希冲突怎么解决的"><a href="#hash-中哈希冲突怎么解决的" class="headerlink" title="hash 中哈希冲突怎么解决的"></a>hash 中哈希冲突怎么解决的</h3><p>分两种情况：hash 在数据量小时结构是 ziplist，这时插入不会做冲突检测，插入到目标位置后就向后统一移动数据，给新插入的数据项流出空间；在数据量大时结构是 dict，这种结构和 Java 中的 HashMap 类似，使用链表来处理冲突。</p>
-<ol>
-<li>说说 Redis 为什么那么快。<br>单线程模型-&gt;减少了线程间上下文切换的开销。<br>多路复用的 IO 模型-&gt;单线程监控多个连接。</li>
-<li>为什么 Redis 记录 AOF 日志是先执行指令然后再记录 AOF 日志？而不是像其他存储引擎一样反过来？<br>主要是因为 Redis 本身是缓存而不是 db，侧重点不同，db 先写日志是为了失败回滚，而 Redis 持久化是一个附加功能，只能保证数据不会完全丢失。</li>
-</ol>
-<h3 id="Redis-淘汰时，如果读取，会不会数据不完整"><a href="#Redis-淘汰时，如果读取，会不会数据不完整" class="headerlink" title="Redis 淘汰时，如果读取，会不会数据不完整"></a>Redis 淘汰时，如果读取，会不会数据不完整</h3><p>redis 的淘汰分两种：</p>
-<ul>
-<li>一种是过期，这种不会导致这种问题，因为查询时会判断下过期时间，过期了就不返回；</li>
-<li>另一种是超过内存容量淘汰，比如 LRU，这种也不会导致这种问题，因为执行每个命令时都会检查下缓存是否超出了阈值，可见代码<code>server.c/processCommand</code>：<br><img src="/imgs/Redis/Redis-%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4%E5%89%8D%E6%A3%80%E6%9F%A5%E7%BC%93%E5%AD%98%E6%98%AF%E5%90%A6%E6%BA%A2%E5%87%BA.jpeg" alt="Redis-执行命令前检查缓存是否溢出" title="Redis-执行命令前检查缓存是否溢出"></li>
-</ul>
-<h3 id="Redis-的持久化原理是什么"><a href="#Redis-的持久化原理是什么" class="headerlink" title="Redis 的持久化原理是什么"></a>Redis 的持久化原理是什么</h3><p>Redis 有两种持久化方式：RDB 和 AOF<br>RDB 是快照，AOF 记录了写操作，效率起见，一般 RDB 作为 checkpoint，checkpoint 后的数据通过 AOF 恢复。</p>
-<h3 id="RDB-和-AOF-之间的区别"><a href="#RDB-和-AOF-之间的区别" class="headerlink" title="RDB 和 AOF 之间的区别"></a>RDB 和 AOF 之间的区别</h3><p>RDB 二进制文件可以直接加载到内存速度较快；AOF 要重放命令，所以速度比较慢。<br>RDB 需要全量备份，AOF 可以增量备份，二者的应用场景不同。</p>
-<h3 id="Redis的复制原理是什么？"><a href="#Redis的复制原理是什么？" class="headerlink" title="Redis的复制原理是什么？"></a>Redis的复制原理是什么？</h3><p>master 会启动一个后台进程进行持久化（RDB or AOF），第一次连接时会将 RDB 文件发给 slave，slave 先保存到磁盘，之后加载到内存中；如果不是第一次连接，slave 连接 master 后通过 PSYNC 命令告知自己同步的起始位置，master 将增量部分 AOF 文件发送给 slave。</p>
-<h3 id="Redis-持久化期间，主进程还能对外提供服务吗？为什么"><a href="#Redis-持久化期间，主进程还能对外提供服务吗？为什么" class="headerlink" title="Redis 持久化期间，主进程还能对外提供服务吗？为什么"></a>Redis 持久化期间，主进程还能对外提供服务吗？为什么</h3><p>能。<br>因为 Redis 的复制是通过 fork 子进程实现的，父进程仍然可以接收请求。</p>
-<h3 id="持久化期间，Redis如何处理新写入的数据呢，这个数据也会直接进行持久化吗？"><a href="#持久化期间，Redis如何处理新写入的数据呢，这个数据也会直接进行持久化吗？" class="headerlink" title="持久化期间，Redis如何处理新写入的数据呢，这个数据也会直接进行持久化吗？"></a>持久化期间，Redis如何处理新写入的数据呢，这个数据也会直接进行持久化吗？</h3><p>不会。<br>因为 Redis 复制是通过 fork 子进程实现的，由于 COW 机制，子进程只能看到老数据。</p>
-<h3 id="主从复制为什么会发生延迟？怎么解决"><a href="#主从复制为什么会发生延迟？怎么解决" class="headerlink" title="主从复制为什么会发生延迟？怎么解决"></a>主从复制为什么会发生延迟？怎么解决</h3><p>延迟无法避免，比如主从之间的网络抖动、slave 发生阻塞（如 IO）等情况。<br>解决办法有两种：</p>
-<ul>
-<li><code>min-slave-to-write N</code>和<code>min-slave-max-lag M</code>，控制 Master，只有在至少有 N 个 slave 正在工作，并且滞后时间均小于 M 秒的情况下，Master 将不接受写入请求；</li>
-<li><code>slave-serve-stale-data</code>，控制从库对主库失去响应或复制进行过程中从库的表现，为 yes 则从库会继续响应客户端的请求，为 no 则除去 INFO 和 SLAVOF 命令之外的任何请求都会返回一个错误<code>SYNC with master in progress</code>；</li>
-<li>编写外部监控程序，如果某个 slave 延迟较大，则通知 client 不要读这个 slave。</li>
-</ul>
-<h3 id="Redis-怎么实现高可用"><a href="#Redis-怎么实现高可用" class="headerlink" title="Redis 怎么实现高可用"></a>Redis 怎么实现高可用</h3><p>从复制、Sentinel 到 Cluster</p>
-<h3 id="sentinel-中，使用客户端是怎么连接服务器的？（Redisson-配置）"><a href="#sentinel-中，使用客户端是怎么连接服务器的？（Redisson-配置）" class="headerlink" title="sentinel 中，使用客户端是怎么连接服务器的？（Redisson 配置）"></a>sentinel 中，使用客户端是怎么连接服务器的？（Redisson 配置）</h3><p>见《Redis 客户端》。</p>
-<h3 id="哈希槽原理？和一致性哈希的区别？怎么落点"><a href="#哈希槽原理？和一致性哈希的区别？怎么落点" class="headerlink" title="哈希槽原理？和一致性哈希的区别？怎么落点"></a>哈希槽原理？和一致性哈希的区别？怎么落点</h3><p>redis cluster 默认分配了 16384 个 slot，当我们 set 一个 key 时，会用<strong>CRC16</strong>算法来取模得到所属的 slot，然后将这个 key 分到哈希槽区间的节点上，具体算法就是：<code>CRC16(key) % 16384</code>。所以我们在测试的时候看到 set 和 get 的时候，直接跳转到了 7000 端口的节点。<br>哈希槽与一致性哈希的区别：哈希槽由客户端来重定向到目标 slot 所在节点，一致性哈希需要由服务器端重定向到目标节点，而且需要按顺时针方向一个一个节点递归地找。</p>
-<h3 id="Redis雪崩、击穿、穿透等现象是怎么出现的？怎么解决"><a href="#Redis雪崩、击穿、穿透等现象是怎么出现的？怎么解决" class="headerlink" title="Redis雪崩、击穿、穿透等现象是怎么出现的？怎么解决"></a>Redis雪崩、击穿、穿透等现象是怎么出现的？怎么解决</h3><ol>
-<li>缓存穿透<br>缓存穿透指查询一个不存在的数据，出于容错考虑这个查询会穿透到 DB 层，如果这种带穿透的查询特别多可能会把 DB 打挂掉。<br>解决办法：使用布隆过滤器，保存所有可能存在的数据到一个足够大的 bitmap 中，由于布隆过滤器的特性，一定不存在的数据在 bitmap 中一定找不到，从而可以很大程度上避免对底层存储系统的查询压力；还有一种更简单的方法，就是在查询返回结果为空时也把这个空结果缓存起来，但是它的过期时间会短一些，最长时间不超过 5 分钟。</li>
-<li>缓存雪崩<br>缓存雪崩指的是设置缓存时采用了相同的过期时间，导致缓存在同一时间同时失效，请求全部打到 DB，DB 瞬时压力过大导致雪崩。<br>解决办法：缓存失效时间随机化，在原有失效时间基础上加上一个随机值，可以使得过期时间的重复率降低；加锁并令请求排队，使得请求串行化，避免所有请求都查询数据库，不过这样会导致性能的降低。</li>
-<li>缓存击穿<br>缓存击穿指的是某个 key 在过期时正好有大量请求访问该 key，这些请求会同时回表，可能会瞬间将后端 DB 打挂。<br>解决办法：使用互斥锁，缓存失效时先加锁，避免并发回表；一些长时间不变的数据完全可以不设置过期时间，或者过期时间特别长。</li>
-</ol>
-<h3 id="主从复制的流程？传的是文件吗？"><a href="#主从复制的流程？传的是文件吗？" class="headerlink" title="主从复制的流程？传的是文件吗？"></a>主从复制的流程？传的是文件吗？</h3><p>流程见《主从同步》。<br>如果是全量同步，同步时会先同步 RDB 文件，再同步增量写命令；<br>如果是部分重同步，则只同步增量写命令。</p>
-<h3 id="中间传输失败怎么办？中间传输不一致怎么办"><a href="#中间传输失败怎么办？中间传输不一致怎么办" class="headerlink" title="中间传输失败怎么办？中间传输不一致怎么办"></a>中间传输失败怎么办？中间传输不一致怎么办</h3><p>如果上次传输中断，则下次同步时从中断位置开始执行部分重同步。</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a target="_blank" rel="noopener" href="https://redis.io/topics/faq">FAQ</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.cxc233.com/blog/e1d54234.html">使用vscode(gdb)调试redis</a></li>
-</ol>
-<h3 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/16375188/redis-strings-vs-redis-hashes-to-represent-json-efficiency">Redis strings vs Redis hashes to represent JSON: efficiency?</a></li>
-</ol>
-<h3 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/4992bed65b22">Redis 源码涉及 C 语言</a></li>
-<li><a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?__biz=MzA4NTg1MjM0Mg==&mid=2657261203&idx=1&sn=f7ff61ce42e29b874a8026683875bbb1&scene=21#wechat_redirect">Redis 内部数据结构详解(1)——dict</a></li>
-<li><a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?__biz=MzA4NTg1MjM0Mg==&mid=2657261213&idx=1&sn=0ddddf48929610a4155bd82794cad4fa&scene=21#wechat_redirect">Redis 内部数据结构详解(2)——sds</a></li>
-<li><a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s?__biz=MzA4NTg1MjM0Mg==&mid=2657261237&idx=1&sn=380d183332d41d24ea6f88a54f533fc3&scene=21#wechat_redirect">Redis 内部数据结构详解(3)——robj</a></li>
-<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzA4NTg1MjM0Mg==&mid=2657261265&idx=1&sn=e105c4b86a5640c5fc8212cd824f750b&scene=21#wechat_redirect">Redis 内部数据结构详解(4)——ziplist</a></li>
-<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzA4NTg1MjM0Mg==&mid=2657261335&idx=1&sn=053d72a348be2e78040f3847f4092d92&scene=21#wechat_redirect">Redis 内部数据结构详解(5)——quicklist</a></li>
-<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzA4NTg1MjM0Mg==&mid=2657261457&idx=1&sn=fe966f3825b81e9d50a2cf38dac9060c&chksm=84479e48b330175ea07905e791856cca5fc50694db9fd4c3485ba5dc097443e69f5ed28a34b5&scene=21#wechat_redirect">Redis 为什么用跳表而不用平衡树？</a></li>
-<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzA4NTg1MjM0Mg==&mid=2657261457&idx=1&sn=fe966f3825b81e9d50a2cf38dac9060c&chksm=84479e48b330175ea07905e791856cca5fc50694db9fd4c3485ba5dc097443e69f5ed28a34b5&scene=21#wechat_redirect">Redis 中的集合类型是怎么实现的？</a></li>
-</ol>
-<h3 id="Persistence"><a href="#Persistence" class="headerlink" title="Persistence"></a>Persistence</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/c210851d3558">剖析 Redis RDB 文件</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/131cf929a262">Redis 源码分析–RDB 实现源码阅读</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/90cdd28c5e92">Redis 源码分析–AOF 文件全量重写源码阅读</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/91cf48c8c082">Redis 源码分析–AOF 文件增量追写源码阅读</a></li>
-</ol>
-<h3 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h3><ol>
-<li><a target="_blank" rel="noopener" href="http://www.redis.cn/topics/clients.html">Redis 如何处理客户端连接</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/36a5935db85b">剖析 Redis 协议</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/78b94407f59c">剖析 Redis 协议(续)</a></li>
-</ol>
-<h3 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h3><ol>
-<li><a target="_blank" rel="noopener" href="http://www.redis.cn/topics/replication.html">复制</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wdliu/p/9407179.html">redis 系列–主从复制以及 redis 复制演进</a></li>
-</ol>
-<h3 id="Sentinel-Cluster"><a href="#Sentinel-Cluster" class="headerlink" title="Sentinel &amp; Cluster"></a>Sentinel &amp; Cluster</h3><ol>
-<li><a target="_blank" rel="noopener" href="http://www.redis.cn/topics/partitioning.html">分区：怎样将数据分布到多个 redis 实例</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.redis.cn/topics/sentinel.html">Redis 的 Sentinel 文档</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.redis.cn/topics/cluster-tutorial.html">Redis 集群教程</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.redis.cn/topics/cluster-spec.html">Redis 集群规范</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/4163916a2a8a">一致性哈希和哈希槽对比</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/145215dc3440">Redis 集群扩容和缩容</a></li>
-</ol>
-<h3 id="架构迁移"><a href="#架构迁移" class="headerlink" title="架构迁移"></a>架构迁移</h3><ol>
-<li><a target="_blank" rel="noopener" href="http://www.redis.cn/articles/20170830103.html">Redis 集群迁移案例</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/vipshop/redis-migrate-tool">redis-migrate-tool</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/CodisLabs/redis-port">redis-port</a></li>
-<li>redis-migration<br><a target="_blank" rel="noopener" href="https://github.com/helifu/redis-migration">redis-migration</a><br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzAxNjc1MTk5Nw==&mid=401404354&idx=1&sn=36225e1e72aa1402d2fb79928addadd9&scene=1&srcid=0304rSI42ziy0Qfb9wvNDzBi&key=8dcebf9e179c9f3a6f34ddb7f5de1b77fe12f5078f6a2ac7bf9f7c0d8485989ab2d848694250dec6c20a3f96f42c0e09&ascene=0&uin=MzM4Njg2NDU1&devicetype=iMac+MacBookPro12,1+OSX+OSX+10.10.3+build(14D136)&version=11020201&pass_ticket=MGWnMZAOg9KlbJTWgO9ARaZA3po2c+LDVDHD6Xtt9cZYpjpc9ygP+pjWQz3D6NBE">redis-migration：独创的 redis 在线数据迁移工具</a></li>
-</ol>
-<h3 id="Twemproxy"><a href="#Twemproxy" class="headerlink" title="Twemproxy"></a>Twemproxy</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://github.com/twitter/twemproxy">Twemproxy</a></li>
-</ol>
-<h3 id="Codis"><a href="#Codis" class="headerlink" title="Codis"></a>Codis</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://github.com/CodisLabs/codis">Codis</a></li>
-</ol>
-<h3 id="Redisson"><a href="#Redisson" class="headerlink" title="Redisson"></a>Redisson</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://github.com/redisson/redisson">Redisson</a></li>
-</ol>
-<h3 id="系统优化"><a href="#系统优化" class="headerlink" title="系统优化"></a>系统优化</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://www.oschina.net/translate/redis-latency-problems-troubleshooting?lang=chs&p=1">Redis 响应延迟问题排查</a></li>
-</ol>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://tallate.github.io/9dda6023.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1691,245 +2197,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/f1a5dd67.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/f1a5dd67.html" class="post-title-link" itemprop="url">Redis 数据结构</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-09-22 12:21:48" itemprop="dateCreated datePublished" datetime="2019-09-22T12:21:48+08:00">2019-09-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BC%93%E5%AD%98/" itemprop="url" rel="index"><span itemprop="name">缓存</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-
-<h1 id="基本数据结构"><a href="#基本数据结构" class="headerlink" title="基本数据结构"></a>基本数据结构</h1><h2 id="String"><a href="#String" class="headerlink" title="String"></a>String</h2><h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ol>
-<li>最大能存储 512MB &#x3D;&#x3D; 536870912 B(byte) ；</li>
-<li>二进制安全，在传输数据的时候，能保证二进制数据的信息安全，也就是不会被篡改、破译；如果被攻击，能够及时检测出来</li>
-<li>能存储各种类型的数据，字符串、数字，以至对象（通过json序列化）、位图等。</li>
-</ol>
-<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><p>容量：512M</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set aa &#x27;str&#x27;</span><br><span class="line">get aa</span><br></pre></td></tr></table></figure>
-<p>操作总结</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">set/get/del/append/strlen key</span><br><span class="line">incr/decr/incrby/decrby key</span><br><span class="line">getrange key start end/setrange key offset value（从offset处开始读取/覆盖）</span><br><span class="line">setex key seconds value(set with expire插入key的同时设置过期时间)/setnx key value(set if not exists如果已存在则直接返回0)</span><br><span class="line">mset/mget/msetnx key value &#123;key value&#125;（设置/读取多个key的值，msetnx比较特殊，要么都成功，要么一个都不执行，可以用来设置一个对象的多个不同字段）</span><br><span class="line">getset key(设置并返回key对应的旧值，可以用于计数器的重置)</span><br></pre></td></tr></table></figure>
-<h3 id="常见应用"><a href="#常见应用" class="headerlink" title="常见应用"></a>常见应用</h3><p>字符串、jpg图片、序列化对象、一些复杂的计数功能的缓存</p>
-<h2 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h2><p>存储 String 类型键值对的映射表、对象</p>
-<h3 id="基本使用方法"><a href="#基本使用方法" class="headerlink" title="基本使用方法"></a>基本使用方法</h3><p>容量：每个 Hash 可存 2^32 - 1（约 40 亿）个键值对</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hmset user username &#x27;name&#x27; password &#x27;123456&#x27; # 定义一个有两个元素的Hash表</span><br><span class="line">hgetall user # 获取user中所有key和value</span><br><span class="line">hget user username # 获取user中key为username的value</span><br></pre></td></tr></table></figure>
-<h3 id="常见应用-1"><a href="#常见应用-1" class="headerlink" title="常见应用"></a>常见应用</h3><p>单点登录（存&lt;CookieId, 用户信息&gt;，设置 30 分钟为缓存过期时间，能很好地模拟出类似 Session 的效果）。</p>
-<h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><p>String列表</p>
-<h3 id="基本使用方法-1"><a href="#基本使用方法-1" class="headerlink" title="基本使用方法"></a>基本使用方法</h3><p>容量：每个 List 可存 2^32 - 1 个元素</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">lpush ball basketball soccer # 按顺序从左侧压入，如果ball列表不存在则创建</span><br><span class="line">rpush ball volleyball</span><br><span class="line">lrange 0 1 # 获取索引从0到1的值</span><br></pre></td></tr></table></figure>
-<p>操作总结</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">lpush/rpush/lrange</span><br><span class="line">lpop/rpop</span><br><span class="line">lindex</span><br><span class="line">llen</span><br><span class="line">lrem key</span><br><span class="line">ltrim key</span><br><span class="line">rpoplpush</span><br><span class="line">lset key index value</span><br><span class="line">linsert key before/after val1 val2</span><br></pre></td></tr></table></figure>
-<h3 id="常见应用-2"><a href="#常见应用-2" class="headerlink" title="常见应用"></a>常见应用</h3><p>简单的消息队列<br>基于 Redis 的分页功能（利用 lrang 命令，性能极佳，用户体验好）</p>
-<h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><p>字符串的无序集合，使用 Hash 实现（key 和 value 相同的 Hash）</p>
-<h3 id="基本使用方法-2"><a href="#基本使用方法-2" class="headerlink" title="基本使用方法"></a>基本使用方法</h3><p>容量：2^32 - 1 个成员</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sadd myset li1 # 向集合myset中添加一个元素li1，若不存在则创建</span><br><span class="line">smembers myset</span><br></pre></td></tr></table></figure>
-<h3 id="常见应用-3"><a href="#常见应用-3" class="headerlink" title="常见应用"></a>常见应用</h3><p>全局去重（为什么不用 JDK 自带的 Set 去重？因为我们的系统一般都是集群部署）<br>计算共同喜好、全部喜好、自己独有的喜好等功能（交集、并集、差集）</p>
-<h2 id="ZSet"><a href="#ZSet" class="headerlink" title="ZSet"></a>ZSet</h2><p>字符串的有序集合，每个元素都关联一个 double 类型的权重参数 score，集合中的元素能够按 score 进行排列。</p>
-<h3 id="基本使用方法-3"><a href="#基本使用方法-3" class="headerlink" title="基本使用方法"></a>基本使用方法</h3><p>容量：2^32 - 1 个成员</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zadd myzset 0 abc</span><br><span class="line">zrangebyscore myzset 0 10</span><br></pre></td></tr></table></figure>
-<h3 id="常见应用-4"><a href="#常见应用-4" class="headerlink" title="常见应用"></a>常见应用</h3><p>排行榜<br>取 Top N 操作<br>延时任务（<a target="_blank" rel="noopener" href="https://www.cnblogs.com/rjzheng/p/8972725.html%EF%BC%89">https://www.cnblogs.com/rjzheng/p/8972725.html）</a><br>范围查找</p>
-<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>实现上类似于 Java 的 SortedSet 和 HashMap 的结合体，value 唯一（Set 结构的特点），每个 value 一个 score 代表该 value 的排序权重。<br>zset 内部是使用一种叫做跳跃列表的结构实现的。</p>
-<h1 id="Redis-数据结构的实现"><a href="#Redis-数据结构的实现" class="headerlink" title="Redis 数据结构的实现"></a>Redis 数据结构的实现</h1><h2 id="数据结构的声明和实现"><a href="#数据结构的声明和实现" class="headerlink" title="数据结构的声明和实现"></a>数据结构的声明和实现</h2><p><img src="/imgs/Redis/Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0.png" alt="Redis数据结构及其实现" title="Redis数据结构及其实现"><br>Redis 中的 set、zset 等结构在 Redis 中并不是由一个单独的数据结构实现的，而是会根据情况有所变化。</p>
-<h3 id="set"><a href="#set" class="headerlink" title="set"></a>set</h3><p>set和Java中的HashSet有点像，它本身是HashMap的封装，key是集合中的对象，而value直接用NULL代替。<br>但是注意一些特殊情况：</p>
-<ul>
-<li>创建集合对象时，如果发现集合内的元素可以使用整数（longlong）编码，则创建一个intset而不是dict；</li>
-<li>之前是intset编码的情况下，插入的新元素如果是非整数的，那么集合会被重新转换成dict编码的；或者插入的元素数量达到了阈值（512），也会自动转换成dict。<br>创建代码见：<code>t_set.c/setTypeCreate()</code></li>
-</ul>
-<h3 id="zset"><a href="#zset" class="headerlink" title="zset"></a>zset</h3><p>zset同样有两种形态：ziplist编码和skiplist编码。</p>
-<ul>
-<li>按ziplist编码的情况下：<br>zset本身就是个ziplist对象。</li>
-<li>按skiplist编码的情况下：<br>zset的集合功能是通过dict实现的，这部分和set并无区别；<br>zset的有序性是通过skiplist实现的，skiplist按分值排序成员，支持平均复杂度为O(logN)的按分值定位成员的操作。</li>
-</ul>
-<p>执行zadd命令代码：<code>t_zset.c/zaddGenericCommand()</code><br>创建zset对象：<code>object.c/createZsetZiplistObject()</code>、<code>object.c/createZsetObject()</code></p>
-<h2 id="SDS-Simple-Dynamic-String"><a href="#SDS-Simple-Dynamic-String" class="headerlink" title="SDS(Simple Dynamic String)"></a>SDS(Simple Dynamic String)</h2><p>Redis 中的动态数组有以下特点：</p>
-<ul>
-<li>可动态扩展内存。sds 表示的字符串其内容可以修改，也可以追加。在很多语言中字符串会分为 mutable 和 immutable 两种，显然 sds 属于 mutable 类型的。</li>
-<li>减少修改字符串的内存重新分配次数<br>C语言由于不记录字符串的长度，所以如果要修改字符串，必须要重新分配内存（先释放再申请），因为如果没有重新分配，字符串长度增大时会造成内存缓冲区溢出，字符串长度减小时会造成内存泄露。<br>而对于SDS，由于<code>len</code>属性和<code>free</code>属性的存在，对于修改字符串SDS实现了空间预分配和惰性空间释放两种策略：<br>1、空间预分配：对字符串进行空间扩展的时候，扩展的内存比实际需要的多，这样可以减少连续执行字符串增长操作所需的内存重分配次数。<br>2、惰性空间释放：对字符串进行缩短操作时，程序不立即使用内存重新分配来回收缩短后多余的字节，而是使用 free 属性将这些字节的数量记录下来，等待后续使用。（当然SDS也提供了相应的API，当我们有需要时，也可以手动释放这些未使用的空间。）</li>
-<li>二进制安全（Binary Safe）。sds 能存储任意二进制数据，而不仅仅是可打印字符。</li>
-<li>与传统的 C 语言字符串类型兼容。</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">struct SDS&lt;T&gt; &#123;</span><br><span class="line">  T capacity; // 数组容量</span><br><span class="line">  T len; // 数组当前长度</span><br><span class="line">  byte flags; // 特殊标识位，不理睬它</span><br><span class="line">  byte[] content; // 数组内容</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>下面的函数将 t 数组拷贝到 s 中，如果长度不够则需要进行扩容：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">/* Append the specified binary-safe string pointed by &#x27;t&#x27; of &#x27;len&#x27; bytes to the</span><br><span class="line"> * end of the specified sds string &#x27;s&#x27;.</span><br><span class="line"> *</span><br><span class="line"> * After the call, the passed sds string is no longer valid and all the</span><br><span class="line"> * references must be substituted with the new pointer returned by the call. */</span><br><span class="line">sds sdscatlen(sds s, const void *t, size_t len) &#123;</span><br><span class="line">    size_t curlen = sdslen(s);  // 原字符串长度</span><br><span class="line"></span><br><span class="line">    // 按需调整空间，如果 capacity 不够容纳追加的内容，就会重新分配字节数组并复制原字符串的内容到新数组中</span><br><span class="line">    s = sdsMakeRoomFor(s,len);</span><br><span class="line">    if (s == NULL) return NULL; // 内存不足</span><br><span class="line">    memcpy(s+curlen, t, len);  // 追加目标字符串的内容到字节数组中</span><br><span class="line">    sdssetlen(s, curlen+len); // 设置追加后的长度值</span><br><span class="line">    s[curlen+len] = &#x27;\0&#x27;; // 让字符串以\0 结尾，便于调试打印，还可以直接使用 glibc 的字符串函数进行操作</span><br><span class="line">    return s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>SDS 有 embstr 和 raw 两种存储结构，它们的区别是：</p>
-<ol>
-<li>内存分配上：<br>embstr 调用 1 次 malloc, 因此 redisObject 和 SDS 内存是连续分配的；<br>raw 需要调用 2 次 malloc, 因此 redisObject 和 SDS 内存不连续分配</li>
-<li>使用上:<br>embstr 整体 64 byte, 正好和<strong>cpu cache line</strong> 64byte 一样, 可以更好的使用缓存, 效率更高</li>
-</ol>
-<h2 id="quicklist"><a href="#quicklist" class="headerlink" title="quicklist"></a>quicklist</h2><p>Redis 早期版本存储 list 数据结构采用（元素少时 ziplist、多时 linkedlist ）的方案，但是：</p>
-<ol>
-<li>链表的附加空间太高，prev 和 next 指针就要占去 16 个字节（64 位系统）；</li>
-<li>链表每个节点都是单独分配，会加剧内存的碎片化。</li>
-</ol>
-<p>因此在之后的版本中转换为了 quicklist 存储。<br>quicklist 是 ziplist 和 linkedlist 的混合体，它将 linkedlist 按段切分，每一段使用 ziplist 来紧凑存储，多个 ziplist 之间使用双向指针串接起来。<br><img src="/imgs/Redis/Redis-quicklist%E7%BB%93%E6%9E%84.png" alt="Redis-quicklist结构" title="Redis-quicklist结构"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">struct ziplist &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line">struct ziplist_compressed &#123;</span><br><span class="line">    int32 size;</span><br><span class="line">    byte[] compressed_data;</span><br><span class="line">&#125;</span><br><span class="line">struct quicklistNode &#123;</span><br><span class="line">    quicklistNode* prev;</span><br><span class="line">    quicklistNode* next;</span><br><span class="line">    ziplist* zl; // 指向压缩列表</span><br><span class="line">    int32 size; // ziplist 的字节总数</span><br><span class="line">    int16 count; // ziplist 中的元素数量</span><br><span class="line">    int2 encoding; // 存储形式 2bit，原生字节数组还是 LZF 压缩存储</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line">struct quicklist &#123;</span><br><span class="line">    quicklistNode* head;</span><br><span class="line">    quicklistNode* tail;</span><br><span class="line">    long count; // 元素总数</span><br><span class="line">    int nodes; // ziplist 节点的个数</span><br><span class="line">    int compressDepth; // LZF 算法压缩深度</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="ziplist"><a href="#ziplist" class="headerlink" title="ziplist"></a>ziplist</h2><p>ziplist 是一种压缩存储的数组结构，当 Redis 中的集合数据结构很小，则它会使用这种紧凑的存储形式存储，元素之间紧挨着存储，查找就是对数组进行遍历找到目标对象。</p>
-<ul>
-<li>zset 和 hash 容器在元素个数较少时会采用 ziplist 存储。当存储的对象数量小于 512 且所有 entry 的 value 值长度小于 64，采用 ziplist 存储，否则转为采用 hashtable 存储。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">import redis</span><br><span class="line">client = redis.StrictRedis()</span><br><span class="line">client.delete(&quot;hello&quot;)</span><br><span class="line">for i in range(512):</span><br><span class="line">    client.hset(&quot;hello&quot;, str(i), str(i))</span><br><span class="line">print client.object(&quot;encoding&quot;, &quot;hello&quot;)</span><br><span class="line">client.hset(&quot;hello&quot;, &quot;512&quot;, &quot;512&quot;)</span><br><span class="line"># 或者插入一个长度为65的值也能起到转化的作用</span><br><span class="line">print client.object(&quot;encoding&quot;, &quot;hello&quot;)</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>可以上服务器上使用<code>debug object</code>命令验证数据结构的类型：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; zadd hgc_test 1.0 go 2.0 python 2.0 java</span><br><span class="line">...</span><br><span class="line">&gt; debug object hgc_test</span><br><span class="line">Value at:0x7f73c6d673a0 refcount:1 encoding:ziplist serializedlength:36 lru:1381596 lru_seconds_idle:77</span><br></pre></td></tr></table></figure>
-<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p><img src="/imgs/Redis/Redis-ziplist%E7%BB%93%E6%9E%84.png" alt="Redis-ziplist结构" title="Redis-ziplist结构"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">struct ziplist&lt;T&gt; &#123;</span><br><span class="line">    int32 zlbytes; // 整个压缩列表占用字节数</span><br><span class="line">    int32 zltail_offset; // 最后一个元素距离压缩列表起始位置的偏移量，用于快速定位到最后一个节点</span><br><span class="line">    int16 zllength; // 元素个数</span><br><span class="line">    T[] entries; // 元素内容列表，挨个挨个紧凑存储</span><br><span class="line">    int8 zlend; // 标志压缩列表的结束，值恒为 0xFF</span><br><span class="line">&#125;</span><br><span class="line">struct entry &#123;</span><br><span class="line">    int&lt;var&gt; prevlen; // 前一个 entry 的字节长度</span><br><span class="line">    int&lt;var&gt; encoding; // 元素类型编码</span><br><span class="line">    optional byte[] content; // 元素内容</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>zltail_offset 字段可以快速定位到 ziplist 中的最后一个节点，可以用于倒序遍历，entry 中的 prevlen 表示前一个 entry 的字节长度，可以用于倒序遍历时找到下一个元素的位置；</li>
-<li>encoding 记录编码类型，ziplist 利用该字段决定后面的 content 内容的形式，比如用<code>00xxxxxx</code>表示最大长度为 63 的短字符串，<code>01xxxxxx xxxxxxxx</code>表示中等长度的字符串；</li>
-</ul>
-<h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><p>ziplist 是紧凑存储的，没有冗余空间，因此插入一个新元素就需要调用 realloc 重新分配内存空间，并将之前的内容一次性拷贝到新的内存空间中。<br>重新分配空间是比较耗时的，因此 ziplist 不适合存储大量数据。</p>
-<h3 id="更新-删除"><a href="#更新-删除" class="headerlink" title="更新&#x2F;删除"></a>更新&#x2F;删除</h3><p>修改或删除一个元素后其后一个位置的元素中的 prevlen 也需要级联更新，prevlen 字段又是变长的，所以可能会导致连锁反应。</p>
-<h3 id="ziplist-vs-dict"><a href="#ziplist-vs-dict" class="headerlink" title="ziplist vs dict"></a>ziplist vs dict</h3><p>为什么 hash 结构中会采用 ziplist 而不是 dict，主要原因如下：</p>
-<ol>
-<li>数据量小时，ziplist 的速度也很快；</li>
-<li>数据量大时，ziplist 在每次插入或修改时引发的 realloc 操作会有更大的概率造成内存拷贝，从而降低性能，而且数据项过多的时候，在 ziplist 上查找指定数据项的性能会变得很低，因为在 ziplist 上的查找需要进行遍历。</li>
-</ol>
-<h2 id="dict（字典）"><a href="#dict（字典）" class="headerlink" title="dict（字典）"></a>dict（字典）</h2><p>dict 是 Redis 中使用最广泛的数据结构：</p>
-<ol>
-<li>hash 结构的数据会用到字典；</li>
-<li>整个 Redis 数据库的所有 key 和 value 也组成了一个全局字典；</li>
-<li>带过期时间的 key 集合也是一个字典；</li>
-<li>set 结构的底层实现也是字典，只是所有 value 都是 NULL；</li>
-<li>zset 集合中存储 value 和 score 值的映射关系也是通过 dict 结构实现的。</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">struct RedisDb &#123;</span><br><span class="line">    dict* dict; // all keys  key=&gt;value</span><br><span class="line">    dict* expires; // all expired keys key=&gt;long(timestamp)</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct dict &#123;</span><br><span class="line">    ...</span><br><span class="line">    dictht ht[2];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">struct zset &#123;</span><br><span class="line">    dict *dict; // all values  value=&gt;score</span><br><span class="line">    zskiplist *zsl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="hashtable"><a href="#hashtable" class="headerlink" title="hashtable"></a>hashtable</h3><p>dict 中的 hashtable 结构和 Java 中的 HashMap 类似，使用一个数组来保存所有的哈希桶，通过<strong>siphash</strong>函数来将 key 散列到数组中的某个桶上，每个哈希桶都是一个链表，也就是说如果发生哈希冲突，则将新元素直接插入到桶的头部。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">struct dictEntry &#123;</span><br><span class="line">    void* key;</span><br><span class="line">    void* val;</span><br><span class="line">    dictEntry* next; // 链接下一个 entry</span><br><span class="line">&#125;</span><br><span class="line">struct dictht &#123;</span><br><span class="line">    dictEntry** table; // 二维</span><br><span class="line">    long size; // 第一维数组的长度</span><br><span class="line">    long used; // hash 表中的元素个数</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="扩容：渐进式-rehash"><a href="#扩容：渐进式-rehash" class="headerlink" title="扩容：渐进式 rehash"></a>扩容：渐进式 rehash</h3><p>正常情况下，当 hashtable 中元素的个数等于第一维数组的长度时、来了一个新增&#x2F;修改&#x2F;删除操作，就会触发扩容，扩容的新数组是原数组大小的 2 倍。</p>
-<blockquote>
-<p>存在一个特殊情况：如果 Redis 正在做 bgsave，为了减少内存页的过多分离 (Copy On Write)，Redis 尽量不去扩容 (<code>dict_can_resize</code>)，但是如果 hash 表已经非常满了，元素的个数已经达到了第一维数组长度的 5 倍 (<code>dict_force_resize_ratio</code>)，说明 hash 表已经过于拥挤了，这个时候就会强制扩容。</p>
-</blockquote>
-<p><img src="/imgs/Redis/Redis-dict%E6%89%A9%E5%AE%B9rehash.png" alt="Redis-dict扩容rehash" title="Redis-dict扩容rehash"><br>一般情况下 dict 中只有一个 hashtable 有值，但是在扩容时会分配另一个新的 hashtable，然后执行<strong>渐进式</strong>的数据迁移，避免一次性对所有 key 执行 rehash，而是将 rehash 操作分散到了对 dict 的各个增删改查操作中去了。</p>
-<ol>
-<li>在扩容过程中，如果有新增元素，则该元素会被同时添加到新 hashtable 中；</li>
-<li>查询、删除、修改操作中，会先查询旧 hashtable，若存在则迁移这个 key 所在的桶并返回元素，若不存在则到新 hashtable 中查找元素。</li>
-<li>有一个异步线程执行定时任务对字典主动迁移。</li>
-</ol>
-<p>dict 之所以这样设计，是为了避免 rehash 期间单个请求的响应时间剧烈增加。<br>当旧 hashtable 中无元素时，即代表迁移完毕，这时会将新旧 hashtable 的指针交换，旧的会被删除，而新的则取而代之。</p>
-<h3 id="缩容"><a href="#缩容" class="headerlink" title="缩容"></a>缩容</h3><p>当 hash 表因为元素的逐渐删除变得越来越稀疏时，Redis 会对 hash 表进行缩容来减少 hash 表的第一维数组空间占用。缩容的条件是元素个数低于数组长度的 10%。<br>缩容不会考虑 Redis 是否正在做 bgsave，因为 COW 的特性是当内存页上的数据被修改时会复制一页做修改，如果删除操作并不会触发删除内存页的数据，操作系统回收内存机制导致的。</p>
-<h3 id="全局哈希表"><a href="#全局哈希表" class="headerlink" title="全局哈希表"></a>全局哈希表</h3><p><code>get a</code>和<code>llen b</code>中的a和b是不同数据结构的对象，他们统统被存储在一个叫全局哈希表的地方。<br>哈希表中的每个哈希桶存储的不是值本身，而是指向它们的指针。<br><img src="/imgs/Redis/Redis%E4%B8%AD%E7%9A%84%E5%85%A8%E5%B1%80%E5%93%88%E5%B8%8C%E8%A1%A8.jpg" alt="Redis中的全局哈希表" title="Redis中的全局哈希表"><br>代码定义在：<code>redis.h/redisDb</code></p>
-<p>缺点：</p>
-<ol>
-<li>过多的哈希冲突容易产生过长的哈希桶（哈希冲突链）。<br>为了减少这个问题产生的影响，需要对哈希表进行rehash操作，这个rehash操作和dict数据结构的rehash原理是一样的。<blockquote>
-<p>全局哈希表实际上就是dict，可以看源码中的定义。</p>
-</blockquote>
-</li>
-</ol>
-<p>优点：</p>
-<ol>
-<li>合适的散列函数和扩容机制可以保证<code>O(1)</code>的操作复杂度。</li>
-</ol>
-<h2 id="skiplist"><a href="#skiplist" class="headerlink" title="skiplist"></a>skiplist</h2><p>zset 中除了 dict（字典）外，还会用一个 skiplist 来提供按score排序的要求，以实现指定 score 的范围来获取 value 列表的功能。</p>
-<p><img src="/imgs/Redis/Redis-skiplist%E7%BB%93%E6%9E%84.png" alt="Redis-skiplist结构" title="Redis-skiplist结构"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">struct zslnode &#123;</span><br><span class="line">  string value;</span><br><span class="line">  double score;</span><br><span class="line">  zslnode*[] forwards;  // 多层连接指针</span><br><span class="line">  zslnode* backward;  // 回溯指针</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct zsl &#123;</span><br><span class="line">  zslnode* header; // 跳跃列表头指针</span><br><span class="line">  int maxLevel; // 跳跃列表当前的最高层</span><br><span class="line">  map&lt;string, zslnode*&gt; ht; // hash 结构的所有键值对</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>各层均为一个有序的链表结构；</li>
-<li>层数越大，节点越少；</li>
-<li>有一个 header 节点作为哨兵，value&#x3D;null，score&#x3D;Double.MIN_VALUE。</li>
-</ul>
-<h3 id="插入-1"><a href="#插入-1" class="headerlink" title="插入"></a>插入</h3><p>插入时会先自顶向下找到新节点在跳表中底层的插入位置，插入每一层时都有概率晋升到更高一层，在 Redis 中是 25%。</p>
-<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>删除每一层上的对应节点。</p>
-<h3 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h3><p>如果不影响排序则直接更新，否则会先删除再重新插入。 </p>
-<h2 id="布隆过滤器"><a href="#布隆过滤器" class="headerlink" title="布隆过滤器"></a>布隆过滤器</h2><h2 id="HyperLogLog"><a href="#HyperLogLog" class="headerlink" title="HyperLogLog"></a>HyperLogLog</h2><p>布隆过滤器用于实现<code>contains</code>的需求，而 HyperLogLog 主要用于实现<code>count</code>。<br>同样是一个特别大的位数组，HyperLogLog 将位数组拆分为桶，每个桶是连续的 6 个位，计数时并非单独对某个桶计数，而是：</p>
-<ul>
-<li>set 操作：计算 key 的散列值，为一个 64 位的数字，前 14 位是桶的位置，桶记录后 50 位中第一个 1 的位置 count，并且<code>count = max(count, oldCount)</code>，即每次记录最大的计数。</li>
-<li>count 操作：因为是概率算法，每个桶的计数值并不精确，但是所有桶的调和均值非常接近真实的计数值。</li>
-</ul>
-<h2 id="pubsub"><a href="#pubsub" class="headerlink" title="pubsub"></a>pubsub</h2><p>用于实现轻量级的发布订阅功能。</p>
-<h2 id="geohash"><a href="#geohash" class="headerlink" title="geohash"></a>geohash</h2><h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><h2 id="使用string还是hash？"><a href="#使用string还是hash？" class="headerlink" title="使用string还是hash？"></a>使用string还是hash？</h2><p>当数据量少时，使用hash明显更加节省内存，因为数据少时hash会转成ziplist的结构，而string每个kv都需要一大堆的额外空间存储元数据。</p>
-<h2 id="如何使用Redis的数据结构实现统计？"><a href="#如何使用Redis的数据结构实现统计？" class="headerlink" title="如何使用Redis的数据结构实现统计？"></a>如何使用Redis的数据结构实现统计？</h2><ol>
-<li>需要支持集合运算（差集、交集、并集）的场合<br>使用set、zset，数据量少时会转成ziplist节省内存。</li>
-<li>需要进行二值统计的场合<br>使用bitmap</li>
-<li>需要大规模统计，且不要求精确统计的场合<br>使用HyperLogLog</li>
-</ol>
-<h2 id="采用渐进式hash时，如果实例暂时没有接收到新请求，是不是就不会做rehash了？"><a href="#采用渐进式hash时，如果实例暂时没有接收到新请求，是不是就不会做rehash了？" class="headerlink" title="采用渐进式hash时，如果实例暂时没有接收到新请求，是不是就不会做rehash了？"></a>采用渐进式hash时，如果实例暂时没有接收到新请求，是不是就不会做rehash了？</h2><p>不会，还有一个定时任务每隔100ms执行rehash，而且每次执行时长不会超过1ms，以免影响其他任务。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li><a target="_blank" rel="noopener" href="https://redissrc.readthedocs.io/en/latest/">redis源码解析</a></li>
-</ol>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/9/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/11/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/9/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/11/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

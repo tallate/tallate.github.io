@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">189</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">79</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">24</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">192</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">189</span>
+          <span class="site-state-item-count">192</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -158,7 +158,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-count">79</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -175,6 +175,474 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/8573ae23.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/8573ae23.html" class="post-title-link" itemprop="url">RocketMQ消息可靠性</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-12 12:23:48" itemprop="dateCreated datePublished" datetime="2020-08-12T12:23:48+08:00">2020-08-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-09-10 16:42:54" itemprop="dateModified" datetime="2023-09-10T16:42:54+08:00">2023-09-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+
+<h2 id="消息有序性"><a href="#消息有序性" class="headerlink" title="消息有序性"></a>消息有序性</h2><p>一些场景需要保证操作的顺序性，比如A系统要将订单同步给B系统，但是要按照订单所发生事件顺序来同步，比如后台先修改订单价格再用户支付，那么就要先发修改价格的状态再发送支付成功的状态。<br>RocketMQ 可以严格的保证消息有序。</p>
+<h3 id="消息优先级"><a href="#消息优先级" class="headerlink" title="消息优先级"></a>消息优先级</h3><p>消息优先级机制可以让消息队列中优先级较高的消息先投递，比如订单创建消息就可以优先于日常推送消息。<br>RocketMQ 没有直接实现消息的优先级，主要是处于性能考虑，因为 RocketMQ 所有消息都是持久化的，所以如果按照优先级来排序，开销会非常大。但也可以用一种变通的方式实现消息的优先级，比如创建 3 个代表不同优先级的队列。</p>
+<h3 id="有序消息的实现方式"><a href="#有序消息的实现方式" class="headerlink" title="有序消息的实现方式"></a>有序消息的实现方式</h3><p>要保证MQ消息消费的有序性，需要保证以下3个阶段的有序性：<br><img src="/imgs/RocketMQ/RocketMQ%E4%BF%9D%E6%8C%81%E6%B6%88%E6%81%AF%E7%9A%84%E6%9C%89%E5%BA%8F%E6%80%A7.png" alt="RocketMQ保持消息的有序性" title="RocketMQ保持消息的有序性"></p>
+<ol>
+<li>消息被发送时保持有序；</li>
+<li>消息被存储时保持和发送时的顺序一致；</li>
+<li>消息被消费时保持和存储时的顺序一致。</li>
+</ol>
+<p>在RocketMQ中，有两种实现方式：</p>
+<ol>
+<li>全局有序<br><img src="/imgs/RocketMQ/RocketMQ-%E5%85%A8%E5%B1%80%E6%9C%89%E5%BA%8F.png" alt="RocketMQ-全局有序" title="RocketMQ-全局有序"><br>一个Topic内所有的消息都发送到同一个Queue。<br>适用于性能要求不高，所有的消息严格按照FIFO原则进行消息发布和消费的场景。</li>
+<li>分区有序<br><img src="/imgs/RocketMQ/RocketMQ-%E5%88%86%E5%8C%BA%E6%9C%89%E5%BA%8F.png" alt="RocketMQ-分区有序" title="RocketMQ-分区有序"><br>RocketMQ根据用户自定义的<strong>Sharding Key</strong>将消息散列到不同的Queue，每个Queue内的消费是严格有序的。<br>适用于性能要求较高的场景。</li>
+</ol>
+<h3 id="RocketMQ中有序消息的实现原理"><a href="#RocketMQ中有序消息的实现原理" class="headerlink" title="RocketMQ中有序消息的实现原理"></a>RocketMQ中有序消息的实现原理</h3><p>发送端需要指定消息的ShardingKey：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.apache.rocketmq.client.producer.DefaultMQProducer#send(Message, MessageQueueSelector, Object)</span><br></pre></td></tr></table></figure>
+<p>如上述消息发送API所示，第二个参数<code>MessageQueueSelector</code>可以用于发送消息时指定某个Queue，在API层面没有区分全局有序和分区有序，如果要实现全局有序就把所有消息都Sharding到一个Queue上即可。</p>
+<p>消费方拉取时需要区分Pull和Push两种模式：</p>
+<ol>
+<li>Pull<br>Pull模式就是每次从一个Queue中拉取。</li>
+<li>Push<br>Push模式使用一个线程轮询Broker拉取消息，然后调用客户端提供的回调函数进行消费，在客户端中需要保证调用<code>MessageListener</code>时消息的顺序性。<br><code>ConsumeMessageOrderlyService</code><br>实现上，就是在消费前先对队列加锁，避免Consumer并发消费一个队列（一个队列只能被一个Consumer消费，因此这个锁主要是保证Consumer不会并发消费一个消息，是单机锁而不是分布式锁）。</li>
+</ol>
+<h3 id="有序性与可用性间存在的矛盾"><a href="#有序性与可用性间存在的矛盾" class="headerlink" title="有序性与可用性间存在的矛盾"></a>有序性与可用性间存在的矛盾</h3><p>为了保证服务的高可用性，RocketMQ支持把一个主题分布到多对主从节点上去，每对主从节点中承担主题中的一部分队列，如果某个主节点宕机了，会自动切换到其他主节点上继续发消息，这样既解决了可用性的问题，还可以通过水平扩容来提升 Topic 总体的性能。<br>但是严格的顺序性要求指定队列来发送消息，一个队列一定是落在一个特定的主节点上的，如果该主节点宕机了，那么顺序性也就不存在了。<br>在RocketMQ中引入了<strong>Dledger</strong>的复制方式，这种方式对上述问题的解决方案是：消息必须被复制到半数以上节点才能返回成功，且主节点宕机后支持通过选举来动态切换主节点，Dledger在选举时，总会把数据和主节点一致的从节点选为新的主节点，这样就保证了数据的一致性，既不会丢消息，还可以保证严格顺序。</p>
+<h2 id="消息可靠性"><a href="#消息可靠性" class="headerlink" title="消息可靠性"></a>消息可靠性</h2><p>只要不是存储硬件发生不可逆的损坏，RocketMQ 都可以保证消息不丢或少丢，比如 Broker 挂掉、操作系统挂掉等；<br>如果硬件发生不可逆的损坏，则该节点的消息就无法恢复了，需要通过异步复制来恢复。</p>
+<h3 id="如何检测消息丢失？"><a href="#如何检测消息丢失？" class="headerlink" title="如何检测消息丢失？"></a>如何检测消息丢失？</h3><ol>
+<li>利用分布式链路追踪系统</li>
+<li>利用消息队列的有序性来验证是否有消息丢失</li>
+</ol>
+<h3 id="RocketMQ-如何保证消息不丢？"><a href="#RocketMQ-如何保证消息不丢？" class="headerlink" title="RocketMQ 如何保证消息不丢？"></a>RocketMQ 如何保证消息不丢？</h3><p>保证消息不丢失的原理是复制，传统的复制方式有异步复制和同步双写复制两种：</p>
+<ol>
+<li><strong>异步复制</strong><br>消息先发送到主节点上，就返回”写入成功”，然后消息再异步复制到从节点上。</li>
+<li><strong>同步双写复制</strong><br>消息同步双写到主从节点上，主从都写成功，才返回”写入成功”。<blockquote>
+<p>这两种方式本质区别是：写入多少个副本再返回，异步复制需要的副本数是1，而同步双写需要的副本数为2。</p>
+</blockquote>
+</li>
+</ol>
+<p>RocketMQ的复制模式是<strong>基于Deldger的新复制模式</strong>。<br>在 RocketMQ 中，Broker 的主从关系是通过配置固定的，不支持动态切换。如果主节点宕机，生产者就不能再生产消息了，消费者可以自动切换到从节点继续进行消费。这时候，即使有一些消息没有来得及复制到从节点上，这些消息依然躺在主节点的磁盘上，除非是主节点的磁盘坏了，否则等主节点重新恢复服务的时候，这些消息依然可以继续复制到从节点上，也可以继续消费，不会丢消息，消息的顺序也是没有问题的。</p>
+<h3 id="Deldger的复制模式"><a href="#Deldger的复制模式" class="headerlink" title="Deldger的复制模式"></a>Deldger的复制模式</h3><ul>
+<li>RocketMQ-on-DLedger Group 是指一组相同名称的 Broker，至少需要 3 个节点，通过 <strong>Raft</strong> 自动选举出一个 Leader，其余节点 作为 Follower，并在 Leader 和 Follower 之间复制数据以保证高可用。</li>
+<li>RocketMQ-on-DLedger Group 能自动容灾切换，并保证数据一致。</li>
+<li>RocketMQ-on-DLedger Group 是可以水平扩展的，也即可以部署任意多个 RocketMQ-on-DLedger Group 同时对外提供服务。</li>
+</ul>
+<p>一主二从的三副本集群的复制过程：</p>
+<ol>
+<li>Dledger 在写入消息的时候，要求<strong>至少消息复制到半数以上的节点之后，才给客户端返回写入成功</strong>，并且它是支持通过选举来动态切换主节点的。<blockquote>
+<p>至少半数这个要求有点像MySQL里的semi-sync和Redis里的复制策略，说明这种方案确实非常有效，只要是涉及集群复制的场景都可以考虑采用。</p>
+</blockquote>
+</li>
+<li>拿 3 个节点举例说明一下。<br>当主节点宕机的时候，2 个从节点会通过投票选出一个新的主节点来继续提供服务，相比主从的复制模式，解决了可用性的问题。<br>由于<strong>消息要至少复制到 2 个节点上才会返回写入成功，即使主节点宕机了，也至少有一个节点上的消息是和主节点一样的。</strong></li>
+<li>Dledger 在选举时，总会把数据和主节点一样的从节点选为新的主节点，<br>这样就保证了数据的一致性，既不会丢消息，还可以保证严格顺序。</li>
+</ol>
+<p>Dledger的不足：</p>
+<ul>
+<li>选举过程中不能提供服务。<br>最少需要 3 个节点才能保证数据一致性，3 节点时，只能保证 1 个节点宕机时可<br>用，如果 2 个节点同时宕机，即使还有 1 个节点存活也无法提供服务，资源的利用率比较<br>低。另外，由于至少要复制到半数以上的节点才返回写入成功，性能上也不如主从异步复制<br>的方式快。</li>
+</ul>
+<h3 id="RocketMQ如何保证高可用"><a href="#RocketMQ如何保证高可用" class="headerlink" title="RocketMQ如何保证高可用"></a>RocketMQ如何保证高可用</h3><ul>
+<li>通过多主多从架构保证高可用<br>RocketMQ 支持<strong>把一个主题分布到多对主从节点上去，每对主从节点中承担主题中的一部分队列</strong>，如果某个主节点宕机了，会自动切换到其他主节点上继续发消息，这样既解决了可用性的问题，还可以通过水平扩容来提升 Topic 总体的性能。</li>
+<li>高可用与严格顺序不能并存<br>在需要保证消息严格顺序的场景下，由于在主题层面无法保证严格顺序，所以必须指定队列来发送消息（指分区有序或全局有序），对于任何一个队列，它一定是落在一组特定的主从节点上，如果这个主节点宕机，其他的主节点是无法替代这个主节点的，否则就无法保证严格顺序。在这种复制模式下，严格顺序和高可用只能选择一个。</li>
+</ul>
+<h3 id="如果服务器宕机怎么办？"><a href="#如果服务器宕机怎么办？" class="headerlink" title="如果服务器宕机怎么办？"></a>如果服务器宕机怎么办？</h3><p>现在我们可以来回答服务器宕机应该怎么办？</p>
+<h4 id="Broker宕机"><a href="#Broker宕机" class="headerlink" title="Broker宕机"></a>Broker宕机</h4><ol>
+<li>RocketMQ并没有实现高可用性，如上所述，Master宕机会触发重新选举，因为消息需要被同步到过半Slave后才会返回，因此Master宕机后消息本身不会丢。</li>
+<li>在RocketMQ中，Broker会定时向NameServer发送心跳，Broker如果宕机，一段时间后NameServer发现Broker上次心跳已经超过了时间阈值，则会将该Broker移除出服务注册表。</li>
+</ol>
+<h4 id="NameServer宕机"><a href="#NameServer宕机" class="headerlink" title="NameServer宕机"></a>NameServer宕机</h4><p>NameServer集群中的节点是没有Master、Slave之分的，其中一台挂掉并不会影响其他节点提供服务。</p>
+<h4 id="Consumer-Producer-宕机"><a href="#Consumer-Producer-宕机" class="headerlink" title="Consumer &#x2F; Producer 宕机"></a>Consumer &#x2F; Producer 宕机</h4><p>Consumer或Producer宕机不会产生任何影响，随时可以扩容缩容。</p>
+<h3 id="主从集群的扩容缩容"><a href="#主从集群的扩容缩容" class="headerlink" title="主从集群的扩容缩容"></a>主从集群的扩容缩容</h3><p>在RocketMQ中消费的基本单位是队列而不是Broker，因此扩容时单纯增加一台Broker并没有什么作用，还需要给这台Broker分配Queue。<br>在RocketMQ中，<strong>读写队列</strong>与读写分离是完全不同的两个概念：</p>
+<ul>
+<li>读写分离是HA机制：将一个节点的数据同步到另一个节点，主节点可用于读写，从节点用于读。</li>
+<li>读写队列则是在做路由信息时使用。在消息发送时，使用写队列个数返回路由信息，而消息消费时按照读队列个数返回路由信息。在物理文件层面，只有写队列才会创建文件。举个例子：写队列个数是8，设置的读队列个数是4.这个时候，会创建8个文件夹，代表0 1 2 3 4 5 6 7，但在消息消费时，路由信息只返回4，在具体拉取消息时，就只会消费0 1 2 3这4个队列中的消息，4 5 6 7压根就没有消息。反过来，如果写队列个数是4，读队列个数是8，在生产消息时只会往0 1 2 3中生产消息，消费消息时则会从0 1 2 3 4 5 6 7所有的队列中消费，当然 4 5 6 7中压根就没有消息 ，假设消费group有两个消费者，事实上只有第一个消费者在真正的消费消息(0 1 2 3)，第二个消费者压根就消费不到消息。<br>因此只有readQueueNums&gt;&#x3D;writeQueueNums时程序才能正常进行，最好是readQueueNums&gt;writeQueueNums。<br>读写队列的分配见代码：<code>MQClientInstance#updateTopicRouteInfoFromNameServer</code></li>
+</ul>
+<p>rocketmq设置读写队列数的目的在于方便队列的缩容和扩容。比如缩容至1&#x2F;2的话就是先把写队列缩小至1&#x2F;2，等后一半队列中的消息被消费完毕，然后再将读队列缩小一半，即可达到平滑缩容的目的。</p>
+<ul>
+<li>将已有的Queue分配到新Broker</li>
+<li>增加更多的Queue并分配到新Broker</li>
+</ul>
+<p>具体扩容的操作可参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/dingwpmz/p/12031987.html">RocketMQ 主题扩分片后遇到的坑</a></p>
+<h2 id="事务消息"><a href="#事务消息" class="headerlink" title="事务消息"></a>事务消息</h2><h3 id="RocketMQ中的实现"><a href="#RocketMQ中的实现" class="headerlink" title="RocketMQ中的实现"></a>RocketMQ中的实现</h3><ul>
+<li><strong>半事务消息</strong>：发事务消息时，发送方会先发送一条半事务消息给 Broker，此时 Broker 暂未收到 Producer 对该消息的二次确认，此时该消息被标记成<strong>暂不能投递</strong>状态，处于该种状态下的消息即半事务消息；</li>
+<li><strong>消息回查</strong>：由于网络闪断、生产者应用重启等原因，导致某条事务消息的二次确认丢失，Broker 通过扫描发现某条消息长期处于<strong>半事务消息</strong>时，需要主动向 Producer 询问该消息的最终状态（Commit 或是 Rollback），该询问过程即消息回查。</li>
+</ul>
+<p><img src="/imgs/RocketMQ/RocketMQ-%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF.png" alt="RocketMQ-事务消息" title="RocketMQ-事务消息"><br>事务消息的处理流程如上图所示：<br>图片来自<a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/43348.html?spm=5176.doc43490.6.566.Zd5Bl7">事务消息</a></p>
+<ol>
+<li>Producer 发半事务消息给 Broker，Producer需要记录消息状态到一张<strong>本地消息事务表</strong>内，和业务数据在一个事务里提交，之后生产消费者均通过这张表里的状态来判断事务的状态；<blockquote>
+<p>如果业务数据本身就是有状态的，其实也可以通过查询业务数据状态来判断事务状态。</p>
+</blockquote>
+</li>
+<li>Broker 将半事务消息持久化后，向 Producer 返回 ACK 确认消息已发送成功，此时消息为半事务消息；</li>
+<li>Producer 端开始执行本地事务逻辑；</li>
+<li>Producer 端根据本地事务执行结果向服务端提交<strong>二次确认（Commit 或是 Rollback）</strong>，Broker 收到 Commit 状态则将半事务消息标记为<strong>可投递</strong>，Consumer 最终将收到该消息；Broker 收到 Rollback 状态则删除半事务消息，Consumer 将不会接受该消息。</li>
+</ol>
+<p>接下来我们看看各步骤如果出错会怎么样：</p>
+<ol>
+<li><code>2</code>消息丢失或<code>3</code>执行失败：发送方终止本次事务，提交 Rollback 消息给服务端；</li>
+<li><code>4</code>的 Commit 消息提交失败：见<code>5</code>，即服务端会回查事务状态；</li>
+</ol>
+<p>事务消息回查步骤如下：</p>
+<ol>
+<li>在断网或者是应用重启的特殊情况下，上述步骤 4 提交的二次确认最终未到达服务端，经过固定时间后服务端将对该消息发起消息回查。</li>
+<li>发送方收到消息回查后，需要检查对应消息的本地事务执行的最终结果。</li>
+<li>发送方根据检查得到的本地事务的最终状态再次提交二次确认，服务端仍按照步骤 4 对半事务消息进行操作。</li>
+</ol>
+<h3 id="事务消息源码"><a href="#事务消息源码" class="headerlink" title="事务消息源码"></a>事务消息源码</h3><p>Producer发送</p>
+<ol>
+<li>发送<br><code>org.apache.rocketmq.client.producer.TransactionMQProducer#sendMessageInTransaction</code><br>先添加<strong>半消息</strong>的标识，然后和普通消息一样发送，如果发送成功则执行本地事务。</li>
+<li>执行本地事务<br><code>org.apache.rocketmq.client.producer.TransactionListener#executeLocalTransaction</code><br>使用了发送前传入的回调。<br>返回值表示本地事务（<code>LocalTransactionState</code>）的执行情况：<ul>
+<li>COMMIT_MESSAGE：endTransaction时发送<code>TRANSACTION_COMMIT_TYPE</code>类型的消息到Broker，此时事务被提交，Consumer端可以消费该条消息；</li>
+<li>ROLLBACK_MESSAGE：endTransaction时通知Broker <code>TRANSACTION_ROLLBACK_TYPE</code>，事务被回滚，Consumer端不可消费该消息；</li>
+<li>UNKNOW：endTransaction时通知Broker <code>TRANSACTION_NOT_TYPE</code>，本地事务未执行完毕，Broker需要稍后反查本地事务状态。</li>
+</ul>
+</li>
+<li>根据本地事务执行结果，开始执行提交或回滚<br><code>org.apache.rocketmq.client.impl.producer.DefaultMQProducerImpl#endTransaction</code><br>正如我们之前讨论的那样，这个消息发失败也没有关系，Broker之后会有反查。</li>
+</ol>
+<p>Broker接收</p>
+<ol>
+<li>处理发消息请求<br><code>org.apache.rocketmq.broker.processor.SendMessageProcessor#sendMessage</code></li>
+<li>处理事务消息<br><code>org.apache.rocketmq.broker.transaction.queue.TransactionalMessageServiceImpl#prepareMessage</code> -&gt; <code>org.apache.rocketmq.broker.transaction.queue.TransactionalMessageBridge#putHalfMessage</code><br>可以看到RocketMQ并没有将半消息保存到客户端指定的那个队列中，而是记录了原始的主题队列后，把这个半消息保存在了一个特殊的内部主题 <code>RMQ_SYS_TRANS_HALF_TOPIC</code> 中，使用的队列号固定为 <code>0</code>。<br>这个主题和队列对消费者是不可见的，所以里面的消息永远不会被消费。这样，就保证了<strong>在事务提交成功之前，这个半消息对消费者来说是消费不到的。</strong></li>
+</ol>
+<p>Broker反查</p>
+<ol>
+<li>启动反查定时任务<br><code>TransactionalMessageCheckService</code></li>
+<li>反查<br><code>org.apache.rocketmq.broker.transaction.AbstractTransactionalMessageCheckListener#resolveHalfMsg</code><br>定时从半消息队列中读出所有待反查的半消息，针对每个需要反查的半消息，Broker 会给对应的 Producer 发一个要求执行事务状态反查的 RPC 请求，根据 RPC 返回响应中的反查结果，来决定这个半消息是需要提交还是回滚，或者后续继续来反查。</li>
+<li>结束事务<br><code>org.apache.rocketmq.broker.processor.EndTransactionProcessor#processRequest</code><br>最后，提交或者回滚事务实现的逻辑是差不多的，首先把半消息标记为已处理，如果是提交事务，那就<strong>把半消息从半消息队列中复制到这个消息真正的主题和队列中去</strong>，如果要回滚事务，这一步什么都不需要做，最后结束这个事务。</li>
+</ol>
+<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><h3 id="Broker的offset如何维护？本地的offset如何维护？"><a href="#Broker的offset如何维护？本地的offset如何维护？" class="headerlink" title="Broker的offset如何维护？本地的offset如何维护？"></a>Broker的offset如何维护？本地的offset如何维护？</h3><h3 id="拉取速度是否会受到消费速度制约？如果不是，那么拉取速度过快是不是会导致重复消费甚至OOM？"><a href="#拉取速度是否会受到消费速度制约？如果不是，那么拉取速度过快是不是会导致重复消费甚至OOM？" class="headerlink" title="拉取速度是否会受到消费速度制约？如果不是，那么拉取速度过快是不是会导致重复消费甚至OOM？"></a>拉取速度是否会受到消费速度制约？如果不是，那么拉取速度过快是不是会导致重复消费甚至OOM？</h3><h3 id="并发消费offset为1-10的消息，其中8失败了，其他都是成功的，这种情况下本地的offset如何记录，broker的offset如何记录，有哪些是可能被重复消费的？"><a href="#并发消费offset为1-10的消息，其中8失败了，其他都是成功的，这种情况下本地的offset如何记录，broker的offset如何记录，有哪些是可能被重复消费的？" class="headerlink" title="并发消费offset为1-10的消息，其中8失败了，其他都是成功的，这种情况下本地的offset如何记录，broker的offset如何记录，有哪些是可能被重复消费的？"></a>并发消费offset为1-10的消息，其中8失败了，其他都是成功的，这种情况下本地的offset如何记录，broker的offset如何记录，有哪些是可能被重复消费的？</h3><h3 id="如何尽可能的避免重复消费？"><a href="#如何尽可能的避免重复消费？" class="headerlink" title="如何尽可能的避免重复消费？"></a>如何尽可能的避免重复消费？</h3><h3 id="应用第一次启动时offset如何定义？是否会消费历史消息，应用重启是否会丢消息？"><a href="#应用第一次启动时offset如何定义？是否会消费历史消息，应用重启是否会丢消息？" class="headerlink" title="应用第一次启动时offset如何定义？是否会消费历史消息，应用重启是否会丢消息？"></a>应用第一次启动时offset如何定义？是否会消费历史消息，应用重启是否会丢消息？</h3><h3 id="应用扩所容是否会导致消费消息丢失和消费队列的重新排序？"><a href="#应用扩所容是否会导致消费消息丢失和消费队列的重新排序？" class="headerlink" title="应用扩所容是否会导致消费消息丢失和消费队列的重新排序？"></a>应用扩所容是否会导致消费消息丢失和消费队列的重新排序？</h3><script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/91c9d48a.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/91c9d48a.html" class="post-title-link" itemprop="url">RocketMQ 消息发送流程</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-12 12:23:48" itemprop="dateCreated datePublished" datetime="2020-08-12T12:23:48+08:00">2020-08-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-09-11 01:08:41" itemprop="dateModified" datetime="2023-09-11T01:08:41+08:00">2023-09-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>先介绍RocketMQ有哪些服务，然后介绍消息如何从Producer发送到Consumer。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/91c9d48a.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/7c98402b.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/7c98402b.html" class="post-title-link" itemprop="url">RocketMQ 消息重试和幂等</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-12 12:23:48" itemprop="dateCreated datePublished" datetime="2020-08-12T12:23:48+08:00">2020-08-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-09-11 01:09:05" itemprop="dateModified" datetime="2023-09-11T01:09:05+08:00">2023-09-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="重试和幂等"><a href="#重试和幂等" class="headerlink" title="重试和幂等"></a>重试和幂等</h2><h3 id="Retry队列和offset"><a href="#Retry队列和offset" class="headerlink" title="Retry队列和offset"></a>Retry队列和offset</h3><p>在RocketMQ启动时，每个group层面都会再定义一个专用的重试topic，重试消息被插入了重试topic队列。<br><strong>重试队列存在的意义就是快速推进offset</strong>，重试topic的名字是<code>%RETRY%+consumerGroup</code>，因此重试topic是group维度的，所以默认情况下一个group的consumer会有2个订阅topic，2个topic同时进行队列的rebalance。<br><strong>offset是按照MessageQueue的维度进行维护的</strong>。<br>消息重试有2种反馈方式：</p>
+<ol>
+<li>重试队列：客户端先通过Netty API发送消息到Broker，如果这时调用Netty发送异常则调用Producer发送到RetryTopic中。</li>
+<li>死信队列：如果重试次数过多（默认16次）则会进入死信队列，死信队列的逻辑在Broker，Client不会将消息发送至死信队列Topic。</li>
+</ol>
+<h3 id="Producer端重试"><a href="#Producer端重试" class="headerlink" title="Producer端重试"></a>Producer端重试</h3><p>下面的代码同步发送消息，如果5秒内没有发送成功，则重试5次</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DefaultMQProducer producer = new DefaultMQProducer(&quot;DefaultProducer&quot;);</span><br><span class="line">producer.setRetryTimesWhenSendFailed(5);</span><br><span class="line">producer.send(msg,5000L);</span><br></pre></td></tr></table></figure>
+<p>Producer 的 send 方法本身支持<strong>内部重试</strong>：<br>同步发送代码：<code>org.apache.rocketmq.client.impl.producer.DefaultMQProducerImpl#send(Message)</code>，注意传超时参数时取的<code>defaultMQProducer.getSendMsgTimeout()</code>。<br>异步发送：<code>org.apache.rocketmq.client.impl.producer.DefaultMQProducerImpl#send(Message, SendCallback)</code><br>实际发送消息的代码位置（注意对sendResult的处理）：<code>org.apache.rocketmq.client.impl.producer.DefaultMQProducerImpl#sendDefaultImpl</code><br>从源码中可以得到以下结论：</p>
+<ul>
+<li>至多重试 2 次。<br>同步发送为 2 次，异步发送为 0 次，也就是说，异步发送是不会重试的。</li>
+<li>如果发送失败，则轮转到下一个 Broker。这个方法的总耗时时间不超过 sendMsgTimeout 设置的值，默认 10s。</li>
+<li>如果本身向 broker 发送消息产生超时异常，就不会再重试。</li>
+</ul>
+<p>除了Producer客户端的自动重试外，应用程序在接收到SendResult后也可以自己尝试去重试。</p>
+<h3 id="Consumer重试"><a href="#Consumer重试" class="headerlink" title="Consumer重试"></a>Consumer重试</h3><p>消费者消费消息后需要给Broker返回消费状态，比如并发消费者<code>MessageListenerConcurrently</code>会返回<code>ConsumeConcurrentlyStatus</code>：</p>
+<ul>
+<li>如果消费成功，返回<code>CONSUME_SUCCESS</code>；</li>
+<li>如果消费出错，返回<code>RECONSUME_LATER</code>，一段时间后重试。</li>
+</ul>
+<p>状态的返回是由用户线程控制的，但还有第三种可能，就是超时了，因此Consumer端的重试包含以下两种情况：</p>
+<ol>
+<li>异常重试：Consumer端主动返回<code>RECONSUME_LATER</code>状态，Broker会在一段时间后重试；</li>
+<li>超时重试：Consumer端处理时间过长，或者由于某些原因线程挂起，导致迟迟没有返回消费状态，Broker就会认为Consumer消费超时，此时会发起超时重试。</li>
+</ol>
+<p>如果Consumer端因为各种类型异常导致本次消费失败（如上所述的两种情况），为防止该消息丢失而需要将其重新回发给Broker端保存，保存这种因为异常无法正常消费而回发给MQ的消息队列称之为<strong>重试队列</strong>。RocketMQ会为每个消费组都设置一个Topic名称为<code>%RETRY%+consumerGroup</code>的重试队列（这里需要注意的是，这个Topic的重试队列是针对消费组，而不是针对每个Topic设置的）。</p>
+<blockquote>
+<p>不能保证消息消费失败加入重试队列后还能被同一消费者消费，可能会破坏消息的顺序性。</p>
+</blockquote>
+<p>由于有些原因导致Consumer端长时间的无法正常消费从Broker端Pull过来的业务消息，为了确保消息不会被无故的丢弃，那么超过配置的“最大重试消费次数”后就会移入到这个<strong>死信队列</strong>中，RocketMQ会为每个消费组都设置一个Topic命名为“%DLQ%+consumerGroup”的死信队列。一般在实际应用中，移入至死信队列的消息，<strong>需要人工干预处理</strong>；</p>
+<p>另外还有两种需要注意的情况：</p>
+<ul>
+<li>只有消息模式为<code>MessageModel.CLUSTERING</code>集群模式时，Broker才会自动进行重试，而广播消息是不会重试的。</li>
+<li>事务消息中的半事务消息通过 Broker 的回查机制重试，具体流程见下面的<strong>事务消息</strong>。</li>
+</ul>
+<h3 id="消费进度和-offset"><a href="#消费进度和-offset" class="headerlink" title="消费进度和 offset"></a>消费进度和 offset</h3><p><img src="/imgs/RocketMQ/offset%E7%9A%84%E6%9B%B4%E6%96%B0.png" alt="offset的更新" title="offset的更新"><br>消息消费完成后，需要将消费进度存储起来，即前面提到的offset。<br>consumerQueue类似一个无限长的数组，可以利用offset来直接定位。<br>offset的存储分为本地模式和远程模式：</p>
+<ul>
+<li>本地模式：广播模式下，同消费组的消费者相互独立，消费进度要单独存储，对应的数据结构是<code>LocalFileOffsetStore</code>；</li>
+<li>远程模式：集群模式下，同一条消息只会被同一个消费组消费一次，消费进度会参与到负载均衡中，故消费进度是需要共享的，对应的数据结构是<code>RemoteBrokerOffsetStore</code>，下面对offset的讨论集中于远程模式。</li>
+</ul>
+<h3 id="Consumer更新offset到Broker"><a href="#Consumer更新offset到Broker" class="headerlink" title="Consumer更新offset到Broker"></a>Consumer更新offset到Broker</h3><ol>
+<li>消费消息维护offset<br><code>org.apache.rocketmq.client.impl.consumer.ConsumeMessageConcurrentlyService#processConsumeResult</code><br>处理失败的消息会反馈给Consumer，然后发送到topic对应的RetryTopic，这样能快速令offset前进。</li>
+<li>定时任务<br>每隔一段时间将各个队列的消费进度存储到对应的broker上，该时间由<code>DefaultMQPushConsumer</code>的<code>persistConsumerOffsetInterval</code>属性控制，默认为5秒。<br><code>MQClientInstance#startScheduledTask</code> -&gt; <code>MQClientInstance#persistAllConsumerOffset</code><br>启动一个定时任务提交offset。<br><code>RemoteBrokerOffsetStore#updateConsumeOffsetToBroker</code><br>将offset发送到Broker。</li>
+</ol>
+<h3 id="Broker端offset的存储"><a href="#Broker端offset的存储" class="headerlink" title="Broker端offset的存储"></a>Broker端offset的存储</h3><p><code>org.apache.rocketmq.broker.processor.ConsumerManageProcessor#updateConsumerOffset</code><br>Broker会将offset存储在内存的一个<code>offsetTable</code>中，即<code>RemoteBrokerOffsetStore</code>。</p>
+<h3 id="Consumer从Broker拉取offset"><a href="#Consumer从Broker拉取offset" class="headerlink" title="Consumer从Broker拉取offset"></a>Consumer从Broker拉取offset</h3><p><code>DefaultMQPushConsumerImpl#pullMessage</code><br>拉消息后触发offset的更新。<br><code>RemoteBrokerOffsetStore#readOffset</code><br>将offset保存到缓存<code>offsetTable</code>中。</p>
+<h3 id="消息幂等"><a href="#消息幂等" class="headerlink" title="消息幂等"></a>消息幂等</h3><p>RocketMQ提供<strong>At least once</strong>的消息服务质量标准，表示一条消息至少被送达一次，也就是说，不允许丢消息，但允许有少量重复消息出现。</p>
+<blockquote>
+<p>另外两种服务质量标准是<strong>At most once</strong>和<strong>Exactly once</strong>。</p>
+</blockquote>
+<p>比如Producer发出了10个消息，如果Consumer接收中间两条消息时出错了，返回<code>RECONSUME_LATER</code>，则该两条消息会被加入到<code>RETRY</code>队列中重新消费。</p>
+<p>解决消息重复消费问题的主要方法是<strong>幂等</strong>，一个幂等操作的特点是，<strong>其任意多次执行仅会产生一次影响</strong>，因此从对系统的影响结果来说：<strong>At least once + 幂等消费 &#x3D; Exactly once</strong>。<br>实现幂等的方式有很多种，不过这些方案与消息队列本身已经没有多大关系了，因此这里仅仅简单描述一下这些实现方式：</p>
+<ol>
+<li>利用数据库的唯一约束实现幂等<br>为一个操作设置一个唯一键，比如一个账单每个用户只允许变更一次，则可以给转账流水表中的账单ID和账户ID创建一个唯一约束。</li>
+<li>加上前置条件<br>限制数据更新前的状态，比如只有在余额为500的时候才允许更新。<br>也可以单独加上一个唯一ID，每次发消息时生成一个全局唯一ID，消费时检查这个唯一ID是否有被消费过。</li>
+</ol>
+<h3 id="重试源码"><a href="#重试源码" class="headerlink" title="重试源码"></a>重试源码</h3><p>1、Consumer端初始化重试队列信息<br>1.1、Consumer端启动后，创建重试队列的订阅group</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// Consumer自动创建一个group=%RETRY%+ConsumerGroup，用于后续的消费重试</span><br><span class="line">switch (this.defaultMQPushConsumer.getMessageModel()) &#123;</span><br><span class="line">    case BROADCASTING:</span><br><span class="line">        break;</span><br><span class="line">    case CLUSTERING:</span><br><span class="line">        final String retryTopic = MixAll.getRetryTopic(this.defaultMQPushConsumer.getConsumerGroup());</span><br><span class="line">        SubscriptionData subscriptionData = FilterAPI.buildSubscriptionData(this.defaultMQPushConsumer.getConsumerGroup(),</span><br><span class="line">            retryTopic, SubscriptionData.SUB_ALL);</span><br><span class="line">        this.rebalanceImpl.getSubscriptionInner().put(retryTopic, subscriptionData);</span><br><span class="line">        break;</span><br><span class="line">    default:</span><br><span class="line">        break;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2、Consumer端处理消费结果<code>ConsumeMessageConcurrentlyService#processConsumeResult</code><br>2.1、设置ack<br>如果ConsumeRequest封装的消息全消费成功，则设置ackIndex的值为消息总条数-1，反之ackIndex-&#x3D;1</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">switch (status) &#123;</span><br><span class="line">    // 消费成功</span><br><span class="line">    case CONSUME_SUCCESS:</span><br><span class="line">        if (ackIndex &gt;= consumeRequest.getMsgs().size()) &#123;</span><br><span class="line">            ackIndex = consumeRequest.getMsgs().size() - 1;</span><br><span class="line">        &#125;</span><br><span class="line">        int ok = ackIndex + 1;</span><br><span class="line">        int failed = consumeRequest.getMsgs().size() - ok;</span><br><span class="line">        this.getConsumerStatsManager().incConsumeOKTPS(consumerGroup, consumeRequest.getMessageQueue().getTopic(), ok);</span><br><span class="line">        this.getConsumerStatsManager().incConsumeFailedTPS(consumerGroup, consumeRequest.getMessageQueue().getTopic(), failed);</span><br><span class="line">        break;</span><br><span class="line">    // 消费失败、重试</span><br><span class="line">    case RECONSUME_LATER:</span><br><span class="line">        ackIndex = -1;</span><br><span class="line">        this.getConsumerStatsManager().incConsumeFailedTPS(consumerGroup, consumeRequest.getMessageQueue().getTopic(),</span><br><span class="line">            consumeRequest.getMsgs().size());</span><br><span class="line">        break;</span><br><span class="line">    default:</span><br><span class="line">        break;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2.2、消费失败的消息触发重试<br>sendMessageBack将消费失败的msg发回broker，如果sendMessageBack也失败则保存到msgBackFailed</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">switch (this.defaultMQPushConsumer.getMessageModel()) &#123;</span><br><span class="line">    ...</span><br><span class="line">    case CLUSTERING:</span><br><span class="line">        List&lt;MessageExt&gt; msgBackFailed = new ArrayList&lt;MessageExt&gt;(consumeRequest.getMsgs().size());</span><br><span class="line">        // ackIndex+1开始的是未成功消费的</span><br><span class="line">        for (int i = ackIndex + 1; i &lt; consumeRequest.getMsgs().size(); i++) &#123;</span><br><span class="line">            MessageExt msg = consumeRequest.getMsgs().get(i);</span><br><span class="line">            boolean result = this.sendMessageBack(msg, context);</span><br><span class="line">            // 如果发送失败，则保存到msgBackFailed</span><br><span class="line">            if (!result) &#123;</span><br><span class="line">                msg.setReconsumeTimes(msg.getReconsumeTimes() + 1);</span><br><span class="line">                msgBackFailed.add(msg);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 将sendMessageBack失败的消息从consumeRequest移除，并包装起来5s后转发给消费线程池继续消费</span><br><span class="line">        if (!msgBackFailed.isEmpty()) &#123;</span><br><span class="line">            consumeRequest.getMsgs().removeAll(msgBackFailed);</span><br><span class="line"></span><br><span class="line">            this.submitConsumeRequestLater(msgBackFailed, consumeRequest.getProcessQueue(), consumeRequest.getMessageQueue());</span><br><span class="line">        &#125;</span><br><span class="line">        break;</span><br><span class="line">    default:</span><br><span class="line">        break;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2.3、更新offset<br>本地消费成功后会将消费进度同步到本地的processQueue<br>sendMessageBack成功的消息会从本地processQueue中移除，并更新进度，这条消息的消费会交由消费集群中的一个节点去继续消费，取决于负载均衡将此消息对应的topic对应的重试队列retryQueue分配给哪个节点。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 这里开始更新offset</span><br><span class="line">// 先从队列在consumer端的视图（一个treeMap）中移除</span><br><span class="line">// 这里返回的offset是经过删除后最小的偏移量</span><br><span class="line">long offset = consumeRequest.getProcessQueue().removeMessage(consumeRequest.getMsgs());</span><br><span class="line">if (offset &gt;= 0 &amp;&amp; !consumeRequest.getProcessQueue().isDropped()) &#123;</span><br><span class="line">    this.defaultMQPushConsumerImpl.getOffsetStore().updateOffset(consumeRequest.getMessageQueue(), offset, true);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3、Broker端接收sendMessageBack消息<br>Broker端的处理主要是重试和延迟<br>3.1、设置topic<br>设置此条消息新的topic为%RETRY%消费组的名称，并且选择新topic的队列（默认为0，默认情况下RetryQueueNum为1）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String newTopic = MixAll.getRetryTopic(requestHeader.getGroup());</span><br><span class="line">int queueIdInt = Math.abs(this.random.nextInt() % 99999999) % subscriptionGroupConfig.getRetryQueueNums();</span><br><span class="line">int topicSysFlag = 0;</span><br><span class="line">if (requestHeader.isUnitMode()) &#123;</span><br><span class="line">    topicSysFlag = TopicSysFlag.buildSysFlag(false, true);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>3.2、将消息topic设置为重试topic<br>通过物理偏移量找到消息体</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">MessageExt msgExt = this.brokerController.getMessageStore().lookMessageByOffset(requestHeader.getOffset());</span><br><span class="line">if (null == msgExt) &#123;</span><br><span class="line">    response.setCode(ResponseCode.SYSTEM_ERROR);</span><br><span class="line">    response.setRemark(&quot;look message by offset failed, &quot; + requestHeader.getOffset());</span><br><span class="line">    return CompletableFuture.completedFuture(response);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>给原始消息新增属性，key为RETRY_TOPIC，value为原始消息的实际topic<br>和Consumer端消费消息时的resetRetryTopic(msgs)相呼应</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">final String retryTopic = msgExt.getProperty(MessageConst.PROPERTY_RETRY_TOPIC);</span><br><span class="line">if (null == retryTopic) &#123;</span><br><span class="line">    MessageAccessor.putProperty(msgExt, MessageConst.PROPERTY_RETRY_TOPIC, msgExt.getTopic());</span><br><span class="line">&#125;</span><br><span class="line">msgExt.setWaitStoreMsgOK(false);</span><br></pre></td></tr></table></figure>
+<p>3.3、获取延迟并判断是否进入死信队列<br>获取消息的延迟级别，默认此时的值为0</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">int delayLevel = requestHeader.getDelayLevel();</span><br><span class="line"></span><br><span class="line">int maxReconsumeTimes = subscriptionGroupConfig.getRetryMaxTimes();</span><br><span class="line">if (request.getVersion() &gt;= MQVersion.Version.V3_4_9.ordinal()) &#123;</span><br><span class="line">    maxReconsumeTimes = requestHeader.getMaxReconsumeTimes();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>消息每消费失败一次都会增加ReconsumeTimes的值，当这个值达到了maxReconsumeTimes（默认为16），则将此消息送入死信队列，且此死信队列不可读，也就是说这条消息在没有人工干预的情况下再也不能被消费了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">if (msgExt.getReconsumeTimes() &gt;= maxReconsumeTimes </span><br><span class="line">    || delayLevel &lt; 0) &#123;</span><br><span class="line">    newTopic = MixAll.getDLQTopic(requestHeader.getGroup());</span><br><span class="line">    queueIdInt = Math.abs(this.random.nextInt() % 99999999) % DLQ_NUMS_PER_GROUP;</span><br><span class="line"></span><br><span class="line">    topicConfig = this.brokerController.getTopicConfigManager().createTopicInSendMessageBackMethod(newTopic,</span><br><span class="line">            DLQ_NUMS_PER_GROUP,</span><br><span class="line">            PermName.PERM_WRITE, 0);</span><br><span class="line">    if (null == topicConfig) &#123;</span><br><span class="line">        response.setCode(ResponseCode.SYSTEM_ERROR);</span><br><span class="line">        response.setRemark(&quot;topic[&quot; + newTopic + &quot;] not exist&quot;);</span><br><span class="line">        return CompletableFuture.completedFuture(response);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    // 设置延迟级别为3，意味着要延迟10s再消费这条消息，消息重复消费需要借助延迟消费的功能实现</span><br><span class="line">    if (0 == delayLevel) &#123;</span><br><span class="line">        delayLevel = 3 + msgExt.getReconsumeTimes();</span><br><span class="line">    &#125;</span><br><span class="line">    msgExt.setDelayTimeLevel(delayLevel);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.4、存储新创建的消息<br>这里有延迟消息的实现：如果delayLevel大于0，会将此消息的topic和queueID再进行一次转换，将此消息的newTopic、queueID存入到属性中（real_topic, real_qid），新的topic为SCHEDULE_TOPIC_XXXX，新的queue为根据delayLevel的等级去本地<code>delayTimeLevel</code>找到对应的队列；后续会有<code>ScheduleMessageService</code>做后续的逻辑。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">CompletableFuture&lt;PutMessageResult&gt; putMessageResult = this.brokerController.getMessageStore().asyncPutMessage(msgInner);</span><br><span class="line">return putMessageResult.thenApply((r) -&gt; &#123;</span><br><span class="line">    if (r != null) &#123;</span><br><span class="line">        switch (r.getPutMessageStatus()) &#123;</span><br><span class="line">            case PUT_OK:</span><br><span class="line">                String backTopic = msgExt.getTopic();</span><br><span class="line">                String correctTopic = msgExt.getProperty(MessageConst.PROPERTY_RETRY_TOPIC);</span><br><span class="line">                if (correctTopic != null) &#123;</span><br><span class="line">                    backTopic = correctTopic;</span><br><span class="line">                &#125;</span><br><span class="line">                this.brokerController.getBrokerStatsManager().incSendBackNums(requestHeader.getGroup(), backTopic);</span><br><span class="line">                response.setCode(ResponseCode.SUCCESS);</span><br><span class="line">                response.setRemark(null);</span><br><span class="line">                return response;</span><br><span class="line">            default:</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">        response.setCode(ResponseCode.SYSTEM_ERROR);</span><br><span class="line">        response.setRemark(r.getPutMessageStatus().name());</span><br><span class="line">        return response;</span><br><span class="line">    &#125;</span><br><span class="line">    response.setCode(ResponseCode.SYSTEM_ERROR);</span><br><span class="line">    response.setRemark(&quot;putMessageResult is null&quot;);</span><br><span class="line">    return response;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>4、Broker端重试<br><code>ScheduleMessageService</code>服务是来处理延迟消息的服务组件，<code>delayLevelTable</code>存储了不同的延迟级别的延迟时间，可配置。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private String messageDelayLevel = &quot;1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h&quot;;</span><br></pre></td></tr></table></figure>
+<p>4.1、遍历消费队列</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// 遍历delayLevelTable里所有级别队列</span><br><span class="line">for (Map.Entry&lt;Integer, Long&gt; entry : this.delayLevelTable.entrySet()) &#123;</span><br><span class="line">    Integer level = entry.getKey();</span><br><span class="line">    Long timeDelay = entry.getValue();</span><br><span class="line">    Long offset = this.offsetTable.get(level);</span><br><span class="line">    if (null == offset) &#123;</span><br><span class="line">        offset = 0L;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (timeDelay != null) &#123;</span><br><span class="line">        // 由一个timer来处理</span><br><span class="line">        this.timer.schedule(new DeliverDelayedMessageTimerTask(level, offset), FIRST_DELAY_TIME);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>4.2、重置延时消息<br>判断时间是否达到了延迟时间，达到了再将这些消息的原始topic和原始队列取出转发存储起来，待消费者消费。<br>4.3、设置重试消息<br>重试消息会被转变2次topic和queueID，导致在<code>ScheduleMessageService</code>转发存储的时候会将第一次转变的topic和queueID取出转发到<code>topic=%RETRY%+consumerGroup</code>、queueId&#x3D;0的消息队列。<br>这个消息会被consumerGroup这个消费组消费，至于哪个节点消费则由负载均衡来决定。</p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1137,712 +1605,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/4eb3381c.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/4eb3381c.html" class="post-title-link" itemprop="url">分布式锁</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-07-06 16:32:14" itemprop="dateCreated datePublished" datetime="2020-07-06T16:32:14+08:00">2020-07-06</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-10-09 16:58:44" itemprop="dateModified" datetime="2022-10-09T16:58:44+08:00">2022-10-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<h1 id="单机环境下的锁"><a href="#单机环境下的锁" class="headerlink" title="单机环境下的锁"></a>单机环境下的锁</h1><p>单机环境下，资源竞争者都是来自机器内部(进程&#x2F;线程)，那么实现锁的方案只需要借助单机资源就可以了，比如借助磁盘、内存、寄存器来实现。</p>
-<h2 id="竞态条件（Race-Condition）"><a href="#竞态条件（Race-Condition）" class="headerlink" title="竞态条件（Race Condition）"></a>竞态条件（Race Condition）</h2><p>计算的正确性取决于多个线程的交替执行时序时，就会发生竞态条件。比如：</p>
-<ol>
-<li>先检测（查询）后执行。执行依赖于检测的结果，而检测结果依赖于多个线程的执行时序，而多个线程的执行时序通常情况下是不固定不可判断的，从而导致执行结果出现各种问题。</li>
-<li>延迟初始化（如单例的实例化） <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class ObjFactory &#123;  </span><br><span class="line">    private Obj instance;  </span><br><span class="line"></span><br><span class="line">    public Obj getInstance()&#123;  </span><br><span class="line">        if(instance == null)&#123;  </span><br><span class="line">            instance = new Obj();  </span><br><span class="line">        &#125;  </span><br><span class="line">        return instance;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
-如果两个线程同时调用 getInstance()就有可能出现：一个线程 A 创建了一个新对象 instance &#x3D; obj1，立马被另一个线程 B 覆盖 instance &#x3D; obj2，线程 A 返回了 obj1，线程 B 返回 obj2，于是 Obj 就相当于被实例化了两次。</li>
-</ol>
-<h2 id="锁的分类"><a href="#锁的分类" class="headerlink" title="锁的分类"></a>锁的分类</h2><ol>
-<li>悲观锁，前提是，一定会有并发抢占资源，强行独占资源，在整个数据处理过程中将数据处于锁定状态。</li>
-<li>乐观锁，前提是，不会发生并发抢占资源，只有在<strong>执行修改时</strong>检查是否违反数据完整性。<strong>只能防止脏读后数据的提交，不能解决脏读</strong>。</li>
-</ol>
-<h2 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h2><h2 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h2><p>乐观锁一般有以下两种实现方法：</p>
-<ol>
-<li>版本号：使用<strong>版本标识</strong>来确定读到的数据与提交时的数据是否一致。提交后修改版本标识，不一致时可以采取<strong>丢弃</strong>或<strong>再次尝试</strong>的策略。</li>
-<li>CAS：java 中的 compareandswap 即 cas，解决多线程并行情况下使用锁造成性能损耗的一种机制。CAS 操作包含三个操作数，内存位置（V）,预期原值（A）和新值（B）。如果内存位置的值与预期原值相匹配，那么处理器会西东将该位置值更新为新值。否则，处理器不做任何操作。</li>
-</ol>
-<h1 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h1><p>目前几乎很多大型网站及应用都是分布式部署的，分布式场景中的数据一致性问题一直是一个比较重要的话题。分布式的<strong>CAP 理论</strong>告诉我们“任何一个分布式系统都无法同时满足<strong>一致性（Consistency）</strong>、<strong>可用性（Availability）</strong>和<strong>分区容错性（Partition tolerance）</strong>，最多只能同时满足其中两项。”所以，很多系统在设计之初就要对这三者做出取舍。在互联网领域的绝大多数的场景中，都需要牺牲强一致性来换取系统的高可用性，系统往往只需要保证“最终一致性”，只要这个最终时间是在用户可以接受的范围内即可。<br>有的时候，我们需要保证一个方法在同一时间内只能被同一个线程执行。在单机环境中，Java 中其实提供了很多并发处理相关的 API，但是这些 API 在分布式场景中就无能为力了。也就是说单纯的 Java Api 并不能提供分布式锁的能力。<br>对于分布式环境下，资源竞争者生存环境更复杂了，原有依赖单机的方案不再发挥作用，这时候就需要一个大家都认可的协调者出来，帮助解决竞争问题，那这个协调者称之为分布式锁。</p>
-<h2 id="实现分布式锁的需求（方法锁，以方法作为临界区，资源锁是类似的）"><a href="#实现分布式锁的需求（方法锁，以方法作为临界区，资源锁是类似的）" class="headerlink" title="实现分布式锁的需求（方法锁，以方法作为临界区，资源锁是类似的）"></a>实现分布式锁的需求（方法锁，以方法作为临界区，资源锁是类似的）</h2><ol>
-<li>可以保证在分布式部署的应用集群中，同一个方法在同一时间只能被一台机器上的一个线程执行。</li>
-<li>这把锁要是一把可重入锁（单线程可重复获取同一把锁，避免死锁）</li>
-<li>这把锁最好是一把阻塞锁（根据业务需求考虑要不要这条）</li>
-<li>有高可用的获取锁和释放锁功能</li>
-<li>获取锁和释放锁的性能要好</li>
-</ol>
-<h2 id="基于数据库表"><a href="#基于数据库表" class="headerlink" title="基于数据库表"></a>基于数据库表</h2><p>要实现分布式锁，最简单的方式可能就是直接创建一张锁表，然后通过操作该表中的数据来实现了。<br>当我们要锁住某个方法或资源时，我们就在该表中增加一条记录，想要释放锁的时候就删除这条记录。<br>创建这样一张数据库表：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `methodLock` (</span><br><span class="line">  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT &#x27;主键&#x27;,</span><br><span class="line">  `method_name` varchar(64) NOT NULL DEFAULT &#x27;&#x27; COMMENT &#x27;锁定的方法名&#x27;,</span><br><span class="line">  `desc` varchar(1024) NOT NULL DEFAULT &#x27;备注信息&#x27;,</span><br><span class="line">  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT &#x27;保存数据时间，自动生成&#x27;,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  UNIQUE KEY `uidx_method_name` (`method_name `) USING BTREE</span><br><span class="line">) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT=&#x27;锁定中的方法&#x27;;</span><br></pre></td></tr></table></figure>
-<h3 id="使用锁表实现方法锁"><a href="#使用锁表实现方法锁" class="headerlink" title="使用锁表实现方法锁"></a>使用锁表实现方法锁</h3><p>执行 SQL：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into methodLock(method_name,desc) values (‘method_name’,‘desc’)</span><br></pre></td></tr></table></figure>
-<p>因为我们对 method_name 做了唯一性约束，这里如果有多个请求同时提交到数据库的话，数据库会保证只有一个操作可以成功，那么我们就可以认为操作成功的那个线程获得了该方法的锁，可以执行方法体内容。<br>当方法执行完毕之后，想要释放锁的话，需要执行以下 Sql:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete from methodLock where method_name =&#x27;method_name&#x27;</span><br></pre></td></tr></table></figure>
-<p>上面这种简单的实现有以下几个问题：</p>
-<ul>
-<li>这把锁强依赖数据库的可用性，数据库是一个单点，一旦数据库挂掉，会导致业务系统不可用。</li>
-<li>这把锁没有失效时间，一旦解锁操作失败，就会导致锁记录一直在数据库中，其他线程无法再获得到锁。</li>
-<li>这把锁只能是非阻塞的，因为数据的 insert 操作，一旦插入失败就会直接报错。没有获得锁的线程并不会进入排队队列，要想再次获得锁就要再次触发获得锁操作。</li>
-<li>这把锁是非重入的，同一个线程在没有释放锁之前无法再次获得该锁。因为数据库中数据已经存在了。</li>
-</ul>
-<p>当然，我们也可以有其他方式解决上面的问题。</p>
-<ul>
-<li>数据库是单点？搞两个数据库，数据之前双向同步。一旦挂掉快速切换到备库上。</li>
-<li>没有失效时间？只要做一个定时任务，每隔一定时间把数据库中的超时数据清理一遍。</li>
-<li>非阻塞的？搞一个 while 循环，直到 insert 成功再返回成功。</li>
-<li>非重入的？在数据库表中加个字段，记录当前获得锁的机器的主机信息和线程信息，那么下次再获取锁的时候先查询数据库，如果当前机器的主机信息和线程信息在数据库可以查到的话，直接把锁分配给他就可以了。</li>
-</ul>
-<h3 id="使用数据库-X-锁（排他锁）实现分布式锁"><a href="#使用数据库-X-锁（排他锁）实现分布式锁" class="headerlink" title="使用数据库 X 锁（排他锁）实现分布式锁"></a>使用数据库 X 锁（排他锁）实现分布式锁</h3><p>除了可以通过增删操作数据表中的记录以外，其实还可以借助数据中自带的锁来实现分布式的锁。<br>我们还用刚刚创建的那张数据库表。可以通过数据库的排他锁来实现分布式锁。<br>基于 MySQL 的 InnoDB 引擎，可以使用以下方法来实现加锁操作：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public boolean lock()&#123;</span><br><span class="line">    connection.setAutoCommit(false)</span><br><span class="line">    while(true)&#123;</span><br><span class="line">        try&#123;</span><br><span class="line">            result = select * from methodLock where method_name = xxx for update;</span><br><span class="line">            if(result==null)&#123;</span><br><span class="line">                return true;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;catch(Exception e)&#123;</span><br><span class="line">            log.warn(&quot;加锁失败&quot;, e);</span><br><span class="line">        &#125;</span><br><span class="line">        sleep(1000);</span><br><span class="line">    &#125;</span><br><span class="line">    return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在查询语句后面增加 for update，数据库会在查询过程中给数据库表增加排他锁。当某条记录被加上排他锁之后，其他线程无法再在该行记录上增加排他锁。<br>我们可以认为获得排它锁的线程即可获得分布式锁，当获取到锁之后，可以执行方法的业务逻辑，执行完方法之后，再通过以下方法解锁：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public void unlock()&#123;</span><br><span class="line">    connection.commit();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>通过 connection.commit()操作来释放锁。<br>这种方法可以有效的解决上面提到的无法释放锁和阻塞锁的问题。</p>
-<ul>
-<li>阻塞锁？ for update 语句会在执行成功后立即返回，在执行失败时一直处于阻塞状态，直到成功。</li>
-<li>锁定之后服务宕机，无法释放？使用这种方式，服务宕机之后数据库会自己把锁释放掉。<br>但是还是无法直接解决数据库单点和可重入问题。</li>
-</ul>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总结一下使用数据库来实现分布式锁的方式，这两种方式都是依赖数据库的一张表，一种是通过表中的记录的存在情况确定当前是否有锁存在，另外一种是通过数据库的排他锁来实现分布式锁。<br>数据库实现分布式锁的优点：</p>
-<ol>
-<li>直接借助数据库，容易理解。</li>
-</ol>
-<p>数据库实现分布式锁的缺点</p>
-<ol>
-<li>会有各种各样的问题，在解决问题的过程中会使整个方案变得越来越复杂。</li>
-<li>操作数据库需要一定的开销，性能问题需要考虑。</li>
-</ol>
-<h2 id="基于缓存"><a href="#基于缓存" class="headerlink" title="基于缓存"></a>基于缓存</h2><p>使用缓存中间件实现分布式锁的方法我已经在<a href="https://tallate.github.io/d3d5fdbf.html#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81">Redis 客户端</a>中有过分析。</p>
-<h2 id="基于-ZooKeeper"><a href="#基于-ZooKeeper" class="headerlink" title="基于 ZooKeeper"></a>基于 ZooKeeper</h2><p>基于 zookeeper 临时有序节点可以实现的分布式锁。<br>大致思想即为：每个客户端对某个方法加锁时，在 zookeeper 上的与该方法对应的指定节点的目录下，生成一个唯一的<strong>瞬时有序节点</strong>。<br>判断是否获取锁的方式很简单，只需要判断有序节点中序号最小的一个。<br>当释放锁的时候，只需将这个瞬时节点删除即可。同时，其可以避免服务宕机导致的锁无法释放，而产生的死锁问题。<br>来看下 Zookeeper 能不能解决前面提到的问题。</p>
-<ul>
-<li>锁无法释放？使用 Zookeeper 可以有效的解决锁无法释放的问题，因为在创建锁的时候，客户端会在 ZK 中创建一个临时节点，一旦客户端获取到锁之后突然挂掉（Session 连接断开），那么这个临时节点就会自动删除掉。其他客户端就可以再次获得锁。</li>
-<li>非阻塞锁？使用 Zookeeper 可以实现阻塞的锁，客户端可以通过在 ZK 中创建顺序节点，并且在节点上绑定监听器，一旦节点有变化，Zookeeper 会通知客户端，客户端可以检查自己创建的节点是不是当前所有节点中序号最小的，如果是，那么自己就获取到锁，便可以执行业务逻辑了。</li>
-<li>不可重入？使用 Zookeeper 也可以有效的解决不可重入的问题，客户端在创建节点的时候，把当前客户端的主机信息和线程信息直接写入到节点中，下次想要获取锁的时候和当前最小的节点中的数据比对一下就可以了。如果和自己的信息一样，那么自己直接获取到锁，如果不一样就再创建一个临时的顺序节点，参与排队。</li>
-<li>单点问题？使用 Zookeeper 可以有效的解决单点问题，ZK 是集群部署的，只要集群中有半数以上的机器存活，就可以对外提供服务。</li>
-</ul>
-<h3 id="使用-Curator-实现分布式锁"><a href="#使用-Curator-实现分布式锁" class="headerlink" title="使用 Curator 实现分布式锁"></a>使用 Curator 实现分布式锁</h3><p>可以直接使用 zookeeper 第三方库 Curator 客户端，这个客户端中封装了一个可重入的锁服务。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public boolean tryLock(long timeout, TimeUnit unit) throws InterruptedException &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        return interProcessMutex.acquire(timeout, unit);</span><br><span class="line">    &#125; catch (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br><span class="line">public boolean unlock() &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        interProcessMutex.release();</span><br><span class="line">    &#125; catch (Throwable e) &#123;</span><br><span class="line">        log.error(e.getMessage(), e);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        executorService.schedule(new Cleaner(client, path), delayTimeForClean, TimeUnit.MILLISECONDS);</span><br><span class="line">    &#125;</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>Curator 提供的 InterProcessMutex 是分布式锁的实现。acquire 方法用户获取锁，release 方法用于释放锁。<br>使用 ZK 实现的分布式锁好像完全符合了本文开头我们对一个分布式锁的所有期望。但是，其实并不是，Zookeeper 实现的分布式锁其实存在一个缺点，那就是性能上可能并没有缓存服务那么高。因为每次在创建锁和释放锁的过程中，都要动态创建、销毁瞬时节点来实现锁功能。ZK 中创建和删除节点只能通过<strong>Leader</strong>服务器来执行，然后将数据同步到所有的 Follower 机器上。</p>
-<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h3><p>使用 Zookeeper 实现分布式锁的优点</p>
-<ol>
-<li>有效的解决单点问题，不可重入问题，非阻塞问题以及锁无法释放的问题。</li>
-<li>实现起来较为简单。</li>
-</ol>
-<p>使用 Zookeeper 实现分布式锁的缺点</p>
-<ol>
-<li>性能上不如使用缓存实现分布式锁。</li>
-<li>需要对 ZK 的原理有所了解。</li>
-</ol>
-<p>分布式锁实现需要根据实际需要来选择，比如红锁是AP的，而ZooKeeper是CP的。</p>
-<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><ol>
-<li>怎么使用 Redis 实现分布式锁？<br>set 命令带上 nx 和 ex 参数。</li>
-<li>怎么使用 zk 实现分布式锁？<br>先建一个代表锁的持久节点，然后每个线程要加锁就在该持久节点下创建临时有序节点，如果当前线程创建的节点是最小的，则说明可以获取到该锁，否则阻塞等待；释放锁就是将这个临时节点删除。</li>
-</ol>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/garfieldcgf/p/6380816.html">分布式锁的几种实现方式</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/dennyzhangdd/p/7133653.html#_label0">终极锁实战：单 JVM 锁+分布式锁</a></li>
-</ol>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/a87bf883.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/a87bf883.html" class="post-title-link" itemprop="url">MySQL6_1其他主题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-05-30 10:18:28" itemprop="dateCreated datePublished" datetime="2020-05-30T10:18:28+08:00">2020-05-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-
-<h1 id="常用服务器配置"><a href="#常用服务器配置" class="headerlink" title="常用服务器配置"></a>常用服务器配置</h1><ul>
-<li>启动选项和系统变量<br>启动选项是运维启动 MySQL 时传入的一些参数，包括命令行启动选项和配置文件 my.cnf<br>系统变量会影响 MySQL 进程的运行行为，大部分是由启动选项初始化的，有些是运行时自动生成的</li>
-<li>查看系统变量<br><code>show [GLOBAL|SESSION] variables [like 匹配的模式];</code></li>
-<li>配置文件中配置组的概念</li>
-<li>配置作用范围<br>1、GLOBAL 指配置文件或命令行启动选项设置的系统变量<br>2、SESSION（LOCAL）刚连接时会被初始化为 GLOBAL 的变量，可以通过以下命令来设置<br><code>SET [GLOBAL|SESSION] 系统变量名 = 值;</code></li>
-<li>状态变量<br>指关于程序运行状态的变量，是只读的，不能手动修改<br>比方说 Threads_connected 表示当前有多少客户端与服务器建立了连接，Handler_update 表示已经更新了多少行记录<br>SHOW [GLOBAL|SESSION] STATUS [LIKE 匹配的模式];</li>
-</ul>
-<h1 id="InnoDB-统计数据"><a href="#InnoDB-统计数据" class="headerlink" title="InnoDB 统计数据"></a>InnoDB 统计数据</h1><h2 id="两种统计数据"><a href="#两种统计数据" class="headerlink" title="两种统计数据"></a>两种统计数据</h2><p>InnoDB 中有两种统计数据：<br>1、永久性：服务器重启也不会消失，这些数据被存储到了<code>innodb_table_stats</code>和<code>innodb_index_stats</code>这两张表中；<br>2、非永久性：重启即消失。<br>可以通过服务器的<code>innodb_stats_persistent</code>变量来查看这个统计数据的方式。</p>
-<h2 id="innodb-table-stats-统计方式"><a href="#innodb-table-stats-统计方式" class="headerlink" title="innodb_table_stats 统计方式"></a>innodb_table_stats 统计方式</h2><p>1、n_rows(一个表中的记录行数)统计项的收集<br>按照一定算法选取几个叶子节点页面，计算每个页面中主键值记录数量，然后计算平均一个页面中主键值的记录数量乘以全部叶子节点的数量就算是该表的 n_rows 值<br>2、clustered_index_size 和 sum_of_other_index_sizes</p>
-<ul>
-<li>从数据字典里找到表的各个索引对应的根页面位置。<br>系统表 SYS_INDEXES 里存储了各个索引对应的根页面信息。</li>
-<li>从根页面的 Page Header 里找到叶子节点段和非叶子节点段对应的 Segment Header。<br>在每个索引的根页面的 Page Header 部分都有两个字段：<br>PAGE_BTR_SEG_LEAF：表示 B+树叶子段的 Segment Header 信息。<br>PAGE_BTR_SEG_TOP：表示 B+树非叶子段的 Segment Header 信息。</li>
-<li>从叶子节点段和非叶子节点段的 Segment Header 中找到这两个段对应的 INODE Entry 结构。<br>这个是 Segment Header 结构：<br><img src="https://user-gold-cdn.xitu.io/2018/12/26/167e94d5b165a91f?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"></li>
-<li>从对应的 INODE Entry 结构中可以找到该段对应所有零散的页面地址以及 FREE、NOT_FULL、FULL 链表的基节点。<br>这个是 INODE Entry 结构：<br><img src="https://user-gold-cdn.xitu.io/2018/12/26/167e94d5b1e44524?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"></li>
-<li>直接统计零散的页面有多少个，然后从那三个链表的 List Length 字段中读出该段占用的区的大小，每个区占用 64 个页，所以就可以统计出整个段占用的页面。<br>这个是链表基节点的示意图：<br><img src="https://user-gold-cdn.xitu.io/2018/12/26/167e94d5b17c24e3?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"></li>
-<li>分别计算聚簇索引的叶子结点段和非叶子节点段占用的页面数，它们的和就是 clustered_index_size 的值，按照同样的套路把其余索引占用的页面数都算出来，加起来之后就是 sum_of_other_index_sizes 的值。</li>
-</ul>
-<h2 id="innodb-index-stats-统计方式"><a href="#innodb-index-stats-统计方式" class="headerlink" title="innodb_index_stats 统计方式"></a>innodb_index_stats 统计方式</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM mysql.innodb_index_stats WHERE table_name = &#x27;single_table&#x27;;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>n_leaf_pages：表示该索引的叶子节点占用多少页面。</li>
-<li>size：表示该索引共占用多少页面。</li>
-<li>n_diff_pfxNN：表示对应的索引列不重复的值有多少。其中的 NN 长得有点儿怪呀，啥意思呢？<br>其实 NN 可以被替换为 01、02、03… 这样的数字。比如对于 idx_key_part 来说：<br>n_diff_pfx01 表示的是统计 key_part1 这单单一个列不重复的值有多少。<br>n_diff_pfx02 表示的是统计 key_part1、key_part2 这两个列组合起来不重复的值有多少。<br>n_diff_pfx03 表示的是统计 key_part1、key_part2、key_part3 这三个列组合起来不重复的值有多少。<br>n_diff_pfx04 表示的是统计 key_part1、key_part2、key_part3、id 这四个列组合起来不重复的值有多少。</li>
-<li>在计算某些索引列中包含多少不重复值时，需要对一些叶子节点页面进行采样，sample_size 列就表明了采样的页面数量是多少。</li>
-</ul>
-<h2 id="基于内存的非永久性统计数据"><a href="#基于内存的非永久性统计数据" class="headerlink" title="基于内存的非永久性统计数据"></a>基于内存的非永久性统计数据</h2><p>开启非永久性统计数据的方法：<br>1、将<code>innodb_stats_persistent</code>的值设置为 OFF；<br>2、直接在创建表或修改表时设置<code>STATS_PERSISTENT</code>属性的值为 0；</p>
-<h1 id="MySQL-Server-统计数据"><a href="#MySQL-Server-统计数据" class="headerlink" title="MySQL Server 统计数据"></a>MySQL Server 统计数据</h1><p>Server 层而不是 InnoDB（存储引擎层）统计数据。<br>1、查看连接数配置</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show variables like &#x27;%max_connections%&#x27;</span><br></pre></td></tr></table></figure>
-<p>2、查看当前连接数</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show full processlist;</span><br></pre></td></tr></table></figure>
-
-
-<h1 id="数据恢复"><a href="#数据恢复" class="headerlink" title="数据恢复"></a>数据恢复</h1><p>数据的误删基本分以下几种情况：</p>
-<ol>
-<li>使用 delete 语句误删数据行；</li>
-<li>使用 drop table 或 truncate table 误删表；</li>
-<li>使用 drop database 误删数据库；</li>
-<li>使用 rm 命令误删整个 MySQL 实例。</li>
-</ol>
-<h2 id="误删行"><a href="#误删行" class="headerlink" title="误删行"></a>误删行</h2><p>使用 Flashback 工具通过闪回把数据恢复。<br>Flashback 恢复数据的原理，是<strong>修改 binlog 的内容</strong>（事务里的语句顺序颠倒、语句的语义颠倒比如 insert 变成 delete），拿回原库重放。而能够使用这个方案的前提是，需要确保 binlog_format&#x3D;row 和 binlog_row_image&#x3D;FULL。</p>
-<h2 id="误删库-表"><a href="#误删库-表" class="headerlink" title="误删库 &#x2F; 表"></a>误删库 &#x2F; 表</h2><p>误删库表的情况不能使用 Flashback 恢复，因为即使配置 binlog_format&#x3D;row，truncate&#x2F;drop 语句在 binlog 中也只会记录一条对应的语句，而用这些信息是无法恢复数据的。<br>这种情况下，恢复需要使用全量备份，加增量日志。这个方案要求线上有定期的全量备份，并且实时备份 binlog。</p>
-<h2 id="rm-删除数据"><a href="#rm-删除数据" class="headerlink" title="rm 删除数据"></a>rm 删除数据</h2><p>仅仅删除某个节点的数据的情况，HA 系统可以选出新的主库，从而保证整个集群的正常工作。<br>之后，我们可以在这个被删节点上把数据恢复回来，再接入整个集群。</p>
-<h1 id="中断查询"><a href="#中断查询" class="headerlink" title="中断查询"></a>中断查询</h1><p>有时候因为查询耗时过长，或出现死锁等待，我们不得不提早终止执行 SQL 的线程，可以通过<code>information_schema.processlist</code> 和 <code>performance_schema.threads</code>这两张表来查看正在执行的线程：</p>
-<ul>
-<li>processlist 表中每一行对应一个客户端连接，也对应一个线程；</li>
-<li>threads 每一行对应一个线程。</li>
-</ul>
-<p><code>kill query pid</code>可以杀死线程，但是客户端的连接还在，可以看到被 kill 后该连接进入了 Sleep 状态：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># Id, User, Host, db, Command, Time, State, Info</span><br><span class="line">&#x27;494633&#x27;, &#x27;beta&#x27;, &#x27;192.168.19.142:56193&#x27;, &#x27;ds_0&#x27;, &#x27;Sleep&#x27;, &#x27;26&#x27;, &#x27;&#x27;, NULL</span><br></pre></td></tr></table></figure>
-
-<p><code>kill pid</code>可以中断连接，执行后再用<code>processlist</code>就找不到那个 pid 了。</p>
-<p>在客户端 Ctrl + C 并不能中断服务器线程，只能中断客户端进程，</p>
-<h1 id="大表查询"><a href="#大表查询" class="headerlink" title="大表查询"></a>大表查询</h1><h2 id="Server-层"><a href="#Server-层" class="headerlink" title="Server 层"></a>Server 层</h2><p>MySQL 使用缓存来保证一次性查询大量数据的情况下不会把服务器内存打满，服务器并不需要保存一个完整的结果集。取数据和发数据的流程如下：<br><img src="/imgs/MySQL/MySQL-%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C%E5%8F%91%E9%80%81%E6%B5%81%E7%A8%8B.png" alt="MySQL-查询结果发送流程" title="MySQL-查询结果发送流程"></p>
-<ol>
-<li>获取一行，写到 <strong>net_buffer</strong> 中。这块内存的大小是由参数 net_buffer_length 定义的，默认是 16k。</li>
-<li>重复获取行，直到 net_buffer 写满，调用网络接口发出去。</li>
-<li>如果发送成功，就清空 net_buffer，然后继续取下一行，并写入 net_buffer。</li>
-<li>如果发送函数返回 EAGAIN 或 WSAEWOULDBLOCK，就表示<strong>本地网络栈（socket send buffer）</strong>写满了，进入等待。直到网络栈重新可写，再继续发送。</li>
-</ol>
-<p>从上面的流程可知，MySQL 一次查询占用的内存是有限的，最大是**min(net_buffer_length, socket send buffer)**，即不能超过 net_buffer_length 和 socket send buffer；</p>
-<h2 id="存储引擎层（InnoDB）"><a href="#存储引擎层（InnoDB）" class="headerlink" title="存储引擎层（InnoDB）"></a>存储引擎层（InnoDB）</h2><p>InnoDB 使用 Buffer Pool 管理内存数据页，如果 Buffer Pool 命中率足够高，那么大部分时候是不需要读磁盘的，直接从内存拿结果，可以加快查询速度。<br>执行 <code>show engine innodb status</code> ，可以看到“<code>Buffer pool hit rate</code>”字样，显示的就是当前的命中率，一般一个稳定服务的线上系统，要保证响应时间符合要求的话，内存命中率要在 99% 以上。<br>Buffer Pool 的空间是有限的，新旧页面的更替是通过 LRU 算法控制的，但 InnoDB 中的 LRU 并不是单纯的新页面替换老页面（因为这样相当于每次大查询都会把整个 Buffer Pool 都刷新一遍），而是将 LRU 链表分成了 young 区和 old 区，页面第一次被访问时会被添加到 old 区，old 区的页面如果是短期内被多次访问，则其不会被移动到链表的头部（young 区），会很快被淘汰掉。</p>
-<h1 id="临时表"><a href="#临时表" class="headerlink" title="临时表"></a>临时表</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">create temporary table temp_t like t1;</span><br><span class="line">alter table temp_t add index(b);</span><br><span class="line">insert into temp_t select * from t2 where b&gt;=1 and b&lt;=2000;</span><br><span class="line">select * from t1 join temp_t on (t1.b=temp_t.b);</span><br></pre></td></tr></table></figure>
-
-<p>临时表特性：</p>
-<ol>
-<li>不同 session 的临时表是可以重名的，常被用在复杂查询的优化过程中，比如有多个 session 同时执行 join 优化，不需要担心表名重复导致建表失败的问题。</li>
-<li>不需要担心数据删除问题。如果使用普通表，在流程执行过程中客户端发生了异常断开，或者数据库发生异常重启，还需要专门来清理中间过程中生成的数据表。而临时表由于会自动回收，所以不需要这个额外的操作。</li>
-</ol>
-<h2 id="临时表的使用场景"><a href="#临时表的使用场景" class="headerlink" title="临时表的使用场景"></a>临时表的使用场景</h2><h3 id="union-语句"><a href="#union-语句" class="headerlink" title="union 语句"></a>union 语句</h3><p>表 t1 在执行前已初始化插入了 1~1000 的数据。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(select 1000 as f) union (select id from t1 order by id desc limit 2);</span><br></pre></td></tr></table></figure>
-<p><img src="/imgs/MySQL/MySQL-union%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png" alt="MySQL-union执行流程" title="MySQL-union执行流程"><br>上面语句将两个子查询的结果合并去重，union 合并时会生成临时表，这可以通过 explain 来验证。</p>
-<h3 id="group-by"><a href="#group-by" class="headerlink" title="group by"></a>group by</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select id%10 as m, count(*) as c from t1 group by m;</span><br></pre></td></tr></table></figure>
-<p><img src="/imgs/MySQL/MySQL-groupby%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png" alt="MySQL-groupby执行流程" title="MySQL-groupby执行流程"><br>上面语句先创建内存临时表，表里有 m 和 c 两个字段，主键是 m，扫描 t1 索引 a，将<code>id%10</code>的结果插入临时表，如果出现主键冲突则计算 c 值+1。</p>
-<ol>
-<li>加索引<br>默认情况下<code>id%10</code>是无序的，所以需要先在临时表中统计排序后再返回，但是如果原表本身就是有序的，则不需要临时表、也不需要额外排序了，实际上只要引入索引就可以解决这个问题，因为<strong>索引是有序的</strong>。</li>
-<li>如果不能加索引，也可以加一列 generated column<br>MySQL5.7 支持 generated column 机制，并可以在该列上创建索引：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter table t1 add column z int generated always as(id % 100), add index(z);</span><br></pre></td></tr></table></figure>
-上面的 group by 语句可以改成如下的形式：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select z, count(*) as c from t1 group by z;</span><br></pre></td></tr></table></figure></li>
-<li>如果不需要排序，可以显式声明忽略排序<br>如果对 group by 语句的结果没有排序要求，要在语句后面加 order by null</li>
-<li>数据量小时使用内存临时表<br>如果 group by 需要统计的数据量不大，尽量只使用内存临时表；也可以通过适当调大 tmp_table_size 参数，来避免用到磁盘临时表；</li>
-<li>数据量大时使用磁盘临时表<br>如果数据量较大，因为内存临时表的空间是有限的，当达到上限后就会转到磁盘内存表，与其这样转一下，不如直接使用磁盘内存表。<br>因此，如果数据量实在太大，使用 <code>SQL_BIG_RESULT</code> 这个提示，来告诉优化器直接使用排序算法得到 group by 的结果。</li>
-</ol>
-<h1 id="Memory-引擎"><a href="#Memory-引擎" class="headerlink" title="Memory 引擎"></a>Memory 引擎</h1><h2 id="Memory-引擎与-InnoDB-引擎区别"><a href="#Memory-引擎与-InnoDB-引擎区别" class="headerlink" title="Memory 引擎与 InnoDB 引擎区别"></a>Memory 引擎与 InnoDB 引擎区别</h2><ol>
-<li>数据组织方式<br>InnoDB 引擎采用 B+树来组织数据，主键是有序存储的。InnoDB 引擎把数据放在主键索引上，其他索引上保存的是主键 id。这种方式，我们称之为<strong>索引组织表（Index Organizied Table）</strong>。<br>Memory 引擎的数据和索引是分开的，数据以数组的方式单独存放，而主键索引是 hash 索引，存的是每个数据的位置，索引上的 key 并不是有序的：<br><img src="/imgs/MySQL/MySQL-Memory%E5%BC%95%E6%93%8E%E6%95%B0%E6%8D%AE%E7%BB%84%E7%BB%87.png" alt="MySQL-Memory引擎数据组织" title="MySQL-Memory引擎数据组织"><br>Memory 引擎采用的是把数据单独存放，索引上保存数据位置的数据组织形式，我们称之为<strong>堆组织表（Heap Organizied Table）</strong>。</li>
-<li>存放顺序<br>InnoDB 表的数据总是有序存放的，而内存表的数据就是按照写入顺序存放的；</li>
-<li>当数据文件有空洞的时候，InnoDB 表在插入新数据的时候，为了保证数据有序性，只能在固定的位置写入新值，而内存表找到空位就可以插入新值；</li>
-<li>数据位置发生变化的时候，InnoDB 表只需要修改主键索引，而内存表需要修改所有索引；</li>
-<li>InnoDB 表用主键索引查询时需要走一次索引查找，用普通索引查询的时候，需要走两次索引查找。而内存表没有这个区别，所有索引的“地位”都是相同的。</li>
-<li>InnoDB 支持变长数据类型，不同记录的长度可能不同；内存表不支持 Blob 和 Text 字段，并且即使定义了 varchar(N)，实际也当作 char(N)，也就是固定长度字符串来存储，因此内存表的每行数据长度相同。</li>
-</ol>
-<h2 id="hash-索引和-B-Tree-索引"><a href="#hash-索引和-B-Tree-索引" class="headerlink" title="hash 索引和 B-Tree 索引"></a>hash 索引和 B-Tree 索引</h2><p>内存表也支持 B-Tree 索引：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter table t1 add index a_btree_index using btree (id);</span><br></pre></td></tr></table></figure>
-<p><img src="/imgs/MySQL/MySQL-%E5%86%85%E5%AD%98%E8%A1%A8B-Tree%E7%B4%A2%E5%BC%95.png" alt="MySQL-内存表B-Tree索引" title="MySQL-内存表B-Tree索引"><br>可以查看以下两个语句的输出：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-- 命中索引a_btree_index，因此输出结果是有序的</span><br><span class="line">select * from t1 where id &lt; 5;</span><br><span class="line">-- 强制使用主键id索引，因此是无序的</span><br><span class="line">select * from t1 force index (primary) where id &lt; 5;</span><br></pre></td></tr></table></figure>
-
-<h2 id="不推荐在生产环境使用-Memory-引擎"><a href="#不推荐在生产环境使用-Memory-引擎" class="headerlink" title="不推荐在生产环境使用 Memory 引擎"></a>不推荐在生产环境使用 Memory 引擎</h2><ol>
-<li>锁粒度问题<br>内存表不支持行锁，只支持表锁，只要这张表上有更新，就会堵住所有其他在这张表上的读写操作，因此在处理并发事务时性能也不会太好。</li>
-<li>数据持久化问题<br>因为数据被存放在内存中，数据库重启时所有的内存表都会被清空。</li>
-</ol>
-<p>虽然一般情况下不适合使用内存表，但是还有一种情况可以考虑使用内存表：用户临时表，只是临时数据，如果数据可控，不会消耗过多内存的情况下，可以考虑使用内存表。<br>内存临时表（通过 create temporary table 语句创建）刚好可以无视内存表的两个不足，主要是下面的三个原因：</p>
-<ol>
-<li>临时表不会被其他线程访问，没有并发性的问题；</li>
-<li>临时表重启后也是需要删除的，清空数据这个问题不存在；</li>
-<li>备库的临时表也不会影响主库的用户线程。</li>
-</ol>
-<h1 id="备份"><a href="#备份" class="headerlink" title="备份"></a>备份</h1><ul>
-<li>将数据导出成一组 insert 语句<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysqldump -h$host -P$port -u$user --add-locks=0 --no-create-info --single-transaction  --set-gtid-purged=OFF db1 t --where=&quot;a&gt;900&quot; --result-file=/client_tmp/t.sql</span><br></pre></td></tr></table></figure>
-恢复：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql -h127.0.0.1 -P13000  -uroot db2 -e &quot;source /client_tmp/t.sql&quot;</span><br></pre></td></tr></table></figure></li>
-<li>导出 CSV 文件<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from db1.t where a&gt;900 into outfile &#x27;/server_tmp/t.csv&#x27;;</span><br></pre></td></tr></table></figure>
-恢复，将数据导入到目标表 db2.t 中：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">load data infile &#x27;/server_tmp/t.csv&#x27; into table db2.t;</span><br></pre></td></tr></table></figure></li>
-<li>物理拷贝<br>不能通过直接拷贝表的.frm 文件和.ibd 文件来实现物理拷贝，因为一个 InnoDB 表除了包含这两个物理文件外，还需要在数据字典中注册，直接拷贝的情况下系统不会识别。<br>在 MySQL 5.6 版本引入了<strong>可传输表空间(transportable tablespace)</strong> 的方法，可以通过导出 + 导入表空间的方式，实现物理拷贝表的功能。<ol>
-<li>执行 create table r like t，创建一个相同表结构的空表；</li>
-<li>执行 alter table r discard tablespace，这时候 r.ibd 文件会被删除；</li>
-<li>执行 flush table t for export，这时候 db1 目录下会生成一个 t.cfg 文件；</li>
-<li>在 db1 目录下执行 cp t.cfg r.cfg; cp t.ibd r.ibd；</li>
-<li>这两个命令（这里需要注意的是，拷贝得到的两个文件，MySQL 进程要有读写权限）；</li>
-<li>执行 unlock tables，这时候 t.cfg 文件会被删除；</li>
-<li>执行 alter table r import tablespace，将这个 r.ibd 文件作为表 r 的新的表空间，由于这个文件的数据内容和 t.ibd 是相同的，所以表 r 中就有了和表 t 相同的数据。</li>
-</ol>
-</li>
-</ul>
-<p>这三种方法各有优劣：</p>
-<ol>
-<li>物理拷贝的方式速度最快，尤其对于大表拷贝来说是最快的方法。如果出现误删表的情况，用备份恢复出误删之前的临时库，然后再把临时库中的表拷贝到生产库上，是恢复数据最快的方法。但是，这种方法的使用也有一定的局限性：<ul>
-<li>必须是全表拷贝，不能只拷贝部分数据；</li>
-<li>需要到服务器上拷贝数据，在用户无法登录数据库主机的场景下无法使用；……</li>
-<li>由于是通过拷贝物理文件实现的，源表和目标表都是使用 InnoDB 引擎时才能使用。</li>
-</ul>
-</li>
-<li>用 mysqldump 生成包含 INSERT 语句文件的方法，可以在 where 参数增加过滤条件，来实现只导出部分数据。这个方式的不足之一是，不能使用 join 这种比较复杂的 where 条件写法。</li>
-<li>用 select … into outfile 的方法是最灵活的，支持所有的 SQL 写法。但，这个方法的缺点之一就是，每次只能导出一张表的数据，而且表结构也需要另外的语句单独备份。</li>
-</ol>
-<h1 id="MySQL-中的自增-ID"><a href="#MySQL-中的自增-ID" class="headerlink" title="MySQL 中的自增 ID"></a>MySQL 中的自增 ID</h1><h2 id="表的自增-id"><a href="#表的自增-id" class="headerlink" title="表的自增 id"></a>表的自增 id</h2><p>我们经常给表的主键加上自增属性，用于唯一标识一条记录，但是因为自增值达到上限后再申请得到的值不变，因此自增字段的范围应该略大一些，尽可能创建成<code>bigint unsigned</code>。</p>
-<h2 id="row-id"><a href="#row-id" class="headerlink" title="row_id"></a>row_id</h2><p>如果没有指定主键，InnoDB 会创建一个不可见的、长度为 6 字节的 row_id，超过上限后再申请时会得到 0，<strong>如果新写入的行的 row_id 在表中已存在，则会直接覆盖原有的行</strong>，因此，最好优先使用自增 ID 而不是 row_id。</p>
-<h2 id="Xid"><a href="#Xid" class="headerlink" title="Xid"></a>Xid</h2><p>Xid 用于唯一标识一个事务。Xid 的值由一个内存变量 global_query_id 给出，重启后清零，但是因为每次重启时 binlog 都会重新生成，所以 binlog 中的 Xid 也不会重复。global_query_id 的长度为 8 个字节，除非 MySQL 实例一直执行了<code>2^64 - 1</code>次查询且期间没有重启，不然不会出现 Xid 重复的情况。</p>
-<h2 id="max-trx-id"><a href="#max-trx-id" class="headerlink" title="max_trx_id"></a>max_trx_id</h2><p>Xid 由 server 层维护。InnoDB 内部使用 Xid，就是为了能够在 InnoDB 事务和 server 之间做关联。但是，InnoDB 自己的 trx_id，是另外维护的。<br>InnoDB 内部维护了一个 max_trx_id 全局变量，每次需要申请一个新的 trx_id 时，就获得 max_trx_id 的当前值，然后并将 max_trx_id 加 1。</p>
-<blockquote>
-<p>InnoDB 事务在读操作时不会申请 trx_id，trx_id 的值就是 0，只有在加锁或执行写操作时才会申请。<br>只读事务不申请 trx_id 的原因是只读事务不影响事务的可见性判断，且能减少 trx_id 的申请次数、减少并发事务申请 trx_id 的锁冲突。</p>
-</blockquote>
-<p>MVCC 判断数据可见性的核心思想：每一行数据都记录了更新它的 trx_id，当一个事务读到一行数据的时候，判断这个数据是否可见的方法，就是通过事务的一致性视图与这行数据的 trx_id 做对比。</p>
-<h2 id="thread-id"><a href="#thread-id" class="headerlink" title="thread_id"></a>thread_id</h2><p>系统保存一个全局变量 thread_id_counter，每新建一个连接就将 thread_id_counter 赋值给这个新连接的线程变量。</p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/f2150593.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/f2150593.html" class="post-title-link" itemprop="url">Netty 原理总结</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-05-29 10:18:28" itemprop="dateCreated datePublished" datetime="2020-05-29T10:18:28+08:00">2020-05-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-20 20:17:42" itemprop="dateModified" datetime="2023-08-20T20:17:42+08:00">2023-08-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-
-<h1 id="为什么使用-Netty"><a href="#为什么使用-Netty" class="headerlink" title="为什么使用 Netty"></a>为什么使用 Netty</h1><ol>
-<li>实现协议的局限性<br>今天，我们使用通用的应用程序或者类库来实现互相通讯，比如，我们经常使用一个 HTTP 客户端库来从 web 服务器上获取信息，或者通过 web 服务来执行一个远程的调用。<br>然而，有时候一个通用的协议或他的实现并没有很好的满足需求。比如我们无法使用一个通用的 HTTP 服务器来处理大文件、电子邮件以及近实时消息，比如金融信息和多人游戏数据。我们需要一个高度优化的协议来处理一些特殊的场景。例如你可能想实现一个优化了的 Ajax 的聊天应用、媒体流传输或者是大文件传输器，你甚至可以自己设计和实现一个全新的协议来准确地实现你的需求。<br>另一个不可避免的情况是当你不得不处理遗留的专有协议来确保与旧系统的互操作性。在这种情况下，重要的是我们如何才能快速实现协议而不牺牲应用的稳定性和性能。</li>
-<li>使用 Netty 可以有效改善这种情况<br>Netty 是一个提供 asynchronous event-driven （异步事件驱动）的网络应用框架，是一个用以快速开发高性能、高可靠性协议的服务器和客户端。<br>换句话说，Netty 是一个 NIO 客户端服务器框架，使用它可以快速简单地开发网络应用程序，比如服务器和客户端的协议。Netty 大大简化了网络程序的开发过程比如 TCP 和 UDP 的 socket 服务的开发。<br>“快速和简单”并不意味着应用程序会有难维护和性能低的问题，Netty 是一个精心设计的框架，它从许多协议的实现中吸收了很多的经验比如 FTP、SMTP、HTTP、许多二进制和基于文本的传统协议.因此，Netty 已经成功地找到一个方式,在不失灵活性的前提下来实现开发的简易性，高性能，稳定性。<br>有一些用户可能已经发现其他的一些网络框架也声称自己有同样的优势，所以你可能会问是 Netty 和它们的不同之处。答案就是 Netty 的哲学设计理念。Netty 从开始就为用户提供了用户体验最好的 API 以及实现设计。正是因为 Netty 的哲学设计理念，才让您得以轻松地阅读本指南并使用 Netty。</li>
-</ol>
-<h1 id="架构总览"><a href="#架构总览" class="headerlink" title="架构总览"></a>架构总览</h1><p><img src="/imgs/Netty/Netty%E6%9E%B6%E6%9E%84%E6%80%BB%E8%A7%88.png" alt="Netty架构总览" title="Netty架构总览"><br>Netty 的架构由三部分组成——缓冲（buffer），通道（channel），事件模型（event model）——所有的高级特性都构建在这三个核心组件之上。</p>
-<h2 id="NIO"><a href="#NIO" class="headerlink" title="NIO"></a>NIO</h2><ol>
-<li><a target="_blank" rel="noopener" href="https://segmentfault.com/q/1010000010446129">想了解 Aio 与 Nio 的利弊，为什么 Netty 没有采用 Aio 实现？</a></li>
-</ol>
-<p>NIO 基于传输层，可以自定义数据处理逻辑来作为应用层，或者基于现有的 HTTP 组件进行升级，在线上环境这样的升级会带来一些兼容性问题，HTTP 已有相应的协议升级机制：<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Protocol_upgrade_mechanism">Protocol upgrade mechanism</a>。</p>
-<p>NIO 相对 BIO 优势：</p>
-<ol>
-<li>零拷贝<br>零拷贝减少线程上下文切换次数，且数据直接拷贝到内核空间，不占用 JVM 堆空间；</li>
-<li>减少线程资源浪费<br>NIO 可以一个线程监听多个 Socket 的连接、读、写请求，而不是像 BIO 那样每个 Socket 创建一个线程，但是同时会有一个问题：</li>
-</ol>
-<h2 id="Netty-核心组件"><a href="#Netty-核心组件" class="headerlink" title="Netty 核心组件"></a>Netty 核心组件</h2><ol>
-<li>Channel 和 ChannelHandler</li>
-<li>ByteBuf</li>
-<li>Pipeline</li>
-</ol>
-<h1 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h1><p><img src="/imgs/Netty/Netty%E6%B5%81%E7%A8%8B.png" alt="Netty流程" title="Netty流程"></p>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>下面是一个启动Netty服务端的代码：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">ServerBootstrap bootstrap = new ServerBootstrap();</span><br><span class="line">        bootstrap.group(bossGroup(), workerGroup())</span><br><span class="line">                .channel(NioServerSocketChannel.class)</span><br><span class="line">                .childHandler(new ChannelInitializer&lt;SocketChannel&gt;() &#123;</span><br><span class="line"></span><br><span class="line">                    @Override</span><br><span class="line">                    protected void initChannel(SocketChannel ch) throws Exception &#123;</span><br><span class="line">                        // 空闲检测</span><br><span class="line">                        ch.pipeline().addLast(&quot;idleStateHandler&quot;, new IdleStateHandler(15, 0, 0,</span><br><span class="line">                                TimeUnit.MINUTES));</span><br><span class="line"></span><br><span class="line">                        // 半包/粘包分解器</span><br><span class="line">                        ch.pipeline().addLast(</span><br><span class="line">                                new DelimiterBasedFrameDecoder(2048, true, getFirstBytes()</span><br><span class="line">                                ));</span><br><span class="line">                        ch.pipeline().addLast(其他Handler比如解码之类的);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;).option(ChannelOption.SO_BACKLOG, 1024);</span><br><span class="line">bootstrap.bind(10885).sync()</span><br></pre></td></tr></table></figure>
-
-<h2 id="创建EventLoop"><a href="#创建EventLoop" class="headerlink" title="创建EventLoop"></a>创建EventLoop</h2><p>在上面的代码中，出现了<strong>bossGroup</strong>和<strong>workerGroup</strong>，bossGroup主要负责监听连接，拿到连接后，交给workerGroup中的线程来监听读或写事件。<br><code>io.netty.util.concurrent.MultithreadEventExecutorGroup#MultithreadEventExecutorGroup</code><br><code>EventExecutorGroup</code>会给每个线程创建一个<code>EventLoop</code>。</p>
-<p><code>io.netty.channel.nio.NioEventLoop#NioEventLoop</code><br><code>newChild()</code>创建EventLoop实例，其默认实现是<code>NioEventLoop</code>。</p>
-<p><code>io.netty.util.concurrent.MultithreadEventExecutorGroup#MultithreadEventExecutorGroup(int, java.util.concurrent.Executor, io.netty.util.concurrent.EventExecutorChooserFactory, java.lang.Object...)</code><br>服务器初始化过程中创建了个线程池<code>ThreadPerTaskExecutor</code>：</p>
-<ul>
-<li>每次执行任务都会构造一个线程执行<br><code>io.netty.util.concurrent.ThreadPerTaskExecutor#execute</code></li>
-</ul>
-<h2 id="创建及初始化-ServerSocketChannel"><a href="#创建及初始化-ServerSocketChannel" class="headerlink" title="创建及初始化 ServerSocketChannel"></a>创建及初始化 ServerSocketChannel</h2><p>Netty 有一个叫做 <strong>Channel</strong> 的统一的异步 I&#x2F;O 编程接口，这个编程接口抽象了所有点对点的通信操作。也就是说，如果你的应用是基于 Netty 的某一种传输实现，那么同样的，你的应用也可以运行在 Netty 的另一种传输实现上。Netty 提供了几种拥有相同编程接口的基本传输实现：</p>
-<ul>
-<li>基于 NIO 的 TCP&#x2F;IP 传输 (见 io.netty.channel.nio),</li>
-<li>基于 OIO 的 TCP&#x2F;IP 传输 (见 io.netty.channel.oio),</li>
-<li>基于 OIO 的 UDP&#x2F;IP 传输, 和</li>
-<li>本地传输 (见 io.netty.channel.local).</li>
-</ul>
-<p>切换不同的传输实现通常只需对代码进行几行的修改调整，例如选择一个不同的 <strong>ChannelFactory</strong> 实现。<br>此外，你甚至可以利用新的传输实现没有写入的优势，只需替换一些构造器的调用方法即可，例如串口通信。而且由于核心 API 具有高度的可扩展性，你还可以完成自己的传输实现。</p>
-<ol>
-<li>入口<br><code>io.netty.bootstrap.AbstractBootstrap#bind(int)</code><br>用户代码调用bind绑定端口时会触发Channel的创建和初始化</li>
-</ol>
-<p><code>io.netty.bootstrap.ServerBootstrap#init</code><br>对Channel的使用可以追溯到这个init方法，包括Channel的创建、属性等的设置。</p>
-<ol>
-<li><p>创建<br><code>NioServerSocketChannel</code>的构造方法 -&gt; <code>io.netty.channel.socket.nio.NioServerSocketChannel#newSocket</code><br>可以看到，Netty中的<code>ServerSocketChannel</code>其实就对应JDK NIO中的<code>ServerSocketChannel</code>，在创建<code>NioServerSocketChannel</code>的同时创建了一个NIO中的<code>ServerSocketChannel</code>。</p>
-</li>
-<li><p>初始化<br>中间包含对<code>childOptions</code>和<code>childAttrs</code>等的设置。</p>
-</li>
-<li><p>添加一个连接处理器<code>ServerBootstrapAcceptor</code>。</p>
-</li>
-</ol>
-<h2 id="注册Selector"><a href="#注册Selector" class="headerlink" title="注册Selector"></a>注册Selector</h2><p>紧接着上面的初始化过程，接下来是注册NIO中的Selector。<br><code>io.netty.channel.EventLoopGroup#register(io.netty.channel.Channel)</code><br>总而言之最终还是使用NIO注册了 Selector。<br><code>io.netty.channel.nio.AbstractNioChannel#doRegister</code></p>
-<h3 id="启动-NioEventLoop"><a href="#启动-NioEventLoop" class="headerlink" title="启动 NioEventLoop"></a>启动 NioEventLoop</h3><p><code>io.netty.bootstrap.AbstractBootstrap#doBind0</code><br>绑定端口号的同时，执行一个线程。<br><code>io.netty.util.concurrent.SingleThreadEventExecutor#startThread</code><br>NioEventLoop启动流程的最终启动了一个线程。<br><code>io.netty.channel.nio.NioEventLoop#run</code><br>该线程任务根据EventLoop的实现不同而有所不同，在<code>NioEventLoop</code>中，主要任务为以下3步：</p>
-<ol>
-<li><p>接收事件（selectionKey）<br><code>io.netty.channel.nio.NioEventLoop#select</code><br>当检查没有需要处理的selectionKey时就会发生空轮询，Netty在轮询时会记录空轮询次数，<strong>当空轮询达到一定次数时，将之前注册的事件先取消，从而避免了NIO的空轮询Bug</strong>。</p>
-</li>
-<li><p>检测新连接并创建NioSocketChannel<br><code>io.netty.channel.nio.NioEventLoop#processSelectedKeys</code><br>处理连接请求，并分发请求到<strong>pipeline</strong><br><code>io.netty.channel.nio.AbstractNioMessageChannel.NioMessageUnsafe#read</code></p>
-<ul>
-<li>每个连接创建一个<strong>ServerSocketChannel</strong>。<br> <code>io.netty.channel.socket.nio.NioServerSocketChannel#doReadMessages</code></li>
-<li>读取数据并分发到<strong>pipeline</strong><br> <code>io.netty.channel.ChannelPipeline#fireChannelReadComplete</code></li>
-</ul>
-</li>
-<li><p>执行线程任务<br><code>io.netty.util.concurrent.SingleThreadEventExecutor#runAllTasks(long)</code></p>
-</li>
-</ol>
-<h2 id="pipeline中的第一个ChannelHandler"><a href="#pipeline中的第一个ChannelHandler" class="headerlink" title="pipeline中的第一个ChannelHandler"></a>pipeline中的第一个ChannelHandler</h2><p>pipeline的第一个Handler为<code>ServerBootstrapAcceptor</code>，它的主要任务包括：</p>
-<ol>
-<li><p>将用户自定义<code>ChannelHandler</code>添加到pipeline</p>
-</li>
-<li><p>选择一个<code>NioEventLoop</code>传播事件<br><code>io.netty.channel.MultithreadEventLoopGroup#register(io.netty.channel.Channel)</code></p>
-</li>
-<li><p>注册selector<br>代码流程非常长，但是最终可以跟到<code>doRegister</code>这个方法，可以发现最后还是调用了JDK的SocketChannel注册Selector。<br><code>io.netty.channel.AbstractChannel.AbstractUnsafe#register0</code> -&gt; <code>io.netty.channel.nio.AbstractNioChannel#doRegister</code></p>
-</li>
-<li><p>注册读事件<br>代码最后判断第一次连接则触发连接激活事件，代码位置仍然是上边的<code>register0</code>。<br><code>io.netty.channel.AbstractChannel.AbstractUnsafe#register0</code><br>继续往下看可以看到最终将读事件（selectionKey）注册到了Selector<br><code>io.netty.channel.DefaultChannelPipeline.HeadContext#channelActive</code><br>-&gt; <code>io.netty.channel.DefaultChannelPipeline.HeadContext#readIfIsAutoRead</code><br>-&gt; <code>io.netty.channel.nio.AbstractNioChannel#doBeginRead</code></p>
-</li>
-</ol>
-<p>选择EventLoop：<br><code>io.netty.util.concurrent.MultithreadEventExecutorGroup#chooser</code><br>每当有客户端连接进来时，Netty需要决定选择哪个EventLoop，这个工作是由<code>EventExecutorChooser</code>负责的：</p>
-<ul>
-<li><code>GenericEventExecutorChooser</code>：循环选择。</li>
-<li><code>PowerOfTwoEventExecutorChooser</code>：也是循环选择，只不过<code>GenericEventExecutorChooser</code>使用了取模运算，而<code>PowerOfTwoEventExecutorChooser</code>是通过位运算实现的。</li>
-</ul>
-<h2 id="Pipeline"><a href="#Pipeline" class="headerlink" title="Pipeline"></a>Pipeline</h2><ol>
-<li><p>创建Pipeline<br>创建NioSocketChannel时会创建Pipeline：<br><code>io.netty.channel.AbstractChannel#AbstractChannel</code><br>Pipeline本身是一个<strong>双向链表</strong>的结构，且有两个哨兵节点<code>head</code>和<code>tail</code>。</p>
-</li>
-<li><p>添加Pipeline<br>添加到链表<br><code>io.netty.channel.ChannelPipeline#addLast(io.netty.channel.ChannelHandler...)</code><br>检查是否重复添加，如果加了<code>@Sharable</code>注解是可以重复添加的<br><code>io.netty.channel.DefaultChannelPipeline#checkMultiplicity</code><br>添加到链表末尾，也就是添加到<code>tail</code>节点的前面。<br><code>io.netty.channel.DefaultChannelPipeline#addLast0</code></p>
-</li>
-<li><p>删除Pipeline<br>有时候我们需要删除一个Pipeline上的某些ChannelHandler，比如已经进行过了授权校验，那下次就不需要再执行授权校验了，我们就可以直接把授权相关的那些ChannelHandler删除掉。<br>首先遍历Pipeline找到目标ChannelHandler。<br><code>io.netty.channel.DefaultChannelPipeline#getContextOrDie</code><br>然后从Pipeline中移除。<br><code>io.netty.channel.DefaultChannelPipeline#remove(AbstractChannelHandlerContext)</code></p>
-</li>
-<li><p>inBound事件传播<br>ChannelHandler中每个事件都有一个接口，<code>ChannelInboundHandler</code>专门处理输入事件，以<code>channelRead</code>为例。<br>EventLoop会将读事件传给Pipeline，然后按责任链模式的逻辑从<code>head</code>节点开始传播事件。<br><code>io.netty.channel.nio.AbstractNioByteChannel.NioByteUnsafe#read</code></p>
-</li>
-<li><p>outBound事件传播<br><code>ChannelOutboundHandler</code>专门用于处理输出事件，以<code>write</code>为例。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class EchoServerOutHandler extends ChannelOutboundHandlerAdapter &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception &#123;</span><br><span class="line">        ctx.channel().write(&quot;Hello&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>当我们在Handler中调用Context的write方法时，就是将写事件传给了Pipeline，Pipeline会从<code>tail</code>节点开始往前传播。<br><code>io.netty.channel.AbstractChannelHandlerContext#write</code></p>
-</li>
-</ol>
-<h2 id="心跳检测"><a href="#心跳检测" class="headerlink" title="心跳检测"></a>心跳检测</h2><p>应用协议层的心跳是必须的，它和 tcp keepalive 是完全不同的概念。应用层协议层的心跳检测的是连接双方的存活性，兼而连接质量，而 keepalive 检测的是连接本身的存活性。而且后者的超时时间默认过长，完全不能适应现代的网络环境。<br>Netty 内置通过增加 <code>IdleStateHandler</code> 产生 IDLE 事件进行便捷的心跳控制。你要处理的，就是心跳超时的逻辑，比如延迟重连。但它的轮训时间是固定的，无法动态修改，高级功能需要自己定制。<br>不同场景下需要切换不同的保活机制，在一些客户端比如 Android，频繁心跳的唤起会浪费大量的网络和电量，它的心跳策略会更加复杂一些。</p>
-<h2 id="优雅退出"><a href="#优雅退出" class="headerlink" title="优雅退出"></a>优雅退出</h2><p>Java 的优雅停机通常通过注册 JDK ShutdownHook 来实现。<br>Runtime.getRuntime().addShutdownHook();<br>一般通过 kill -15 进行 java 进程的关闭，以便在进程死亡之前进行一些清理工作。</p>
-<blockquote>
-<p>注意：kill -9 会立马杀死进程，不给遗言的机会，比较危险。</p>
-</blockquote>
-<p>虽然 netty 做了很多优雅退出的工作，通过 EventLoopGroup 的 shutdownGracefully 方法对 nio 进行了一些状态设置，但在很多情况下，这还不够多。它只负责单机环境的优雅关闭。<br>流量可能还会通过外层的路由持续进入，造成无效请求。一种可行的做法是首先在外层路由进行一次本地实例的摘除，把流量截断，然后再进行 netty 本身的优雅关闭。</p>
-<h2 id="示例协议实现"><a href="#示例协议实现" class="headerlink" title="示例协议实现"></a>示例协议实现</h2><p>不少中间件会实现自己的协议，比如 Redis、MySQL，MyCat、TiDB 用的就是 MySQL 协议。<br>netty 默认实现了 dns、haproxy、http、http2、memcache、mqtt、redis、smtp、socks、stomp、xml 等协议。<br>协议分为两种：</p>
-<ul>
-<li>文本协议在调试起来是比较直观和容易的，但安全性欠佳；</li>
-<li>二进制协议就需要依赖日志、wireshark 等其他方式进行分析，增加了开发难度。</li>
-</ul>
-<ol>
-<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/io/netty/example/echo/package-summary.html">示例协议 - echo</a></li>
-<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/io/netty/example/discard/package-summary.html">示例协议 - discard</a></li>
-<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/io/netty/example/uptime/package-summary.html">示例协议 - uptime</a></li>
-<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/io/netty/example/factorial/package-summary.html">示例二进制协议 - factorial</a></li>
-<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/io/netty/example/telnet/package-summary.html">示例文本协议 - telnet</a></li>
-</ol>
-<h1 id="数据结构-ByteBuf"><a href="#数据结构-ByteBuf" class="headerlink" title="数据结构 - ByteBuf"></a>数据结构 - ByteBuf</h1><p>Netty 使用自建的 buffer API，而不是使用 NIO 的 <a target="_blank" rel="noopener" href="http://docs.oracle.com/javase/7/docs/api/java/nio/ByteBuffer.html?is-external=true">ByteBuffer</a> 来表示一个连续的字节序列。与 ByteBuffer 相比这种方式拥有明显的优势。Netty 使用新的 buffer 类型 <a target="_blank" rel="noopener" href="http://netty.io/4.0/api/io/netty/buffer/ByteBuf.html">ByteBuf</a>，被设计为一个可从底层解决 ByteBuffer 问题，并可满足日常网络应用开发需要的缓冲类型。这些很酷的特性包括：</p>
-<ul>
-<li>如果需要，允许使用自定义的缓冲类型。</li>
-<li>复合缓冲类型中内置的透明的零拷贝实现。</li>
-<li>开箱即用的动态缓冲类型，具有像 StringBuffer 一样的动态缓冲能力。</li>
-<li>不再需要调用的 flip()方法。</li>
-<li>正常情况下具有比 ByteBuffer 更快的响应速度。</li>
-</ul>
-<p><img src="/imgs/Netty/ByteBuf%E7%BB%93%E6%9E%84.png" alt="ByteBuf结构" title="ByteBuf结构"><br>以上就是一个 ByteBuf 的结构图，从上面这幅图可以看到</p>
-<ol>
-<li>ByteBuf 是一个字节容器，容器里面的的数据分为三个部分，第一个部分是已经丢弃的字节，这部分数据是无效的；第二部分是可读字节，这部分数据是 ByteBuf 的主体数据， 从 ByteBuf 里面读取的数据都来自这一部分;最后一部分的数据是可写字节，所有写到 ByteBuf 的数据都会写到这一段。最后一部分虚线表示的是该 ByteBuf 最多还能扩容多少容量</li>
-<li>以上三段内容是被两个指针给划分出来的，从左到右，依次是读指针（readerIndex）、写指针（writerIndex），然后还有一个变量 capacity，表示 ByteBuf 底层内存的总容量</li>
-<li>从 ByteBuf 中每读取一个字节，readerIndex 自增 1，ByteBuf 里面总共有 writerIndex-readerIndex 个字节可读, 由此可以推论出当 readerIndex 与 writerIndex 相等的时候，ByteBuf 不可读</li>
-<li>写数据是从 writerIndex 指向的部分开始写，每写一个字节，writerIndex 自增 1，直到增到 capacity，这个时候，表示 ByteBuf 已经不可写了</li>
-<li>ByteBuf 里面其实还有一个参数 maxCapacity，当向 ByteBuf 写数据的时候，如果容量不足，那么这个时候可以进行扩容，直到 capacity 扩容到 maxCapacity，超过 maxCapacity 就会报错</li>
-</ol>
-<p>使用 ByteBuf 有以下好处：</p>
-<ol>
-<li>可以有效地区分可读数据和可写数据，读写之间相互没有冲突</li>
-<li>Extensibility 可扩展性<br>ByteBuf 具有丰富的操作集,可以快速的实现协议的优化。例如，ByteBuf 提供各种操作用于访问无符号值和字符串，以及在缓冲区搜索一定的字节序列。你也可以扩展或包装现有的缓冲类型用来提供方便的访问。自定义缓冲式仍然实现自 ByteBuf 接口，而不是引入一个不兼容的类型</li>
-<li>Transparent Zero Copy 透明的零拷贝<br>网络应用中需要减少内存拷贝操作次数。你可能有一组缓冲区可以被组合以形成一个完整的消息。网络提供了一种复合缓冲，允许你从现有的任意数的缓冲区创建一个新的缓冲区而无需内存拷贝。例如，一个信息可以由两部分组成：header 和 body。在一个模块化的应用，当消息发送出去时，这两部分可以由不同的模块生产和装配。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+--------+------+</span><br><span class="line">| header | body |</span><br><span class="line">+--------+------+</span><br></pre></td></tr></table></figure>
- 如果你使用的是 ByteBuffer ，你必须要创建一个新的大缓存区用来拷贝这两部分到这个新缓存区中。或者，你可以在 NIO做一个收集写操作，但限制你将复合缓冲类型作为 ByteBuffer 的数组而不是一个单一的缓冲区，这样打破了抽象，并且引入了复杂的状态管理。此外，如果你不从 NIO channel 读或写，它是没有用的。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 复合类型与组件类型不兼容。</span><br><span class="line">ByteBuffer[] message = new ByteBuffer[] &#123; header, body &#125;;</span><br></pre></td></tr></table></figure>
- 通过对比， ByteBuf 不会有警告，因为它是完全可扩展并有一个内置的复合缓冲区。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 复合类型与组件类型是兼容的。</span><br><span class="line">ByteBuf message = Unpooled.wrappedBuffer(header, body);</span><br><span class="line">// 因此，你甚至可以通过混合复合类型与普通缓冲区来创建一个复合类型。</span><br><span class="line">ByteBuf messageWithFooter = Unpooled.wrappedBuffer(message, footer);</span><br><span class="line">// 由于复合类型仍是 ByteBuf，访问其内容很容易，</span><br><span class="line">//并且访问方法的行为就像是访问一个单独的缓冲区，</span><br><span class="line">//即使你想访问的区域是跨多个组件。</span><br><span class="line">//这里的无符号整数读取位于 body 和 footer</span><br><span class="line">messageWithFooter.getUnsignedInt(</span><br><span class="line">     messageWithFooter.readableBytes() - footer.readableBytes() - 1);</span><br></pre></td></tr></table></figure></li>
-<li>Automatic Capacity Extension 自动容量扩展<br>许多协议定义可变长度的消息，这意味着没有办法确定消息的长度，直到你构建的消息。或者，在计算长度的精确值时，带来了困难和不便。这就像当你建立一个字符串。你经常估计得到的字符串的长度，让 StringBuffer 扩大了其本身的需求。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 一种新的动态缓冲区被创建。在内部，实际缓冲区是被“懒”创建，从而避免潜在的浪费内存空间。</span><br><span class="line">ByteBuf b = Unpooled.buffer(4);</span><br><span class="line">// 当第一个执行写尝试，内部指定初始容量 4 的缓冲区被创建</span><br><span class="line">b.writeByte(&#x27;1&#x27;);</span><br><span class="line">b.writeByte(&#x27;2&#x27;);</span><br><span class="line">b.writeByte(&#x27;3&#x27;);</span><br><span class="line">b.writeByte(&#x27;4&#x27;);</span><br><span class="line">// 当写入的字节数超过初始容量 4 时，</span><br><span class="line">//内部缓冲区自动分配具有较大的容量</span><br><span class="line">b.writeByte(&#x27;5&#x27;);</span><br></pre></td></tr></table></figure></li>
-<li>Better Performance 更好的性能<br>最频繁使用的缓冲区 ByteBuf 的实现是一个非常薄的字节数组包装器（比如，一个字节）。与 ByteBuffer 不同，它没有复杂的边界和索引检查补偿，因此对于 JVM 优化缓冲区的访问更加简单。更多复杂的缓冲区实现是用于拆分或者组合缓存，并且比 ByteBuffer 拥有更好的性能。</li>
-</ol>
-<h2 id="粘包拆包和半包合并"><a href="#粘包拆包和半包合并" class="headerlink" title="粘包拆包和半包合并"></a>粘包拆包和半包合并</h2><p>基于流的传输比如 TCP&#x2F;IP, 接收到数据是存在 socket 接收的 buffer 中。不幸的是，基于流的传输并不是一个数据包队列，而是一个字节队列。造成粘包的原因，主要是由于缓冲区的介入，所以需要严格约定去所传输的包的格式——何时开始何时结束。意味着，即使你发送了 2 个独立的数据包，操作系统也不会作为 2 个消息处理而仅仅是作为一连串的字节而言。因此这是不能保证你远程写入的数据就会准确地读取。举个例子，让我们假设操作系统的 TCP&#x2F;TP 协议栈已经接收了 3 个数据包，在应用程序中读取数据的时候可能被分成下面的片段：<br><img src="/imgs/Netty/%E7%B2%98%E5%8C%85%E5%92%8C%E5%8D%8A%E5%8C%85%E9%97%AE%E9%A2%98.png" alt="粘包和半包问题" title="粘包和半包问题"><br>因此，一个接收方不管他是客户端还是服务端，都应该把接收到的数据整理成一个或者多个更有意义并且能够让程序的业务逻辑更好理解的数据。<br>在没有 Netty 的情况下，用户如果自己需要拆包，基本原理就是不断从 TCP 缓冲区中读取数据，每次读取完都需要判断是否是一个完整的数据包</p>
-<ul>
-<li>半包：如果当前读取的数据不足以拼接成一个完整的业务数据包，那就保留该数据，继续从 TCP 缓冲区中读取，直到得到一个完整的数据包。</li>
-<li>粘包：如果当前读到的数据加上已经读取的数据足够拼接成一个数据包，那就将已经读取的数据拼接上本次读取的数据，构成一个完整的业务数据包传递到业务逻辑，多余的数据仍然保留，以便和下次读到的数据尝试拼接。</li>
-</ul>
-<h2 id="解码器-ByteToMessageDecoder"><a href="#解码器-ByteToMessageDecoder" class="headerlink" title="解码器 - ByteToMessageDecoder"></a>解码器 - ByteToMessageDecoder</h2><p>入口：<code>io.netty.handler.codec.ByteToMessageDecoder#channelRead</code></p>
-<ol>
-<li>累加字节流<br>累加器累加已读入的字节数，如果超过<code>ByteBuf</code>当前可读入的空间大小，则执行扩容。<br><code>io.netty.handler.codec.ByteToMessageDecoder.Cumulator#cumulate</code></li>
-<li>调用子类的decode方法进行解析（模板方法）<br><code>io.netty.handler.codec.ByteToMessageDecoder#callDecode</code></li>
-<li>将子类解析出的ByteBuf向下传播<br><code>io.netty.handler.codec.ByteToMessageDecoder#fireChannelRead(io.netty.channel.ChannelHandlerContext, io.netty.handler.codec.CodecOutputList, int)</code></li>
-</ol>
-<h2 id="Netty中的一些拆箱即用的解码器"><a href="#Netty中的一些拆箱即用的解码器" class="headerlink" title="Netty中的一些拆箱即用的解码器"></a>Netty中的一些拆箱即用的解码器</h2><p>如果要自己实现所有协议的拆包无疑是非常麻烦的，实际上 Netty 已经自带了一些开箱即用的拆包器：</p>
-<ol>
-<li>固定长度的拆包器 <code>FixedLengthFrameDecoder</code><br>如果你的应用层协议非常简单，每个数据包的长度都是固定的，比如 100，那么只需要把这个拆包器加到 pipeline 中，Netty 会把一个个长度为 100 的数据包 (ByteBuf) 传递到下一个 channelHandler。</li>
-<li>行拆包器 <code>LineBasedFrameDecoder</code><br>从字面意思来看，发送端发送数据包的时候，每个数据包之间以<strong>换行符</strong>作为分隔，接收端通过 LineBasedFrameDecoder 将粘过的 ByteBuf 拆分成一个个完整的应用层数据包。</li>
-<li>分隔符拆包器 <code>DelimiterBasedFrameDecoder</code><br>DelimiterBasedFrameDecoder 是行拆包器的通用版本，只不过我们可以自定义分隔符。</li>
-<li>基于长度域拆包器 <code>LengthFieldBasedFrameDecoder</code><br>最后一种拆包器是最通用的一种拆包器，只要你的自定义协议中包含长度域字段，均可以使用这个拆包器来实现应用层拆包。由于上面三种拆包器比较简单，读者可以自行写出 demo，接下来，我们就结合我们小册的自定义协议，来学习一下如何使用基于长度域的拆包器来拆解我们的数据包。</li>
-</ol>
-<h2 id="编码-MessageToByteEncoder"><a href="#编码-MessageToByteEncoder" class="headerlink" title="编码 - MessageToByteEncoder"></a>编码 - MessageToByteEncoder</h2><p>编码器是一个ChannelHandler，一般是第一个添加到Pipeline内，然后write的最后会将数据进行编码再输出。</p>
-<ol>
-<li>匹配对象<br><code>io.netty.handler.codec.MessageToByteEncoder#acceptOutboundMessage</code></li>
-<li>内存分配<br><code>io.netty.handler.codec.MessageToByteEncoder#allocateBuffer</code></li>
-<li>调用子类的编码实现<br><code>io.netty.handler.codec.MessageToByteEncoder#encode</code></li>
-<li>释放内存<br><code>io.netty.util.ReferenceCountUtil#release(java.lang.Object)</code></li>
-<li>放到Pipeline里传播<br>默认情况下会一直传播到<code>head</code>节点<br><code>io.netty.channel.ChannelHandlerContext#write(java.lang.Object, io.netty.channel.ChannelPromise)</code><br><code>io.netty.channel.Channel.Unsafe#write</code></li>
-<li>输出<br>将数据暂存到ByteBuf，将堆内对象转换为堆外内存<br><code>io.netty.channel.nio.AbstractNioByteChannel#filterOutboundMessage</code><br>插入写队列<br><code>io.netty.channel.ChannelOutboundBuffer#addMessage</code><br>TODO: 什么时候刷新buffer队列？</li>
-</ol>
-<h1 id="自定义数据处理逻辑"><a href="#自定义数据处理逻辑" class="headerlink" title="自定义数据处理逻辑"></a>自定义数据处理逻辑</h1><h2 id="基于拦截链模式的事件模型-pipeline"><a href="#基于拦截链模式的事件模型-pipeline" class="headerlink" title="基于拦截链模式的事件模型 - pipeline"></a>基于拦截链模式的事件模型 - pipeline</h2><p>一个定义良好并具有扩展能力的事件模型是事件驱动开发的必要条件。Netty 具有定义良好的 I&#x2F;O 事件模型。由于严格的层次结构区分了不同的事件类型，因此 Netty 也允许你在不破坏现有代码的情况下实现自己的事件类型。这是与其他框架相比另一个不同的地方。很多 NIO 框架没有或者仅有有限的事件模型概念；在你试图添加一个新的事件类型的时候常常需要修改已有的代码，或者根本就不允许你进行这种扩展。<br>在 Netty 中一条连接对应一个 Channel，该 Channel 的所有处理逻辑都在一个 ChannelPipeline 对象内，ChannelPipeline 是一个双向链表结构，在一个 ChannelPipeline 内部一个 <a href="../%E6%8A%80%E6%9C%AF%E7%82%B9%E6%80%BB%E7%BB%93">ChannelEvent</a> 被一组 ChannelHandler 处理。这个管道是 Intercepting Filter (拦截过滤器)模式的一种高级形式的实现，因此对于一个事件如何被处理以及管道内部处理器间的交互过程，你都将拥有绝对的控制力。例如，你可以定义一个从 socket 读取到数据后的操作：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class MyReadHandler implements SimpleChannelHandler &#123;</span><br><span class="line">     public void messageReceived(ChannelHandlerContext ctx, MessageEvent evt) &#123;</span><br><span class="line">         Object message = evt.getMessage();</span><br><span class="line">         // Do something with the received message.</span><br><span class="line">            ...</span><br><span class="line">         // And forward the event to the next handler.</span><br><span class="line">         ctx.sendUpstream(evt);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>同时你也可以定义一种操作响应其他处理器的写操作请求：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class MyWriteHandler implements SimpleChannelHandler &#123;</span><br><span class="line">    public void writeRequested(ChannelHandlerContext ctx, MessageEvent evt) &#123;</span><br><span class="line">        Object message = evt.getMessage();</span><br><span class="line">        // Do something with the message to be written.</span><br><span class="line">            ...</span><br><span class="line">        // And forward the event to the next handler.</span><br><span class="line">        ctx.sendDownstream(evt);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>ChannelHandler 分为两种：</p>
-<ul>
-<li>ChannelInboundHandler<br>处理读数据逻辑，核心方法是 channelRead。</li>
-<li>ChannelOutBoundHandler<br>处理些数据逻辑，核心方法是 write，在链式处理中总是位于 ChannelInboundHandler 之后。</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">serverBootstrap</span><br><span class="line">        .childHandler(new ChannelInitializer&lt;NioSocketChannel&gt;() &#123;</span><br><span class="line">            protected void initChannel(NioSocketChannel ch) &#123;</span><br><span class="line">                // inBound，处理读数据的逻辑链</span><br><span class="line">                ch.pipeline().addLast(new InBoundHandlerA());</span><br><span class="line">                ch.pipeline().addLast(new InBoundHandlerB());</span><br><span class="line">                ch.pipeline().addLast(new InBoundHandlerC());</span><br><span class="line">                </span><br><span class="line">                // outBound，处理写数据的逻辑链</span><br><span class="line">                ch.pipeline().addLast(new OutBoundHandlerA());</span><br><span class="line">                ch.pipeline().addLast(new OutBoundHandlerB());</span><br><span class="line">                ch.pipeline().addLast(new OutBoundHandlerC());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
-
-<p>其执行顺序如下图所示：<br><img src="/imgs/Netty/pipeline%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F.png" alt="pipeline执行顺序" title="pipeline执行顺序"></p>
-<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p>netty 由于其异步化的开发方式，以及其事件机制，在异常处理方面就显得异常重要。为了保证连接的高可靠性，许多异常需要静悄悄的忽略，或者在用户态没有感知。<br>netty 的异常会通过 pipeline 进行传播，所以在任何一层进行处理都是可行的，但编程习惯上，习惯性抛到最外层集中处理。<br>为了最大限度的区别异常信息，通常会定义大量的异常类，不同的错误会抛出不同的异常。发生异常后，可以根据不同的类型选择断线重连（比如一些二进制协议的编解码紊乱问题)，或者调度到其他节点。</p>
-<h2 id="Codec-框架"><a href="#Codec-框架" class="headerlink" title="Codec 框架"></a>Codec 框架</h2><p>我们可以使用 POJO 代替 ChannelBuffer，从业务逻辑代码中分离协议处理部分总是一个很不错的想法。然而如果一切从零开始便会遭遇到实现上的复杂性。你不得不处理分段的消息。一些协议是多层的（例如构建在其他低层协议之上的协议）。一些协议过于复杂以致难以在一台独立状态机上实现。<br>因此，一个好的网络应用框架应该提供一种可扩展，可重用，可单元测试并且是多层的 codec 框架，为用户提供易维护的 codec 代码。<br>Netty 提供了一组构建在其核心模块之上的 codec 实现，这些简单的或者高级的 codec 实现帮你解决了大部分在你进行协议处理开发过程会遇到的问题，无论这些协议是简单的还是复杂的，二进制的或是简单文本的。</p>
-<h2 id="SSL-TLS-支持"><a href="#SSL-TLS-支持" class="headerlink" title="SSL &#x2F; TLS 支持"></a>SSL &#x2F; TLS 支持</h2><p>不同于传统阻塞式的 I&#x2F;O 实现，在 NIO 模式下支持 SSL 功能是一个艰难的工作。你不能只是简单的包装一下流数据并进行加密或解密工作，你不得不借助于 javax.net.ssl.SSLEngine，SSLEngine 是一个有状态的实现，其复杂性不亚于 SSL 自身。你必须管理所有可能的状态，例如密码套件，密钥协商（或重新协商），证书交换以及认证等。此外，与通常期望情况相反的是 SSLEngine 甚至不是一个绝对的线程安全实现。<br>在 Netty 内部，<a target="_blank" rel="noopener" href="http://netty.io/4.0/api/io/netty/handler/ssl/SslHandler.html">SslHandler</a> 封装了所有艰难的细节以及使用 SSLEngine 可 能带来的陷阱。你所做的仅是配置并将该 SslHandler 插入到你的 ChannelPipeline 中。同样 Netty 也允许你实现像 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Opportunistic_TLS">StartTlS</a> 那样所拥有的高级特性，这很容易。</p>
-<h2 id="HTTP-实现"><a href="#HTTP-实现" class="headerlink" title="HTTP 实现"></a>HTTP 实现</h2><p>HTTP 无 疑是互联网上最受欢迎的协议，并且已经有了一些例如 Servlet 容器这样的 HTTP 实现。因此，为什么 Netty 还要在其核心模块之上构建一套 HTTP 实现？<br>与现有的 HTTP 实现相比 Netty 的 HTTP 实现是相当与众不同的。在 HTTP 消息的低层交互过程中你将拥有绝对的控制力。这是因为 Netty 的 HTTP 实现只是一些 HTTP codec 和 HTTP 消息类的简单组合，这里不存在任何限制——例如那种被迫选择的线程模型。你可以随心所欲的编写那种可以完全按照你期望的工作方式工作的客户端或服务器端代码。这包括线程模型，连接生命期，快编码，以及所有 HTTP 协议允许你做的，所有的一切，你都将拥有绝对的控制力。<br>由于这种高度可定制化的特性，你可以开发一个非常高效的 HTTP 服务器，例如：</p>
-<ul>
-<li>要求持久化链接以及服务器端推送技术的聊天服务（如，<a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Comet_%28programming%29">Comet</a> )</li>
-<li>需要保持链接直至整个文件下载完成的媒体流服务（如，2 小时长的电影）</li>
-<li>需要上传大文件并且没有内存压力的文件服务（如，上传 1GB 文件的请求）</li>
-<li>支持大规模混合客户端应用用于连接以万计的第三方异步 web 服务。</li>
-</ul>
-<h2 id="WebSockets-实现"><a href="#WebSockets-实现" class="headerlink" title="WebSockets 实现"></a>WebSockets 实现</h2><p><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/WebSockets">WebSockets</a> 允许双向，全双工通信信道，在 TCP socket 中。它被设计为允许一个 Web 浏览器和 Web 服务器之间通过数据流交互。<br>WebSocket 协议已经被 IETF 列为 <a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc6455">RFC 6455</a> 规范。<br>Netty 已经实现了 WebSocket 和一些老版本的规范：<a target="_blank" rel="noopener" href="http://netty.io/4.0/api/io/netty/handler/codec/http/websocketx/package-frame.html">http://netty.io/4.0/api/io/netty/handler/codec/http/websocketx/package-frame.html</a></p>
-<h2 id="Google-Protocol-Buffer-整合"><a href="#Google-Protocol-Buffer-整合" class="headerlink" title="Google Protocol Buffer 整合"></a>Google Protocol Buffer 整合</h2><p><a target="_blank" rel="noopener" href="http://code.google.com/apis/protocolbuffers/docs/overview.html">Google Protocol Buffers</a> 是快速实现一个高效的二进制协议的理想方案。通过使用 <a target="_blank" rel="noopener" href="http://netty.io/4.0/api/io/netty/handler/codec/protobuf/ProtobufEncoder.html">ProtobufEncoder</a> 和 <a target="_blank" rel="noopener" href="http://netty.io/4.0/api/io/netty/handler/codec/protobuf/ProtobufDecoder.html">ProtobufDecoder</a>，你可以把 Google Protocol Buffers 编译器 (protoc) 生成的消息类放入到 Netty 的 codec 实现中。请参考“<a target="_blank" rel="noopener" href="http://docs.jboss.org/netty/3.2/xref/org/jboss/netty/example/localtime/package-summary.html">LocalTime</a>”实例，这个例子也同时显示出开发一个由简单协议定义 的客户及服务端是多么的容易。</p>
-<h1 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h1><h2 id="FastThreadLocal"><a href="#FastThreadLocal" class="headerlink" title="FastThreadLocal"></a>FastThreadLocal</h2><p>重写了JDK的ThreadLocal，但是速度更快</p>
-<h2 id="Recycle"><a href="#Recycle" class="headerlink" title="Recycle"></a>Recycle</h2><p>对象池</p>
-<h2 id="单机百万连接"><a href="#单机百万连接" class="headerlink" title="单机百万连接"></a>单机百万连接</h2><h2 id="Netty应用级别性能优化"><a href="#Netty应用级别性能优化" class="headerlink" title="Netty应用级别性能优化"></a>Netty应用级别性能优化</h2><h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><h2 id="如何使用-Netty"><a href="#如何使用-Netty" class="headerlink" title="如何使用 Netty"></a>如何使用 Netty</h2><p>Netty 是 Java 中的一个 NIO 框架：</p>
-<ol>
-<li>易用的 API；</li>
-<li>NIO 模型相对 BIO 更高效。</li>
-<li>解决了 Java 原生 NIO 接口存在的一些问题。<br>包括粘包半包问题、心跳检测等问题。</li>
-</ol>
-<h2 id="ServerBootstrap-默认情况下Netty服务端会起多个线程？又是什么时候启动这些线程的？"><a href="#ServerBootstrap-默认情况下Netty服务端会起多个线程？又是什么时候启动这些线程的？" class="headerlink" title="ServerBootstrap - 默认情况下Netty服务端会起多个线程？又是什么时候启动这些线程的？"></a>ServerBootstrap - 默认情况下Netty服务端会起多个线程？又是什么时候启动这些线程的？</h2><p>Netty中线程主要用于执行EventLoop的for循环任务，当ServerBootstrap<br>默认情况下创建2倍CPU核心线程数的线程。<br><code>io.netty.channel.MultithreadEventLoopGroup#MultithreadEventLoopGroup(int, java.util.concurrent.Executor, java.lang.Object...)</code><br>可以看到最终创建了个线程池<code>ThreadPerTaskExecutor</code><br><code>io.netty.util.concurrent.MultithreadEventExecutorGroup#MultithreadEventExecutorGroup(int, java.util.concurrent.Executor, io.netty.util.concurrent.EventExecutorChooserFactory, java.lang.Object...)</code></p>
-<h2 id="ServerBootstrap-Netty是如何解决JDK的空轮询Bug的？"><a href="#ServerBootstrap-Netty是如何解决JDK的空轮询Bug的？" class="headerlink" title="ServerBootstrap - Netty是如何解决JDK的空轮询Bug的？"></a>ServerBootstrap - Netty是如何解决JDK的空轮询Bug的？</h2><p>NioEventLoop</p>
-<h2 id="ServerBootstrap-Netty是如何保证异步串行无锁化的？"><a href="#ServerBootstrap-Netty是如何保证异步串行无锁化的？" class="headerlink" title="ServerBootstrap - Netty是如何保证异步串行无锁化的？"></a>ServerBootstrap - Netty是如何保证异步串行无锁化的？</h2><p>执行需要保证并发安全的操作时先判断是否是刚开始创建的线程，如果不是则放入一个单线程的线程池中执行。<br>线程创建位置：<code>SingleThreadEventExecutor</code>的构造方法<br>判断位置：<code>io.netty.util.concurrent.AbstractEventExecutor#inEventLoop</code></p>
-<h2 id="NioEventLoop-Netty如何检测新连接的接入？"><a href="#NioEventLoop-Netty如何检测新连接的接入？" class="headerlink" title="NioEventLoop - Netty如何检测新连接的接入？"></a>NioEventLoop - Netty如何检测新连接的接入？</h2><p>初始化ServerBootstrap时</p>
-<h2 id="NioEventLoop-新连接怎样被注册NioEventLoop线程？"><a href="#NioEventLoop-新连接怎样被注册NioEventLoop线程？" class="headerlink" title="NioEventLoop - 新连接怎样被注册NioEventLoop线程？"></a>NioEventLoop - 新连接怎样被注册NioEventLoop线程？</h2><p>调用bind时会启动一个NioEventLoop线程，用于监听连接请求。</p>
-<h2 id="pipeline-Netty如何判断ChannelHandler类型？"><a href="#pipeline-Netty如何判断ChannelHandler类型？" class="headerlink" title="pipeline - Netty如何判断ChannelHandler类型？"></a>pipeline - Netty如何判断ChannelHandler类型？</h2><p>ChannelHandler分为Inbound类型和Outbound类型，在Netty中将ChannelHandler添加到Pipeline时会判断这个ChannelHandler的类型，然后设置到一个bool类型的成员变量里，在传播时使用。<br><code>io.netty.channel.DefaultChannelHandlerContext#isInbound</code><br><code>io.netty.channel.DefaultChannelHandlerContext#isOutbound</code></p>
-<h2 id="pipeline-对ChannelHandler的添加会遵循什么样的顺序？"><a href="#pipeline-对ChannelHandler的添加会遵循什么样的顺序？" class="headerlink" title="pipeline - 对ChannelHandler的添加会遵循什么样的顺序？"></a>pipeline - 对ChannelHandler的添加会遵循什么样的顺序？</h2><p>根据Pipeline的传播逻辑可以看出，Inbound类型的ChannelHandler按添加顺序传播，而Outbound类型的ChannelHandler是按逆顺序传播的。</p>
-<h2 id="pipeline-用户手动触发事件传播，不同的触发方式有什么区别？"><a href="#pipeline-用户手动触发事件传播，不同的触发方式有什么区别？" class="headerlink" title="pipeline - 用户手动触发事件传播，不同的触发方式有什么区别？"></a>pipeline - 用户手动触发事件传播，不同的触发方式有什么区别？</h2><p>如果是在Pipeline中间的某个ChannelHandler中调用了read，则就是从这个节点开始往后传播，如果是write，就是从这个节点开始往前传播。</p>
-<h2 id="ByteBuf-内存的类别有哪些？"><a href="#ByteBuf-内存的类别有哪些？" class="headerlink" title="ByteBuf - 内存的类别有哪些？"></a>ByteBuf - 内存的类别有哪些？</h2><h2 id="ByteBuf-如何减少多线程之间内存分配的竞争？"><a href="#ByteBuf-如何减少多线程之间内存分配的竞争？" class="headerlink" title="ByteBuf - 如何减少多线程之间内存分配的竞争？"></a>ByteBuf - 如何减少多线程之间内存分配的竞争？</h2><h2 id="ByteBuf-不同大小的内存是如何进行分配的？"><a href="#ByteBuf-不同大小的内存是如何进行分配的？" class="headerlink" title="ByteBuf - 不同大小的内存是如何进行分配的？"></a>ByteBuf - 不同大小的内存是如何进行分配的？</h2><h2 id="ByteBuf-粘包半包问题是什么"><a href="#ByteBuf-粘包半包问题是什么" class="headerlink" title="ByteBuf - 粘包半包问题是什么"></a>ByteBuf - 粘包半包问题是什么</h2><h2 id="解码器抽象的解码过程？"><a href="#解码器抽象的解码过程？" class="headerlink" title="解码器抽象的解码过程？"></a>解码器抽象的解码过程？</h2><h2 id="Netty里面有哪些拆箱即用的解码器？"><a href="#Netty里面有哪些拆箱即用的解码器？" class="headerlink" title="Netty里面有哪些拆箱即用的解码器？"></a>Netty里面有哪些拆箱即用的解码器？</h2><h2 id="如何把对象变成字节流，并最终写到socket底层？"><a href="#如何把对象变成字节流，并最终写到socket底层？" class="headerlink" title="如何把对象变成字节流，并最终写到socket底层？"></a>如何把对象变成字节流，并最终写到socket底层？</h2><h2 id="如何使用Netty实现长短连接？"><a href="#如何使用Netty实现长短连接？" class="headerlink" title="如何使用Netty实现长短连接？"></a>如何使用Netty实现长短连接？</h2><p>长连接是为了复用连接资源，长连接下，多个请求可以使用同一个连接传输数据包。</p>
-<h2 id="如何使用Netty实现长短轮询？"><a href="#如何使用Netty实现长短轮询？" class="headerlink" title="如何使用Netty实现长短轮询？"></a>如何使用Netty实现长短轮询？</h2><p>长轮询的特点是请求发到服务器上时若没有资源（比如库存），请求会被挂起，直到资源充足后才返回。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li><a target="_blank" rel="noopener" href="https://wiki.jikexueyuan.com/project/netty-4-user-guide/">Netty 4.x 用户指南</a></li>
-<li><a target="_blank" rel="noopener" href="https://netty.io/wiki/user-guide-for-4.x.html">User guide for 4.x（上面这个文档的英文原版）</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/netty/netty">github - netty &#x2F; netty</a></li>
-<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/overview-summary.html">Netty Source Xref (4.0.56.Final)（同上为源码）</a></li>
-</ol>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/6/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/8/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/6/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/8/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
