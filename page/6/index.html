@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">187</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-count">187</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -175,6 +175,138 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/f89cb603.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/f89cb603.html" class="post-title-link" itemprop="url">红黑树</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-21 19:48:41" itemprop="dateCreated datePublished" datetime="2020-08-21T19:48:41+08:00">2020-08-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+
+<h1 id="二叉树、平衡树、AVL-树和红黑树"><a href="#二叉树、平衡树、AVL-树和红黑树" class="headerlink" title="二叉树、平衡树、AVL 树和红黑树"></a>二叉树、平衡树、AVL 树和红黑树</h1><p>二叉树是一类特殊的树形结构，其他类似的还有三叉树、B 树、B+树等，二叉树的特征是 1 对 2，即每个节点都有 2 个子节点（这里认为空节点也算子节点）。</p>
+<blockquote>
+<p>这么定义主要是为了避免将二叉树的实现局限于指针，实际上我们也可以使用数组来实现二叉树，也就是二叉堆。</p>
+</blockquote>
+<p>二叉树所有操作的时间复杂度为<code>O(logN)</code>，但是它存在的主要问题是不稳定，比如数据是从小到大依次插入的情况下，最终结果是得到一条斜线，这时二叉树会退化为链表。<br>平衡树的特点是在每次写入操作后会进行一次重平衡，让树的高度保持在<code>O(logN)</code>。<br>AVL 树是平衡树的一种，它严格保证树的高度为<code>O(logN)</code>，每次都会根据高度重平衡，其缺点是过于严格，会导致旋转操作占用比较多的时间。<br>红黑树作为 AVL 树的一种替代，通过红黑规则控制树的旋转，能以较少次旋转作为代价得到较为平衡的树。</p>
+<blockquote>
+<p>AVL 树严格保证树的高度在<code>[logN, logN + 1]</code>，红黑树理论上极端情况可以出现高度达到 2*logN，但是现实中很难遇到。</p>
+</blockquote>
+<h1 id="红黑树的起源-23树"><a href="#红黑树的起源-23树" class="headerlink" title="红黑树的起源 - 23树"></a>红黑树的起源 - 23树</h1><p><img src="/imgs/%E7%AE%97%E6%B3%95/23%E6%A0%91%E7%9A%84%E5%88%86%E8%A3%82.png" alt="23树的分裂" title="23树的分裂"><br>23树并不是指3叉树，23树是一种平衡树，不过它维持平衡的方式并不是旋转，而是分裂，如上图所示：</p>
+<ul>
+<li>一个节点有至多3个元素，当达到3个元素后会发生分裂；</li>
+<li>分裂后中间元素上移，与父节点合并。</li>
+</ul>
+<p>23树可以证明高度在<code>log3(N)=(lgN)/(lg3)</code>（如果都是3-nodes即2元素节点）到<code>lgN</code>（如果都是2-nodes即1元素节点），从而保证查询时顶多查<code>lgN</code>个节点。<br>23树的缺点是实现的<strong>额外开销过大</strong>，比如要变更节点类型、比较是否相等时要比较节点中的所有元素值等，有时候23树的性能甚至不如普通的BST，因此<code>Sedgewick</code>之后便提出了红黑树。</p>
+<h1 id="红黑树的定义"><a href="#红黑树的定义" class="headerlink" title="红黑树的定义"></a>红黑树的定义</h1><p>红黑树是从23树演化而来的，它将原来2-3树中的3-nodes表示为使用红线连接的两个节点，因为每个节点只有一条线连上它，因此为了简单起见把颜色字段保存到节点里。<br><img src="/imgs/%E7%AE%97%E6%B3%95/23%E6%A0%91%E5%92%8C%E7%BA%A2%E9%BB%91%E6%A0%91.png" alt="23树和红黑树" title="23树和红黑树"><br>红黑树的定义：</p>
+<ol>
+<li>Red links lean left. - 红色节点必须在左边</li>
+<li>No node has two red links connected to it. - 3个红色节点不能连一起</li>
+<li>The tree has perfect black balance: every path from the root to a null link has the same number of black links. - 红黑树是完美黑平衡的，从root沿任意路径到达叶节点的黑节点数量都是一样的。</li>
+</ol>
+<p>以上3个定义其实和2-3树的定义是一一对应的：</p>
+<ol>
+<li>和左红节点连一块可以看作2-3树中的一个3-node；</li>
+<li>2-3树中一个节点中塞满3个元素后就会分裂；</li>
+<li>把红黑树中节点和其左红子节点合并后，最终的树其实和2-3树等价。</li>
+</ol>
+<p>红黑树的<strong>红黑规则</strong>：</p>
+<ol>
+<li>任何一个节点都有颜色，黑色或者红色；</li>
+<li>根节点是黑色的；</li>
+<li>空节点（有些实现中叶节点是哨兵节点nil）被认为是黑色的。</li>
+<li>父子节点之间不能出现两个连续的红节点（如果父节点是红色，则它的两个儿子都是黑色）；</li>
+<li>任何一个节点向下遍历到其子孙的叶子节点，所经过的黑节点个数必须相等；</li>
+</ol>
+<h1 id="红黑树操作-查询"><a href="#红黑树操作-查询" class="headerlink" title="红黑树操作 - 查询"></a>红黑树操作 - 查询</h1><p>红黑树的查询就是普通的二叉树查询。</p>
+<h1 id="红黑树操作-旋转"><a href="#红黑树操作-旋转" class="headerlink" title="红黑树操作 - 旋转"></a>红黑树操作 - 旋转</h1><p>左旋操作将右子节点旋转到父节点位置，并改变二者的颜色。<br><img src="/imgs/%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91%E5%B7%A6%E6%97%8B.png" alt="红黑树左旋" title="红黑树左旋"><br>右旋同理：<br><img src="/imgs/%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91%E5%8F%B3%E6%97%8B.png" alt="红黑树右旋" title="红黑树右旋"></p>
+<h1 id="红黑树操作-插入"><a href="#红黑树操作-插入" class="headerlink" title="红黑树操作 - 插入"></a>红黑树操作 - 插入</h1><p>红黑树的插入操作和 BST 差不多，只不过插入后可能会破坏上面红黑树的定义，因此需要做一些旋转和颜色修改操作来恢复。<br>很多地方描述红黑树的方式并不一致，这里还是以《算法》中的实现为主。<br><img src="/imgs/%E7%AE%97%E6%B3%95/%E6%8F%92%E5%85%A5%E8%8A%82%E7%82%B9%E5%88%B0%E4%B8%80%E4%B8%AA3-node%E7%9A%843%E7%A7%8D%E6%83%85%E5%86%B5.png" alt="插入节点到一个3-node的3种情况" title="插入节点到一个3-node的3种情况"></p>
+<ul>
+<li>可以看到上面3种情况最终都转换成了一个三角形的形状，然后进行了颜色的翻转，实际上相当于2-3树中一个3元素节点分裂成了3个。</li>
+</ul>
+<p>下图是一个插入节点到红黑树中的例子，其中被红线连接的子节点是红色的节点：<br><img src="/imgs/%E7%AE%97%E6%B3%95/%E7%BA%A2%E9%BB%91%E6%A0%91%E8%8A%82%E7%82%B9%E6%8F%92%E5%85%A5%E8%BD%A8%E8%BF%B9.png" alt="红黑树节点插入轨迹" title="红黑树节点插入轨迹"></p>
+<h1 id="红黑树操作-删除"><a href="#红黑树操作-删除" class="headerlink" title="红黑树操作 - 删除"></a>红黑树操作 - 删除</h1><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li>《Algorithms》 - Robert_Sedgewick<br>红黑树原来是从23树演化而来，之前以为是凭空编出来的。</li>
+<li><a target="_blank" rel="noopener" href="https://algs4.cs.princeton.edu/33balanced/RedBlackBST.java.html">《Algorithms》中的红黑树实现</a></li>
+</ol>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -454,7 +586,7 @@
 <li><a target="_blank" rel="noopener" href="http://diyhpl.us/~bryan/papers2/distributed/distributed-systems/generalized-consensus-and-paxos.2004.pdf">[3] Generalized Consensus and Paxos, Leslie Lamport, 2004</a></li>
 <li><a target="_blank" rel="noopener" href="http://sigops.org/sosp/sosp13/papers/p358-moraru.pdf">[4] There Is More Consensus in Egalitarian Parliaments, Iulian Moraru, David G. Andersen, Michael Kaminsky, 2013</a></li>
 </ol>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
 
@@ -649,7 +781,7 @@
 </ul>
 <h3 id="Producer"><a href="#Producer" class="headerlink" title="Producer"></a>Producer</h3><p>Producer是只能发给Broker集群里的Master的，如果Master挂掉，那么Producer也不能继续发消息了，只能等集群重新选举出一个新的Master，虽然可用性会降低，但是也给顺序消息的实现提供了方便。</p>
 <h3 id="Consumer"><a href="#Consumer" class="headerlink" title="Consumer"></a>Consumer</h3><p>定时从NameServer拉取<code>topicRouteTable</code>更新本地的<code>brokerAddrTable</code>，也就是说，只要NameServer会把宕掉的Broker清掉，那么Consumer最终（注意并不能实时）也可以取到拿到一份活跃的Broker列表。<br><code>MQClientInstance#updateTopicRouteInfoFromNameServer(final String topic, boolean isDefault, DefaultMQProducer defaultMQProducer)</code><br>Consumer端是定时地上Broker拉取消息。<br><code>org.apache.rocketmq.common.ServiceThread#start</code><br>如果某次消费出错了，就会触发Fallback方案，改为稍后再重试。<br><code>org.apache.rocketmq.client.impl.MQClientAPIImpl#pullMessageAsync</code></p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
 
@@ -859,7 +991,7 @@
 <li>反查<br><code>org.apache.rocketmq.broker.transaction.AbstractTransactionalMessageCheckListener#resolveHalfMsg</code><br>定时从半消息队列中读出所有待反查的半消息，针对每个需要反查的半消息，Broker 会给对应的 Producer 发一个要求执行事务状态反查的 RPC 请求，根据 RPC 返回响应中的反查结果，来决定这个半消息是需要提交还是回滚，或者后续继续来反查。</li>
 <li>结束事务<br><code>org.apache.rocketmq.broker.processor.EndTransactionProcessor#processRequest</code><br>最后，提交或者回滚事务实现的逻辑是差不多的，首先把半消息标记为已处理，如果是提交事务，那就<strong>把半消息从半消息队列中复制到这个消息真正的主题和队列中去</strong>，如果要回滚事务，这一步什么都不需要做，最后结束这个事务。</li>
 </ol>
-<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><h3 id="Broker的offset如何维护？本地的offset如何维护？"><a href="#Broker的offset如何维护？本地的offset如何维护？" class="headerlink" title="Broker的offset如何维护？本地的offset如何维护？"></a>Broker的offset如何维护？本地的offset如何维护？</h3><h3 id="拉取速度是否会受到消费速度制约？如果不是，那么拉取速度过快是不是会导致重复消费甚至OOM？"><a href="#拉取速度是否会受到消费速度制约？如果不是，那么拉取速度过快是不是会导致重复消费甚至OOM？" class="headerlink" title="拉取速度是否会受到消费速度制约？如果不是，那么拉取速度过快是不是会导致重复消费甚至OOM？"></a>拉取速度是否会受到消费速度制约？如果不是，那么拉取速度过快是不是会导致重复消费甚至OOM？</h3><h3 id="并发消费offset为1-10的消息，其中8失败了，其他都是成功的，这种情况下本地的offset如何记录，broker的offset如何记录，有哪些是可能被重复消费的？"><a href="#并发消费offset为1-10的消息，其中8失败了，其他都是成功的，这种情况下本地的offset如何记录，broker的offset如何记录，有哪些是可能被重复消费的？" class="headerlink" title="并发消费offset为1-10的消息，其中8失败了，其他都是成功的，这种情况下本地的offset如何记录，broker的offset如何记录，有哪些是可能被重复消费的？"></a>并发消费offset为1-10的消息，其中8失败了，其他都是成功的，这种情况下本地的offset如何记录，broker的offset如何记录，有哪些是可能被重复消费的？</h3><h3 id="如何尽可能的避免重复消费？"><a href="#如何尽可能的避免重复消费？" class="headerlink" title="如何尽可能的避免重复消费？"></a>如何尽可能的避免重复消费？</h3><h3 id="应用第一次启动时offset如何定义？是否会消费历史消息，应用重启是否会丢消息？"><a href="#应用第一次启动时offset如何定义？是否会消费历史消息，应用重启是否会丢消息？" class="headerlink" title="应用第一次启动时offset如何定义？是否会消费历史消息，应用重启是否会丢消息？"></a>应用第一次启动时offset如何定义？是否会消费历史消息，应用重启是否会丢消息？</h3><h3 id="应用扩所容是否会导致消费消息丢失和消费队列的重新排序？"><a href="#应用扩所容是否会导致消费消息丢失和消费队列的重新排序？" class="headerlink" title="应用扩所容是否会导致消费消息丢失和消费队列的重新排序？"></a>应用扩所容是否会导致消费消息丢失和消费队列的重新排序？</h3><script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><h3 id="Broker的offset如何维护？本地的offset如何维护？"><a href="#Broker的offset如何维护？本地的offset如何维护？" class="headerlink" title="Broker的offset如何维护？本地的offset如何维护？"></a>Broker的offset如何维护？本地的offset如何维护？</h3><h3 id="拉取速度是否会受到消费速度制约？如果不是，那么拉取速度过快是不是会导致重复消费甚至OOM？"><a href="#拉取速度是否会受到消费速度制约？如果不是，那么拉取速度过快是不是会导致重复消费甚至OOM？" class="headerlink" title="拉取速度是否会受到消费速度制约？如果不是，那么拉取速度过快是不是会导致重复消费甚至OOM？"></a>拉取速度是否会受到消费速度制约？如果不是，那么拉取速度过快是不是会导致重复消费甚至OOM？</h3><h3 id="并发消费offset为1-10的消息，其中8失败了，其他都是成功的，这种情况下本地的offset如何记录，broker的offset如何记录，有哪些是可能被重复消费的？"><a href="#并发消费offset为1-10的消息，其中8失败了，其他都是成功的，这种情况下本地的offset如何记录，broker的offset如何记录，有哪些是可能被重复消费的？" class="headerlink" title="并发消费offset为1-10的消息，其中8失败了，其他都是成功的，这种情况下本地的offset如何记录，broker的offset如何记录，有哪些是可能被重复消费的？"></a>并发消费offset为1-10的消息，其中8失败了，其他都是成功的，这种情况下本地的offset如何记录，broker的offset如何记录，有哪些是可能被重复消费的？</h3><h3 id="如何尽可能的避免重复消费？"><a href="#如何尽可能的避免重复消费？" class="headerlink" title="如何尽可能的避免重复消费？"></a>如何尽可能的避免重复消费？</h3><h3 id="应用第一次启动时offset如何定义？是否会消费历史消息，应用重启是否会丢消息？"><a href="#应用第一次启动时offset如何定义？是否会消费历史消息，应用重启是否会丢消息？" class="headerlink" title="应用第一次启动时offset如何定义？是否会消费历史消息，应用重启是否会丢消息？"></a>应用第一次启动时offset如何定义？是否会消费历史消息，应用重启是否会丢消息？</h3><h3 id="应用扩所容是否会导致消费消息丢失和消费队列的重新排序？"><a href="#应用扩所容是否会导致消费消息丢失和消费队列的重新排序？" class="headerlink" title="应用扩所容是否会导致消费消息丢失和消费队列的重新排序？"></a>应用扩所容是否会导致消费消息丢失和消费队列的重新排序？</h3><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
 
@@ -1117,7 +1249,7 @@
 <p>4.1、遍历消费队列</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// 遍历delayLevelTable里所有级别队列</span><br><span class="line">for (Map.Entry&lt;Integer, Long&gt; entry : this.delayLevelTable.entrySet()) &#123;</span><br><span class="line">    Integer level = entry.getKey();</span><br><span class="line">    Long timeDelay = entry.getValue();</span><br><span class="line">    Long offset = this.offsetTable.get(level);</span><br><span class="line">    if (null == offset) &#123;</span><br><span class="line">        offset = 0L;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (timeDelay != null) &#123;</span><br><span class="line">        // 由一个timer来处理</span><br><span class="line">        this.timer.schedule(new DeliverDelayedMessageTimerTask(level, offset), FIRST_DELAY_TIME);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>4.2、重置延时消息<br>判断时间是否达到了延迟时间，达到了再将这些消息的原始topic和原始队列取出转发存储起来，待消费者消费。<br>4.3、设置重试消息<br>重试消息会被转变2次topic和queueID，导致在<code>ScheduleMessageService</code>转发存储的时候会将第一次转变的topic和queueID取出转发到<code>topic=%RETRY%+consumerGroup</code>、queueId&#x3D;0的消息队列。<br>这个消息会被consumerGroup这个消费组消费，至于哪个节点消费则由负载均衡来决定。</p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
 
@@ -1216,7 +1348,7 @@
 <p>DeliverDelayedMessageTimerTask<br><code>ScheduleMessageService.executeOnTimeup</code>：<br>扫描延迟消息队列（<code>SCHEDULE_TOPIC_XXX</code>）的消息，将该延迟消息转换为指定的topic的消息。<br>1、读取不同延迟级别对应的延迟消息；<br>2、取得对应延迟级别读取的开始位置offset；<br>3、将延迟消息转换为指定topic的普通消息并存放起来。<br>4、修改下一次读取的offset值（修改的只是缓存），并指定下一次转换延迟消息的timetask。</p>
 <p><code>ScheduleMessageService.this.persist</code>：<br>将延迟队列扫描处理的进度offset持久化到delayOffset.json文件中。</p>
 <p>RocketMQ延迟队列也有一个缺点：Java中的Timer是单线程，而延迟消息的原理是Timer，也就是说当同时发送的延迟消息过多的时候一个线程处理速度一定是有瓶颈的，因此在实际项目中使用延迟消息一定不要过多依赖，只能作为一个辅助手段。</p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
 
@@ -1314,236 +1446,6 @@
             </div>
           <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e095c2f.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/e095c2f.html" class="post-title-link" itemprop="url">RocketMQ 概述</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-08-12 12:21:48" itemprop="dateCreated datePublished" datetime="2020-08-12T12:21:48+08:00">2020-08-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<h1 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h1><h2 id="选型"><a href="#选型" class="headerlink" title="选型"></a>选型</h2><table>
-<thead>
-<tr>
-<th>消息队列</th>
-<th>Kafka</th>
-<th>RocketMQ</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>适用场景</td>
-<td>大量消息快速消费如流式计算</td>
-<td>高性能、稳定、高可靠</td>
-</tr>
-<tr>
-<td>热度</td>
-<td>与周边生态系统的兼容性最好</td>
-<td>有活跃中文社区</td>
-</tr>
-<tr>
-<td>消息可靠传递</td>
-<td>√</td>
-<td>√</td>
-</tr>
-<tr>
-<td>延迟</td>
-<td>毫秒级</td>
-<td>毫秒级</td>
-</tr>
-<tr>
-<td>性能</td>
-<td>每秒几十万</td>
-<td>每秒几十万</td>
-</tr>
-<tr>
-<td>消息丢失</td>
-<td>参数优化配置后0丢失</td>
-<td>参数优化配置后0丢失</td>
-</tr>
-<tr>
-<td>消费模式</td>
-<td>Pull</td>
-<td>Pull + Push（原理都是Pull）</td>
-</tr>
-<tr>
-<td>可用性</td>
-<td>非常高（分布式）</td>
-<td>非常高（主从）</td>
-</tr>
-<tr>
-<td>topic数量对吞吐量的影响</td>
-<td>topic达到几十，几百个时，吞吐量会大幅度下降</td>
-<td>topic达到几百，几千个时，吞吐量会有较小幅度的下降</td>
-</tr>
-</tbody></table>
-<p>缺点：</p>
-<ul>
-<li>Kafka：同步收发消息的响应时延比较高，因为当客户端发送一条消息的时候，Kafka 并不会立即发送出去，而是要等一会儿攒一批再发送，在它的 Broker 中，很多地方都会使用这种“先攒一波再一起处理”的设计。当业务场景中，每秒钟消息数量没有那么多的时候，Kafka 的时延反而会比较高。所以，Kafka 不太适合在线业务场景。</li>
-<li>RocketMQ：没有太明显的缺点</li>
-</ul>
-<h2 id="部署结构"><a href="#部署结构" class="headerlink" title="部署结构"></a>部署结构</h2><p><img src="/imgs/RocketMQ/RocketMQ-%E6%9E%B6%E6%9E%84%E5%9B%BE.png" alt="RocketMQ-架构图" title="RocketMQ-架构图"><br><img src="/imgs/RocketMQ/RocketMQ-%E9%83%A8%E7%BD%B2%E5%9B%BE.png" alt="RocketMQ-部署图" title="RocketMQ-部署图"></p>
-<ul>
-<li>启动 NameServer，NameServer 起来后监听端口，等待 Broker、Producer、Consumer 连上来，相当于一个路由控制中心。</li>
-<li>Broker 启动，跟所有的 NameServer 保持长连接，定时发送心跳包。心跳包中包含当前 Broker 信息(IP+端口等)以及存储所有 Topic 信息。注册成功后，NameServer 集群中就有 Topic 跟 Broker 的映射关系。</li>
-<li>收发消息前，先创建 Topic，创建 Topic 时需要指定该 Topic 要存储在哪些 Broker 上，也可以在发送消息时自动创建 Topic。</li>
-<li>Producer 发送消息，启动时先跟 NameServer 集群中的其中一台建立长连接，并从 NameServer 中获取当前发送的 Topic 存在哪些 Broker 上，轮询从队列列表中选择一个队列，然后与队列所在的 Broker 建立长连接从而向 Broker 发消息。</li>
-<li>Consumer 跟 Producer 类似，跟其中一台 NameServer 建立长连接，获取当前订阅 Topic 存在哪些 Broker 上，然后直接跟 Broker 建立连接通道，开始消费消息。</li>
-</ul>
-<p>下图来自<a target="_blank" rel="noopener" href="https://github.com/apache/rocketmq/blob/master/docs/cn/architecture.md">GitHub</a><br><img src="/imgs/RocketMQ/rocketmq_architecture.png" alt="rocketmq_architecture" title="rocketmq_architecture"></p>
-<h2 id="推拉模型"><a href="#推拉模型" class="headerlink" title="推拉模型"></a>推拉模型</h2><h3 id="推模式优缺点"><a href="#推模式优缺点" class="headerlink" title="推模式优缺点"></a>推模式优缺点</h3><ul>
-<li><p>实时性高</p>
-</li>
-<li><p>推送速率难以适应消费速率</p>
-</li>
-<li><p>不同消费者的消费速率很有可能不一样，Broker难以平衡每个消费者的推送速率，如果要实现自适应就会大大增加Broker自身的复杂度</p>
-</li>
-</ul>
-<p>因此推模式适用于消息量不大、消费能力强要求实时性高的情况下。</p>
-<h3 id="拉模式优缺点"><a href="#拉模式优缺点" class="headerlink" title="拉模式优缺点"></a>拉模式优缺点</h3><ul>
-<li><p>消费者可以根据自己能力拉取消息处理，灵活稳定</p>
-</li>
-<li><p>可以更合适地进行消息的批量发送，基于推模式可以来一个消息就推送，也可以缓存一些消息之后再推送，但是推送的时候其实不知道消费者能不能一次性处理这么多消息。而拉模式可以根据消费者缓存能力决定拉取多少消息。</p>
-</li>
-<li><p>会造成消息的延迟消费，如果长时间没有消息，消费端不断轮询拉取，会造成一定时间的忙等，如果轮询时间过长，又会导致消息的延迟加大。</p>
-</li>
-</ul>
-<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><h2 id="消息队列可以做什么？"><a href="#消息队列可以做什么？" class="headerlink" title="消息队列可以做什么？"></a>消息队列可以做什么？</h2><p>异步处理耗时任务<br>解耦上下游系统<br>削峰填谷</p>
-<h2 id="哪些消息队列可以做到在消息生产、消费过程中不重、不丢（Exactly-once）？"><a href="#哪些消息队列可以做到在消息生产、消费过程中不重、不丢（Exactly-once）？" class="headerlink" title="哪些消息队列可以做到在消息生产、消费过程中不重、不丢（Exactly once）？"></a>哪些消息队列可以做到在消息生产、消费过程中不重、不丢（Exactly once）？</h2><p>Kafka、RocketMQ、RabbitMQ都没有实现这个需求，因为要实现Exactly once，除了重发外还需要做幂等，实现比较复杂，而且对性能影响比较大。</p>
-<h2 id="RocketMQ中的Consumer是推还是拉？"><a href="#RocketMQ中的Consumer是推还是拉？" class="headerlink" title="RocketMQ中的Consumer是推还是拉？"></a>RocketMQ中的Consumer是推还是拉？</h2><p>RocketMQ支持推和拉，但这两种方式实际上都是通过pull实现的，只是拉是同步的，而推是传个回调函数，当RocketMQ客户端接收到消息后再调用这个回调函数。</p>
-<h2 id="RocketMQ发送、存储、接收的流程？"><a href="#RocketMQ发送、存储、接收的流程？" class="headerlink" title="RocketMQ发送、存储、接收的流程？"></a>RocketMQ发送、存储、接收的流程？</h2><h2 id="当发现消费者不消费时，如何诊断问题？"><a href="#当发现消费者不消费时，如何诊断问题？" class="headerlink" title="当发现消费者不消费时，如何诊断问题？"></a>当发现消费者不消费时，如何诊断问题？</h2><ol>
-<li>检查连接状态，看消费者是否正常连接Broker；</li>
-<li>看消费者是否有分配到ConsumeQueue，因为一个ConsumeQueue只能被一个消费者消费，所以消费者数量超过ConsumeQueue时，就会出现部分消费者没有ConsumeQueue可消费的情况；</li>
-<li>生产者是否有正常消费，从控制台就可以看；</li>
-<li>如果检查完以上步骤后仍然没有发现问题，则需要查看消费者的客户端日志再进一步分析。</li>
-</ol>
-<h2 id="怎么实现消息发送的严格顺序性？"><a href="#怎么实现消息发送的严格顺序性？" class="headerlink" title="怎么实现消息发送的严格顺序性？"></a>怎么实现消息发送的严格顺序性？</h2><p>RMQ中的<strong>分区算法</strong>指的就是把消息发到固定的某些队列上，因为同一队列只能被一个消费者消费，因此可以保证这个队列中消息的顺序性。<br>可选的分区算法如：</p>
-<ol>
-<li>在表中存储key和分区的对应关系，通过查表确定分区号；</li>
-<li>取模</li>
-</ol>
-<h2 id="RocketMQ能否做到单队列的并行消费？"><a href="#RocketMQ能否做到单队列的并行消费？" class="headerlink" title="RocketMQ能否做到单队列的并行消费？"></a>RocketMQ能否做到单队列的并行消费？</h2><p>RocketMQ 在消费的时候，为了保证消息的不丢失和严格顺序，每个队列只能串行消费（一个消费者可以消费多个队列），无法做到并发，否则会出现消费空洞的问题。那如果放宽一下限制，不要求严格顺序，能否做到单个队列的并行消费呢？</p>
-<h2 id="怎么实现负载均衡？"><a href="#怎么实现负载均衡？" class="headerlink" title="怎么实现负载均衡？"></a>怎么实现负载均衡？</h2><h2 id="RocketMQ如何保证消息不丢（消息一定能被消费）？"><a href="#RocketMQ如何保证消息不丢（消息一定能被消费）？" class="headerlink" title="RocketMQ如何保证消息不丢（消息一定能被消费）？"></a>RocketMQ如何保证消息不丢（消息一定能被消费）？</h2><ol>
-<li>Producer端重试<br>默认push重试3次。</li>
-<li>Broker端只有在复制半数以上副本之后才会返回发送成功。<blockquote>
-<p>和MySQL里的semisync有点像。</p>
-</blockquote>
-</li>
-<li>Consumer端重复消费<br>DefaultMQPushConsumer默认超时重试无限次，默认异常重试16次，过期或重试不成功则进入死信队列、默认凌晨 3 点会清除死信队列，为了确保重试不会出现重复消费，业务逻辑一般都需要保证幂等（幂等key可以使用业务oid或uniqId）。<br>Consumer有两种返回值，CONSUME_SUCCESS和CONSUME_LATER，后者令Broker将消息转移到另一个Retry队列中供重试使用。</li>
-</ol>
-<h2 id="RocketMQ如何实现消息去重？"><a href="#RocketMQ如何实现消息去重？" class="headerlink" title="RocketMQ如何实现消息去重？"></a>RocketMQ如何实现消息去重？</h2><p>RocketMQ本身没有实现消息的去重功能，因为RocketMQ是At-Least-Once的。<br>所以，很多时候我们需要自己通过Redis等来实现消息去重，但是要注意的是不要用错了msgId：</p>
-<ul>
-<li><code>MessageExt.msgId</code>：重试时这个msgId是会变的，因此不适合当作幂等key；</li>
-<li><code>MessageExt.properties[&quot;PROPERTY_UNIQ_CLIENT_MESSAGE_ID_KEYIDX&quot;]</code>：相对上面那个msgId来说，这个UNIQ_KEY就算重试多次值还是一样的，因此更适合当作幂等key。</li>
-</ul>
-<h2 id="消费失败怎么重发的？"><a href="#消费失败怎么重发的？" class="headerlink" title="消费失败怎么重发的？"></a>消费失败怎么重发的？</h2><h2 id="怎么判断消息堆积了？"><a href="#怎么判断消息堆积了？" class="headerlink" title="怎么判断消息堆积了？"></a>怎么判断消息堆积了？</h2><h2 id="刷盘的原理？"><a href="#刷盘的原理？" class="headerlink" title="刷盘的原理？"></a>刷盘的原理？</h2><ol>
-<li>CommitLog</li>
-<li>ConsumeLog</li>
-</ol>
-<h2 id="怎么实现消息复制（Broker主从之间）？"><a href="#怎么实现消息复制（Broker主从之间）？" class="headerlink" title="怎么实现消息复制（Broker主从之间）？"></a>怎么实现消息复制（Broker主从之间）？</h2><h2 id="RocketMQ-如何保证消息的高可用？"><a href="#RocketMQ-如何保证消息的高可用？" class="headerlink" title="RocketMQ 如何保证消息的高可用？"></a>RocketMQ 如何保证消息的高可用？</h2><ol>
-<li>NameServer 集群<br>NameServer集群节点没有Master、Slave之分，即使挂掉其中几台，其他的仍可提供服务。</li>
-<li>Broker多主多从<br>Broker支持多主多从集群，即使其中某台Master挂掉了，其他Master照样可以提供服务，而且挂掉的Master，其从节点照样可以通过选举得到一个新的Master。</li>
-</ol>
-<h2 id="broker集群的master宕机，slave是怎么提供服务的？master是怎么切换回来的？"><a href="#broker集群的master宕机，slave是怎么提供服务的？master是怎么切换回来的？" class="headerlink" title="broker集群的master宕机，slave是怎么提供服务的？master是怎么切换回来的？"></a>broker集群的master宕机，slave是怎么提供服务的？master是怎么切换回来的？</h2><h2 id="为什么-RocketMQ-使用-NameServer-而不是-ZooKeeper-作为服务注册表"><a href="#为什么-RocketMQ-使用-NameServer-而不是-ZooKeeper-作为服务注册表" class="headerlink" title="为什么 RocketMQ 使用 NameServer 而不是 ZooKeeper 作为服务注册表"></a>为什么 RocketMQ 使用 NameServer 而不是 ZooKeeper 作为服务注册表</h2><p>NameServer 具有<strong>高可用性</strong>，就算其中某台挂掉，其他服务器仍然能提供服务注册和查询功能。<br>ZooKeeper 的设计目标是<strong>高一致性</strong>，其中某台服务器挂掉，整个 ZooKeeper 集群就无法提供服务了——直到下一个Leader被选举出来为止。</p>
-<h2 id="NameServer是怎么感知Broker的变化的？"><a href="#NameServer是怎么感知Broker的变化的？" class="headerlink" title="NameServer是怎么感知Broker的变化的？"></a>NameServer是怎么感知Broker的变化的？</h2><h2 id="RocketMQ的事务消息是否完整实现了事务的ACID特性？"><a href="#RocketMQ的事务消息是否完整实现了事务的ACID特性？" class="headerlink" title="RocketMQ的事务消息是否完整实现了事务的ACID特性？"></a>RocketMQ的事务消息是否完整实现了事务的ACID特性？</h2><h2 id="为什么要有Half-Message？"><a href="#为什么要有Half-Message？" class="headerlink" title="为什么要有Half Message？"></a>为什么要有Half Message？</h2><ol>
-<li>可以先确认Broker服务器是否正常，如果半消息都发送失败了，就说明Broker挂了。</li>
-<li>可以通过半消息来回查事务状态，如果半消息发出后一直没有被二次确认，就会回查事务状态。<blockquote>
-<p>事务回查有两种情况：1、由于网络等原因一直没有执行事务的commit和rollback；2、本地事务执行成功了，但是返回commit的时候服务挂了，Broker最终也没有收到消息，因此还是半消息状态，因此仍会进行重试。</p>
-</blockquote>
-</li>
-</ol>
-<h2 id="为什么说RocketMQ只能保证最终一致性？"><a href="#为什么说RocketMQ只能保证最终一致性？" class="headerlink" title="为什么说RocketMQ只能保证最终一致性？"></a>为什么说RocketMQ只能保证最终一致性？</h2><p>比如以一个转帐功能为例，A账户扣减、发MQ消息通知另一个服务增加B账户的余额，扣减和增加是在两个事务中执行的，MQ虽然能保证两个事务最终一定都能执行上，但是并不能保证中间状态不会出现，比如某个时刻A账户扣减了、但是B账户仍为原状。</p>
-<h2 id="RocketMQ使用某个消息序号messageID消费某个队列的消息，时间复杂度是多少？（假设消息文件commitLog数量为m，每个消息文件中消息条数是k，索引文件consumerQueue的数量是n，队列中共有j条消息）"><a href="#RocketMQ使用某个消息序号messageID消费某个队列的消息，时间复杂度是多少？（假设消息文件commitLog数量为m，每个消息文件中消息条数是k，索引文件consumerQueue的数量是n，队列中共有j条消息）" class="headerlink" title="RocketMQ使用某个消息序号messageID消费某个队列的消息，时间复杂度是多少？（假设消息文件commitLog数量为m，每个消息文件中消息条数是k，索引文件consumerQueue的数量是n，队列中共有j条消息）"></a>RocketMQ使用某个消息序号messageID消费某个队列的消息，时间复杂度是多少？（假设消息文件commitLog数量为m，每个消息文件中消息条数是k，索引文件consumerQueue的数量是n，队列中共有j条消息）</h2><p>复杂度是O(1)，因为消息序号中包含了消息在commitLog中的偏移量，因此可以直接通过偏移量来拿到消息。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ol>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/miaoying/p/10319840.html">rocketmq 控制台搭建（rocketmq-console）</a></li>
-<li><a target="_blank" rel="noopener" href="http://rocketmq.apache.org/docs/quick-start/">Quick Start</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.iocoder.cn/RocketMQ/build-debugging-environment/">RocketMQ 源码解析 —— 调试环境搭建</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/zhu_tianwei/article/details/40951301">RocketMQ管理命令说明</a></li>
-</ol>
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><ol>
-<li><a target="_blank" rel="noopener" href="https://github.com/apache/rocketmq/blob/master/docs/cn/features.md">特性(features)</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/apache/rocketmq/blob/master/docs/cn/design.md">设计(design)</a></li>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/91528718">RocketMQ 实战(三) - 消息的有序性</a></li>
-<li><a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/43348.html?spm=5176.doc43490.6.566.Zd5Bl7">事务消息</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.iocoder.cn/categories/RocketMQ/">RocketMQ 源码分析</a></li>
-</ol>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
       
     </div>
 

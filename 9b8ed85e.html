@@ -91,7 +91,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">187</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -155,7 +155,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-count">187</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -374,7 +374,7 @@
 <p>二、多项选择<br>1.ABC 选项 C 我似乎没选，因为把 VO 当成 DO 来用了，而且现在开发都是前后台分离，很少用到页面模板；选项 D 中 POJO 确实是 DO&#x2F;DTO&#x2F;BO&#x2F;VO 的统称，但不能把所有都命名成 XxxPOJO，会分不清该类的职责。<br>2.ACD 一般接口和抽象类里的抽象方法需要加上注释，而类里面的私有方法没有这个要求，也要避免注释过多的情况。<br>3.ABCD<br>4.ABCD 使用锁时要考虑锁的粒度、性能等特性，同时应该避免死锁等问题。<br>5.BCD 我和大部分人一样非常厌恶方法返回 null，尽量返回空集合或空对象能减少很多烦恼，但是手册中认为方法可以返回 null，防止 NPE 是调用者的责任，我觉得原因很大程度上是因为难以避免远程调用失败、序列化失败、运行时异常等场景返回 null 的情况。<br>6.ABD 选项 A 卫语句指的是处理完一个分支后直接返回；选项 B 强调我们分清稳定代码和非稳定代码，不要将不会出错的稳定代码也加到 try 中，这是不负责任的。<br>7.BCD 异常最好有业务含义，能提高后期排错效率。<br>8.AD 选项 B 不规范是因为 l 和 1 容易混淆。<br>9.ACD 最好看一下 Arrays.asList()源码。<br>10.ABC FixedThreadPool 不推荐使用，因为其允许的请求队列长度为 Integer.MAX_VALUE ，可能会堆积大量的请求，从而导致 OOM 。</p>
 <p>三、简答题<br>第一题：表名和字段名按规范，表名前缀 HR，使用有意义的单词，单词间用_分割，有中文注释。<br>第二题：读写分离，冷热分离，按照特定业务纬度分表，使用 ID Hash 取余平均分表等。<br>第三题：<br>1、明确影响范围<br>2、预留应变空间时间<br>3、交由专家评估合理性和性能<br>4、脚本交由专人在生产库执行，记录；<br>5、错峰操作。<br>第四题：参考规范 3 性能优化 22  ，或者先查询 id，在根据 id 查询数据等都可。<br>补充：后一个方法为什么可行呢？因为规范要求所有删除都是逻辑删除，能保证库里的数据 id 是从 1 到 1000000 排列的。</p>
 <h3 id="反思"><a href="#反思" class="headerlink" title="反思"></a>反思</h3><p>有的题目比较抠细节，但是上课好好听应该不难。<br>大部分规范都取自阿里 Java 编码规范，但很多数据库优化策略很有见地，在日后多作总结。</p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
     </div>
 
     

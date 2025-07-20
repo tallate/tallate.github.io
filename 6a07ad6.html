@@ -92,7 +92,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">187</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -156,7 +156,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-count">187</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -551,7 +551,7 @@
 <h1 id="Redis-使用规范"><a href="#Redis-使用规范" class="headerlink" title="Redis 使用规范"></a>Redis 使用规范</h1><p>来自：《<a target="_blank" rel="noopener" href="https://time.geekbang.org/column/article/309089">加餐（六）| Redis的使用规范小建议</a>》</p>
 <h2 id="业务层面"><a href="#业务层面" class="headerlink" title="业务层面"></a>业务层面</h2><p>1、key 的长度尽量短，节省内存空间<br>2、避免 bigkey，防止阻塞主线程<br>3、4.0+版本建议开启 lazy-free<br>4、把 Redis 当作缓存使用，设置过期时间<br>5、不使用复杂度过高的命令，例如SORT、SINTER、SINTERSTORE、ZUNIONSTORE、ZINTERSTORE<br>6、查询数据尽量不一次性查询全量，写入大量数据建议分多批写入<br>7、批量操作建议 MGET&#x2F;MSET 替代 GET&#x2F;SET，HMGET&#x2F;HMSET 替代 HGET&#x2F;HSET<br>8、禁止使用 KEYS&#x2F;FLUSHALL&#x2F;FLUSHDB 命令<br>9、避免集中过期 key<br>10、根据业务场景选择合适的淘汰策略<br>11、使用连接池操作 Redis，并设置合理的参数，避免短连接<br>12、只使用 db0，减少 SELECT 命令的消耗<br>13、读请求量很大时，建议读写分离，写请求量很大，建议使用切片集群</p>
 <h2 id="运维层面"><a href="#运维层面" class="headerlink" title="运维层面"></a>运维层面</h2><p>1、按业务线部署实例，避免多个业务线混合部署，出问题影响其他业务<br>2、保证机器有足够的 CPU、内存、带宽、磁盘资源<br>3、建议部署主从集群，并分布在不同机器上，slave 设置为 readonly<br>4、主从节点所部署的机器各自独立，尽量避免交叉部署，对从节点做维护时，不会影响到主节点<br>5、推荐部署哨兵集群实现故障自动切换，哨兵节点分布在不同机器上<br>6、提前做好容量规划，防止主从全量同步时，实例使用内存突增导致内存不足<br>7、做好机器 CPU、内存、带宽、磁盘监控，资源不足时及时报警，任意资源不足都会影响 Redis 性能<br>8、实例设置最大连接数，防止过多客户端连接导致实例负载过高，影响性能<br>9、单个实例内存建议控制在 10G 以下，大实例在主从全量同步、备份时有阻塞风险<br>10、设置合理的 slowlog 阈值，并对其进行监控，slowlog 过多需及时报警<br>11、设置合理的 repl-backlog，降低主从全量同步的概率<br>12、设置合理的 slave client-output-buffer-limit，避免主从复制中断情况发生<br>13、推荐在从节点上备份，不影响主节点性能<br>14、不开启 AOF 或开启 AOF 配置为每秒刷盘，避免磁盘 IO 拖慢 Redis 性能<br>15、调整 maxmemory 时，注意主从节点的调整顺序，顺序错误会导致主从数据不一致<br>16、对实例部署监控，采集 INFO 信息时采用长连接，避免频繁的短连接<br>17、做好实例运行时监控，重点关注 expired_keys、evicted_keys、latest_fork_usec，这些指标短时突增可能会有阻塞风险<br>18、扫描线上实例时，记得设置休眠时间，避免过高 OPS 产生性能抖动</p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
     </div>
 
     

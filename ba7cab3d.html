@@ -140,7 +140,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">187</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -204,7 +204,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-count">187</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -632,7 +632,7 @@ return result;
 </code></pre>
 <p>}<br>如上代码，首先通过 lock.lockInterruptibly() 获取独占锁，这个方式获取的锁是对中断进行响应的。然后调用 dequeue 方法返回堆树根节点元素，如果队列为空，则返回 false，然后当前线程调用 notEmpty.await() 阻塞挂起当前线程，直到有线程调用了 offer（）方法（offer 方法内在添加元素成功后调用了 notEmpty.signal 方法会激活一个阻塞在 notEmpty 的条件队列里面的一个线程）。另外这里使用 while 而不是 if 是为了避免虚假唤醒。<br>5.2.5 size 操作<br>获取队列元个数，如下代码，在返回 size 前加了锁，保证在调用 size() 方法时候不会有其它线程进行入队和出队操作，另外由于 size 变量没有被修饰为 volatie，这里加锁也保证了多线程下 size 变量的内存可见性。<br>public int size() {<br>    final ReentrantLock lock &#x3D; this.lock;<br>    lock.lock();<br>    try {<br>        return size;<br>    } finally {<br>        lock.unlock();<br>    }<br>}<br>注：PriorityBlockingQueue 队列内部使用二叉树堆维护元素优先级，内部使用数组作为元素存储的数据结构，这个数组是可扩容的，当当前元素个数 &gt;&#x3D; 最大容量时候会通过算法扩容，出队时候始终保证出队的元素是堆树的根节点，而不是在队列里面停留时间最长的元素，默认元素优先级比较规则是使用元素的 compareTo 方法来做，用户可以自定义优先级的比较规则。</p>
 <h3 id="队列对比"><a href="#队列对比" class="headerlink" title="队列对比"></a>队列对比</h3><p>上面介绍的各种队列中只有 ConcurrentLinkedQueue 是使用 UNSAFE 类提供的 CAS 非阻塞算法实现的，其他几个队列内部都是使用锁来保证线程安全的。使用 CAS 算法的效率较好，那么是不是所有场景都用 ConcurrentLinkedQueue 那？<br>其实不然，因为 ConcurrentLinkedQueue 还是无界队列，无界队列使用不当可能造成 OOM。所以当使用 ConcurrentLinkedQueue 的时候在添加元素前应该先判断当前队列元素个数是否已经达到了设定的阈值，如果达到就做一定的处理措施，比如直接丢弃等。这里需要注意判断当前队列元素个数与阈值这个操作不是原子性的，最终会导致队列元素个数比设置的阈值大。<br>ConcurrentLinkedQueue 在 Tomcat 的的 NioEndPoint 中得到了应用，通过使用 ConcurrentLinkedQueue 将同步转换为异步，可以让 tomcat 同时接受更多请求，模型如下图：<br><img src="/imgs/%E5%B9%B6%E5%8F%91/20180707192524794.png" alt="image.png"><br>tomcat 的 NioEndPoint 模式中 acceptor 线程负责接受用户请求，接受后把请求放入到 poll 线程对应的队列，poll 线程从队列里面获取任务后委托给 worker 线程具体处理。<br>LinkedBlockingQueue 和 ArrayBlockingQueue 都是有界阻塞队列，不同在于一个底层数据结构是链表，一个是数组；另外前者入队出队使用单独的锁，而后者出入队使用同一个锁，所以前者的并发度比后者高。另外创建前者时候可以不指定队列大小，默认队列元素个数为 Integer.MAX_VALUE，而后者必须要指定数组大小。所以使用 LinkedBlockingQueue 时候要记得指定队列大小。<br>比如比较有名的 LogBack 日志系统的异步日志打印实现中就是用了 ArrayBlockingQueue 作为缓冲队列，如下图，业务检查调用异步 log 进行写入日志时候，实际是把日志放入了 ArrayBlockingQueue 队列就返回了，而具体真正写入日志到磁盘是一个日志线程从队列里面获取任务来做的，这其实是一个多生产单消费模型：<br><img src="/imgs/%E5%B9%B6%E5%8F%91/20180707192524971.png" alt="image.png"><br>PriorityBlockingQueue 是无界阻塞队列，是一个队列元素有优先级的队列，前面的队列模式都是 FIFO 先进先出，而 PriorityBlockingQueue 而是优先级最高的元素先出队，而不管谁先进入队列的，所以 PriorityBlockingQueue 经常会用在一些任务具有优先级的场景。还比如上面说的 logback 异步日志模型，如果把日志等级分了优先级，比如 error&gt;warn&gt;info，那么上述模型中队列就可以使用 PriorityBlockingQueue，日志线程会先从队列里面首先获取 error 级别的日志，但是需要注意的是如果业务线程一直向队列里面写入 error 级别日志，那么可能先写入到队列的 warn 和 info 级别的日志将很久甚至永远没机会写入到磁盘。还有一点要注意 PriorityBlockingQueue 是无界限队列，要注意判断队列元素个数不要超过设置的阈值。</p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
     </div>
 
     

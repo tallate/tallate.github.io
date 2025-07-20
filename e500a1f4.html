@@ -102,7 +102,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">187</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -166,7 +166,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-count">187</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -378,7 +378,7 @@
 <h3 id="服务间通信功能（RPC）"><a href="#服务间通信功能（RPC）" class="headerlink" title="服务间通信功能（RPC）"></a>服务间通信功能（RPC）</h3><h4 id="使用-TCP-等更底层、灵活的协议"><a href="#使用-TCP-等更底层、灵活的协议" class="headerlink" title="使用 TCP 等更底层、灵活的协议"></a>使用 TCP 等更底层、灵活的协议</h4><p>HTTP 是应用层的，Spring Boot 封装了一个 RestTemplate 可以很方便地发 HTTP 请求。而 TCP 是传输层的，如何包装消息需要另外再讨论，常见的框架如 Netty，提供了长连接、心跳检测等功能，可以提高开发效率。</p>
 <h4 id="使用-Kryo-等更完善的序列化工具"><a href="#使用-Kryo-等更完善的序列化工具" class="headerlink" title="使用 Kryo 等更完善的序列化工具"></a>使用 Kryo 等更完善的序列化工具</h4><p>Kryo 是一个优秀的 Java 序列化方案，大概用了很多优化方案，这就是很零碎的编程问题了。<br>TCC 的 confir 和 cance 都有可能出错，一般都需要手动恢复，异常日志指的是 redo 和 undo 日志，redo 是未执行前的数据值，undo 是执行修改后的数据值。</p>
 <h3 id="服务间一致性（TCC-事务）"><a href="#服务间一致性（TCC-事务）" class="headerlink" title="服务间一致性（TCC 事务）"></a>服务间一致性（TCC 事务）</h3><p>考虑 TCC 事务发生异常的情况，做好 redo&#x2F;undo 日志，供出错时手动执行恢复。</p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
     </div>
 
     

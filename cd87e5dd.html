@@ -91,7 +91,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">187</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -155,7 +155,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-count">187</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -358,7 +358,7 @@
 <h4 id="Rest-协议"><a href="#Rest-协议" class="headerlink" title="Rest 协议"></a>Rest 协议</h4><p>现在一般的 Web 项目开放的网络接口基本上都会声称是 REST 的，司库云也不例外，但实际上呢？为了方便项目中所有接口的方法都是 POST，链接是一个动词，总之，怎么方便怎么来。<br>有一次碰到过一个接口偏偏把参数放到请求链接后面（@param()），结果因为参数过长导致服务器读取到的参数被截短了，因为该接口被很多下游功能使用，一改肯定会导致所有功能都出问题，后来没办法只能改 Tomcat 服务器的配置。</p>
 <h3 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h3><h4 id="异常日志"><a href="#异常日志" class="headerlink" title="异常日志"></a>异常日志</h4><p>像日志这种必不可少又特别常用的功能，项目中当然也提供了一个公共接口，其中封装了一些日志框架的常用功能，比如，从最常用的 Log4j 到比较成熟的日志框架 Logback，都免不了的一些像滚动日志、定期删除等功能。</p>
 <h4 id="业务日志"><a href="#业务日志" class="headerlink" title="业务日志"></a>业务日志</h4><p>业务日志是对所有 Service 接口调用做的日志，虽然后期也没什么用。<br>其实这种接口等级的日志我觉得可以用于分布式事务出错后的手动回滚，但是这样来说频率及每次所需要记录的内容也会大很多，会对系统性能造成一定影响。</p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
     </div>
 
     

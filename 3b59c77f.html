@@ -116,7 +116,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">187</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -180,7 +180,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-count">187</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -607,7 +607,7 @@
 <h2 id="为什么TCP建立连接是3次握手而不是2次或4次？"><a href="#为什么TCP建立连接是3次握手而不是2次或4次？" class="headerlink" title="为什么TCP建立连接是3次握手而不是2次或4次？"></a>为什么TCP建立连接是3次握手而不是2次或4次？</h2><ul>
 <li>如果是2次握手<br>比如A和B建立连接时，A可能会重试发送，但此时可能前面的请求由于网络等情况没有及时送到B，后来重试的请求先建立了连接，然后先发出的请求才送到，这个连接仍然建立了，但是却没有任何作用（因为A已经默认之前发出的请求都失败了）。<br><img src="/imgs/%E7%BD%91%E7%BB%9C/TCP%E5%A6%82%E6%9E%9C%E6%98%AF2%E6%AC%A1%E6%8F%A1%E6%89%8B%E5%8F%AF%E8%83%BD%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98.png" alt="TCP如果是2次握手可能存在的问题" title="TCP如果是2次握手可能存在的问题"><br>为了解决上面的问题，必须要有一个“应答之应答”，A需要告诉B这个连接的建立是有效的，因此需要3次握手。<br>那么为什么不是4次握手或更多次的握手呢？主要是因为很多次也不能保证就真的可靠了，而且太多次对效率也会有比较大的影响。</li>
 </ul>
-<h2 id="为什么TCP关闭连接是4次挥手而不是2次或6次？"><a href="#为什么TCP关闭连接是4次挥手而不是2次或6次？" class="headerlink" title="为什么TCP关闭连接是4次挥手而不是2次或6次？"></a>为什么TCP关闭连接是4次挥手而不是2次或6次？</h2><script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+<h2 id="为什么TCP关闭连接是4次挥手而不是2次或6次？"><a href="#为什么TCP关闭连接是4次挥手而不是2次或6次？" class="headerlink" title="为什么TCP关闭连接是4次挥手而不是2次或6次？"></a>为什么TCP关闭连接是4次挥手而不是2次或6次？</h2><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
     </div>
 
     

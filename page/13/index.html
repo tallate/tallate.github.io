@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">187</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-count">187</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -281,7 +281,322 @@
 <h3 id="为什么采用异步单一长连接"><a href="#为什么采用异步单一长连接" class="headerlink" title="为什么采用异步单一长连接"></a>为什么采用异步单一长连接</h3><p>因为服务的现状大都是服务提供者少，通常只有几台机器，而服务的消费者多，可能整个网站都在访问该服务，比如 Morgan 的提供者只有 6 台提供者，却有上百台消费者，每天有 1.5 亿次调用，如果采用常规的 hessian 服务，服务提供者很容易就被压跨，通过单一连接，保证单一消费者不会压死提供者，长连接，减少连接握手验证等，并使用异步 IO，复用线程池，防止 C10K 问题（服务器无法服务 1w 左右的并发连接）。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 配置协议端口和服务提供方最大连接数，防止服务被压垮 --&gt;</span><br><span class="line">&lt;dubbo:protocol name=&quot;dubbo&quot; port=&quot;20880&quot; accepts=&quot;1000&quot; /&gt;</span><br><span class="line">&lt;!--配置dubbo默认协议 --&gt;</span><br><span class="line">&lt;dubbo:provider protocol=&quot;dubbo&quot; /&gt;</span><br><span class="line">&lt;!--配置dubbo设置服务协议 --&gt;</span><br><span class="line">&lt;dubbo:service protocol=&quot;dubbo&quot; /&gt;</span><br></pre></td></tr></table></figure>
 
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/353ec849.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/353ec849.html" class="post-title-link" itemprop="url">Dubbo 概述</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-07 18:51:58" itemprop="dateCreated datePublished" datetime="2019-09-07T18:51:58+08:00">2019-09-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Dubbo/" itemprop="url" rel="index"><span itemprop="name">Dubbo</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+<h2 id="为什么使用-Dubbo"><a href="#为什么使用-Dubbo" class="headerlink" title="为什么使用 Dubbo"></a>为什么使用 Dubbo</h2><p>选型时一般需要考虑：</p>
+<ol>
+<li>业务特点及可预见的后续的发展。</li>
+<li>可用性要求。</li>
+<li>团队的成熟度。一个成熟的团队可以很好地 Hold 住复杂的开源框架，甚至做定制化开发。</li>
+</ol>
+<p>在选择使用 Dubbo 之后，又需要考虑很多细节，比如：</p>
+<ol>
+<li>Dubbo 底层走什么协议？如何对对象进行序列化，用了哪些序列化方式？如何处理异步转同步？</li>
+<li>高并发高可用性。Dubbo 依赖了 ZooKeeper，但是万一 ZooKeeper 宕机了怎么办？<br>如果 ZooKeeper 假死，客户端对服务端的调用是否会全部下线？如果是该如何避免？<br>如何监控 Dubbo 的调用，并做到优雅的客户端无感发布？</li>
+</ol>
+<h3 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h3><ol>
+<li>模块化<br>推荐将服务接口、实体、异常等都放到 API 包内，它们都是 API 的一部分。</li>
+<li>粗粒度<br>暴露的 Dubbo 接口的粒度应尽可能得粗，代表一个完整的功能，而不是其中的某一步，否则就不得不面对分布式事务问题了，而 Dubbo 当前并没有提供分布式事务支持。</li>
+<li>版本<br>某露服务接口的配置最好增加版本，当有不兼容的升级（比如接口定义要加个参数）时，版本可以方便地实现平滑发布，而又不用引入多余的代码。<br>版本只需要两位即可，比如<code>&quot;1.0&quot;</code>，因为升级并不是频繁的操作，因为不兼容的升级不会那么频繁。<br>升级时，先将一半的 provider 升级到新版本，然后将所有 consumer 升级，最后将其余的 provider 升级。</li>
+<li>兼容性<br>向后兼容：接口加方法、对象加字段；<br>不兼容：删除方法、删除字段、枚举类型加字段。<br>不兼容的情况下，可以通过升级版本来实现平滑发布。</li>
+<li>枚举类型<br>枚举是类型安全的，但是作为 Dubbo 接口的参数 &#x2F; 返回值却不合适，因为 provider 会将枚举转换为字符串传输，接收方会尝试寻找该字符串所属的枚举 field，找不到就会直接报错。</li>
+<li>序列化<br>传值没必要使用接口抽象，因为序列化需要接口实现类的元信息（包括 getter、setter），无法隐藏实现。<br>参数和返回值必须 byValue 而不是 byReference，因为 Dubbo 不支持远程对象，provider 引用的对象 consumer 就找不到了。</li>
+<li>异常<br>最好直接抛异常而不是返回异常码，因为异常可以携带更多信息、语法上也更加友好。<br>provider 不要将 DAO 层的异常抛给 consumer 端，consumer 端不应该关注 provider 对服务是如何实现的。</li>
+</ol>
+<h2 id="开始使用-Dubbo"><a href="#开始使用-Dubbo" class="headerlink" title="开始使用 Dubbo"></a>开始使用 Dubbo</h2><h3 id="ZooKeeper"><a href="#ZooKeeper" class="headerlink" title="ZooKeeper"></a>ZooKeeper</h3><p>ZooKeeper 在 Dubbo 中可以作为注册中心使用。<br>下载 ZooKeeper，修改配置，配置文件位于{ZOOKEEPER_HOME}&#x2F;conf&#x2F;zoo.cfg：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">dataDir = /tmp/zk/data</span><br><span class="line">clientPort = 2181</span><br><span class="line">tickTime = 2000</span><br><span class="line">initLimit = 5</span><br><span class="line">syncLimit = 2</span><br></pre></td></tr></table></figure>
+<ul>
+<li>dataDir：数据保存的目录</li>
+<li>clientPort：监听的端口</li>
+<li>tickTime：心跳检查间隔</li>
+<li>initLimit：Follower 启动从 Leader 同步数据时能忍受多少个心跳的时间间隔</li>
+<li>syncLimit：Leader 同步到 Follower 后，如果超过 syncLimit 个 tickTime 的时间过去，还没有收到 Follower 的响应，那么就认为该 Follower 已下线。</li>
+</ul>
+<p>后台启动：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/zkServer.sh start-foreground</span><br></pre></td></tr></table></figure>
+<h3 id="SDK"><a href="#SDK" class="headerlink" title="SDK"></a>SDK</h3><p>SDK 是一个被 provider 和 consumer 同时依赖的 jar 包，它的作用包括：</p>
+<ul>
+<li>提供实体类的定义；  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public class Person &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>提供接口的定义；  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public interface UserServiceBo &#123;</span><br><span class="line">    String sayHello(String name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>在设计 SDK 时包含一些注意要点，比如：</p>
+<ul>
+<li>不要使用枚举，用字符串常量来替代，因为 Dubbo 反序列化时如果碰到不存在的枚举就会抛出异常，这个问题编译期无法发现，可能造成线上故障；</li>
+<li>升级时不要随意修改接口定义，provider 和 consumer 接口定义不同会导致运行时故障，最佳实践是提升<code>dubbo:reference</code>和<code>dubbo:service</code>的版本号，或者直接增加一个接口。</li>
+</ul>
+<h3 id="Provider"><a href="#Provider" class="headerlink" title="Provider"></a>Provider</h3><ol>
+<li>声明依赖 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.alibaba&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;dubbo&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;2.6.6&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;io.netty&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;netty-all&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;4.0.35.Final&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.apache.curator&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;curator-framework&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;4.2.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;com.alibaba&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;fastjson&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.2.47&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></li>
+<li>Dubbo 配置文件 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</span><br><span class="line">  xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><br><span class="line">  xmlns:dubbo=&quot;http://code.alibabatech.com/schema/dubbo&quot;</span><br><span class="line">  xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans</span><br><span class="line">    http://www.springframework.org/schema/beans/spring-beans.xsd</span><br><span class="line">    http://code.alibabatech.com/schema/dubbo</span><br><span class="line">    http://code.alibabatech.com/schema/dubbo/dubbo.xsd&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!-- 提供方应用信息，用于计算依赖关系 --&gt;</span><br><span class="line">    &lt;dubbo:application name=&quot;dubboProvider&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!-- 使用zookeeper注册中心暴露服务地址 --&gt;</span><br><span class="line">    &lt;dubbo:registry address=&quot;zookeeper://127.0.0.1:2181&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!-- 用dubbo协议在20880端口暴露服务 --&gt;</span><br><span class="line">    &lt;dubbo:protocol name=&quot;dubbo&quot; port=&quot;20880&quot;/&gt;</span><br><span class="line">    &lt;!-- 启用monitor模块 --&gt;</span><br><span class="line">    &lt;dubbo:monitor protocol=&quot;registry&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;bean id=&quot;userService&quot; class=&quot;com.tallate.provider.UserServiceImpl&quot;/&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!-- 声明需要暴露的服务接口 --&gt;</span><br><span class="line">    &lt;dubbo:service interface=&quot;com.tallate.UserServiceBo&quot; ref=&quot;userService&quot;</span><br><span class="line">      group=&quot;dubbo&quot; version=&quot;1.0.0&quot; timeout=&quot;3000&quot;/&gt;</span><br><span class="line"></span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure></li>
+<li>接口的实现 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public class UserServiceImpl implements UserServiceBo &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String sayHello(String name) &#123;</span><br><span class="line">        //让当前当前线程休眠2s</span><br><span class="line">        try &#123;</span><br><span class="line">            Thread.sleep(2000);</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return name;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>启动<br>原生 Spring 的启动方式： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] arg) throws InterruptedException &#123;</span><br><span class="line">    ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(&quot;classpath:provider.xml&quot;);</span><br><span class="line">    //挂起当前线程，如果没有改行代码，服务提供者进程会消亡，服务消费者就发现不了提供者了</span><br><span class="line">    Thread.currentThread().join();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>如果需要以 SpringBoot 或 Docker 方式启动可以参考官方的示例</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="Consumer"><a href="#Consumer" class="headerlink" title="Consumer"></a>Consumer</h3><ol>
+<li>声明依赖<br>同 Provider</li>
+<li>Dubbo 配置文件 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;beans xmlns=&quot;http://www.springframework.org/schema/beans&quot;</span><br><span class="line">  xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><br><span class="line">  xmlns:dubbo=&quot;http://code.alibabatech.com/schema/dubbo&quot;</span><br><span class="line">  xsi:schemaLocation=&quot;http://www.springframework.org/schema/beans</span><br><span class="line">    http://www.springframework.org/schema/beans/spring-beans.xsd</span><br><span class="line">    http://code.alibabatech.com/schema/dubbo</span><br><span class="line">    http://code.alibabatech.com/schema/dubbo/dubbo.xsd&quot;&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!-- 消费方应用名，用于计算依赖关系，不是匹配条件，不要与提供方一样 --&gt;</span><br><span class="line">    &lt;dubbo:application name=&quot;dubboConsumer&quot; /&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!-- 使用multicast广播注册中心暴露发现服务地址 --&gt;</span><br><span class="line">    &lt;dubbo:registry  protocol=&quot;zookeeper&quot; address=&quot;zookeeper://127.0.0.1:2181&quot; /&gt;</span><br><span class="line">    &lt;!-- 启动monitor--&gt;</span><br><span class="line">    &lt;dubbo:monitor protocol=&quot;registry&quot; /&gt;</span><br><span class="line">    &lt;!-- 生成远程服务代理，可以和本地bean一样使用demoService --&gt;</span><br><span class="line">    &lt;dubbo:reference id=&quot;userService&quot; interface=&quot;com.tallate.UserServiceBo&quot; group=&quot;dubbo&quot; version=&quot;1.0.0&quot; timeout=&quot;3000&quot;/&gt;</span><br><span class="line"></span><br><span class="line">&lt;/beans&gt;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这里出现了一些以 dubbo 作为前缀的标签，它们是由 Dubbo 的扩展 DubboNamespaceHandler 来处理的，DubboBeanDefinitionParser 在解析完后会得到对应 BeanDefinition，然后生成对象放到 BeanFactory 中。</p>
+</blockquote>
+</li>
+<li>启动 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">    ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(</span><br><span class="line">            new String[]&#123;&quot;classpath:consumer.xml&quot;&#125;);</span><br><span class="line"></span><br><span class="line">    final UserServiceBo demoService = (UserServiceBo) context.getBean(&quot;userService&quot;);</span><br><span class="line"></span><br><span class="line">    System.out.println(demoService.sayHello(&quot;Hello World&quot;));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="调用-Dubbo-原生-API-启动"><a href="#调用-Dubbo-原生-API-启动" class="headerlink" title="调用 Dubbo 原生 API 启动"></a>调用 Dubbo 原生 API 启动</h3><ol>
+<li>Provider <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">// 等价于&lt;bean id=&quot;userService&quot; class=&quot;com.test.UserServiceImpl&quot; /&gt;</span><br><span class="line">UserServiceBo userService = new UserServiceImpl();</span><br><span class="line">// 等价于&lt;dubbo:application name=&quot;dubboProvider&quot; /&gt;</span><br><span class="line">ApplicationConfig application = new ApplicationConfig();</span><br><span class="line">application.setName(&quot;dubboProvider&quot;);</span><br><span class="line"></span><br><span class="line">// 等价于&lt;dubbo:registry address=&quot;zookeeper://127.0.0.1:2181&quot; /&gt;</span><br><span class="line">RegistryConfig registry = new RegistryConfig();</span><br><span class="line">registry.setAddress(&quot;127.0.0.1:2181&quot;);</span><br><span class="line">registry.setProtocol(&quot;zookeeper&quot;);</span><br><span class="line"></span><br><span class="line">// 等价于&lt;dubbo:protocol name=&quot;dubbo&quot; port=&quot;20880&quot; /&gt;</span><br><span class="line">ProtocolConfig protocol = new ProtocolConfig();</span><br><span class="line">protocol.setName(&quot;dubbo&quot;);</span><br><span class="line">protocol.setPort(20880);</span><br><span class="line"></span><br><span class="line">// 等价于&lt;dubbo:monitor protocol=&quot;registry&quot; /&gt;</span><br><span class="line">MonitorConfig monitorConfig = new MonitorConfig();</span><br><span class="line">monitorConfig.setProtocol(&quot;registry&quot;);</span><br><span class="line"></span><br><span class="line">// 等价于&lt;dubbo:service interface=&quot;com.test.UserServiceBo&quot; ref=&quot;userService&quot;</span><br><span class="line">//      group=&quot;dubbo&quot;  version=&quot;1.0.0&quot; timeout=&quot;3000&quot;/&gt;</span><br><span class="line">// 此实例很重，封装了与注册中心的连接，请自行缓存，否则可能造成内存和连接泄漏</span><br><span class="line">ServiceConfig&lt;UserServiceBo&gt; service = new ServiceConfig&lt;&gt;();</span><br><span class="line">service.setApplication(application);</span><br><span class="line">service.setMonitor(monitorConfig);</span><br><span class="line">// 多个注册中心可以用setRegistries()</span><br><span class="line">service.setRegistry(registry);</span><br><span class="line">// 多个协议可以用setProtocols()</span><br><span class="line">service.setProtocol(protocol);</span><br><span class="line">service.setInterface(UserServiceBo.class);</span><br><span class="line">service.setRef(userService);</span><br><span class="line">service.setVersion(&quot;1.0.0&quot;);</span><br><span class="line">service.setGroup(&quot;dubbo&quot;);</span><br><span class="line">service.setTimeout(3000);</span><br><span class="line">service.export();</span><br><span class="line"></span><br><span class="line">// 挂起当前线程</span><br><span class="line">Thread.currentThread().join();</span><br></pre></td></tr></table></figure></li>
+<li>Consumer <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">// 等价于&lt;dubbo:application name=&quot;dubboConsumer&quot; /&gt;</span><br><span class="line">ApplicationConfig application = new ApplicationConfig();</span><br><span class="line">application.setName(&quot;dubboConsumer&quot;);</span><br><span class="line"></span><br><span class="line">// 等价于&lt;dubbo:registry  protocol=&quot;zookeeper&quot; address=&quot;zookeeper://127.0.0.1:2181&quot; /&gt;</span><br><span class="line">RegistryConfig registry = new RegistryConfig();</span><br><span class="line">registry.setAddress(&quot;127.0.0.1:2181&quot;);</span><br><span class="line">registry.setProtocol(&quot;zookeeper&quot;);</span><br><span class="line"></span><br><span class="line">// 等价于 &lt;dubbo:monitor protocol=&quot;registry&quot; /&gt;</span><br><span class="line">MonitorConfig monitorConfig = new MonitorConfig();</span><br><span class="line">monitorConfig.setProtocol(&quot;registry&quot;);</span><br><span class="line"></span><br><span class="line">//等价于&lt;dubbo:reference id=&quot;userService&quot; interface=&quot;com.test.UserServiceBo&quot;</span><br><span class="line">//group=&quot;dubbo&quot; version=&quot;1.0.0&quot; timeout=&quot;3000&quot; /&gt;</span><br><span class="line">// 此实例很重，封装了与注册中心的连接以及与提供者的连接，最好放缓存，否则可能造成内存和连接泄漏</span><br><span class="line">ReferenceConfig&lt;UserServiceBo&gt; reference = new ReferenceConfig&lt;&gt;();</span><br><span class="line">reference.setApplication(application);</span><br><span class="line">// 多个注册中心可以用setRegistries()</span><br><span class="line">reference.setRegistry(registry);</span><br><span class="line">reference.setInterface(UserServiceBo.class);</span><br><span class="line">reference.setVersion(&quot;1.0.0&quot;);</span><br><span class="line">reference.setGroup(&quot;dubbo&quot;);</span><br><span class="line">reference.setTimeout(3000);</span><br><span class="line">reference.setInjvm(false);</span><br><span class="line">reference.setMonitor(monitorConfig);</span><br><span class="line"></span><br><span class="line">UserServiceBo userService = reference.get();</span><br><span class="line">System.out.println(userService.sayHello(&quot;哈哈哈&quot;));</span><br><span class="line">Thread.currentThread().join();</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="泛化调用"><a href="#泛化调用" class="headerlink" title="泛化调用"></a>泛化调用</h3><p>正常情况下我们使用 Dubbo 时会将实体类和接口定义放到一个 SDK 包内，其实也可以不加入这个包、直接将要传的参数放到一个 Map 对象内，称为泛化调用，但是这种方式没有什么实践价值，在此就不赘述了。</p>
+<h2 id="Dubbo-架构"><a href="#Dubbo-架构" class="headerlink" title="Dubbo 架构"></a>Dubbo 架构</h2><blockquote>
+<p>Dubbo 是一个分布式服务框架，是阿里巴巴 SOA 服务化治理方案的核心框架，致力于提供高性能和透明化的 RPC 远程服务调用方案，以及 SOA 服务治理方案。简而言之，Dubbo 是个远程服务调用的分布式框架（告别 Web Service 模式中的 WSdl，以服务提供者与消费者的方式在 dubbo 上注册）。</p>
+</blockquote>
+<p>Apache Dubbo 是一款高性能、轻量级的开源 Java RPC 框架，它提供了三大核心能力：面向接口的远程方法调用，智能容错和负载均衡，以及服务自动注册和发现。<br>Dubbo 的架构基本上可以概括为 RPC+服务发现，或者可以称之为弹性 RPC 框架。</p>
+<h3 id="CP-三大中心"><a href="#CP-三大中心" class="headerlink" title="CP+三大中心"></a>CP+三大中心</h3><p><img src="/imgs/Dubbo/Dubbo%E6%9E%B6%E6%9E%84.png" alt="Dubbo架构" title="Dubbo架构"></p>
+<blockquote>
+<p>图中的 Consumer 和 Provider 是抽象概念，只是想让看图者更直观的了解哪些类分属于客户端与服务器端，不用 Client 和 Server 的原因是 Dubbo 在很多场景下都使用 Provider、Consumer、Registry、Monitor 划分逻辑拓普节点，保持统一概念。</p>
+</blockquote>
+<p>Provider: 暴露服务的服务提供方，启动时会注册自己提供的服务到注册中心。<br>Consumer: 调用远程服务的服务消费方，启动时会去注册中心订阅自己需要的服务，服务注册中心异步提供 Provider 的地址列表，Consumer 根据路由规则和预设的负载均衡算法选择一个 Provider 的 IP 进行调用，调用是直连的，失败后会调用另外一个。<br>Registry: 服务注册与发现的注册中心。<br>Monitor: 统计服务的调用次调和调用时间的监控中心，Provider 和 Consumer 在内存中累计调用次数和耗时，并定时每分钟发送一次统计数据到监控中心。<br>Container: 服务运行容器。</p>
+<p>大数据量传输时适合用短连接，小数据量高并发适合用长连接。从上图中可以得知，Provider 和 Consumer 均通过长连接与注册中心通信，当消费方调用服务时，会创建一个连接，然后同时会创建一个心跳发送的定时线程池，每一分钟发送一次心跳包到注册中心，通过 ping-pong 来检查连接的存活性，同时还会启动断线重连定时线程池，每两秒钟检查一次连接状态，如果断开就重连，而当注册中心断开连接后，会回调通知 Consumer 销毁连接，同理，Provider 也是通过长连接与注册中心通信。</p>
+<h4 id="元数据中心"><a href="#元数据中心" class="headerlink" title="元数据中心"></a>元数据中心</h4><p>2.7 之后提供的一个新组件，容易和注册中心混淆，元数据和注册中心中的注册信息之间的区别如下：</p>
+<ul>
+<li><strong>元数据（Metadata）</strong>指的是服务分组、服务版本、服务名、方法列表、方法参数列表、超时时间等</li>
+<li><strong>注册信息</strong>指服务分组、服务版本、服务名、地址列表等。</li>
+</ul>
+<p>元数据中心和注册中心包含了一些公共数据，另外，元数据中心还会存储方法列表即参数列表，注册中心存储了服务地址，其他的一些区别如下所示：</p>
+<ul>
+<li>| 元数据 | 注册信息</li>
+<li>| - | -<br>职责 | 描述服务，定义服务的基本属性 | 存储地址列表<br>变化频繁度 | 基本不变 | 随着服务上下线而不断变更<br>数据量 | 大 | 小<br>数据交互&#x2F;存储模型 | 消费者&#x2F;提供者上报，控制台查询 | PubSub 模型，提供者上报，消费者订阅<br>主要使用场景 | 服务测试、服务 | MOCK 服务调用<br>可用性要求 | 元数据中心可用性要求不高，不影响主流程 | 注册中心可用性要求高，影响到服务调用的主流程</li>
+</ul>
+<h3 id="Dubbo-层次化结构"><a href="#Dubbo-层次化结构" class="headerlink" title="Dubbo 层次化结构"></a>Dubbo 层次化结构</h3><p><img src="/imgs/Dubbo/Dubbo%E6%A1%86%E6%9E%B6.png" alt="Dubbo框架" title="Dubbo框架"><br>Dubbo 的架构是分层的，使用这种方式可以使各个层之间解耦合（或者最大限度地松耦合）。从服务模型的角度来看，Dubbo 采用的是一种非常简单的模型，要么是提供方提供服务，要么是消费方消费服务。</p>
+<p><img src="/imgs/Dubbo/Dubbo%E6%89%A9%E5%B1%95.jpg" alt="Dubbo扩展" title="Dubbo扩展"></p>
+<ul>
+<li>服务接口层（Service）：该层是与实际业务逻辑相关的，根据服务提供方和服务消费方的业务设计对应的接口和实现。</li>
+</ul>
+<p>RPC 是 Dubbo 的核心：</p>
+<ul>
+<li>配置层（Config）<br>对外配置接口，以 <strong>ServiceConfig</strong> 和 <strong>ReferenceConfig</strong> 为中心，可以直接 new 配置类，也可以通过 Spring 解析配置生成配置类。</li>
+<li>服务代理层（Proxy）<br>服务接口透明代理。Proxy 层封装了所有接口的透明化代理，而在其它层都以 <strong>Invoker</strong> 为中心，只有到了暴露给用户使用时，才用 <strong>Proxy</strong> 将 <strong>Invoker</strong> 转成接口，或将接口实现转成 <strong>Invoker</strong>，也就是去掉 Proxy 层 RPC 是可以 Run 的，只是不那么透明，不那么看起来像调本地服务一样调远程服务。<br>Proxy 层封装了所有接口的透明化代理，而在其它层都以 Invoker 为中心，只有到了暴露给用户使用时，才用 Proxy 将 Invoker 转成接口，或将接口实现转成 Invoker，也就是去掉 Proxy 层 RPC 是可以 Run 的，只是不那么透明，不那么看起来像调本地服务一样调远程服务。</li>
+<li>服务注册层（Registry）<br>封装服务地址的注册与发现，以服务 URL 为中心，扩展接口为 <strong>RegistryFactory</strong>、<strong>Registry</strong> 和 <strong>RegistryService</strong>。可能没有服务注册中心，此时服务提供方直接暴露服务。</li>
+<li>集群层（Cluster）<br>封装多个提供者的路由及负载均衡，并桥接注册中心，以 Invoker 为中心，扩展接口为 <strong>Cluster</strong>、<strong>Directory</strong>、<strong>Router</strong> 和 <strong>LoadBalance</strong>。将多个服务提供方组合为一个服务提供方，实现对服务消费方来透明，只需要与一个服务提供方进行交互。</li>
+<li>监控层（Monitor）<br>RPC 调用次数和调用时间监控，以 <strong>Statistics</strong> 为中心，扩展接口为 <strong>MonitorFactory</strong>、<strong>Monitor</strong>和 <strong>MonitorService</strong>。</li>
+<li>远程调用层（Protocol）<br>封装 RPC 调用，扩展接口为 <strong>Protocol</strong>、<strong>Invoker</strong> 和 <strong>Exporter</strong>。Protocol 是服务域，它是 Invoker 暴露和引用的主功能入口，它负责 Invoker 的生命周期管理。Invoker 是实体域，它是 Dubbo 的核心模型，其它模型都向它靠扰，或转换成它，它代表一个可执行体，可向它发起 invoke 调用，它有可能是一个本地的实现，也可能是一个远程的实现，也可能一个集群实现。Protocol 是核心层，也就是只要有 Protocol + Invoker + Exporter 就可以完成非透明的 RPC 调用，然后在 Invoker 的主过程上 Filter 拦截点。</li>
+</ul>
+<blockquote>
+<p>Registry 和 Monitor 实际上不算一层，而是一个独立的节点，只是为了全局概览，用层的方式画在一起。<br>Cluster 是外围概念，Cluster 的目的是将多个 Invoker 伪装成一个 Invoker，这样其它人只要关注 Protocol 层 Invoker 即可，加上 Cluster 或者去掉 Cluster 对其它层都不会造成影响，因为只有一个提供者时，是不需要 Cluster 的。</p>
+</blockquote>
+<p>Remoting 实现是 Dubbo 协议的实现，如果你选择 RMI 协议，整个 Remoting 都不会用上，Remoting 内部再划为 Transport 传输层和 Exchange 信息交换层，Transport 层只负责单向消息传输，是对 Mina、Netty、Grizzly 的抽象，它也可以扩展 UDP 传输，而 Exchange 层是在传输层之上封装了 Request-Response 语义。</p>
+<ul>
+<li>交换层（Exchange）：封装请求响应模式，同步转异步，以 Request 和 Response 为中心，扩展接口为<strong>Exchanger</strong>、<strong>ExchangeChannel</strong>、<strong>ExchangeClient</strong>和<strong>ExchangeServer</strong>。</li>
+<li>网络传输层（Transport）：抽象 mina 和 netty 为统一接口，以 Message 为中心，扩展接口为<strong>Channel</strong>、<strong>Transporter</strong>、<strong>Client</strong>、<strong>Server</strong>和<strong>Codec</strong>。</li>
+<li>数据序列化层（Serialize）：可复用的一些工具，扩展接口为<strong>Serialization</strong>、 <strong>ObjectInput</strong>、<strong>ObjectOutput</strong>和<strong>ThreadPool</strong>。</li>
+</ul>
+<p><img src="/imgs/Dubbo/Dubbo%E5%8C%85%E7%BB%93%E6%9E%84.png" alt="Dubbo包结构" title="Dubbo包结构"></p>
+<ul>
+<li>dubbo-common 公共逻辑模块，包括 Util 类和通用模型。</li>
+<li>dubbo-remoting 远程通讯模块，相当于 Dubbo 协议的实现，如果 RPC 用 RMI 协议则不需要使用此包。</li>
+<li>dubbo-rpc 远程调用模块，抽象各种协议，以及动态代理，只包含一对一的调用，不关心集群的管理。</li>
+<li>dubbo-cluster 集群模块，将多个服务提供方伪装为一个提供方，包括：负载均衡、容错、路由等，集群的地址列表可以是静态配置的，也可以是由注册中心下发。</li>
+<li>dubbo-registry 注册中心模块，基于注册中心下发地址的集群方式，以及对各种注册中心的抽象。</li>
+<li>dubbo-monitor 监控模块，统计服务调用次数，调用时间的，调用链跟踪的服务。</li>
+<li>dubbo-config 配置模块，是 Dubbo 对外的 API，用户通过 Config 使用 Dubbo，隐藏 Dubbo 所有细节。</li>
+<li>dubbo-container 容器模块，是一个 Standalone 的容器，以简单的 Main 加载 Spring 启动，因为服务通常不需要 Tomcat&#x2F;JBoss 等 Web 容器的特性，没必要用 Web 容器去加载服务。</li>
+</ul>
+<h2 id="集群-Cluster"><a href="#集群-Cluster" class="headerlink" title="集群 - Cluster"></a>集群 - Cluster</h2><p>提供基于接口方法的透明远程过程调用，包括多协议支持，以及软负载均衡，失败容错，地址路由，动态配置等集群支持。</p>
+<h3 id="服务目录（Directory）"><a href="#服务目录（Directory）" class="headerlink" title="服务目录（Directory）"></a>服务目录（Directory）</h3><p><strong>服务目录</strong>中存储了一些和服务提供者有关的信息，通过服务目录，服务消费者可获取到服务提供者的信息，比如 ip、端口、服务协议等。通过这些信息，服务消费者就可通过 Netty 等客户端进行远程调用。<br>服务目录与注册中心之间的区别：</p>
+<ul>
+<li>注册中心存储服务提供者信息，在 Dubbo 中通过 ZooKeeper 实现；</li>
+<li>服务目录是 Invoker 的集合，且这个集合中的元素会随注册中心的变化而进行动态调整。</li>
+</ul>
+<p>服务目录会在客户端启动时初始化完成，并订阅注册中心的更新：<br><code>com.alibaba.dubbo.registry.support.FailbackRegistry#FailbackRegistry</code><br><code>com.alibaba.dubbo.registry.support.FailbackRegistry#subscribe</code></p>
+<h4 id="Directory-继承结构"><a href="#Directory-继承结构" class="headerlink" title="Directory 继承结构"></a>Directory 继承结构</h4><p>Directory 接口包含了一个获取配置信息的方法 getUrl，实现该接口的类可以向外提供配置信息。Directory 有多个实现。</p>
+<ul>
+<li>StaticDirectory<br>获取一次 Invoker 列表后就不变了。</li>
+<li>RegistryDirectory<br>实现了 NotifyListener 接口，当注册中心服务配置发生变化后，RegistryDirectory 可收到与当前服务相关的变化，然后根据配置变更信息刷新 Invoker 列表。<br>刷新 Invoker 列表代码：com.alibaba.dubbo.registry.integration.RegistryDirectory#refreshInvoker</li>
+</ul>
+<h3 id="路由（Router）"><a href="#路由（Router）" class="headerlink" title="路由（Router）"></a>路由（Router）</h3><p>服务目录中包含多个 Invoker，需要通过路由规则来选择调用哪个，Dubbo 提供了 3 种路由实现：<strong>条件路由 ConditionRouter</strong>、<strong>脚本路由 ScriptRouter</strong> 和<strong>标签路由 TagRouter</strong>。</p>
+<h4 id="条件路由（ConditionRouter）"><a href="#条件路由（ConditionRouter）" class="headerlink" title="条件路由（ConditionRouter）"></a>条件路由（ConditionRouter）</h4><h3 id="容错方案"><a href="#容错方案" class="headerlink" title="容错方案"></a>容错方案</h3><p><img src="/imgs/Dubbo/%E9%9B%86%E7%BE%A4%E5%AE%B9%E9%94%99.png" alt="集群容错" title="集群容错"><br>Dubbo 提供多种集群的容错方案，默认情况下为 Failover。<br><code>com.alibaba.dubbo.rpc.cluster.Cluster</code></p>
+<h4 id="Failover"><a href="#Failover" class="headerlink" title="Failover"></a>Failover</h4><p>失败自动切换，当出现失败，重试其它服务器 （该配置为默认配置）。通常用于读操作，但重试会带来更长时间的延迟。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--配置集群容错模式为失败自动切换 --&gt;</span><br><span class="line">&lt;dubbo:reference cluster=&quot;failover&quot; /&gt;</span><br><span class="line">&lt;!-- 调用queryOrder方法如果失败共调3次，重试2次，如果成功则只调1次 --&gt;</span><br><span class="line">&lt;dubbo:reference&gt;</span><br><span class="line">    &lt;dubbo:method name=&quot;queryOrder&quot; retries=&quot;2&quot; /&gt;</span><br><span class="line">&lt;/dubbo:reference&gt;</span><br></pre></td></tr></table></figure>
+<p>通常用于幂等操作，多次调用副作用相同，譬如只读请求，Failover 使用得较多，推荐使用，但重试会带来更长延迟，应用于消费者和提供者的服务调用。</p>
+<h4 id="Failfast"><a href="#Failfast" class="headerlink" title="Failfast"></a>Failfast</h4><p>快速失败，只发起一次调用，失败立即报错。通常用于非幂等性的写操作，比如新增记录和修改数据，Failfast 使用得较多，但如果有机器正在重启，可能会出现调用失败，应用于消费者和提供者的服务调用。</p>
+<h4 id="Failsafe"><a href="#Failsafe" class="headerlink" title="Failsafe"></a>Failsafe</h4><p>失败安全，出现异常时，直接忽略。通常用于写入审计日志等操作，Failsafe 使用得不多，但调用信息会丢失，应用于发送统计信息到监控中心。</p>
+<h4 id="Failback"><a href="#Failback" class="headerlink" title="Failback"></a>Failback</h4><p>失败自动恢复，后台记录失败请求，定时重发。通常用于消息通知操作，使用得很少，不可靠，重启会丢失，应用于注册服务到注册中心。</p>
+<h4 id="Forking"><a href="#Forking" class="headerlink" title="Forking"></a>Forking</h4><p>并行调用多个服务器，只要一个成功即返回。通常用于实时性要求较高的读操作，使用得很少，但需要浪费更多服务资源。</p>
+<h4 id="Broadcast"><a href="#Broadcast" class="headerlink" title="Broadcast"></a>Broadcast</h4><p>广播调用所有提供者，逐个调用，任意一台报错则报错 。通常用于通知所有提供者更新缓存或日志等本地资源信息，速度慢，任意一台报错则报错，使用得很少。</p>
+<h3 id="负载均衡"><a href="#负载均衡" class="headerlink" title="负载均衡"></a>负载均衡</h3><h4 id="Random-LoadBalance"><a href="#Random-LoadBalance" class="headerlink" title="Random LoadBalance"></a>Random LoadBalance</h4><p>随机调用（默认配置），按权重设置随机概率，在一个截面上碰撞的概率高，但调用量越大分布越均匀，而且按概率使用权重后也比较均匀，有利于动态调整提供者权重，使用较多，推荐使用，但重试时，可能出现瞬间压力不均。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 服务端方法基本负载均衡设置 --&gt;</span><br><span class="line">&lt;dubbo:service interface=&quot;com.service.dubbo.queryOrder&quot;&gt;</span><br><span class="line">    &lt;dubbo:method name=&quot;queryOrder&quot; loadbalance=&quot;roundrobin&quot; /&gt;</span><br><span class="line">&lt;/dubbo:service&gt;</span><br></pre></td></tr></table></figure>
+<h4 id="RoundRobin-LoadBalance"><a href="#RoundRobin-LoadBalance" class="headerlink" title="RoundRobin LoadBalance"></a>RoundRobin LoadBalance</h4><p>轮循调用，按公约后的权重设置轮循比率，存在慢的提供者累积请求的问题，比如：第二台机器很慢，但没挂，当请求调到第二台时就卡在那，久而久之，所有请求都卡在调到第二台上，极端情况可能产生雪崩。</p>
+<h4 id="LeastActive-LoadBalance"><a href="#LeastActive-LoadBalance" class="headerlink" title="LeastActive LoadBalance"></a>LeastActive LoadBalance</h4><p>最少活跃数调用，相同活跃数的随机，活跃数指调用前后计数差，使慢的提供者收到更少请求，因为越慢的提供者的调用前后计数差（与时间有关）会越大，但不支持权重。</p>
+<h4 id="ConsistentHash-LoadBalance"><a href="#ConsistentHash-LoadBalance" class="headerlink" title="ConsistentHash LoadBalance"></a>ConsistentHash LoadBalance</h4><p>一致性 Hash，相同参数的请求总是发到同一提供者，当某一台提供者挂时，原本发往该提供者的请求，基于虚拟节点，平摊到其它提供者，不会引起剧烈变动。缺省只对第一个参数 Hash，如果要修改，请配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;dubbo:parameter key=&quot;hash.arguments&quot; value=&quot;0,1&quot; /&gt;</span><br></pre></td></tr></table></figure>
+<p>缺省用 160 份虚拟节点，如果要修改，请配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;dubbo:parameter key=&quot;hash.nodes&quot; value=&quot;320&quot; /&gt;</span><br></pre></td></tr></table></figure>
+<p>由于是通过哈希算法分摊调用，有可能出现调用不均匀的情况</p>
+<h2 id="远程通信-Transport"><a href="#远程通信-Transport" class="headerlink" title="远程通信 - Transport"></a>远程通信 - Transport</h2><p>提供对多种基于长连接的 NIO 框架抽象封装，包括多种线程模型，序列化，以及“请求-响应”模式的信息交换方式。<br>Dubbo 支持如下网络通信框架：</p>
+<ul>
+<li>Mina</li>
+<li>Netty</li>
+<li>Grizzly</li>
+</ul>
+<h2 id="序列化-Serialize"><a href="#序列化-Serialize" class="headerlink" title="序列化 - Serialize"></a>序列化 - Serialize</h2><h3 id="反射"><a href="#反射" class="headerlink" title="反射"></a>反射</h3><p>通过缓存加载的 Class、setAccessible(false)去掉安全校验等来提高反射效率，或者使用反射包<strong>ReflectASM</strong>。</p>
+<h3 id="序列化"><a href="#序列化" class="headerlink" title="序列化"></a>序列化</h3><p>对性能敏感，对开发体验要求不高的内部系统 thrift 或 protobuf<br>对开发体验敏感，性能有要求的内外部系统 hessian2<br>对序列化后的数据要求有良好的可读性 jackson&#x2F;gson&#x2F;xml<br>对兼容性和性能要求较高的系统 protobuf 或 kryo ，它们的性能相差不多，但是 protobuf 有个缺点就是要传输的每一个类的结构都要生成对应的 proto 文件。</p>
+<h2 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h2><p>ProtocolFilterWrapper#export：如果当前 protocol 不是 registry，则调用 buildInvokerChain<br>-&gt; ProtocolFilterWrapper#buildInvokerChain<br>-&gt; ExtensionLoader#getActivateExtension(URL url, String key, String group)：获取系统自动激活的 Filter 和用户自定义的 Filter，最后合并返回</p>
+<h2 id="更多功能"><a href="#更多功能" class="headerlink" title="更多功能"></a>更多功能</h2><h3 id="限流"><a href="#限流" class="headerlink" title="限流"></a>限流</h3><p>限流最好配置在 Provider 端，因为 Consumer 可能有很多个服务器实例，如果他们同时发起对同一 Provider 实例的请求可能会超出机器的处理能力上限。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 限制接口OrderService里的每个方法，服务提供者端的执行线程不超过10个 --&gt;</span><br><span class="line">&lt;dubbo:service interface=&quot;com.bubbo.service.OrderService&quot; executes=&quot;10&quot; /&gt;</span><br><span class="line">&lt;!-- 限制接口OrderService里的queryOrderList方法，服务提供者端的执行线程不超过10个 --&gt;</span><br><span class="line">&lt;dubbo:service interface=&quot;com.bubbo.service.OrderService&quot;&gt;</span><br><span class="line">    &lt;dubbo:method name=&quot;queryOrderList&quot; executes=&quot;10&quot; /&gt;</span><br><span class="line">&lt;/dubbo:service&gt;</span><br><span class="line">&lt;!--限制使用dubbo协议时在服务提供者端启用的连接数不超过1000个--&gt;</span><br><span class="line">&lt;dubbo:provider protocol=&quot;dubbo&quot; accepts=&quot;1000&quot;/&gt;</span><br></pre></td></tr></table></figure>
+<p>上述配置限制的是线程数，即并发连接数，Consumer 和 Provider 默认通过一条共享的 TCP 长连接通信，连接成功的情况下请求线程交由 IO 线程池异步读写数据，数据被反序列化后交由业务线程池处理具体业务，也就是对应的 Impl 实现类的具体方法。</p>
+<h3 id="服务隔离"><a href="#服务隔离" class="headerlink" title="服务隔离"></a>服务隔离</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--当同一个接口有多个实现时，可以通过group来隔离  --&gt;</span><br><span class="line">&lt;!--服务提供者  --&gt;</span><br><span class="line">&lt;dubbo:service group=&quot;ImplA&quot; interface=&quot;com.bubbo.service.OrderService&quot;/&gt;</span><br><span class="line">&lt;dubbo:service group=&quot;ImplB&quot; interface=&quot;com.bubbo.service.OrderService&quot;/&gt;</span><br><span class="line">&lt;!--服务调用者  --&gt;</span><br><span class="line">&lt;dubbo:reference id=&quot;MethodA&quot; group=&quot;ImplA&quot; interface=&quot;com.bubbo.service.OrderService&quot;/&gt;</span><br><span class="line">&lt;dubbo:reference id=&quot;MethodB&quot; group=&quot;ImplB&quot; interface=&quot;com.bubbo.service.OrderService&quot;/&gt;</span><br><span class="line"></span><br><span class="line">&lt;!--当一个接口出现升级，新旧实现同时存在时，可以通过版本号来隔离，通常版本号隔离也用于联调阶段，不同版本号的服务无法调用，版本号相同的服务才能调用  --&gt;</span><br><span class="line">&lt;!--服务提供者  --&gt;</span><br><span class="line">&lt;dubbo:service interface=&quot;com.bubbo.service.OrderService&quot; version=&quot;new2.0.0&quot;/&gt;</span><br><span class="line">&lt;dubbo:service interface=&quot;com.bubbo.service.OrderService&quot; version=&quot;old1.0.0&quot;/&gt;</span><br><span class="line">&lt;!--服务调用者  --&gt;</span><br><span class="line">&lt;dubbo:reference id=&quot;NewMethodA&quot; interface=&quot;com.bubbo.service.OrderService&quot; version=&quot;new2.0.0&quot;/&gt;</span><br><span class="line">&lt;dubbo:reference id=&quot;OldMethodB&quot; interface=&quot;com.bubbo.service.OrderService&quot; version=&quot;old1.0.0&quot;/&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>通过版本号，也可以实现消费者和提供者服务端直接连接</strong>，因为发起调用默认使用随机调用端负载均衡模式，当有多台提供者的时候，会随机选取，通常联调阶段都会调用指定服务进行联调，直连一般用在调试，开发阶段，只需要消费者和提供者 version 相同即可。</p>
+<h3 id="灰度发布"><a href="#灰度发布" class="headerlink" title="灰度发布"></a>灰度发布</h3><p>有三台服务器 A、B、C 要上线，现在三台服务器都是旧版本代码，那首先从 Ngnix 负载均衡列表里移除 A 服务器的配置，切断对 A 的访问，然后在 A 服务器不受新的代码，重新把 A 配置进 Ngnix 负载均衡列表。如果在线使用没有问题，则继续升级 B、C 服务器，否则回滚，恢复旧版本代码，这是针对三端（PC 端，微信端，移动端）跟网关系统的。<br>如果是针对子系统，譬如用户系统、订单系统等，可以通过分组 group 来实现子系统的灰度发布。服务提供者有两组，One、Two，将新版本代码 group 改为 Two，旧版本 group 还是 One，将新版本的消费者 group 改为 Two，这时请求定位到新的消费者再调用新的提供者，而且旧的消费者还是请求旧的提供者，如果线上没有问题，那就把提供者 group 为 One 的组改为 Two，并部署新代码，旧的消费者也改成 Two 并部署新代码如果有问题，那消费端和提供端都回滚到旧版本。</p>
+<h3 id="异步调用"><a href="#异步调用" class="headerlink" title="异步调用"></a>异步调用</h3><p>Dubbo 默认情况下是同步调用的，就是调用后立刻返回，但如果消费端调用服务端创建文件并转化成 PDF 格式的文件这种在 IO 密集操作时，消费端同步调用需要等待对方转换结束才返回，很消耗性能，这时选择异步调用和回调调用更合适。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--</span><br><span class="line">async=&quot;true&quot; 异步调用，调用后不用等待，继续往下执行</span><br><span class="line">onreturn =&quot;CallBack.onreturn&quot; 返回后调用自定义的类CallBack类的onreturn方法</span><br><span class="line">onthrow=&quot;CallBack.onthrow&quot; 调用后，提供者抛出异常后，返回调用自定义的类CallBack类的onthrow方法</span><br><span class="line">--&gt;    </span><br><span class="line">&lt;!--服务调用者  --&gt;</span><br><span class="line">&lt;dubbo:reference id=&quot;tranfromPDF&quot; interface=&quot;com.bubbo.service.OrderService&quot; &gt;</span><br><span class="line">    &lt;dubbo:method name=&quot;tranPDF&quot; async=&quot;true&quot; </span><br><span class="line">    onreturn =&quot;CallBack.onreturn&quot; </span><br><span class="line">    onthrow=&quot;CallBack.onthrow&quot;/&gt;</span><br><span class="line"> &lt;/dubbo:reference&gt;</span><br></pre></td></tr></table></figure>
+
+<p>可以在 onthrow 事件里实现服务降级的方法，譬如遇到网络抖动，调用超时返回时可在 onthrow 里 return null。</p>
+<ul>
+<li>调用方  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void testQueryOrder() &#123;</span><br><span class="line">    // 此时调用会立即拿到null值</span><br><span class="line">    List&lt;Order&gt; list = this.orderService.queryOrderList();</span><br><span class="line">    // 拿到Future的引用，在提供方返回结果后，结果值会被设置进Future</span><br><span class="line">    Future&lt;String&gt; orderFuture = RpcContext.getContext().getFuture();</span><br><span class="line">    try &#123;</span><br><span class="line">        // 该方法是阻塞方法，在拿到值之前一直等待，直到拿到值才会被唤醒，该方法会抛出异常，可以捕获</span><br><span class="line">        String returnValue = orderFuture.get();</span><br><span class="line">    &#125; catch (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; catch (ExecutionException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>回调方  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">// 回调接口</span><br><span class="line">interface ICallBack &#123;</span><br><span class="line">    // 第一个参数是返回值，第二个参数是原参数</span><br><span class="line">    public void onreturn(String returnValue, String initParameter);</span><br><span class="line"></span><br><span class="line">    // 第一个参数是异常，第二个参数是原参数</span><br><span class="line">    public void onthrow(Throwable ex, String initParameter);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 实现类</span><br><span class="line">class CallBackImpl implements ICallBack &#123;</span><br><span class="line">    public void onreturn(String returnValue, String initParameter) &#123;</span><br><span class="line">        // do something</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    public void onthrow(Throwable ex, String initParameter) &#123;</span><br><span class="line">        // do something</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p><img src="/imgs/Dubbo/%E5%BC%82%E6%AD%A5%E8%B0%83%E7%94%A8.png" alt="异步调用" title="异步调用"><br>调用方有一个用户线程池用于处理调用请求（比如 Tomcat 里那个线程池），请求被转发到 IO 线程池，由 IO 线程来发起对提供方的调用，此时 IO 线程会新建一个 Future 对象进 RpcContext，用户线程可以继续继续自己的业务逻辑，然后在需要的时候调用 Future 的 get 方法阻塞等待，而服务端只需要将结果返回给 IO 线程，由 IO 线程调用 notify 方法唤醒阻塞等待中的用户线程。</p>
+<h3 id="服务降级"><a href="#服务降级" class="headerlink" title="服务降级"></a>服务降级</h3><p>服务降级用于在服务高峰期将次要服务降级，仅保留关键服务，从而降低系统负载、提升可用性。比如，订单列表正常情况下展示所有订单，但是如果是在网站开展秒杀之类的大促活动时，就可以降级展示当月的订单而不是所有，再其次，如果服务器宕机了，也最好展示兜底页而不是 504。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;dubbo:service interface=&quot;com.bubbo.service.OrderService&quot; mock=&quot;com.dubbo.service.MonthOderMock&quot;/&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="热点缓存"><a href="#热点缓存" class="headerlink" title="热点缓存"></a>热点缓存</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;!--服务调用者 --&gt;</span><br><span class="line">&lt;dubbo:reference id=&quot;queryCatalog&quot; interface=&quot;com.bubbo.service.CatalogService&quot;&gt;</span><br><span class="line">    &lt;dubbo:method name=&quot;queryCatalog&quot; cache=&quot;lru&quot; /&gt;</span><br><span class="line">&lt;/dubbo:reference&gt;</span><br><span class="line">&lt;dubbo:monitor protocol=&quot;registry&quot; /&gt;</span><br></pre></td></tr></table></figure>
+<p>如果查询的对象改变很少但又数据量很大的时候，如首页目录，可以避免每次都频繁调用服务端，可以设置本地缓存，加快热点数据的访问，Dubbo 的缓存类型 LRU 缓存，最近最少使用的数据会被清除，使用频繁的数据被保留，Thredlocal 缓存，当前线程的缓存，假如当前线程有多次请求，每次请求都需要相同的用户信息，那就适用，避免每次都去查询用户基本信息。</p>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><p>环境配置比较简单，就是 zk-&gt;provider-&gt;consumer，在此不再赘述。</p>
+<h3 id="失败重试"><a href="#失败重试" class="headerlink" title="失败重试"></a>失败重试</h3><p>Dubbo 中的失败重试机制比较丰富，基本考虑到常用的场景<br><a target="_blank" rel="noopener" href="http://dubbo.apache.org/zh-cn/docs/user/demos/fault-tolerent-strategy.html">http://dubbo.apache.org/zh-cn/docs/user/demos/fault-tolerent-strategy.html</a><br>FailoverClusterInvoker、FailfastClusterInvoker 等，以 FailoverClusterInvoker 为例：<br>FailoverClusterInvoker.doInvoke 重试几次，把失败的添加到 invoked 列表里<br>    -&gt; AbstractClusterInvoker.select 选一个可用的调用，如果是已经被选过或因为其他条件不可用则 reselect</p>
+<h3 id="负载均衡-1"><a href="#负载均衡-1" class="headerlink" title="负载均衡"></a>负载均衡</h3><p><a target="_blank" rel="noopener" href="http://dubbo.apache.org/zh-cn/docs/user/demos/loadbalance.html">http://dubbo.apache.org/zh-cn/docs/user/demos/loadbalance.html</a></p>
+<h3 id="幂等"><a href="#幂等" class="headerlink" title="幂等"></a>幂等</h3><p>Dubbo 没有提供幂等性检查功能，需要自定义。</p>
+<h3 id="限流-1"><a href="#限流-1" class="headerlink" title="限流"></a>限流</h3><p>Dubbo 中的限流比较简单，采用的是<strong>计数器算法</strong>，单位时间内超出阈值的流量会被直接丢弃，而且只支持 PORVIDER 端的限流，而且为了让它生效还要搞复杂的 SPI 配置。<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7112a8d3d869">https://www.jianshu.com/p/7112a8d3d869</a><br>入口：TpsLimitFilter.invoke<br>    -&gt; TPSLimiter.isAllowable 为每个 Service 创建一个计数器 StatItem（粒度是整个 Service 有没有太大了）</p>
+<h3 id="降级"><a href="#降级" class="headerlink" title="降级"></a>降级</h3><p>Dubbo 里的降级比较水，即调用出错就改成调用 Mock 接口，没有 Hystrix 中那么复杂的逻辑：<br><a target="_blank" rel="noopener" href="http://dubbo.apache.org/zh-cn/docs/user/demos/service-downgrade.html">http://dubbo.apache.org/zh-cn/docs/user/demos/service-downgrade.html</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/java-zhao/p/8320519.html">https://www.cnblogs.com/java-zhao/p/8320519.html</a><br>入口：ReferenceConfig.createProxy 创建代理<br>    -&gt; ProxyFactory.getProxy<br>    -&gt; InvokerInvocationHandler.invoke<br>    -&gt; MockClusterInvoker.invoke 如果配置中有 fail 开头，则在远程调用失败后调用 doMockInvoke，大概逻辑是实例化一个 XxxServiceMock 服务然后调用</p>
+<h3 id="优雅停机"><a href="#优雅停机" class="headerlink" title="优雅停机"></a>优雅停机</h3><p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/6e4d1ecb0815">https://www.jianshu.com/p/6e4d1ecb0815</a></p>
+<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><h3 id="说一下你们怎么用-Dubbo-的（考对-Dubbo-的应用能力）"><a href="#说一下你们怎么用-Dubbo-的（考对-Dubbo-的应用能力）" class="headerlink" title="说一下你们怎么用 Dubbo 的（考对 Dubbo 的应用能力）"></a>说一下你们怎么用 Dubbo 的（考对 Dubbo 的应用能力）</h3><h3 id="说一下-Dubbo-的工作原理"><a href="#说一下-Dubbo-的工作原理" class="headerlink" title="说一下 Dubbo 的工作原理"></a>说一下 Dubbo 的工作原理</h3><p><img src="/imgs/Dubbo/Dubbo%E6%9E%B6%E6%9E%84.png" alt="Dubbo架构" title="Dubbo架构"><br>描述 Registry、Consumer、Provider 之间的关系。</p>
+<h3 id="Dubbo-负载均衡策略和集群容错策略都有哪些"><a href="#Dubbo-负载均衡策略和集群容错策略都有哪些" class="headerlink" title="Dubbo 负载均衡策略和集群容错策略都有哪些"></a>Dubbo 负载均衡策略和集群容错策略都有哪些</h3><p>负载均衡策略和集群容错策略见上面的《集群》小节。</p>
+<h3 id="Dubbo-的动态代理策略"><a href="#Dubbo-的动态代理策略" class="headerlink" title="Dubbo 的动态代理策略"></a>Dubbo 的动态代理策略</h3><p>javassist，类似 CGLIB，通过继承目标类以生成代理类。</p>
+<h3 id="说一下服务注册（导出）过程"><a href="#说一下服务注册（导出）过程" class="headerlink" title="说一下服务注册（导出）过程"></a>说一下服务注册（导出）过程</h3><p>分本地暴露和远程暴露两种</p>
+<h3 id="说一下服务消费（引入）过程"><a href="#说一下服务消费（引入）过程" class="headerlink" title="说一下服务消费（引入）过程"></a>说一下服务消费（引入）过程</h3><h3 id="服务的运行过程中，如果-ZooKeeper-挂掉了，这时还能正常请求吗？"><a href="#服务的运行过程中，如果-ZooKeeper-挂掉了，这时还能正常请求吗？" class="headerlink" title="服务的运行过程中，如果 ZooKeeper 挂掉了，这时还能正常请求吗？"></a>服务的运行过程中，如果 ZooKeeper 挂掉了，这时还能正常请求吗？</h3><h3 id="说一下-Dubbo-协议"><a href="#说一下-Dubbo-协议" class="headerlink" title="说一下 Dubbo 协议"></a>说一下 Dubbo 协议</h3><h3 id="Dubbo-有几种容错机制"><a href="#Dubbo-有几种容错机制" class="headerlink" title="Dubbo 有几种容错机制"></a>Dubbo 有几种容错机制</h3><h3 id="dubbo-有几种服务降级机制"><a href="#dubbo-有几种服务降级机制" class="headerlink" title="dubbo 有几种服务降级机制"></a>dubbo 有几种服务降级机制</h3><h3 id="dubbo-有几种服务降级机制-1"><a href="#dubbo-有几种服务降级机制-1" class="headerlink" title="dubbo 有几种服务降级机制"></a>dubbo 有几种服务降级机制</h3><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/apache/incubator-dubbo">apache&#x2F;incubator-dubbo</a></li>
+<li><a target="_blank" rel="noopener" href="http://dubbo.apache.org/en-us/docs/user/preface/background.html">Dubbo 文档</a></li>
+<li><a target="_blank" rel="noopener" href="http://dubbo.apache.org/en-us/docs/user/demos/preflight-check.html">Dubbo 实例 Demos</a><br><a target="_blank" rel="noopener" href="http://dubbo.apache.org/zh-cn/docs/user/demos/preflight-check.html">中文版</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/j3t9z7h/article/details/81437570">设计 RPC 接口时，你有考虑过这些吗？</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/wolfcode_cn/article/details/81907241">解密 Dubbo:自己动手编写 RPC 框架</a></li>
+</ol>
+<h3 id="启动过程"><a href="#启动过程" class="headerlink" title="启动过程"></a>启动过程</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/j3T9Z7H/article/details/82836811">研究优雅停机时的一点思考</a><br><code>kill -9</code>与<code>kill -15</code>的区别，SpringBoot 的停机机制。</li>
+<li><a target="_blank" rel="noopener" href="http://www.solves.com.cn/it/cxkf/bk/2019-10-14/6046.html">一文聊透 Dubbo 优雅停机</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1543749">一文聊透 Dubbo 优雅上线</a></li>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000015276158">Spring-boot+Dubbo 应用启停源码分析</a></li>
+<li><a target="_blank" rel="noopener" href="http://dubbo.apache.org/zh-cn/docs/source_code_guide/export-service.html">服务导出</a></li>
+<li><a target="_blank" rel="noopener" href="http://dubbo.apache.org/zh-cn/docs/source_code_guide/refer-service.html">服务引入</a></li>
+</ol>
+<h3 id="SPI"><a href="#SPI" class="headerlink" title="SPI"></a>SPI</h3><ol>
+<li><a target="_blank" rel="noopener" href="http://dubbo.apache.org/zh-cn/docs/source_code_guide/dubbo-spi.html">Dubbo SPI</a></li>
+<li><a target="_blank" rel="noopener" href="http://dubbo.apache.org/zh-cn/docs/source_code_guide/adaptive-extension.html">自适应拓展机制</a></li>
+</ol>
+<h3 id="协议"><a href="#协议" class="headerlink" title="协议"></a>协议</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/X5fnncxzq4/article/details/80729942">【RPC 专栏】深入理解 RPC 之协议篇</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43970890/article/details/103348778">Dubbo 在跨语言和协议穿透性方向的探索：支持 HTTP&#x2F;2 gRPC</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u013815546/article/details/96364814">一文详细解读 Dubbo 中的 http 协议</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.itpub.net/31556476/viewspace-2375225/">聊聊 TCP 长连接和心跳那些事</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.itpub.net/31556476/viewspace-2305549/">Dubbo 中的 URL 统一模型</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnkirito.moe/network-interfaces/">研究网卡地址注册时的一点思考</a></li>
+<li><a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc5234">RFC 5234 - Augmented BNF for Syntax Specifications: ABNF</a></li>
+<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5cac08a26fb9a068996d5fb2">服务端经典的 C10k 问题(译)</a></li>
+</ol>
+<h3 id="心跳机制"><a href="#心跳机制" class="headerlink" title="心跳机制"></a>心跳机制</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_34175509/article/details/87997148">一种心跳，两种设计</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.itpub.net/31556476/viewspace-2375225/">聊聊 TCP 长连接和心跳那些事</a></li>
+</ol>
+<h3 id="序列化-1"><a href="#序列化-1" class="headerlink" title="序列化"></a>序列化</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/X5fnncxzq4/article/details/80333364">【RPC 专栏】深入理解 RPC 之序列化篇–总结篇</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/X5fnncxzq4/article/details/80276182">【RPC 专栏】深入理解 RPC 之序列化篇 —— Kryo</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/loveqishan/article/details/89531587">如何提高使用 Java 反射的效率？</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_26525215/article/details/82943040">Java 序列化框架性能比较</a></li>
+</ol>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
 
@@ -697,7 +1012,7 @@
 <li>非干系方的验收<br>比如让媒体报道，提升我们公司的影响力。</li>
 <li>形成闭环<br>review 计划，看是否达到了预期。</li>
 </ol>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
 
@@ -1101,190 +1416,7 @@
 <li>可以通过更新一个映射来添加一个新域，并为其设置映射（<a target="_blank" rel="noopener" href="https://discuss.elastic.co/t/elasticsearch-5-not-analyzed/68411">后来版本取消了 string 类型，改成了<strong>text</strong>，要注意</a>）</li>
 <li>不能将一个存在的域从 analyzed 改为 not_analyzed。因为如果一个域的映射已经存在，那么该域的数据可能已经被索引。如果你意图修改这个域的映射，索引的数据可能会出错，不能被正常的搜索。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">PUT /gb</span><br><span class="line">&#123;</span><br><span class="line">  &quot;mappings&quot;: &#123;</span><br><span class="line">    &quot;testmapping&quot; : &#123;</span><br><span class="line">      &quot;properties&quot; : &#123;</span><br><span class="line">        &quot;tweetgjghjggh&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;text&quot;,</span><br><span class="line">          &quot;analyzer&quot;: &quot;english&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;date&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;date&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;user_id&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;long&quot;</span><br><span class="line">        &#125;&#125;&#125;&#125;&#125;</span><br></pre></td></tr></table></figure></li>
 </ul>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/cca2faf5.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/cca2faf5.html" class="post-title-link" itemprop="url">ES1_4文档</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-08-21 09:03:54" itemprop="dateCreated datePublished" datetime="2019-08-21T09:03:54+08:00">2019-08-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="常用操作-对象（文档-Document）"><a href="#常用操作-对象（文档-Document）" class="headerlink" title="常用操作 - 对象（文档 Document）"></a>常用操作 - 对象（文档 Document）</h1><h2 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h2><ul>
-<li>ES是面向文档的，文档是所有可搜索数据的最小单位。</li>
-<li>文档会被序列化成JSON格式，保存在ES中；<br>JSON对象由字段组成，每个字段都有对应的字段类型。</li>
-<li>每个文档都有一个Unique ID。<br>这个Unique ID可以自己指定或由ES自动生成。</li>
-</ul>
-<h3 id="文档和字段-Document、Field"><a href="#文档和字段-Document、Field" class="headerlink" title="文档和字段 - Document、Field"></a>文档和字段 - Document、Field</h3><p>一个文档是一个可被索引的基础信息单元，文档以 JSON 格式来表示。<br>在一个 index&#x2F;type 里面，可以存储任意多的文档，每个文档都有唯一 id。<br>每个文档包含多个字段(fields)，即 json 数据里的字段。</p>
-<h3 id="文档元数据"><a href="#文档元数据" class="headerlink" title="文档元数据"></a>文档元数据</h3><p>一个文档不仅仅包含它的数据，也包含 元数据 —— 有关 文档的信息。 三个必须的元数据元素如下：</p>
-<ul>
-<li>_index<br>一个 索引 应该是因共同的特性被分组到一起的文档集合。<br>索引名字必须小写，不能以下划线开头，不能包含逗号。</li>
-<li>_type<br>Lucene 没有文档类型的概念，而是使用一个元数据字段_type 文档表示的对象类别，数据可能在索引中只是松散的组合在一起，但是通常明确定义一些数据中的子分区是很有用的，不同 types 的文档可能有不同的字段，但最好能够非常相似。<br>一个 _type 命名可以是大写或者小写，但是不能以下划线或者句号开头，不应该包含逗号， 并且长度限制为 256 个字符。<br>当我们要检索某个类型的文档时, Elasticsearch 通过在 _type 字段上使用过滤器限制只返回这个类型的文档。</li>
-<li>_id<br>文档唯一标识，和 _index 以及 _type 组合就可以唯一确定 Elasticsearch 中的一个文档。<br>id 也可以由 Elasticsearch 自动生成。</li>
-<li>_version<br>在 Elasticsearch 中每个文档都有一个版本号。当每次对文档进行修改时（包括删除）， _version 的值会递增。这个字段用来确保这些改变在跨多节点时以正确的顺序执行。<br>版本号——不管是内部的还是引用外部的——都必须是在(0, 9.2E+18)范围内的一个 long 类型的正数。</li>
-<li>_source<br>即索引数据时发送给 Elasticsearch 的原始 JSON 文档。</li>
-<li>_score<br>相关性打分</li>
-<li><del>_all</del><br>整合所有字段内容到该字段，已被废除。</li>
-</ul>
-<h3 id="文档属性"><a href="#文档属性" class="headerlink" title="文档属性"></a>文档属性</h3><p>文档里有几个最重要的设置：</p>
-<ul>
-<li>type<br>字段的数据类型，例如 string 或 date</li>
-<li>index<br>字段是否应当被当成全文来搜索（analyzed），或被当成一个准确的值（not_analyzed），还是完全不可被搜索（ no ）</li>
-<li>analyzer<br>确定在索引和搜索时全文字段使用的 analyzer</li>
-<li>_source<br>存储代表文档体的 JSON 字符串，和所有被存储的字段一样， _source 字段在被写入磁盘之前先会被压缩。这个字段有以下作用：<ol>
-<li>搜索结果包括了整个可用的文档——不需要额外的从另一个的数据仓库来取文档。</li>
-<li>如果没有 _source 字段，部分 update 请求不会生效。</li>
-<li>当你的映射改变时，你需要重新索引你的数据，有了_source 字段你可以直接从 Elasticsearch 这样做，而不必从另一个（通常是速度更慢的）数据仓库取回你的所有文档。</li>
-<li>当你不需要看到整个文档时，单个字段可以从 _source 字段提取和通过 get 或者 search 请求返回。  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GET /_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot;: &#123; &quot;match_all&quot;: &#123;&#125;&#125;,</span><br><span class="line">    &quot;_source&quot;: [ &quot;title&quot;, &quot;created&quot; ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>调试查询语句更加简单，因为你可以直接看到每个文档包括什么，而不是从一列 id 猜测它们的内容。<br>也可以调用下面的映射来禁用_source 字段：  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">PUT /my_index</span><br><span class="line">&#123;</span><br><span class="line">    &quot;mappings&quot;: &#123;</span><br><span class="line">        &quot;my_type&quot;: &#123;</span><br><span class="line">            &quot;_source&quot;: &#123;</span><br><span class="line">                &quot;enabled&quot;: false</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ol>
-</li>
-</ul>
-<h3 id="对象和文档"><a href="#对象和文档" class="headerlink" title="对象和文档"></a>对象和文档</h3><p>通常情况下，我们使用的术语 对象 和 文档 是可以互相替换的。不过，有一个区别：<br>一个对象仅仅是类似于 hash 、 hashmap 、字典或者关联数组的 JSON 对象，对象中也可以嵌套其他的对象。 对象可能包含了另外一些对象。<br>文档指最顶层或者根对象，这个根对象被序列化成 JSON 并存储到 Elasticsearch 中，指定了唯一 ID 及一些必须的文档元数据。</p>
-<h3 id="根对象"><a href="#根对象" class="headerlink" title="根对象"></a>根对象</h3><p>映射的最高一层被称为 根对象 ，它可能包含下面几项：</p>
-<ul>
-<li>一个 properties 节点，列出了文档中可能包含的每个字段的映射</li>
-<li>各种元数据字段，它们都以一个下划线开头，例如 _type 、 _id 和 _source</li>
-<li>设置项，控制如何动态处理新的字段，例如 analyzer 、 dynamic_date_formats 和 dynamic_templates</li>
-<li>其他设置，可以同时应用在根对象和其他 object 类型的字段上，例如 enabled 、 dynamic 和 include_in_all</li>
-</ul>
-<h2 id="操作类型"><a href="#操作类型" class="headerlink" title="操作类型"></a>操作类型</h2><p>文档的CRUD：</p>
-<ul>
-<li>Index<br>Index操作——如果ID不存在——则创建新的文档，否则删除现有的再创建新的，版本号会增加<br><code>PUT my_index/_doc/1</code></li>
-<li>Create<br>Create操作——如果ID已经存在——会失败<br><code>PUT my_index/_create/1</code><br>不指定ID，自动生成<br><code>POST my_index/_doc</code></li>
-<li>Read<br><code>GET my_index/_doc/1</code></li>
-<li>Update<br>文档必须已经存在，更新只会对相应字段做增量修改<br><code>POST my_index/_update/1</code></li>
-<li>Delete<br><code>my_index/_doc/1</code></li>
-</ul>
-<h2 id="常见返回"><a href="#常见返回" class="headerlink" title="常见返回"></a>常见返回</h2><table>
-<thead>
-<tr>
-<th>问题</th>
-<th>原因</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>无法连接</td>
-<td>网络故障或集群挂了</td>
-</tr>
-<tr>
-<td>连接无法关闭</td>
-<td>网络故障或节点出错</td>
-</tr>
-<tr>
-<td>429</td>
-<td>集群过于繁忙</td>
-</tr>
-<tr>
-<td>4xx</td>
-<td>请求体格式有问题</td>
-</tr>
-<tr>
-<td>500</td>
-<td>集群内部错误</td>
-</tr>
-</tbody></table>
-<h2 id="更新-PUT"><a href="#更新-PUT" class="headerlink" title="更新 - PUT"></a>更新 - PUT</h2><p>更新现有的对象需要自己指定对象的 id，如果不存在将自动创建一个，文档更新后_version 字段的值也会相应提高。在内部，Elasticsearch 已将旧文档标记为已删除，并增加一个全新的文档。 尽管你不能再对旧版本的文档进行访问，但它并不会立即消失。当继续索引更多的数据，Elasticsearch 会在后台清理这些已删除文档。<br>检索 和 重建索引 步骤的间隔越小，变更冲突的机会越小。 但是它并不能完全消除冲突的可能性。 还是有可能在 update 设法重新索引之前，来自另一进程的请求修改了文档。为了避免数据丢失， update API 在 检索 步骤时检索得到文档当前的 _version 号，并传递版本号到 重建索引 步骤的 index 请求。 如果另一个进程修改了处于检索和重新索引步骤之间的文档，那么 _version 号将不匹配，更新请求将会失败。为了实现版本号控制只需要在请求参数中加入 version（如上所示）。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PUT /website/blog/123</span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;: &quot;My first blog entry&quot;,</span><br><span class="line">  &quot;text&quot;: &quot;Just trying this out...&quot;,</span><br><span class="line">  &quot;date&quot;: &quot;2014/01/01&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果已经有自己的 _id 、而又想执行创建，那么我们必须告诉 Elasticsearch ，只有在相同的 _index 、 _type 和 _id 不存在时才接受我们的索引请求——而不是覆盖掉，有两种方式：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 指定ID的index操作，其实是个upsert操作</span><br><span class="line">PUT /website/blog/123?op_type=create</span><br><span class="line">&#123; ... &#125;</span><br><span class="line"># 创建一个文档</span><br><span class="line">PUT /website/blog/123/_create</span><br><span class="line">&#123; ... &#125;</span><br></pre></td></tr></table></figure>
-<p><strong>文档是不可变的</strong>：他们不能被修改，只能被替换。 update API 必须遵循同样的规则。 从外部来看，我们在一个文档的某个位置进行部分更新。然而在内部， update API 简单使用与之前描述相同的 <strong>检索-修改-重建索引</strong> 的处理过程。 区别在于这个过程发生在分片内部，这样就<strong>避免了多次请求的网络开销</strong>。通过减少检索和重建索引步骤之间的时间，我们也<strong>减少了其他进程的变更带来冲突的可能性</strong>。</p>
-<h2 id="创建-POST"><a href="#创建-POST" class="headerlink" title="创建 - POST"></a>创建 - POST</h2><p>不需要指定对象 id，由 Elasticsearch 自动生成，自动生成的 ID 是 URL-safe、 基于 Base64 编码且长度为 20 个字符的 GUID 字符串。 这些 GUID 字符串由可修改的 <strong>FlakeID</strong> 模式生成，这种模式允许多个节点并行生成唯一 ID ，且互相之间的冲突概率几乎为零。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">POST /website/blog/</span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;: &quot;My second blog entry&quot;,</span><br><span class="line">  &quot;text&quot;: &quot;Still trying this out...&quot;,</span><br><span class="line">  &quot;date&quot;: &quot;2014/01/01&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="部分更新-POST"><a href="#部分更新-POST" class="headerlink" title="部分更新 - POST"></a>部分更新 - POST</h2><p>update 请求最简单的一种形式是接收文档的一部分作为 doc 的参数， 它只是与现有的文档进行合并。对象被合并到一起，覆盖现有的字段，增加新的字段。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 文档必须已经存在</span><br><span class="line">POST /website/blog/1/_update</span><br><span class="line">&#123;</span><br><span class="line">   &quot;doc&quot; : &#123;</span><br><span class="line">      &quot;tags&quot; : [ &quot;testing&quot; ],</span><br><span class="line">      &quot;views&quot;: 0</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>使用脚本部分更新文档</strong>：脚本可以在 update API 中用来改变 _source 的字段内容， 它在更新脚本中称为 ctx._source ，运行在一个沙盒内，默认使用 Painless 语言作为脚本语言。下面这个脚本在页面不存在时执行新增并初始化 views&#x3D;1（第一次运行这个请求时， <strong>upsert</strong> 值作为新文档被索引，初始化 views 字段为 1 ；在后续的运行中，由于文档已经存在， script 更新操作将替代 upsert 进行应用，对 views 计数器进行累加）、页面被浏览 2 次后执行删除，其他情况浏览量+1 并添加一个新标签：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">POST /website/blog/zVmOW2EBsZ0GEqF92yf6/_update</span><br><span class="line">&#123;</span><br><span class="line">   &quot;script&quot; : &#123;</span><br><span class="line">      &quot;source&quot; : &quot;if(ctx._source.views == params.count) &#123; ctx.op = &#x27;delete&#x27;&#125; ctx._source.views+=1; ctx._source.tags.add(params.new_tag)&quot;,</span><br><span class="line">      &quot;params&quot; : &#123;</span><br><span class="line">        &quot;new_tag&quot; : &quot;search&quot;,</span><br><span class="line">        &quot;count&quot;: 2</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;upsert&quot;: &#123;</span><br><span class="line">        &quot;views&quot;: 1</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>重试</strong>：<br>正如之前所说，update 操作是<strong>检索-修改-重新索引</strong>的过程， 检索 和 重建索引 步骤的间隔越小，变更冲突的机会越小。 但是它并不能完全消除冲突的可能性。 还是有可能在 update 设法重新索引之前，来自另一进程的请求修改了文档。为了避免数据丢失， update API 在 检索 步骤时检索得到文档当前的 _version 号，并传递版本号到 重建索引 步骤的 index 请求。 如果另一个进程修改了处于检索和重新索引步骤之间的文档，那么 _version 号将不匹配，更新请求将会失败。<br>对于部分更新的很多使用场景，文档已经被改变也没有关系。 例如，如果两个进程都对页面访问量计数器进行递增操作，它们发生的先后顺序其实不太重要； 如果冲突发生了，我们唯一需要做的就是尝试再次更新。这可以通过 设置参数 retry_on_conflict 来自动完成， 这个参数规定了失败之前 update 应该重试的次数，它的默认值为 0 </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">POST /website/blog/zVmOW2EBsZ0GEqF92yf6/_update?retry_on_conflict=5 </span><br><span class="line">&#123;</span><br><span class="line">   &quot;script&quot; : &quot;ctx._source.views+=1&quot;,</span><br><span class="line">   &quot;upsert&quot;: &#123;</span><br><span class="line">       &quot;views&quot;: 0</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="GET（搜索）"><a href="#GET（搜索）" class="headerlink" title="GET（搜索）"></a>GET（搜索）</h2><p>在请求的查询串参数中加上 pretty 参数，这将会调用 Elasticsearch 的 pretty-print 功能，该功能 使得 JSON 响应体更加可读，但其中的 _source 字段并不是被当成字符串打印出来，而是格式化成了 JSON 串：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GET /website/blog/123?pretty</span><br><span class="line">GET /website/blog/123/_source</span><br><span class="line">GET /website/blog/123?_source=title,text</span><br></pre></td></tr></table></figure>
-<p>将多个请求合并成一个，避免单独处理每个请求花费的网络延时和开销。 如果你需要从 Elasticsearch 检索很多文档，那么使用 multi-get 或者 mget API 来将这些检索请求放在一个请求中，将比逐个文档请求更快地检索到全部文档。<br>mget API 要求有一个 docs 数组作为参数，每个 元素包含需要检索文档的元数据， 包括 _index 、 _type 和 _id 。如果你想检索一个或者多个特定的字段，那么你可以通过 _source 参数来指定这些字段的名字：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">GET /_mget</span><br><span class="line">&#123;</span><br><span class="line">   &quot;docs&quot; : [</span><br><span class="line">      &#123;</span><br><span class="line">         &quot;_index&quot; : &quot;website&quot;,</span><br><span class="line">         &quot;_type&quot; : &quot;blog&quot;,</span><br><span class="line">         &quot;_id&quot; : &quot;zVmOW2EBsZ0GEqF92yf6&quot;</span><br><span class="line">      &#125;,</span><br><span class="line">      &#123;</span><br><span class="line">         &quot;_index&quot; : &quot;website&quot;,</span><br><span class="line">         &quot;_type&quot; : &quot;blog&quot;,</span><br><span class="line">         &quot;_id&quot; : 1,</span><br><span class="line">         &quot;_source&quot;: &quot;views&quot;</span><br><span class="line">      &#125;</span><br><span class="line">   ]</span><br><span class="line">&#125;</span><br><span class="line">GET /website/blog/_mget</span><br><span class="line">&#123;</span><br><span class="line">   &quot;ids&quot; : [ &quot;2&quot;, &quot;1&quot; ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="HEAD（ping）"><a href="#HEAD（ping）" class="headerlink" title="HEAD（ping）"></a>HEAD（ping）</h2><p>如果只想检查一个文档是否存在——根本不想关心内容——那么用 HEAD 方法来代替 GET 方法。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">HEAD /website/blog/124</span><br></pre></td></tr></table></figure>
-<h2 id="DELETE（删除）"><a href="#DELETE（删除）" class="headerlink" title="DELETE（删除）"></a>DELETE（删除）</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DELETE /website/blog/123</span><br></pre></td></tr></table></figure>
-<h2 id="bulk（批量操作）"><a href="#bulk（批量操作）" class="headerlink" title="bulk（批量操作）"></a>bulk（批量操作）</h2><p>每一行——包括最后一行——都必须以换行符结尾，格式如下所示：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123; action: &#123; metadata &#125;&#125;\n</span><br><span class="line">&#123; request body &#125;\n</span><br><span class="line">&#123; action: &#123; metadata &#125;&#125;\n</span><br><span class="line">&#123; request body &#125;\n</span><br></pre></td></tr></table></figure>
-<p>action&#x2F;metadata 行指定 哪一个文档 做 什么操作 。action 必须是以下选项之一:<br>create：如果文档不存在，那么就创建它。类似<code>POST</code>或<code>PUT /_create</code>。<br>index：创建一个新文档或者替换一个现有的文档。类似<code>POST</code>或<code>PUT</code>。<br>update：部分更新一个文档。类似<code>POST /_update</code>。<br>delete：删除一个文档。类似<code>DELETE</code>。<br>metadata 应该 指定被索引、创建、更新或者删除的文档的 _index 、 _type 和 _id ，每个请求的 metadata 都会覆盖请求 URL 中带上的默认元数据。<br>request body 行由文档的 _source 本身组成–文档包含的字段和值。它是 index、create、update 操作所必需的。<br>为什么不直接用一个 JSON 数组来保存？主要是考虑效率问题，解析为数组需要有更多的 RAM 空间，且 JVM 要花时间进行 gc。而直接使用原始数据只需要多注意每条数据之间的间隔（换行符）。<br>每个子请求都是<strong>独立执行</strong>，因此某个子请求的失败不会对其他子请求的成功与否造成影响。 如果其中任何子请求失败，最顶层的 error 标志被设置为 true ，并且在相应的请求报告出错误明细。这也意味着 <strong>bulk 请求不是原子的</strong>： 不能用它来实现事务控制。每个请求是单独处理的，因此一个请求的成功或失败不会影响其他的请求。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">POST /_bulk</span><br><span class="line">&#123; &quot;delete&quot;: &#123; &quot;_index&quot;: &quot;website&quot;, &quot;_type&quot;: &quot;blog&quot;, &quot;_id&quot;: &quot;123&quot; &#125;&#125; </span><br><span class="line">&#123; &quot;create&quot;: &#123; &quot;_index&quot;: &quot;website&quot;, &quot;_type&quot;: &quot;blog&quot;, &quot;_id&quot;: &quot;123&quot; &#125;&#125;</span><br><span class="line">&#123; &quot;title&quot;: &quot;My first blog post&quot; &#125;</span><br><span class="line">&#123; &quot;index&quot;: &#123; &quot;_index&quot;: &quot;website&quot;, &quot;_type&quot;: &quot;blog&quot; &#125;&#125;</span><br><span class="line">&#123; &quot;title&quot;: &quot;My second blog post&quot; &#125;</span><br><span class="line">&#123; &quot;update&quot;: &#123; &quot;_index&quot;: &quot;webiite&quot;, &quot;_type&quot;: &quot;blog&quot;, &quot;_id&quot;: &quot;123&quot;, &quot;_retry_on_conflict&quot; : 3&#125; &#125;</span><br><span class="line">&#123; &quot;doc&quot; : &#123;&quot;title&quot; : &quot;My updated blog post&quot;&#125; &#125; </span><br></pre></td></tr></table></figure>
-<p>批量请求的大小有一个最佳值，大于这个值，性能将不再提升，甚至会下降。 但是<strong>最佳值不是一个固定的值，它完全取决于硬件、文档的大小和复杂度、索引和搜索的负载的整体情况</strong>。<br>幸运的是，很容易找到这个 最佳点 ：通过批量索引典型文档，并不断增加批量大小进行尝试。 当性能开始下降，那么你的批量大小就太大了。一个好的办法是开始时将 1,000 到 5,000 个文档作为一个批次, 如果你的文档非常大，那么就减少批量的文档个数。并且请求的文档也最好不要太大，一个好的批量大小在开始处理后所占用的物理大小约为 5-15 MB。</p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
 

@@ -95,7 +95,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">187</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -159,7 +159,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-count">187</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -275,7 +275,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jmap -dump:format=b,file=&lt;文件名&gt; [pid]</span><br><span class="line">gzip &lt;文件名&gt;</span><br></pre></td></tr></table></figure>
 <p>下载到本地，因为线上服务器没有开启下载端口，因此下载文件必须要中转一下，先上传到一台暴露到公网的服务器，再从该服务器上下载，如果没有这样的服务器也可以用github代替。<br>在本地使用eclipse MAT分析。</p>
 <h1 id="问题排查记录"><a href="#问题排查记录" class="headerlink" title="问题排查记录"></a>问题排查记录</h1><p>手动导出内存dump文件：<br><img src="/imgs/JVM/robin%E7%9A%84%E5%86%85%E5%AD%98dump%E6%96%87%E4%BB%B6.png" alt="robin的内存dump文件" title="robin的内存dump文件"><br>仔细观察其中对象占用的内存空间，发现一个大对象占用了接近1&#x2F;3的内存空间，发现是<code>com.alibaba.druid.stat.JdbcDataSourceStat</code>中有个LinkedHashMap类型的成员变量占用了大量空间没有释放，在源码中对应一个sqlStatMap。<br><img src="/imgs/JVM/%E5%8D%A0%E7%94%A8%E5%A4%A7%E9%87%8F%E5%86%85%E5%AD%98%E7%A9%BA%E9%97%B4%E7%9A%84%E5%A4%A7%E5%AF%B9%E8%B1%A1.png" alt="占用大量内存空间的大对象" title="占用大量内存空间的大对象"><br><img src="/imgs/JVM/Druid%E4%B8%AD%E7%9A%84sqlStatMap.png" alt="Druid中的sqlStatMap" title="Druid中的sqlStatMap"><br>从源码可知，打开开关之后，每次执行SQL前后都会把SQL记到这个sqlStatMap里，<strong>在JVM实例运行期间会一直存在（基本都在老年代）</strong>，这个开关主要用于监控SQL执行情况，<strong>对SQL语句的执行本身没有影响，且我们这边统计SQL（包括慢查询等）都是基于MySQL本身的功能、并没有用到这个配置。</strong><br>可以把这个开关关掉，因为我们根本没有使用Druid内置的SQL监控功能，<strong>关闭后预计可以释放25%左右的堆空间。</strong><br>另外附：<br>1、配置_StatFilter：<a target="_blank" rel="noopener" href="https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE_StatFilter">https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE_StatFilter</a><br>2、每个sql语句都会长期持有引用，加快FullGC频率 #1664：<a target="_blank" rel="noopener" href="https://github.com/alibaba/druid/issues/1664">https://github.com/alibaba/druid/issues/1664</a></p>
-<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
     </div>
 
     
