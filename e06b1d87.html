@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="介绍纯粹为了熟悉系统设计而搭建的项目。  场景没什么可说的就是减库存下单，流程很简单； 秒杀会在短时间内产生大量流量，会有很多用户“疯狂”下单，但是又只有少部分用户能够真正秒杀成功； 主要关注如何设计系统的高可用和高性能特性。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计秒杀系统">
+<meta property="og:url" content="https://tallate.github.io/e06b1d87.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="介绍纯粹为了熟悉系统设计而搭建的项目。  场景没什么可说的就是减库存下单，流程很简单； 秒杀会在短时间内产生大量流量，会有很多用户“疯狂”下单，但是又只有少部分用户能够真正秒杀成功； 主要关注如何设计系统的高可用和高性能特性。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F/%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84.png">
+<meta property="article:published_time" content="2020-12-31T15:12:18.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.909Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="秒杀">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F/%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/e06b1d87.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/e06b1d87.html","path":"/e06b1d87.html","title":"设计秒杀系统"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>设计秒杀系统 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">系统分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF"><span class="nav-number">2.1.</span> <span class="nav-text">场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1"><span class="nav-number">2.2.</span> <span class="nav-text">服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8"><span class="nav-number">2.3.</span> <span class="nav-text">存储</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%93%E5%AD%98%E6%89%A3%E5%87%8F%E6%97%B6%E6%9C%BA"><span class="nav-number">2.3.1.</span> <span class="nav-text">库存扣减时机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%90%E8%B4%AD"><span class="nav-number">2.3.2.</span> <span class="nav-text">限购</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E8%B6%85%E5%8D%96%E9%97%AE%E9%A2%98"><span class="nav-number">2.3.3.</span> <span class="nav-text">解决超卖问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%93%E5%AD%98%E9%A2%84%E7%83%AD"><span class="nav-number">2.3.4.</span> <span class="nav-text">库存预热</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8A%E5%B3%B0%E9%99%90%E6%B5%81"><span class="nav-number">2.3.5.</span> <span class="nav-text">削峰限流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E4%BC%98%E5%8C%96"><span class="nav-number">2.3.6.</span> <span class="nav-text">其他优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95"><span class="nav-number">2.4.</span> <span class="nav-text">扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E6%9E%9CRedis%E4%B8%8D%E8%B6%B3%E4%BB%A5%E5%BA%94%E5%AF%B9%E6%B5%81%E9%87%8F"><span class="nav-number">2.4.1.</span> <span class="nav-text">如果Redis不足以应对流量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%92%E6%9D%80%E6%9C%8D%E5%8A%A1%E5%99%A8%E6%8C%82%E6%8E%89"><span class="nav-number">2.4.2.</span> <span class="nav-text">秒杀服务器挂掉</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E9%87%8F%E8%BF%87%E6%BB%A4"><span class="nav-number">2.4.3.</span> <span class="nav-text">流量过滤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A7%92%E6%9D%80%E5%89%8D%E9%98%B2%E5%88%B7"><span class="nav-number">2.4.4.</span> <span class="nav-text">秒杀前防刷</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%B2%E5%88%B7%EF%BC%88%E8%84%9A%E6%9C%AC%E3%80%81%E7%88%AC%E8%99%AB%EF%BC%89"><span class="nav-number">2.4.5.</span> <span class="nav-text">防刷（脚本、爬虫）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F%E7%9A%84%E5%8F%98%E7%A7%8D"><span class="nav-number">3.</span> <span class="nav-text">秒杀系统的变种</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%A2%E7%A5%A8%EF%BC%88%E7%81%AB%E8%BD%A6%E7%A5%A8%E3%80%81%E6%9C%BA%E7%A5%A8%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">抢票（火车票、机票）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%A2%E7%BA%A2%E5%8C%85"><span class="nav-number">3.2.</span> <span class="nav-text">抢红包</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e06b1d87.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="设计秒杀系统 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          设计秒杀系统
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-31 23:12:18" itemprop="dateCreated datePublished" datetime="2020-12-31T23:12:18+08:00">2020-12-31</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p>纯粹为了熟悉系统设计而搭建的项目。</p>
+<ul>
+<li>场景没什么可说的就是减库存下单，流程很简单；</li>
+<li>秒杀会在短时间内产生大量流量，会有很多用户“疯狂”下单，但是又只有少部分用户能够真正秒杀成功；</li>
+<li>主要关注如何设计系统的高可用和高性能特性。</li>
+</ul>
+<span id="more"></span>
+
+
+<h1 id="系统分析"><a href="#系统分析" class="headerlink" title="系统分析"></a>系统分析</h1><p>按照场景、服务、存储、升级四个层次来分析秒杀系统的设计。</p>
+<h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><ol>
+<li>瞬时大流量高并发<br>从QPS来讲，每秒1000人访问，秒杀时每秒数十万人访问，QPS增加100倍以上。</li>
+<li>有限库存，不能超卖</li>
+<li>防止黄牛的恶意请求<br>一般黄牛请求都是有规律的，能够制定一些规则来屏蔽黄牛的非法请求。</li>
+</ol>
+<h2 id="服务"><a href="#服务" class="headerlink" title="服务"></a>服务</h2><p><img src="/imgs/%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F/%E7%A7%92%E6%9D%80%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84.png" alt="秒杀系统架构" title="秒杀系统架构"></p>
+<ul>
+<li>秒杀服务</li>
+<li>商品信息和库存服务</li>
+<li>订单服务</li>
+<li>支付服务</li>
+</ul>
+<h2 id="存储"><a href="#存储" class="headerlink" title="存储"></a>存储</h2><p>商品信息表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">create table product (</span><br><span class="line">    id unsigned bigint(20) primary key,</span><br><span class="line">    name varchar(20) not null default &#x27;&#x27; commnet &#x27;商品名称&#x27;,</span><br><span class="line">    desc varchar(20) not null default &#x27;&#x27; comment &#x27;商品描述&#x27;,</span><br><span class="line">    price decimal(5, 2) not null default 0 comment &#x27;商品价格&#x27;,</span><br><span class="line">    </span><br><span class="line">) default engine = InnoDB;</span><br></pre></td></tr></table></figure>
+<p>秒杀活动表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">create table seckill (</span><br><span class="line">    id unsigned bigint(20) primary key,</span><br><span class="line">    name varchar(20) not null default &#x27;&#x27; commnet &#x27;活动名称&#x27;,</span><br><span class="line">    product_id unsigned bigint(20) not null default 0 comment &#x27;商品id&#x27;,</span><br><span class="line">    price decimal(5, 2) not null default 0 comment &#x27;秒杀价格&#x27;,</span><br><span class="line">    number int not null default 0 comment &#x27;秒杀数量&#x27;,</span><br><span class="line">    </span><br><span class="line">) default engine = InnoDB;</span><br></pre></td></tr></table></figure>
+<p>库存信息表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">create table stock (</span><br><span class="line">    id unsigned bigint(20) primary key,</span><br><span class="line">    product_id unsigned bigint(20) not null default 0 comment &#x27;商品id&#x27;,</span><br><span class="line">    seckill_id unsigned bigint(20) not null default 0 comment &#x27;秒杀活动id&#x27;,</span><br><span class="line">    number int not null default 0 comment &#x27;库存数量&#x27;,</span><br><span class="line">    lock int not null default 0 comment &#x27;锁定&#x27;,</span><br><span class="line">    </span><br><span class="line">) default engine = InnoDB;</span><br></pre></td></tr></table></figure>
+<p>订单信息表</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">create table order (</span><br><span class="line">    id unsigned bigint(20) primary key,</span><br><span class="line">    product_id unsigned bigint(20) not null default 0 comment &#x27;商品id&#x27;,</span><br><span class="line">    seckill_id unsigned bigint(20) not null default 0 comment &#x27;秒杀活动id&#x27;,</span><br><span class="line">    user_id unsigned bigint(20) null default 0 comment &#x27;用户id&#x27;,</span><br><span class="line">    paid int(1) not null default &#x27;&#x27; comment &#x27;是否已付款&#x27;,</span><br><span class="line">    </span><br><span class="line">) default engine = InnoDB;</span><br></pre></td></tr></table></figure>
+
+<p>为了分析如何加索引，先来看下需要实现的有哪些功能。<br>商家侧</p>
+<ul>
+<li>商家查询商品信息</li>
+<li>商家创建秒杀活动</li>
+<li>商家创建库存</li>
+</ul>
+<p>用户侧</p>
+<ul>
+<li>用户查询秒杀活动、商品、库存</li>
+<li>用户下单</li>
+<li>用户更新库存<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-- 查询库存余量</span><br><span class="line">select number from stock</span><br><span class="line">where product_id = 123 and seckill_id = 456;</span><br><span class="line">-- 扣减库存</span><br><span class="line">update stock set stock = stock - 1</span><br><span class="line">where product_id = 123 and seckill_id = 456;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="库存扣减时机"><a href="#库存扣减时机" class="headerlink" title="库存扣减时机"></a>库存扣减时机</h3><ul>
+<li>下单时立即扣减库存<br>优点：用户体验最好，利用数据库锁机制一定能够精准扣减库存，用户一定能支付成功；<br>缺点：可能被恶意下单，下单后不付款，别人也买不了了。</li>
+<li>先下单，不减库存，实际支付后扣减库存<br>优点：可以避免恶意下单；<br>缺点：对用户体验差，可能下单成功但是无法付款</li>
+<li>下单后锁定库存，支付成功后再扣减库存</li>
+</ul>
+<h3 id="限购"><a href="#限购" class="headerlink" title="限购"></a>限购</h3><p>限制一个用户只能秒杀一次。<br>扣减库存后将用户ID存入Redis集合中，之后用户下单时需要校验用户ID是否存在于Redis集合中。<br>如果用户支付失败，需要再删除集合内的用户ID。</p>
+<h3 id="解决超卖问题"><a href="#解决超卖问题" class="headerlink" title="解决超卖问题"></a>解决超卖问题</h3><p>库存最终是通过数据库存储的。</p>
+<ul>
+<li>加行锁<br>开启事务，并在查询库存时加行锁。<br>缺点：加行锁性能慢<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">start transaction;</span><br><span class="line">-- 查询库存余量</span><br><span class="line">select number from stock</span><br><span class="line">where product_id = 123 and seckill_id = 456</span><br><span class="line">for update;</span><br><span class="line">-- 扣减库存</span><br><span class="line">...没有变化</span><br></pre></td></tr></table></figure></li>
+<li>使用update语句自带的行锁<br>只有库存大于0的时候才会进行更新操作，因为update语句本身是带行锁的、当前读的。<br>缺点：还是对MySQL依赖比较大，如果MySQL崩溃服务就不可用了。<br>解决办法：在秒杀活动中，大部分请求都是失败的，可以利用Redis来过滤这些请求。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">-- 查询库存余量</span><br><span class="line">...没有变化</span><br><span class="line">-- 扣减库存</span><br><span class="line">update stock set stock = stock - 1</span><br><span class="line">where product_id = 123 and seckill_id = 456</span><br><span class="line">and number &gt; 0;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="库存预热"><a href="#库存预热" class="headerlink" title="库存预热"></a>库存预热</h3><p>初步设计中，使用数据库保存库存，面临的主要问题是MySQL无法应对秒杀的瞬时大量请求。<br>秒杀之前将商品信息缓存起来，减少数据库本身的流量，在下单前校验库存，只有检查成功的请求才能进入到下游。</p>
+<p>数据库中的库存是通过行锁来保证并发更新安全的，但是数据库中的库存数据怎么和缓存保持一致呢？<br>MySQL扣减库存成功或失败都会影响Redis中前置库存（用于锁定）的值，所以在扣减操作后需要更新Redis中库存的值。</p>
+<h3 id="削峰限流"><a href="#削峰限流" class="headerlink" title="削峰限流"></a>削峰限流</h3><p>MQ堆积订单，下游Consumer根据自己的消费能力来处理下单请求。</p>
+<h3 id="其他优化"><a href="#其他优化" class="headerlink" title="其他优化"></a>其他优化</h3><ol>
+<li>数据库层面<br>分库分表</li>
+<li>缓存层面</li>
+<li>可拓展<br>服务的可扩展，可以水平添加机器将用户请求分担到不同的机器上去。数据库可扩展，支持分库分表，对于用户的请求，映射到不同的数据库，减少单台数据库的压力。</li>
+</ol>
+<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><h3 id="如果Redis不足以应对流量"><a href="#如果Redis不足以应对流量" class="headerlink" title="如果Redis不足以应对流量"></a>如果Redis不足以应对流量</h3><p>上面的设计中，库存锁定依赖Redis，虽然Redis性能高过MySQL，但是能力仍然有限，那么如果流量超过了Redis的承载能力怎么办？</p>
+<ol>
+<li>Redis库存扣减完毕后，后面请求可以直接拒绝</li>
+<li><strong>限流</strong></li>
+</ol>
+<h3 id="秒杀服务器挂掉"><a href="#秒杀服务器挂掉" class="headerlink" title="秒杀服务器挂掉"></a>秒杀服务器挂掉</h3><p>尽量不要影响其他服务，加入<strong>熔断</strong>机制。</p>
+<h3 id="流量过滤"><a href="#流量过滤" class="headerlink" title="流量过滤"></a>流量过滤</h3><p>库存预热用Redis来过滤流量，大大减轻了MySQL压力（MySQL最多支持1KQPS，Redis可支持10WQPS），其他流量过滤措施如：</p>
+<ol>
+<li>页面资源静态化，可使用CDN提速</li>
+<li>禁止重复提交（前端限流）：秒杀开始之后，可以对用户点击后响应前按钮置灰。</li>
+</ol>
+<h3 id="秒杀前防刷"><a href="#秒杀前防刷" class="headerlink" title="秒杀前防刷"></a>秒杀前防刷</h3><p>防止商品详情页被刷爆：</p>
+<ol>
+<li>未开始抢购时，禁用抢购按钮<br>比如轮询服务器时间，获取距离活动开始时间的时间差，轮询主要是为了不断纠正客户端时间，和服务端的时间保持一致；</li>
+</ol>
+<h3 id="防刷（脚本、爬虫）"><a href="#防刷（脚本、爬虫）" class="headerlink" title="防刷（脚本、爬虫）"></a>防刷（脚本、爬虫）</h3><ol>
+<li>刷单问题<br>有的用户会频繁调接口来达到刷单的目的，一方面刷接口对系统压力比较大，另一方面同一用户可能会占用大量的库存资源<br>解决办法是限制一个用户调用的频率，比如一个用户一分钟只能调10次，超过这个时间就提示用户访问过于频繁、或弹出验证码让用户输入。<br>防刷功能可以通过在Redis中计数来实现，记<code>&lt;userId, count&gt;</code>，使用lua脚本实现原子操作。</li>
+<li>多账号刷单问题<br>有的用户为了避免被上述规则拦住，就会注册多个账号来刷单。<br>解决办法是拦IP，但是如果多个用户有相同的出口IP，就会导致误拦的情况，解决办法是加白名单，比如阿里云盾就是采用的这种方式：<a target="_blank" rel="noopener" href="https://help.aliyun.com/knowledge_detail/37914.html?spm=5176.11065259.1996646101.searchclickresult.41b2b34fFlde4t">通过设置白名单解决因误判IP被拦截问题</a>。</li>
+</ol>
+<p>以上的两种维度（用户userId、IP）都可以通过黑名单来实现。</p>
+<h1 id="秒杀系统的变种"><a href="#秒杀系统的变种" class="headerlink" title="秒杀系统的变种"></a>秒杀系统的变种</h1><h2 id="抢票（火车票、机票）"><a href="#抢票（火车票、机票）" class="headerlink" title="抢票（火车票、机票）"></a>抢票（火车票、机票）</h2><p>和秒杀系统的区别是：根据区段锁定库存。</p>
+<h2 id="抢红包"><a href="#抢红包" class="headerlink" title="抢红包"></a>抢红包</h2><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/df4fbecb1a4b">秒杀系统架构分析与实战</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%A7%92%E6%9D%80/" rel="tag"># 秒杀</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/1ecb20d1.html" rel="prev" title="建立网页索引">
+                  <i class="fa fa-angle-left"></i> 建立网页索引
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/14bfa738.html" rel="next" title="热点数据发现">
+                  热点数据发现 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

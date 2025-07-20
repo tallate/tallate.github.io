@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="类文件结构类文件结构比较繁琐，我暂时没有整理的兴趣，看一下《深入理解 Java 虚拟机上》上的介绍就可以了。 类加载器Java 类结构是在运行时而不是在编译时确定的，而是由类加载器在运行期间加载的，因此称类的加载过程是动态加载，当调用某个类型对象的方法时，具体调用哪个方法是在运行期间决定的，因此称之为动态连接。类加载器（ClassLoader）不是 Java 虚拟机的组成部分，它由外部调用，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM 与类加载">
+<meta property="og:url" content="https://tallate.github.io/dcdf6e0b.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="类文件结构类文件结构比较繁琐，我暂时没有整理的兴趣，看一下《深入理解 Java 虚拟机上》上的介绍就可以了。 类加载器Java 类结构是在运行时而不是在编译时确定的，而是由类加载器在运行期间加载的，因此称类的加载过程是动态加载，当调用某个类型对象的方法时，具体调用哪个方法是在运行期间决定的，因此称之为动态连接。类加载器（ClassLoader）不是 Java 虚拟机的组成部分，它由外部调用，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/JVM/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/JVM/%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/JVM/%E5%88%9D%E5%A7%8B%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E5%92%8C%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8.png">
+<meta property="article:published_time" content="2019-09-29T11:12:49.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.864Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="JVM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/JVM/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/dcdf6e0b.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/dcdf6e0b.html","path":"/dcdf6e0b.html","title":"JVM 与类加载"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>JVM 与类加载 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">类文件结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="nav-number">2.</span> <span class="nav-text">类加载器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E4%B8%80%E4%B8%AA%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="nav-number">2.1.</span> <span class="nav-text">写一个自定义的类加载器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E4%BB%8E%E5%93%AA%E9%87%8C%E6%9D%A5"><span class="nav-number">2.2.</span> <span class="nav-text">类从哪里来</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E7%9A%84%E7%A7%8D%E7%B1%BB"><span class="nav-number">2.3.</span> <span class="nav-text">类加载器的种类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.4.</span> <span class="nav-text">双亲委派模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E6%97%B6%E6%9C%BA"><span class="nav-number">2.5.</span> <span class="nav-text">类的加载时机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="nav-number">2.6.</span> <span class="nav-text">类的加载过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD"><span class="nav-number">2.6.1.</span> <span class="nav-text">加载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81"><span class="nav-number">2.6.2.</span> <span class="nav-text">验证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%86%E5%A4%87"><span class="nav-number">2.6.3.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E6%9E%90"><span class="nav-number">2.6.4.</span> <span class="nav-text">解析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="nav-number">2.6.5.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-number">2.6.6.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%B8%E8%BD%BD"><span class="nav-number">2.6.7.</span> <span class="nav-text">卸载</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B"><span class="nav-number">2.7.</span> <span class="nav-text">接口的加载过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E5%92%8C%E5%88%9D%E5%A7%8B%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="nav-number">2.8.</span> <span class="nav-text">定义类加载器和初始类加载器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QA"><span class="nav-number">3.</span> <span class="nav-text">QA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84-1"><span class="nav-number">4.1.</span> <span class="nav-text">类文件结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E5%88%86%E9%85%8D"><span class="nav-number">4.2.</span> <span class="nav-text">对象分配</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/dcdf6e0b.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="JVM 与类加载 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JVM 与类加载
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-29 19:12:49" itemprop="dateCreated datePublished" datetime="2019-09-29T19:12:49+08:00">2019-09-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+
+<h2 id="类文件结构"><a href="#类文件结构" class="headerlink" title="类文件结构"></a>类文件结构</h2><p>类文件结构比较繁琐，我暂时没有整理的兴趣，看一下《深入理解 Java 虚拟机上》上的介绍就可以了。</p>
+<h2 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h2><p>Java 类结构是在运行时而不是在编译时确定的，而是由类加载器在运行期间加载的，因此称类的加载过程是<strong>动态加载</strong>，当调用某个类型对象的方法时，具体调用哪个方法是在运行期间决定的，因此称之为<strong>动态连接</strong>。<br><strong>类加载器（ClassLoader）</strong>不是 Java 虚拟机的组成部分，它由外部调用，执行加载过程。<br>类加载器用于加载类，任何类都需要由加载它的类加载器和这个类一同确立其在 Java 虚拟机中的唯一性，每一个类加载器，都有一个独立的类<strong>名称空间</strong>，因此由不同类加载器加载的类、就算它们真的是一个 class 出来的，也不算是同一个类型的，也不能直接进行交互（可以通过反射进行交互）。实现上，实际上 jvm 将类加载器的引用作为类型信息的一部分保存在方法区，作为判断两个类相同的依据。</p>
+<h3 id="写一个自定义的类加载器"><a href="#写一个自定义的类加载器" class="headerlink" title="写一个自定义的类加载器"></a>写一个自定义的类加载器</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">import java.io.ByteArrayOutputStream;</span><br><span class="line">import java.io.FileInputStream;</span><br><span class="line"></span><br><span class="line">public class MyClassLoader extends ClassLoader &#123;</span><br><span class="line"></span><br><span class="line">    private String rootPath;</span><br><span class="line"></span><br><span class="line">    public MyClassLoader(String rootPath) &#123;</span><br><span class="line">        this.rootPath = rootPath;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected Class&lt;?&gt; findClass(String name) &#123;</span><br><span class="line">        Class&lt;?&gt; clz = findLoadedClass(name);</span><br><span class="line">        if (clz != null) &#123;</span><br><span class="line">            return clz;</span><br><span class="line">        &#125;</span><br><span class="line">        byte[] classData = getData(name);</span><br><span class="line">        clz = defineClass(&quot;Hello&quot;, classData, 0, classData.length);</span><br><span class="line">        return clz;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private byte[] getData(String className) &#123;</span><br><span class="line">        String pathName = rootPath + className.replace(&quot;.&quot;, &quot;/&quot;) + &quot;.class&quot;;</span><br><span class="line">        System.out.println(&quot;加载的类路径: &quot; + pathName);</span><br><span class="line">        byte[] bytes = null;</span><br><span class="line">        try (FileInputStream fis = new FileInputStream(pathName);</span><br><span class="line">             ByteArrayOutputStream bos = new ByteArrayOutputStream()) &#123;</span><br><span class="line">            byte[] flush = new byte[1024 * 1024];</span><br><span class="line">            int len;</span><br><span class="line">            while (-1 != (len = fis.read(flush))) &#123;</span><br><span class="line">                bos.write(flush, 0, len);</span><br><span class="line">            &#125;</span><br><span class="line">            bytes = bos.toByteArray();</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        return bytes;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws IllegalAccessException, InstantiationException &#123;</span><br><span class="line">        MyClassLoader classLoader = new MyClassLoader(&quot;/tmp/&quot;);</span><br><span class="line">        Class&lt;?&gt; helloClass = classLoader.findClass(&quot;Hello&quot;);</span><br><span class="line">        Object hello = helloClass.newInstance();</span><br><span class="line">        System.out.println(hello);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个类加载器：</p>
+<ol>
+<li><code>findClass</code>的时候，先判断之前是否已经加载过这个类，如果加载过就直接返回了（双亲委派）；</li>
+<li>从<code>/tmp</code>目录下面读类文件，对读进的二进制流数据使用<code>defineClass</code>转换为类对象。</li>
+</ol>
+<p>测试类：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">import java.util.StringJoiner;</span><br><span class="line"></span><br><span class="line">public class Hello &#123;</span><br><span class="line"></span><br><span class="line">    private int a = 10;</span><br><span class="line"></span><br><span class="line">    static &#123;</span><br><span class="line">        System.out.println(&quot;123&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String toString() &#123;</span><br><span class="line">        return new StringJoiner(&quot;, &quot;, Hello.class.getSimpleName() + &quot;[&quot;, &quot;]&quot;)</span><br><span class="line">                .add(&quot;a=&quot; + a)</span><br><span class="line">                .toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用<code>javac</code>命令编译后，将<code>Hello.class</code>文件移动到<code>/tmp</code>目录下。</p>
+<h3 id="类从哪里来"><a href="#类从哪里来" class="headerlink" title="类从哪里来"></a>类从哪里来</h3><p>除了从文件加载以外，Java 的类加载机制还支持从网络读取，其实只要根据自己的需要实现类加载器，就能将任何二进制数据作为字节码数据进行加载。</p>
+<ul>
+<li><p><code>-XX:+TraceClassLoading</code><br>跟踪类加载过程，结果形如：<code>[Loaded java.lang.invoke.MethodHandleImpl$Lazy from D:\programme\jdk\jdk8U74\jre\lib\rt.jar]</code></p>
+</li>
+<li><p>mvn dependency:tree &gt; ~&#x2F;dependency.txt<br>打出所有依赖</p>
+</li>
+<li><p>mvn dependency:tree -Dverbose -Dincludes&#x3D;groupId:artifactId<br>只打出指定 groupId 和 artifactId 的依赖关系</p>
+</li>
+<li><p>-XX:+TraceClassLoading<br>vm 启动脚本加入。在 tomcat 启动脚本中可见加载类的详细信息</p>
+</li>
+<li><p>-verbose<br>vm 启动脚本加入。在 tomcat 启动脚本中可见加载类的详细信息</p>
+</li>
+<li><p>greys:sc<br>greys 的 sc 命令也能清晰的看到当前类是从哪里加载过来的</p>
+</li>
+<li><p>tomcat-classloader-locate<br>通过以下 url 可以获知当前类是从哪里加载的<br>curl <a target="_blank" rel="noopener" href="http://localhost:8006/classloader/locate?class=org.apache.xerces.xs.XSObject">http://localhost:8006/classloader/locate?class=org.apache.xerces.xs.XSObject</a></p>
+</li>
+</ul>
+<h3 id="类加载器的种类"><a href="#类加载器的种类" class="headerlink" title="类加载器的种类"></a>类加载器的种类</h3><p>从虚拟机角度看，只存在两种类加载器：1. 启动类加载器。2. 其他类加载器。<br>从开发人员角度看，包括如下类加载器：1. 启动类加载器。2. 扩展类加载器。3. 应用程序类加载器。4. 自定义类加载器。</p>
+<ul>
+<li>启动类加载器，用于加载 Java API，加载<code>&lt;JAVA_HOME&gt;/lib</code> 目录下的类库。</li>
+<li>扩展类加载类，由 <code>sun.misc.Launcher$ExtClassLoader</code> 实现，用于加载<code>&lt;JAVA_HOME&gt;/lib/ext</code> 目录下或者被 <code>java.ext.dirs</code> 系统变量指定路径下的类库。</li>
+<li>应用程序类加载器，也成为系统类加载器，由 <code>sun.misc.Launcher$AppClassLoader</code> 实现，用于加载用户类路径(ClassPath)上所指定的类库。</li>
+<li>自定义类加载器，继承系统类加载器，实现用户自定义加载逻辑。</li>
+</ul>
+<h3 id="双亲委派模型"><a href="#双亲委派模型" class="headerlink" title="双亲委派模型"></a>双亲委派模型</h3><p><img src="/imgs/JVM/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.png" alt="类加载器执行过程" title="类加载器执行过程"><br>Java 设计者推荐所有自定义加载器都组合一个父加载器，加载类时先委派父加载器去尝试加载，若不成，再由自身去加载。所以一些基类总是由基加载器去加载，可以避免一个程序中有多个 java.lang.Object 类的情况<br>注意<strong>各个类加载器之间是组合关系，并非继承关系</strong>。<br>当一个类加载器收到类加载的请求，它将这个加载请求委派给父类加载器进行加载，每一层加载器都是如此，最终，所有的请求都会传送到启动类加载器中。只有当父类加载器自己无法完成加载请求时，子类加载器才会尝试自己加载。<br>双亲委派模型可以确保安全性，可以<strong>保证所有的 Java 类库都是由启动类加载器加载</strong>。如用户编写的 java.lang.Object，加载请求传递到启动类加载器，启动类加载的是系统中的 Object 对象，而用户编写的 java.lang.Object 不会被加载。如用户编写的 java.lang.virus 类，加载请求传递到启动类加载器，启动类加载器发现 virus 类并不是核心 Java 类，无法进行加载，将会由具体的子类加载器进行加载，而经过不同加载器进行加载的类是无法访问彼此的。由不同加载器加载的类处于不同的运行时包。所有的访问权限都是基于同一个运行时包而言的。</p>
+<h3 id="类的加载时机"><a href="#类的加载时机" class="headerlink" title="类的加载时机"></a>类的加载时机</h3><p>Java 虚拟机规范没有强制规定类的加载时机，但是严格规定了以下 5 种情况必须立即对类进行“初始化”（而加载、验证、准备自然需要在此之前开始）  </p>
+<ol>
+<li>遇到字节码指令 new（实例化对象时）、getstatic、putstatic（读取或设置一个类的静态字段）、invokestatic（调用一个类的静态方法）；</li>
+<li>遇到反射调用 java.lang.reflect 对类进行反射调用；</li>
+<li>初始化一个类时，其父类还未初始化，则先初始化其父类（对接口不适用，即初始化子接口并不会导致父接口初始化）；</li>
+<li>主类（main）；</li>
+<li>JDK7 的动态语言支持，java.lang.invoke.MethodHandle 实例最后的解析结果 REF_getStatic、REF_putStatic、REF_invokeStatic 方法句柄，并且这个方法句柄对应的类没有进行初始化，则需要先进行初始化。</li>
+</ol>
+<p>上边的情况统称为<strong>主动引用</strong>，其他情况都是<strong>被动引用</strong>，被动引用都<strong>不会触发类的初始化</strong>。</p>
+<ul>
+<li>被动引用的示例如下，主要是使用 <strong>类初始化块</strong> 进行验证的（即 static 块），只输出了”Super!”，原因是不满足上边的条件，子类是否被加载完全由虚拟机实现说了算    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">class SuperClass &#123;</span><br><span class="line">    public static int value = 123;</span><br><span class="line">    static &#123;</span><br><span class="line">        System.out.println(&quot;Super!&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">class SubClass &#123;</span><br><span class="line">    static &#123;</span><br><span class="line">        System.out.println(&quot;Sub!&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        System.out.println(SubClass.value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>书上举了另外一个例子说明 <strong>数组类初始化</strong> 的问题，下面代码并不会触发 SuperClass 类的初始化，而是初始化了一个对应的数组类，可以通过加-XX:+TraceClassLoading 的运行时参数来跟踪类的加载过程    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class NotInitialization &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SuperClass[] sca = new SuperClass[10];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>还有一个例子来说明 <strong>常量传播优化</strong> 会导致的混淆情况，即使用常量字段（static final）时不会触发初始化，编译时会将常量值保存到调用者的类常量池中，所以在调用时就和被调用者没关系了，下面的代码并不会触发 ConstClass 类的加载   <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">class ConstClass &#123;</span><br><span class="line">    static &#123;</span><br><span class="line">        System.out.println(&quot;ConstClass!&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    public static final String HELLOWORLD = &quot;hello world&quot;;</span><br><span class="line">&#125;</span><br><span class="line">public class NotInitialization &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        System.out.println(ConstClass.HELLOWORLD);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="类的加载过程"><a href="#类的加载过程" class="headerlink" title="类的加载过程"></a>类的加载过程</h3><p><img src="/imgs/JVM/%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.png" alt="类的加载过程" title="类的加载过程"></p>
+<h4 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h4><ol>
+<li>通过类的完全限定名获取表示类的二进制流；</li>
+<li>转换为方法区中的类结构；</li>
+<li>在 Java 堆中生成一个代表这个类的 java.lang.Class 对象，作为方法区这些数据的访问入口</li>
+</ol>
+<p>对于数组类而言，<strong>数组类由 java 虚拟机直接创建，不通过类加载器创建</strong>。数组类的创建过程如下：</p>
+<ol>
+<li>如果数组元素类型是引用类型，就采用双亲委派模型进行加载(之后会介绍)，数组类将在加载该元素类型的类名称空间上被标识。</li>
+<li>如果数组元素类型为基本类型，数组类被标记为与引导类加载器关联。</li>
+<li>数组类的可见性与其元素类型可见性一致，如果元素类型不是引用类型，那数组类的可见性默认为 public。</li>
+</ol>
+<h4 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h4><p>此阶段的<strong>主要目的是确保 class 文件的字节流包含的信息符合虚拟机的要求</strong>，进行一部分的语义分析，主要是防止字节码中存在一些危险操作（数组越界、错误转型、跳转过头等），后来的 Java 虚拟机规范还规定了文件格式、符号引用等的验证。<br>不同的虚拟机，对类验证的实现可能有所不同，但大致都会完成下面四个阶段的验证：</p>
+<ol>
+<li><strong>文件格式验证</strong>，是要验证字节流是否符合 Class 文件格式的规范，并且能被当前版本的虚拟机处理。如验证魔数是否为 0xCAFEBABE；主、次版本号是否正在当前虚拟机处理范围之内；常量池的常量中是否有不被支持的常量类型。<br>该验证阶段的主要目的是保证输入的字节流能正确地解析并存储于方法区中，经过这个阶段的验证后，字节流才会进入内存的方法区中存储，所以后面的三个验证阶段都是基于方法区的存储结构进行的。</li>
+<li><strong>元数据验证</strong>，对字节码描述的信息进行语义分析，以保证其描述的信息符合 Java 语言规范的要求。可能包括的验证如：这个类是否有父类；这个类的父类是否继承了不允许被继承的类；如果这个类不是抽象类，是否实现了其父类或接口中要求实现的所有方法……</li>
+<li><strong>字节码验证</strong>，主要工作是进行数据流和控制流分析，保证被校验类的方法在运行时不会做出危害虚拟机安全的行为。如果一个类方法体的字节码没有通过字节码验证，那肯定是有问题的；但如果一个方法体通过了字节码验证，也不能说明其一定就是安全的。</li>
+<li><strong>符号引用验证</strong>，发生在虚拟机将符号引用转化为直接引用的时候，这个转化动作将在“解析阶段”中发生。验证符号引用中通过字符串描述的权限定名是否能找到对应的类；在指定类中是否存在符合方法字段的描述符及简单名称所描述的方法和字段；符号引用中的类、字段和方法的访问性(private、protected、public、default)是否可被当前类访问。</li>
+</ol>
+<p>验证阶段对于虚拟机的类加载机制来说，不一定是必要的阶段。<strong>如果所运行的全部代码确认是安全的，可以使用-Xverify：none 参数来关闭大部分的类验证措施，以缩短虚拟机类加载时间</strong>。</p>
+<h4 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h4><p>为类变量（static 变量）分配内存和并初始化为默认值，它们被分配在方法区中。<br>准备阶段不分配类中的实例变量的内存，实例变量将会在对象实例化时随着对象一起分配在 Java 堆中。<br>比如<code>static int a = 1;</code>在准备阶段后 a 的值为 0，在初始化阶段后才变成 1，但是对常量字段（static final），在准备阶段会直接赋予用户设定的值。</p>
+<h4 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h4><p>将常量池内的符号引用替换为直接引用，类似于将一个字面量 hash 到一个确定的槽中。<br><strong>符号引用（Symbolic Reference）</strong>：符号引用以一组符号来描述所引用的目标，符号可以是任何形式的字面量，只要使用时能无歧义地定位到目标即可。符号引用与虚拟机实现的内存布局无关，引用的目标并不一定已经加载到内存中。<br><strong>直接引用（Direct Reference）</strong>：直接引用可以是直接指向目标的指针、相对偏移量或是一个能间接定位到目标的句柄。直接引用是与虚拟机实现的内存布局相关的，如果有了直接引用，那么引用的目标必定已经在内存中存在。指向类型、类变量、类方法的直接引用可能是指向方法区的本地指针。</p>
+<p>常见的符号引用包括类或接口的全限定名、字段名和描述符、方法名和描述符。类型的直接引用可能简单地指向保存类型数据的方法区中的与实现相关的数据结构。类变量的直接引用可以指向方法区中保存的类变量的值。类方法的直接引用可以指向方法区中的一段数据结构方法区中包含调用方法的必要数据。指向实例变量和实例方法的直接引用都是偏移量。实例变量的直接引用可能是从对象的映像开始算起到这个实例变量位置的偏移量。实例方法的直接引用可能是到方法表的偏移量。</p>
+<p>为了加快解析效率，可以对解析结果进行缓存，之后再解析符号引用时直接返回即可，但是对于 invokedynamic 则不能进行缓存。解析主要是针对 CONSTANT_Class_info、CONSTANT_Fieldref_info、CONSTANT_Methodref_info、CONSTANT_InterfaceMethodref_info、CONSTANT_MethodType_info、CONSTANT_MethodHandle_info、CONSTANT_InvokeDynamic_info 七种常量类型。</p>
+<ol>
+<li>类或接口的解析<br>将符号引用替换为直接引用包括如下几步。假设符号引用记为 S，当前类记为 C，S 对应的类或接口记为 I。<ul>
+<li>若 S 不是数组类型，则把 S 传递给当前类 C 的类加载器进行加载，这个过程可能会触发其他的加载，这个过程一旦出现异常，则解析失败。</li>
+<li>若 S 是数组类型，并且数组元素类型为对象，则 S 的描述符会形如[java&#x2F;lang&#x2F;String，按照第一条去加载该类型，如果 S 的描述符符合，则需要加载的类型就是 java.lang.String，接着有虚拟机生成一个代表此数组唯独和元素的数组对象。</li>
+<li>若以上两个步骤没有出现异常，即 I 已经存在于内存中了，但是解析完成时还需要进行符号引用验证，确认 C 是否具备对 I 的访问权限。若不具备，则抛出 java.lang.IllegalAccessError 异常。</li>
+</ul>
+</li>
+<li>字段解析<br>首先将 CONSTANT_Fieldref_info 中的 class_index 索引的 CONSTANT_Class_info 符号引用进行解析，即解析字段所在类或接口，若解析出现异常，则字段解析失败。如解析成功，则进行下面的解析步骤。假设该字段所属的类或接口标记为 C。<ul>
+<li>如果 C 包含了字段的简单名和描述符与目标相匹配的字段，则返回这个字段的直接引用，查找结束。</li>
+<li>（字段解析对接口优先搜索）否则，如果 C 实现了接口，按照继承关系从下往上递归搜索各个接口和它的父接口，看是否存在相匹配的字段。存在，则返回直接引用，查找结束。</li>
+<li>否则，如果 C 不是 Object 对象，按照继承关系从下往上递归搜索父类，看是否存在相匹配的字段。存在，则返回直接引用，查找结束。</li>
+<li>否则，查找失败，抛出 java.lang.NoSuchFieldError 异常。</li>
+</ul>
+</li>
+<li>类方法解析<br>首先将 CONSTANT_Methodref_info 中的 class_index 索引的 CONSTANT_Class_info 符号引用进行解析，即解析方法所在的类或接口，若解析出现异常，则方法解析失败；如解析成功，则进行下面解析步骤。假设该方法所属的类标记为 C。<ul>
+<li>如果在方法表中发现 CONSTANT_Class_info 中索引的 C 是一个接口而不是一个类，则抛出 java.lang.IncompatibleClassChangeError 异常。</li>
+<li>否则，如果 C 中包含了方法的简单名和描述符与目标相匹配的字段，则返回这个方法的直接引用，查找结束。</li>
+<li>（方法解析对父类优先搜索）否则，在 C 的父类中递归搜索，看是否存在相匹配的方法，存在，则返回直接引用，查找结束。</li>
+<li>否则，在 C 实现的接口列表及父接口中递归搜索，看是否存在相匹配的方法，存在，说明 C 是一个抽象类（没有实现该方法，否则，在第一步就查找成功），抛出 java.lang.AbstractMethodError 异常。</li>
+<li>否则，查找失败，抛出 java.lang.NoSuchMethodError 异常。</li>
+<li>若查找过程成功，则对方法进行权限验证，如果发现不具备对此方法的访问权限，则抛出 java.lang.lllegalAccessError 异常。</li>
+</ul>
+</li>
+<li>接口方法解析<br>首先将 CONSTANT_InterfaceMethodref_info 中的 class_index 索引的 CONSTANT_Class_info 符号引用进行解析，即解析方法所在的类或接口，若解析出现异常，则方法解析失败；如解析成功，则进行下面解析步骤。假设该方法所属的类标记为 C。<ul>
+<li>如果在方法表中发现 CONSTANT_Class_info 中索引的 C 是一个类而不是接口，则抛出 java.lang.IncompatibleClassChangeError 异常。</li>
+<li>否则，如果 C 中包含了方法的简单名和描述符与目标相匹配的字段，则返回这个方法的直接引用，查找结束。</li>
+<li>否则，在 C 的父接口中递归搜索，直到 Object 类，看是否存在相匹配的方法，存在，则返回直接引用，查找结束。</li>
+<li>否则，查找失败，抛出 java.lang.NoSuchMethodError 异常。</li>
+<li>若查找过程成功，不需要进行权限验证，因为接口方法为 public，不会抛出 java.lang.IllegalAccessError 异常。</li>
+</ul>
+</li>
+</ol>
+<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p>类初始化是类加载过程的最后一步，前面的类加载过程，除了在加载阶段用户应用程序可以通过自定义类加载器参与之外，其余动作完全由虚拟机主导和控制，到了初始化阶段，才真正开始执行类中定义的 Java 程序代码。<br>初始化是执行类构造器&lt;clinit&gt;()的过程，<clinit>()方法是由编译器自动<strong>收集类中的所有类变量的赋值动作和静态语句块(static{}块&#x2F;类初始化块)中的语句合并产生的</strong>。具体地说，应该有以下几条规则：</p>
+<ul>
+<li>由编译器收集类中的所有类变量的赋值动作（如果仅仅只是声明，不会被收集）和静态语句块中的语句合并产生的，收集顺序按照语句在源文件中出现的顺序所决定；在静态语句块中只能访问定义在静态语句之前的变量；而对于定义在静态语句块之后的变量，可以进行赋值，但是不能够访问。</li>
+<li>不需要显示调用父类构造器，虚拟机会保证在子类的<clinit>()方法执行之前，父类的<clinit>()方法已经执行完毕，所以，第一个被执行的<clinit>()方法的类肯定是 java.lang.Object。</li>
+<li>父类中定义的静态语句块优先于子类的静态语句。</li>
+<li>此方法对类和接口都不是必须的，若类中没有静态语句块和静态变量赋值操作，则不会生成<clinit>()方法。</li>
+<li>接口会生成此方法，因为对接口的字段可以进行赋值操作。执行接口的<clinit>()方法不需要先执行父接口的<clinit>()方法，只有在使用父接口的变量时，才会进行初始化；接口的实现类在初始化时也不会执行接口的<clinit>()方法。</li>
+<li>此方法在多线程环境中会被正确的加锁、同步。</li>
+</ul>
+<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><p>完成了初始化阶段后，我们就可以使用对象了，在程序中可以随意进行访问，只要类还没有被卸载。</p>
+<h4 id="卸载"><a href="#卸载" class="headerlink" title="卸载"></a>卸载</h4><p>GC 能够对方法区内无用对象进行回收，启动类加载的类型永远是可触及的，回收的是由用户自定义加加载器加载的类，具体内容等到 GC 部分再说。</p>
+<h3 id="接口的加载过程"><a href="#接口的加载过程" class="headerlink" title="接口的加载过程"></a>接口的加载过程</h3><p>接口的加载和类的加载是类似的，只是接口要初始化时并不会连带父接口一块初始化，只有在真正用到父接口时才会执行初始化。 </p>
+<h3 id="定义类加载器和初始类加载器"><a href="#定义类加载器和初始类加载器" class="headerlink" title="定义类加载器和初始类加载器"></a>定义类加载器和初始类加载器</h3><p>我们知道不同类加载器加载的类位于不同的命名空间，它们之间是相互隔离的，这里说的隔离仅仅指它们存储位置隔离，并不是说一个自定义的类 A 使用了 java.util.List 类就会报错。<br>自定义的类 A 一般会使用系统类加载器加载，而 java.util.List 则会由启动类加载器加载，当加载类 A 时如果遇到了 java.util.List，会首先尝试通过系统类加载器加载，在它发现自己无法加载后，通过双亲委派模型交给父加载器加载。<br><img src="/imgs/JVM/%E5%88%9D%E5%A7%8B%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E5%92%8C%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8.png" alt="初始类加载器和定义类加载器" title="初始类加载器和定义类加载器"><br>如上图所示：</p>
+<ul>
+<li>A 是由系统类加载器加载的，因此系统类加载器是其定义类加载器兼初始类加载器；</li>
+<li>系统类加载器加载过 java.util.List，因此是其初始类加载器；</li>
+<li>启动类加载器实际加载了 java.util.List，因此是其定义类加载器。</li>
+</ul>
+<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><ol>
+<li>为什么下面的执行结果为 0？<br>说明类加载器在加载一个类时，父类的成员变量就算被覆盖，其存储空间依然还存在。  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">class A &#123;</span><br><span class="line">    int a;</span><br><span class="line">&#125;</span><br><span class="line">public class JavaTest extends A &#123;</span><br><span class="line">    int a;</span><br><span class="line">    @Test</span><br><span class="line">    public void test() &#123;</span><br><span class="line">        a = 1;</span><br><span class="line">        System.out.println(super.a);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>为什么下面的报错？<br>类的初始化阶段有一个细节：类初始化块不能访问定义在其之后的变量  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class JavaTest &#123;</span><br><span class="line">    static &#123;</span><br><span class="line">        i = 0;</span><br><span class="line">        System.out.println(i); // 报错</span><br><span class="line">    &#125;</span><br><span class="line">    static int i = 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>为什么输出两个’A’？<br>当我们 new A()时，首先为 A 分配内存空间，此时 A 已经存在了，只是还未初始化，然后调用 A 的构造函数，A 的构造函数又隐式调用了父类的构造函数。<br>在父类构造函数中使用 this 调用 draw()，this 实际上指向了 a 对象，平常调用方法时 this 也是隐含的。  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">class B &#123;</span><br><span class="line">    int a;</span><br><span class="line">    B() &#123;</span><br><span class="line">        this.draw();</span><br><span class="line">    &#125;</span><br><span class="line">    void draw() &#123;</span><br><span class="line">        System.out.println(&quot;B&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">class A extends B &#123;</span><br><span class="line">    int a;</span><br><span class="line">    A() &#123;</span><br><span class="line">        draw();</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    void draw() &#123;</span><br><span class="line">        System.out.println(&quot;A&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        A a = new A();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>为什么最后输出的 count2 为 0？<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">class SingleTon &#123;</span><br><span class="line">    private static SingleTon singleTon = new SingleTon();</span><br><span class="line">    public static int count1;</span><br><span class="line">    public static int count2 = 0;</span><br><span class="line">    private SingleTon() &#123;</span><br><span class="line">        count1++;</span><br><span class="line">        count2++;</span><br><span class="line">    &#125;</span><br><span class="line">    public static SingleTon getInstance() &#123;</span><br><span class="line">        return singleTon;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">public class Test &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SingleTon singleTon = SingleTon.getInstance();</span><br><span class="line">        System.out.println(&quot;count1=&quot; + singleTon.count1);</span><br><span class="line">        System.out.println(&quot;count2=&quot; + singleTon.count2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+这里有问题的应该是 static 变量的初始化和构造方法被调用的顺序，实际上构造方法是先被调用的。</li>
+<li>SingleTon singleTon &#x3D; SingleTon.getInstance();调用了类的 SingleTon 调用了类的静态方法，触发类的初始化（主动引用）</li>
+<li>类加载的时候在准备过程中为类的静态变量分配内存并初始化默认值 singleton&#x3D;null count1&#x3D;0,count2&#x3D;0（准备）</li>
+<li>类初始化，为类的静态变量赋值和执行静态代码快。singleton 赋值为 new SingleTon()调用类的构造方法（初始化）</li>
+<li>调用类的构造方法后 count&#x3D;1;count2&#x3D;1</li>
+<li>继续为 count1 与 count2 赋值,此时 count1 没有赋值操作,所有 count1 为 1,但是 count2 执行赋值操作就变为 0</li>
+<li>读下面的类加载器应用代码，为什么输出 false？<br>myLoader 加载的类和虚拟机的默认类加载器（Bootstrap ClassLoader）将加载的类保存在不同的命名空间中，它们相当于不同的类。  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public class JavaTest &#123;</span><br><span class="line">    @Test</span><br><span class="line">    public void test() throws ClassNotFoundException, IllegalAccessException, InstantiationException &#123;</span><br><span class="line">        ClassLoader myLoader = new ClassLoader() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public Class&lt;?&gt; loadClass(String name) throws ClassNotFoundException &#123;</span><br><span class="line">                String fileName = name.substring(</span><br><span class="line">                        name.lastIndexOf(&quot;.&quot;) + 1) + &quot;.class&quot;;</span><br><span class="line">                InputStream is = getClass().getResourceAsStream(fileName);</span><br><span class="line">                if(is == null) &#123; return super.loadClass(name); &#125;</span><br><span class="line">                try &#123;</span><br><span class="line">                    byte[] b = new byte[is.available()]; // 进行验证</span><br><span class="line">                    is.read(b);</span><br><span class="line">                    return defineClass(name, b, 0, b.length);</span><br><span class="line">                &#125; catch (IOException e) &#123;</span><br><span class="line">                    throw new ClassNotFoundException(name);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        Object obj = myLoader.loadClass(&quot;com.tallate.JavaTest&quot;)</span><br><span class="line">                .newInstance();</span><br><span class="line">        System.out.println(obj.getClass());</span><br><span class="line">        System.out.println(obj instanceof com.tallate.JavaTest); // false？</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>JVM 怎么知道哪些类应该委托给父加载器加载？<br>每个类装载器都有一个 URLClassPath 对象用于保存类路径，在加载时会先在这个路径下查找该类，找不到再返回 null。  </li>
+<li>不同命名空间的类为什么能互相使用？<br>双亲委派模型中，一个类装载器总是会先委托父类去进行装载，所有这些被委托的类装载器都被称为<strong>初始类装载器</strong>，而实际装载的被称为<strong>定义类装载器</strong>，所有初始装载器间的类型是共享的  </li>
+<li>可以不可以自己写个 String 类？<br>不能，因为根据类加载的双亲委派机制，会去加载父类，父类发现冲突了 String 就不再加载了。</li>
+<li>Tomcat 的应用隔离原理是什么？<br>Tomcat 实现了两种隔离技术：用于线程隔离的线程池和用于代码隔离的 WebAppClassLoader。<br>前者不必赘述，对于后者，大家比较感兴趣的是 Tomcat 中对双亲委派模型的违背，因为它不是先委托父加载器去加载目标类，因为 Tomcat 一个进程可以运行多个 web 服务器，两个 web 项目中可能会出现两个声明完全一致的类，它们必须所处的命名空间必须隔离开，不然可能会发生一个项目启动后调到另一个项目中的代码的情况，这样就乱套了。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><h3 id="类文件结构-1"><a href="#类文件结构-1" class="headerlink" title="类文件结构"></a>类文件结构</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/leesf456/p/5263764.html">【JVM】JVM 系列之 Class 文件（三）</a></li>
+</ol>
+<h3 id="对象分配"><a href="#对象分配" class="headerlink" title="对象分配"></a>对象分配</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.programcreek.com/2011/11/what-do-java-objects-look-like-in-memory/">What do Java objects look like in memory during run-time?</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.programcreek.com/2013/04/what-does-a-java-array-look-like-in-memory/">What does a Java array look like in memory?</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JVM/" rel="tag"># JVM</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/6ead94ff.html" rel="prev" title="JVM 与执行引擎">
+                  <i class="fa fa-angle-left"></i> JVM 与执行引擎
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/807599f6.html" rel="next" title="JVM调优">
+                  JVM调优 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

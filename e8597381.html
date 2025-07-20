@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="不懂很多网络概念，在一些开会、对接场合出了很多洋相，趁机好好补补。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网络架构梳理">
+<meta property="og:url" content="https://tallate.github.io/e8597381.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="不懂很多网络概念，在一些开会、对接场合出了很多洋相，趁机好好补补。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E7%BD%91%E7%BB%9C/LVS%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.jpeg">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E7%BD%91%E7%BB%9C/ServiceMesh%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.jpeg">
+<meta property="article:published_time" content="2019-07-20T06:01:28.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.906Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="网络">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/%E7%BD%91%E7%BB%9C/LVS%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.jpeg">
+
+
+<link rel="canonical" href="https://tallate.github.io/e8597381.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/e8597381.html","path":"/e8597381.html","title":"网络架构梳理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>网络架构梳理 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E5%85%B3"><span class="nav-number">1.1.</span> <span class="nav-text">网关</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E6%9C%BA"><span class="nav-number">1.2.</span> <span class="nav-text">前置机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%90%A5%E5%95%86"><span class="nav-number">1.3.</span> <span class="nav-text">运营商</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%93%E7%BA%BF"><span class="nav-number">1.4.</span> <span class="nav-text">专线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%B3%E6%9D%BF%E6%9C%BA%EF%BC%88Jump-Server-%E5%A0%A1%E5%9E%92%E6%9C%BA%EF%BC%89"><span class="nav-number">1.5.</span> <span class="nav-text">跳板机（Jump Server &#x2F; 堡垒机）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#QPS"><span class="nav-number">1.6.</span> <span class="nav-text">QPS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E7%BA%BF%E7%A8%8B%E6%95%B0"><span class="nav-number">1.7.</span> <span class="nav-text">并发线程数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5"><span class="nav-number">1.8.</span> <span class="nav-text">健康检查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BA%BF%E5%99%A8%EF%BC%88hub%EF%BC%89"><span class="nav-number">1.9.</span> <span class="nav-text">集线器（hub）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E5%8D%A1%EF%BC%88network-card%EF%BC%89"><span class="nav-number">1.10.</span> <span class="nav-text">网卡（network card）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%A4%E6%8D%A2%E6%9C%BA%EF%BC%88switch%EF%BC%89"><span class="nav-number">1.11.</span> <span class="nav-text">交换机（switch）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E5%99%A8%EF%BC%88router%EF%BC%89"><span class="nav-number">1.12.</span> <span class="nav-text">路由器（router）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E6%AC%A1%E8%AF%B7%E6%B1%82%E7%9A%84%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">一次请求的执行过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DNS"><span class="nav-number">2.1.</span> <span class="nav-text">DNS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CDN"><span class="nav-number">2.2.</span> <span class="nav-text">CDN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%BD%91%E5%85%B3"><span class="nav-number">2.3.</span> <span class="nav-text">服务网关</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F-IP%EF%BC%88VIP%EF%BC%89"><span class="nav-number">2.4.</span> <span class="nav-text">虚拟 IP（VIP）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%89%E4%BB%80%E4%B9%88%E4%BD%9C%E7%94%A8"><span class="nav-number">2.4.1.</span> <span class="nav-text">有什么作用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4"><span class="nav-number">2.4.2.</span> <span class="nav-text">相关命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">2.4.3.</span> <span class="nav-text">实现原理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RPC"><span class="nav-number">2.5.</span> <span class="nav-text">RPC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ServiceMesh"><span class="nav-number">2.6.</span> <span class="nav-text">ServiceMesh</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7"><span class="nav-number">3.</span> <span class="nav-text">监控</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE"><span class="nav-number">4.</span> <span class="nav-text">协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8"><span class="nav-number">5.</span> <span class="nav-text">网络安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%9F%BA%E7%A1%80"><span class="nav-number">6.1.</span> <span class="nav-text">网络基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP-IP"><span class="nav-number">6.2.</span> <span class="nav-text">TCP&#x2F;IP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HA-%E9%9B%86%E7%BE%A4"><span class="nav-number">6.3.</span> <span class="nav-text">HA 集群</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8"><span class="nav-number">6.4.</span> <span class="nav-text">安全</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e8597381.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="网络架构梳理 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          网络架构梳理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-07-20 14:01:28" itemprop="dateCreated datePublished" datetime="2019-07-20T14:01:28+08:00">2019-07-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BD%91%E7%BB%9C/" itemprop="url" rel="index"><span itemprop="name">网络</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>不懂很多网络概念，在一些开会、对接场合出了很多洋相，趁机好好补补。</p>
+<span id="more"></span>
+
+<h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><h3 id="网关"><a href="#网关" class="headerlink" title="网关"></a>网关</h3><p>网关提供了一个系统间通信的代理，网关和业务服务有本质区别，标准的网关应该是不包含业务逻辑的，一些错误的实现会将业务相关代码硬编码到网关内，比如针对不同终端的请求执行不同的处理逻辑。<br>接入层的概念和网关容易混淆，接入层是组网中常提到的概念，表示网络中直接面向用户连接或访问网络的部分，如果放到互联网应用架构中，可以包括 CDN、DNS、网关等一系列暴露给外网的组件。<br>网关的设计需要考虑下游服务的特征，就算你设计了一个能承载百万并发的业务，遇到一个并发承载能力不到 2 的下游服务，那也是白搭。</p>
+<h3 id="前置机"><a href="#前置机" class="headerlink" title="前置机"></a>前置机</h3><p>用于跨系统的金融交易的中间设备，主要解决系统间通信时协议的适配问题。<br>其实运行服务器的宿主机也算是一种前置机，一些传统企业会把 Tomcat 直接跑在一台 Windows 电脑上，这台电脑其实就是前置机。</p>
+<h3 id="运营商"><a href="#运营商" class="headerlink" title="运营商"></a>运营商</h3><p>指提供网络服务的供应商，如中国联通、中国电信、中国移动等。</p>
+<h3 id="专线"><a href="#专线" class="headerlink" title="专线"></a>专线</h3><p>网络专线就是为某个机构拉一条独立的网线，也就是一个独立的局域网，例如军事，银行等。<br>专线的优点是安全性好，QoS 可以得到保证。缺点是租用价格也相对比较高，而且管理也需要专业人员。</p>
+<h3 id="跳板机（Jump-Server-堡垒机）"><a href="#跳板机（Jump-Server-堡垒机）" class="headerlink" title="跳板机（Jump Server &#x2F; 堡垒机）"></a>跳板机（Jump Server &#x2F; 堡垒机）</h3><p>一种网络设备，主要被用作跳板来批量操作远程设备，好处是可以统一管理账户、单点登录、操作行为控制、审计等。</p>
+<h3 id="QPS"><a href="#QPS" class="headerlink" title="QPS"></a>QPS</h3><p>每秒查询数，或者说每秒查询请求的吞吐量，是处理服务器单位时间内处理流量的一个指标，衡量网站性能的标准之一。</p>
+<h3 id="并发线程数"><a href="#并发线程数" class="headerlink" title="并发线程数"></a>并发线程数</h3><p>衡量服务器同时能处理的请求数量，QPS 可以用于度量平均负载能力，而并发线程数可以用于度量瞬时的负载能力。</p>
+<h3 id="健康检查"><a href="#健康检查" class="headerlink" title="健康检查"></a>健康检查</h3><p>Nginx 作为网关有时并不只有反向代理、负载均衡的作用，比如 tegine 就提供了它所代理服务的健康检查功能。</p>
+<h3 id="集线器（hub）"><a href="#集线器（hub）" class="headerlink" title="集线器（hub）"></a>集线器（hub）</h3><p>hub 工作在 OSI 的物理层</p>
+<h3 id="网卡（network-card）"><a href="#网卡（network-card）" class="headerlink" title="网卡（network card）"></a>网卡（network card）</h3><p>网卡工作在 OSI 的物理层</p>
+<h3 id="交换机（switch）"><a href="#交换机（switch）" class="headerlink" title="交换机（switch）"></a>交换机（switch）</h3><p>switch 工作在 OSI 的数据链路层</p>
+<h3 id="路由器（router）"><a href="#路由器（router）" class="headerlink" title="路由器（router）"></a>路由器（router）</h3><p>router 工作在 OSI 的网络层</p>
+<h2 id="一次请求的执行过程"><a href="#一次请求的执行过程" class="headerlink" title="一次请求的执行过程"></a>一次请求的执行过程</h2><h3 id="DNS"><a href="#DNS" class="headerlink" title="DNS"></a>DNS</h3><p>将域名解析为 IP，因为 IP 不好记忆<br>浏览器会在一段时间内记忆解析结果，这样就省去了这一步查询的代价，当然也可以手动在 HOSTS 文件中指定解析规则。</p>
+<h3 id="CDN"><a href="#CDN" class="headerlink" title="CDN"></a>CDN</h3><p>如果是一些比较大又不怎么改变的静态文件，一个显而易见的优化方案是缓存，CDN 究其根本也是一种缓存。</p>
+<h3 id="服务网关"><a href="#服务网关" class="headerlink" title="服务网关"></a>服务网关</h3><p>如果有多个服务实例可提供相同的服务，那么势必需要在 DNS 的域名解析中将域名与多个地址进行绑定，这样的方案有如下问题：</p>
+<ul>
+<li>如何检查这些实例的健康情况，同时在发现出现问题的时候增删服务实例地址？即所谓的服务高可用问题。</li>
+<li>把这些服务实例地址都暴露到外网，会不会涉及到安全问题？即使可以解决安全问题，那么也需要每台机器都做安全策略。</li>
+<li>由于 DNS 协议的特点，增删服务实例并不是实时的，有时候会影响到业务。</li>
+</ul>
+<p>为了解决这些问题，就引入了<strong>反向代理网关</strong>这一组件。它提供如下的功能：</p>
+<ul>
+<li>负载均衡功能：根据某些算法将请求分派到服务实例上。</li>
+<li>提供管理功能，可以给运维管理员增减服务实例。</li>
+<li>由于它决定了服务请求流量的走向，因此还可以做更多的其他功能：灰度引流、安全防攻击(如访问黑白名单、卸载 SSL 证书)等。</li>
+</ul>
+<p>LVS 工作在四层，即请求来到 LVS 这里时是根据四层协议来决定请求最终走到哪个服务实例；而 Nginx 工作在七层，主要用于 HTTP 协议，即根据 HTTP 协议本身来决定请求的走向。需要说明的是，Nginx 也可以工作在四层，但是这么用的地方不是很多，可以参考 nginx 的 stream 模块。</p>
+<blockquote>
+<p>LVS 有好几种工作模式，以下表述仅针对 Full NAT 模式</p>
+</blockquote>
+<p>LVS 有如下的组成部分：</p>
+<ul>
+<li>Direct Server（以下简称 DS）：前端暴露给客户端进行负载均衡的服务器。</li>
+<li>Virtual Ip 地址（以下简称 VIP）：DS 暴露出去的 IP 地址，做为客户端请求的地址。</li>
+<li>Direct Ip 地址（以下简称 DIP）：DS 用于与 Real Server 交互的 IP 地址。</li>
+<li>Real Server（以下简称 RS）：后端真正进行工作的服务器，可以横向扩展。</li>
+<li>Real IP 地址（以下简称 RIP）：RS 的地址。</li>
+<li>Client IP 地址（以下简称 CIP）：Client 的地址。</li>
+</ul>
+<p><img src="/imgs/%E7%BD%91%E7%BB%9C/LVS%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.jpeg" alt="LVS工作流程" title="LVS工作流程"><br>客户端进行请求时，流程如下：</p>
+<ol>
+<li>使用 VIP 地址访问 DS，此时的地址二元组为<code>&lt;src:CIP,dst:VIP&gt;</code>。</li>
+<li>DS 根据自己的负载均衡算法，选择一个 RS 将请求转发过去，在转发过去的时候，修改请求的源 IP 地址为 DIP 地址，让 RS 看上去认为是 DS 在访问它，此时的地址二元组为<code>&lt;src:DIP,dst:RIP A&gt;</code>。</li>
+<li>RS 处理并且应答该请求，这个回报的源地址为 RS 的 RIP 地址，目的地址为 DIP 地址，此时的地址二元组为<code>&lt;src:RIP A,dst:DIP&gt;</code>。</li>
+<li>DS 在收到该应答包之后，将报文应答客户端，此时修改应答报文的源地址为 VIP 地址，目的地址为 CIP 地址，此时的地址二元组为<code>&lt;src:VIP,dst:CIP&gt;</code>。</li>
+</ol>
+<h3 id="虚拟-IP（VIP）"><a href="#虚拟-IP（VIP）" class="headerlink" title="虚拟 IP（VIP）"></a>虚拟 IP（VIP）</h3><p>LVS 的基础技术之一就是虚拟 IP（VIP），虚拟 IP 即为一个网卡设置多个 ip，相当于别名。</p>
+<h4 id="有什么作用"><a href="#有什么作用" class="headerlink" title="有什么作用"></a>有什么作用</h4><ol>
+<li>布网需要</li>
+<li>简单的负载均衡<br>实现高可用性 HA（High Availability）的最有效方法就是实时检测和自动切换：<ul>
+<li><strong>心跳</strong>（实时检测），采用定时发送一个数据包，如果机器多长时间没响应，就认为是发生故障，自动切换到热备的机器上去。</li>
+<li><strong>虚拟 IP</strong>（自动切换），虚拟 IP 就是一个未分配给真实主机的 IP，也就是说对外提供数据库服务器的主机除了有一个真实 IP 外还有一个虚 IP，使用这两个 IP 中的 任意一个都可以连接到这台主机，所有项目中数据库链接一项配置的都是这个虚 IP，当服务器发生故障无法对外提供服务时，动态将这个虚 IP 切换到备用主机。</li>
+</ul>
+</li>
+<li>多 ip 访问测试</li>
+<li>特定软件对多 ip 的需要</li>
+</ol>
+<h4 id="相关命令"><a href="#相关命令" class="headerlink" title="相关命令"></a>相关命令</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 设置静态ip</span><br><span class="line">ifconfig eth0 192.168.0.105 netmask 255.255.255.0 up</span><br><span class="line"># 设置虚拟ip</span><br><span class="line">ifconfig eth0:1 192.168.0.107 netmask 255.255.0.0</span><br><span class="line">ifconfig eth0:1 down</span><br><span class="line"># ping一下目标ip</span><br><span class="line">ping 192.168.0.107</span><br><span class="line"># 查看arp缓存表</span><br><span class="line">arp -a</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>在设置 ip 别名时，如果增加的是和局域网同一网段的 ip（如 192.168.6.100），那么除了本机外局域网内其他机器都可以 ping 通这个 ip。如果增加的是奇形怪状的 ip，那么就只有本机可以 ping 通而已，后者主要用于本机测试需要。<br>重启后之前设置的 vip 会失效，如果需要长时间使用 ip 别名，最好将别名信息保存起来，一般方法有两个：1.将设置 vip 的命令保存到&#x2F;etc&#x2F;rc.local(作用相当于开机自动执行命令);2.手动在&#x2F;etc&#x2F;sysconfig&#x2F;network-scripts 下编写 ip 别名的网卡配置文件，以下是其中部分需要特别注意的，其他部分直接从原来网卡的配置中粘过来即可：</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 3Com Corporation 3c905B 100BaseTX [Cyclone]    //硬件型号，忽略不计</span><br><span class="line">DEVICE=eth0:0                 //虚拟网络接口，随意    </span><br><span class="line">ONBOOT=yes                    //系统启动时激活</span><br><span class="line">BOOTPROTO=static             //使用静态ip地址                </span><br><span class="line">IPADDR=192.168.6.100          //该虚拟网络接口的ip别名，随意</span><br><span class="line">NETMASK=255.255.255.0         //子网掩码，对应ip别名</span><br><span class="line">GATEWAY=192.168.6.1           //网关，对应ip别名</span><br><span class="line">HWADDR=00:10:5A:5E:B1:E4      //网卡MAC地址，无需更改                   </span><br><span class="line">USERCTL=no                    //是否给予非root用户设备管理权限</span><br></pre></td></tr></table></figure>
+<h4 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h4><p><strong>其实现原理主要是靠 TCP&#x2F;IP 的 ARP 协议</strong>。<br>因为 ip 地址只是一个逻辑地址，在以太网中 MAC 地址才是真正用来进行数据传输的物理地址，每台主机中都有一个 ARP 高速缓存，存储同一个网络内的 IP 地址与 MAC 地址的对应关系，以太网中的主机发送数据时会先从这个缓存中查询目标 IP 对应的 MAC 地址，会向这个 MAC 地址发送数据。操作系统会自动维护这个缓存。这就是整个实现的关键。<br>下边就是我电脑上的 arp 缓存的内容。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(192.168.1.219) at 00:21:5A:DB:68:E8 [ether] on bond0</span><br><span class="line">(192.168.1.217) at 00:21:5A:DB:68:E8 [ether] on bond0</span><br><span class="line">(192.168.1.218) at 00:21:5A:DB:7F:C2 [ether] on bond0</span><br></pre></td></tr></table></figure>
+<p>192.168.1.217、192.168.1.218 是两台真实的电脑，<br>192.168.1.217 为对外提供数据库服务的主机。<br>192.168.1.218 为热备的机器。<br>192.168.1.219 为虚 IP。<br>其中，219、217 的 MAC 地址是相同的。<br>再看看 217 宕机后的 arp 缓存</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(192.168.1.219) at 00:21:5A:DB:7F:C2 [ether] on bond0</span><br><span class="line">(192.168.1.217) at 00:21:5A:DB:68:E8 [ether] on bond0</span><br><span class="line">(192.168.1.218) at 00:21:5A:DB:7F:C2 [ether] on bond0 </span><br></pre></td></tr></table></figure>
+<p>这就是奥妙所在。当 218 发现 217 宕机后会向网络发送一个 ARP 数据包，告诉所有主机 192.168.1.219 这个 IP 对应的 MAC 地址是 00:21:5A:DB:7F:C2，这样所有发送到 219 的数据包都会发送到 mac 地址为 00:21:5A:DB:7F:C2 的机器，也就是 218 的机器。</p>
+<h3 id="RPC"><a href="#RPC" class="headerlink" title="RPC"></a>RPC</h3><p>面向公网的服务，一般都是以域名的形式提供给外部调用者，然而对于服务内部之间的互相调用，域名形式还不够，其原因在于：</p>
+<ul>
+<li>DNS 服务发现的粒度太粗，只能到 IP 地址级别，而服务的端口还需要用户自己维护。</li>
+<li>对于服务的健康状况的检查，DNS 的检查还不够，需要运维的参与。</li>
+<li>DNS 对于服务状态的收集很欠缺，而服务状态最终应该是反过来影响服务被调用情况的。</li>
+<li>DNS 的变更需要人工的参与，不够智能以及自动化。</li>
+</ul>
+<p>综上，内网间的服务调用，通常而言会自己实现一套“服务发现”类的系统，其包括以下几个组件：</p>
+<ul>
+<li>服务发现系统<br>用于提供服务的寻址、注册能力，以及对服务状态进行统计汇总，根据服务情况更改服务的调用情况。比如，某个服务实例的响应慢了，此时分配给该实例的流量响应的就会少一些。而由于这个系统能提供服务的寻址能力，所以一些寻址策略就可以在这里做，比如灰度某些特定的流量只能到某些特定的实例上，比如可以配置每个实例的流量权重等。</li>
+<li>一套与该服务系统搭配使用的 RPC 库<br>其提供以下功能：<ul>
+<li>服务提供方：使用 RPC 库注册自己的服务到服务发现系统，另外上报自己的服务情况。</li>
+<li>服务调用方：使用 RPC 库进行服务寻址，实时从服务发现系统那边获取最新的服务调度策略。</li>
+<li>提供协议的序列化、反序列化功能，负载均衡的调用策略、熔断限流等安全访问策略，这部分对于服务的提供方以及调用方都适用。</li>
+</ul>
+</li>
+</ul>
+<h3 id="ServiceMesh"><a href="#ServiceMesh" class="headerlink" title="ServiceMesh"></a>ServiceMesh</h3><blockquote>
+<p>ServiceMesh 并没有见公司内部有实践过，感觉现阶段应该还算是比较冷门的技术。</p>
+</blockquote>
+<p>前面的服务发现系统中，需要一个与之配套的 RPC 库，然而这又会有如下的问题：</p>
+<ul>
+<li>如果需要支持多语言，该怎么做？每个语言实现一个对应的 RPC 库吗？</li>
+<li>库的升级很麻烦，比如 RPC 库本身出了安全漏洞，比如需要升级版本，一般推动业务方去做这个升级是很难的，尤其是系统做大了之后。<br>可以看到，由于 RPC 库是嵌入到进程之中的组件，所以以上问题很麻烦，于是就想出了一个办法：将原先的一个进程拆分成两个进程，如下图所示。<br><img src="/imgs/%E7%BD%91%E7%BB%9C/ServiceMesh%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.jpeg" alt="ServiceMesh工作流程" title="ServiceMesh工作流程"><br>在服务 mesh 化之前，服务调用方实例通过自己内部的 RPC 库来与服务提供方实例进行通信。<br>在服务 mesh 化之后，会与服务调用方同机部署一个 local Proxy 也就是 ServiceMesh 的 proxy，此时服务调用的流量会先走到这个 proxy，再由它完成原先 RPC 库响应的工作。至于如何实现这个流量的劫持，答案是采用 iptables，将特定端口的流量转发到 proxy 上面即可。<br>有了这一层的分拆，将业务服务与负责 RPC 库作用的 Proxy 分开来，上面的两个痛点问题就变成了对每台物理机上面的 mesh proxy 的升级维护问题，多语言也不是问题了，因为都是通过网络调用完成的 RPC 通信，而不是进程内使用 RPC 库。<br>然而这个方案并不是什么问题都没有的，最大的问题在于，多了这一层的调用之后，势必有影响原来的响应时间。</li>
+</ul>
+<h2 id="监控"><a href="#监控" class="headerlink" title="监控"></a>监控</h2><p>如果从大的系统性能角度，需要看响应时间、并发连接数、吞吐量、资源利用率、事务成功率这几个重要的指标。这几个指标都是可以从中间件中观察到的。只不过这些指标我们往往不从中间件中监控。例如，响应时间、吞吐量往往从用户的端到端计算，或者从日志里面计算，资源利用率从操作系统层面监控。这里介绍的指标是中间件特有的监控指标。</p>
+<h2 id="协议"><a href="#协议" class="headerlink" title="协议"></a>协议</h2><blockquote>
+<p>以下关于协议的一些名词基本讨论范围都限制在 TCP&#x2F;IP 协议栈内。</p>
+</blockquote>
+<ul>
+<li><p>tcp、http、https<br>TCP&#x2F;IP 协议栈中最常见的几个协议之一。</p>
+</li>
+<li><p>端口</p>
+</li>
+<li><p>丢包<br>丢包指的是网络请求中的数据包（packet）无法到达目的地的情况，<br>引起丢包的可能性包括通道阻塞（packet drop）、数据包损坏（corrupted packet），还有一种可能性是<code>MTU</code>定小了：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/hzzll/p/9954004.html">http 请求响应丢包问题</a></p>
+</li>
+<li><p>网络抖动<br>指<strong>分组延迟</strong>的变化程度。如果网络发生<strong>拥塞</strong>，<strong>排队延迟</strong>将影响到端到端的延迟，并导致通过同一连接传输的分组延迟各不相同，而抖动就是用来描述这一延迟变化的程度。对于实时性要求较高的场景，抖动是一个比较重要的参数。</p>
+</li>
+<li><p>长 ping<br>指 ping 的时候发送特别大的数据包，比如：</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping -c 10 -s 65500 localhost</span><br></pre></td></tr></table></figure>
+<p>如果数据包更大一点，超过包处理程序的默认尺寸，超出可用缓冲区大小，这很容易导致系统进入非稳定状态，是一种典型的缓存溢出（Buffer Overflow）攻击。</p>
+</li>
+<li><p>跳 ping<br>打游戏时网络不稳定的说法，游戏中 RTT(Round-Trip Time 往返时延)不稳定、时常跳到很高的值，表示跳 ping 了，此时 ping 一下远程服务器可以发现大量的超时和丢包现象。ping 不稳定可能是电脑到路由器、本地到游戏服务器这两段网络引起的，前者一般出现在无线连接的情况下，可以用网线代替无线来减小这一段的延迟，更多情况下是本地发到游戏服务器的包出现了延迟，可能是服务供应商、带宽问题（例如同一网段内用户太多了）、网络设备本身的问题等。</p>
+</li>
+<li><p>hang 住<br>指程序停住不动了，这里不是指死锁，因为真实环境中死锁并不多见，更有可能是程序 hang 在了某个 IO 请求上。<br>为了排查 hang 住的情况，如果是 Java 程序一般使用<code>jstack</code>，如果是 C&#x2F;C++程序一般使用<code>strace</code>和<code>lsof</code>命令：<a target="_blank" rel="noopener" href="http://vearne.cc/archives/297">程序 HANG 住的问题的追踪</a></p>
+</li>
+<li><p>5XX<br>以 5 开头的 HTTP 状态码表示服务端出现问题，其中有几个常见的包括：<br>500 - Internal Server Error - 内部错误，一般是代码有 Bug 报错了。<br>501 - Not Implemented - 请求方法不对，比如应该传 GET 却传成了 ET（不过一般人应该不会犯这种低级错误）。<br>502 - Bad Gateway - ，网关错误，比较常见，如果某段时间一直出现 502，那么很有可能是应用挂掉了；如果是偶尔出现 502，则有可能是 CPU 使用率高、QPS 增加，导致应用服务器不可响应或响应不过来，可以按如下流程排查：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># 检查进程是否存在</span><br><span class="line">ps -ef | grep java</span><br><span class="line"># 检查端口是否开放</span><br><span class="line">sudo netstat -lntp | grep &#123;PORT&#125;</span><br><span class="line"># 应用程序健康检查（首先得确保我们的应用里有这个健康检查机制）</span><br><span class="line">curl -l 127.0.0.1:&#123;PORT&#125;/health</span><br><span class="line"># 检查接入层（比如对外提供服务的是Nginx，假设Nginx的日志是access.log）有没有进来</span><br><span class="line">tail -300f access.log | grep xxxx</span><br><span class="line"># 直接访问一次接入层</span><br><span class="line">curl -l 10.10.10.10:80/app</span><br><span class="line"># 检查接入层有没有报错（同样假设Nginx的错误日志是error.log）</span><br><span class="line">tail -300f error.log | grep xxxx</span><br><span class="line"># 检查Nginx超时时间配置，是不是可能因为配得过小了而导致触发超时报错，超时时间配置项为proxy_read_timeout</span><br><span class="line"># 调大超时时间可以一定程度上缓解，但是优化链路本身的请求耗时才能从根本上解决问题</span><br><span class="line">vim /opt/nginx/nginx.conf</span><br></pre></td></tr></table></figure>
+<p>503 - Service Unavailable - 服务不可用，服务器或许就是正在维护或者暂停了，还有的时候是 CPU 占用的频率大导致的。<br>504 - Gateway Time-out - 网关超时，一般是所连接的服务器无响应导致的。<br>505 - HTTP Version not supported - 版本不支持，可以尝试调整浏览器支持的 HTTP 版本，一般只有在 IE 上才可能出现。</p>
+</li>
+</ul>
+<h2 id="网络安全"><a href="#网络安全" class="headerlink" title="网络安全"></a>网络安全</h2><ul>
+<li>密码登录、扫码登录、验证码登录、授权登录、静默登录、二次登录<br>前三种就是非常常见的登录功能。<br>授权登录是一种短期登录方案，它需要一个三方平台提供登录页面，并在登录成功之后能够跳转回来，并提供能获取用户信息的登录标识，现在最通用的设计是<code>OAuth</code>。<br>静默登录虽然是用户无法感知的，但是原则上，无论任何登录都是需要用户信息，实际上只是后台“偷偷地”从三方那获取到了用户信息而已，静默登录出现在页面需要嵌入到其他应用中的场景下，比如某个 XX 公司的产品要通过小程序的形式嵌入到微信里。<br>二次登录出现在操作需要更高的权限的时候，比如，虽然能够通过静默登录进入 XX 公司产品的小程序页面，但是某些操作需要更明确的用户标识，比如手机号、证件号等，就需要在执行这些操作的时候能提示用户进行登录、实名认证等。</li>
+<li>越权<br>用户能够执行一些超过自己所获取到的权限的操作。<br>比如，某学校的后台管理系统通过 URL 参数来区分登录身份，role&#x3D;STUDENT 表示学生登录、role&#x3D;TEACHER 表示教师登录，通过简单修改 role 参数我们就可以在学生登录的前提下执行教师权限才能执行的操作了。</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><h3 id="网络基础"><a href="#网络基础" class="headerlink" title="网络基础"></a>网络基础</h3><ol>
+<li><a target="_blank" rel="noopener" href="http://web.mit.edu/6.829/www/currentsemester/">6.829: Computer Networks</a></li>
+</ol>
+<h3 id="TCP-IP"><a href="#TCP-IP" class="headerlink" title="TCP&#x2F;IP"></a>TCP&#x2F;IP</h3><ol>
+<li>概述<br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI0MDQ4MTM5NQ==&mid=2247489101&idx=1&sn=14a1281b4314ba50cb5adda1b7a76bd1&chksm=e91b7351de6cfa47fb71278de673d4a188761c3b17cb70fdfae919b603b77ae38cda568aff76&token=1180152654&lang=zh_CN#rd">涨姿势！请您收好这一份详细、清晰的计算机网络基础学习指南</a></li>
+<li>抓包<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/fdd7c681929c">抓包工具 Charles 的使用心得</a></li>
+</ol>
+<h3 id="HA-集群"><a href="#HA-集群" class="headerlink" title="HA 集群"></a>HA 集群</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42141701/article/details/100982547">HA（高可用） 技术全面介绍</a></li>
+<li>Nginx &#x2F; Tegine<br><a target="_blank" rel="noopener" href="http://tengine.taobao.org/document_cn/http_upstream_check_cn.html">ngx_http_upstream_check_module</a></li>
+<li>LVS<br><a target="_blank" rel="noopener" href="http://www.linuxvirtualserver.org/zh/lvs1.html">Linux 服务器集群系统</a></li>
+<li>CDN<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/nicerblog/p/11202466.html">程序员要搞明白 CDN，这篇应该够了</a><br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/tinywan/p/6067126.html#4257962">CDN 学习笔记一（CDN 是什么？）</a></li>
+</ol>
+<h3 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h3><ol>
+<li>登录<br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/8c87099f72a5">Cookie 还是 Token，这是一个问题</a></li>
+<li>攻击防御<br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI0MDQ4MTM5NQ==&mid=2247489198&idx=1&sn=fad6a755263f6fdd5372b0df6e4e8bb6&chksm=e91b73b2de6cfaa465d360a5c20ebc65f86ffe8f46803012f35f7ef400a4456bf66cbdf4ac24&token=902280270&lang=zh_CN#rd">服务器遭受攻击后，这样排查处理不背锅！</a></li>
+<li>OWASP<br><a target="_blank" rel="noopener" href="https://github.com/OWASP">github - OWASP</a><br><a target="_blank" rel="noopener" href="https://www.owasp.org/index.php/Category:OWASP_Top_Ten_Project">Category:OWASP Top Ten Project</a><br><a target="_blank" rel="noopener" href="https://www.owasp.org/images/7/72/OWASP_Top_10-2017_%28en%29.pdf.pdf">OWASP Top 10 - 2017</a><br><a target="_blank" rel="noopener" href="https://www.baidu.com/s?wd=owasp%20top%2010&rsv_spt=1&rsv_iqid=0xc415b7c00002e5d4&issp=1&f=8&rsv_bp=1&rsv_idx=2&ie=utf-8&tn=baiduhome_pg&rsv_enter=1&rsv_sug3=12&rsv_sug1=12&rsv_sug7=100&rsv_sug2=0&inputT=3387&rsv_sug4=3387">2017 OWASP TOP 10 — OWASP-CHINA</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BD%91%E7%BB%9C/" rel="tag"># 网络</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/a4caf2c1.html" rel="prev" title="Nginx 原理总结">
+                  <i class="fa fa-angle-left"></i> Nginx 原理总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/cc86b541.html" rel="next" title="TCP协议总结">
+                  TCP协议总结 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

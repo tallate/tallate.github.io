@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="限流器可以用于限制打入系统的流量或限制系统的对外请求频率，这种想法有点类似 TCP 中的拥塞控制。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="服务治理——限流">
+<meta property="og:url" content="https://tallate.github.io/6e8a6bb7.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="限流器可以用于限制打入系统的流量或限制系统的对外请求频率，这种想法有点类似 TCP 中的拥塞控制。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E9%99%90%E6%B5%81/%E5%88%86%E5%B8%83%E5%BC%8F%E9%99%90%E6%B5%81%E5%99%A8%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E5%88%86%E5%B8%83%E5%BC%8F%E9%99%90%E6%B5%81%E5%99%A8/ResourcePool.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E9%99%90%E6%B5%81/LeakyBucket.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E9%99%90%E6%B5%81/TokenBucket.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E9%99%90%E6%B5%81/SlidingWindow.png">
+<meta property="article:published_time" content="2019-02-24T14:47:18.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.894Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="限流">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E9%99%90%E6%B5%81/%E5%88%86%E5%B8%83%E5%BC%8F%E9%99%90%E6%B5%81%E5%99%A8%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/6e8a6bb7.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/6e8a6bb7.html","path":"/6e8a6bb7.html","title":"服务治理——限流"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>服务治理——限流 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9D%E8%A1%B7"><span class="nav-number">1.</span> <span class="nav-text">初衷</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%90%E6%B5%81%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.1.</span> <span class="nav-text">限流使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%B0%E6%88%90%E6%96%B9%E6%A1%88%E5%AD%98%E5%9C%A8%E7%9A%84%E7%BC%BA%E9%99%B7"><span class="nav-number">1.2.</span> <span class="nav-text">现成方案存在的缺陷</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LeakyBucket%EF%BC%88%E6%BC%8F%E6%A1%B6%E7%AE%97%E6%B3%95%EF%BC%89"><span class="nav-number">2.1.</span> <span class="nav-text">LeakyBucket（漏桶算法）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TokenBucket%EF%BC%88%E4%BB%A4%E7%89%8C%E6%A1%B6%E7%AE%97%E6%B3%95%EF%BC%89"><span class="nav-number">2.2.</span> <span class="nav-text">TokenBucket（令牌桶算法）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%90%E6%B5%81%E5%8E%9F%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">限流原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%90%E6%B5%81%E7%BB%B4%E5%BA%A6"><span class="nav-number">3.1.</span> <span class="nav-text">限流维度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%8F%98%E5%8C%96"><span class="nav-number">3.2.</span> <span class="nav-text">负载变化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%BA%A6%E8%AF%84%E4%BC%B0"><span class="nav-number">3.3.</span> <span class="nav-text">并发度评估</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Little%E2%80%99s-Law"><span class="nav-number">3.4.</span> <span class="nav-text">Little’s Law</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-%E5%8E%9F%E5%AD%90%E5%8F%98%E9%87%8F-%E8%80%8C%E4%B8%8D%E6%98%AF-%E9%94%81"><span class="nav-number">3.5.</span> <span class="nav-text">使用 原子变量 而不是 锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E6%B5%81%E9%87%8F%E9%99%90%E5%88%B6"><span class="nav-number">3.6.</span> <span class="nav-text">最大流量限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E9%99%90%E6%B5%81%EF%BC%88%E8%87%AA%E9%80%82%E5%BA%94%EF%BC%89"><span class="nav-number">3.7.</span> <span class="nav-text">动态限流（自适应）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WarmUp%EF%BC%88%E9%A2%84%E7%83%AD%EF%BC%89"><span class="nav-number">3.8.</span> <span class="nav-text">WarmUp（预热）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E9%A2%84%E7%83%AD"><span class="nav-number">3.8.1.</span> <span class="nav-text">为什么要预热</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E9%A2%84%E7%83%AD%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="nav-number">3.8.2.</span> <span class="nav-text">添加预热的位置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%84%E7%83%AD%E6%96%B9%E6%A1%88-%E6%8E%A5%E5%8F%A3%E6%94%BE%E9%87%8F"><span class="nav-number">3.8.3.</span> <span class="nav-text">预热方案 - 接口放量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%84%E7%83%AD%E6%96%B9%E6%A1%88-%E8%B5%B0%E9%A9%AC%E8%A7%82%E8%8A%B1"><span class="nav-number">3.8.4.</span> <span class="nav-text">预热方案 - 走马观花</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%84%E7%83%AD%E6%96%B9%E6%A1%88-%E7%8A%B6%E6%80%81%E4%BF%9D%E7%95%99"><span class="nav-number">3.8.5.</span> <span class="nav-text">预热方案 - 状态保留</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.8.6.</span> <span class="nav-text">实现</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E4%B8%A2%E5%A4%B1%E7%AD%96%E7%95%A5"><span class="nav-number">3.9.</span> <span class="nav-text">请求丢失策略</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%99%90%E6%B5%81"><span class="nav-number">4.</span> <span class="nav-text">分布式限流</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E-Redis-%E7%9A%84%E9%99%90%E6%B5%81%E5%99%A8"><span class="nav-number">4.1.</span> <span class="nav-text">基于 Redis 的限流器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Push-Or-Pull"><span class="nav-number">4.2.</span> <span class="nav-text">Push Or Pull</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%BA%E4%B8%80%E8%87%B4%E6%80%A7-Or-%E5%BC%B1%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">4.3.</span> <span class="nav-text">强一致性 Or 弱一致性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%B5%81%E9%87%8F%E7%9A%84%E5%88%86%E6%91%8A"><span class="nav-number">4.4.</span> <span class="nav-text">如何实现流量的分摊</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E5%90%8C%E6%AD%A5"><span class="nav-number">4.5.</span> <span class="nav-text">时间同步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%9C%8D%E5%8A%A1%E4%B8%8A%E7%BA%BF"><span class="nav-number">4.6.</span> <span class="nav-text">如何实现服务上线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%9C%8D%E5%8A%A1%E4%B8%8B%E7%BA%BF"><span class="nav-number">4.7.</span> <span class="nav-text">如何实现服务下线</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%BF%E4%BB%A3%E6%96%B9%E6%A1%88%E5%8F%8A%E5%BB%B6%E4%BC%B8%E6%80%9D%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">替代方案及延伸思考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Counter%EF%BC%88%E8%AE%A1%E6%95%B0%E5%99%A8%EF%BC%89"><span class="nav-number">5.1.</span> <span class="nav-text">Counter（计数器）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SlidingWindow%EF%BC%88%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3%E7%AE%97%E6%B3%95%EF%BC%89"><span class="nav-number">5.2.</span> <span class="nav-text">SlidingWindow（滑动窗口算法）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">5.3.</span> <span class="nav-text">信号量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-number">5.4.</span> <span class="nav-text">线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-number">5.5.</span> <span class="nav-text">计数器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97"><span class="nav-number">5.6.</span> <span class="nav-text">阻塞队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E9%85%8D%E7%BD%AE"><span class="nav-number">5.7.</span> <span class="nav-text">可配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E8%AE%BF%E9%97%AE%E9%A2%91%E7%8E%87%E9%99%90%E5%88%B6"><span class="nav-number">5.8.</span> <span class="nav-text">用户访问频率限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%90%E6%B5%81%E5%99%A8%E5%92%8C%E9%98%9F%E5%88%97"><span class="nav-number">5.9.</span> <span class="nav-text">限流器和队列</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Guava"><span class="nav-number">6.1.</span> <span class="nav-text">Guava</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Nginx"><span class="nav-number">6.2.</span> <span class="nav-text">Nginx</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HAProxy"><span class="nav-number">6.3.</span> <span class="nav-text">HAProxy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Radis"><span class="nav-number">6.4.</span> <span class="nav-text">Radis</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/6e8a6bb7.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="服务治理——限流 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          服务治理——限流
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-02-24 22:47:18" itemprop="dateCreated datePublished" datetime="2019-02-24T22:47:18+08:00">2019-02-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>限流器可以用于限制打入系统的流量或限制系统的对外请求频率，这种想法有点类似 TCP 中的拥塞控制。</p>
+<span id="more"></span>
+
+<h2 id="初衷"><a href="#初衷" class="headerlink" title="初衷"></a>初衷</h2><h3 id="限流使用场景"><a href="#限流使用场景" class="headerlink" title="限流使用场景"></a>限流使用场景</h3><p>限流可以认为是一种降级，一般是根据后台的负载提前预估的一个阈值（也可以动态调整）。超过了这个值，就要进行一些旁路处理。根据业务形态，会有直接拒绝、延迟处理、保持等待、部分穿透、默认返回等响应方式。<br>限流没有具体的应用场景，可以说只要有高并发就会有限流的用武之地（类似的还有缓存、降级等）：</p>
+<ol>
+<li>一般 web 服务，可以直接拒绝服务。快速响应才是最重要的；</li>
+<li>像一些秒杀、下单等，可以通过排队或者等待解决（部分的）；</li>
+<li>像消息消费等，如果没有顺序需求，我觉得，无限等待还可能是个好的方式；</li>
+<li>对于大多数可有可无的业务结果，使用一些默认值直接返回，效果会好的多。虽然是限流，但干的是熔断的事。</li>
+</ol>
+<p>还有一些对安全敏感的场景，比如：</p>
+<ol>
+<li>有人想暴力碰撞网站的用户密码；</li>
+<li>有人想攻击某个非常耗费资源的接口；</li>
+<li>有人想从某个接口大量抓取数据。</li>
+</ol>
+<h3 id="现成方案存在的缺陷"><a href="#现成方案存在的缺陷" class="headerlink" title="现成方案存在的缺陷"></a>现成方案存在的缺陷</h3><p>Guava 内置了一个限流器 RateLimiter ，但是它只能提供单机环境，如果提供同一接口的服务实例变多了或者变少了，流量总量也会相应改变，这样严格意义上流量其实是没有限制住的。<br>或者，借助 Redis 来实现分布式系统内的限流， Redis 记录单位时间内的请求数，只有未超过阈值的情况下才允许执行，但是这种方案下，每次请求都需要额外访问一次 Redis ，非常浪费时间。<br>另外，其实还可以和服务发现组件进行配合实现一种分布式限流器，思路如下图：<br><img src="/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E9%99%90%E6%B5%81/%E5%88%86%E5%B8%83%E5%BC%8F%E9%99%90%E6%B5%81%E5%99%A8%E7%A4%BA%E6%84%8F%E5%9B%BE.png" alt="分布式限流器示意图" title="分布式限流器示意图"><br>服务实例数量变动的时候，均衡每个实例内的限流器流量大小。</p>
+<h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><p>常见的经典限流算法有两种：漏桶算法和令牌桶算法，在某些情况下也可以采取更简单的滑动窗口算法。这几种算法描述的都是单位时间内允许通过的流量，并不关注调用什么时候结束，换句话说，它们并不能限制并发度，如果对并发量有限制，可以转为采取类似信号量（Semaphore）的实现方式。</p>
+<p>在描述实际的算法之前，先提一句我对限流器的抽象，我将其看作一个资源池，限流算法就像生产者消费者算法，只不过生产者是固定的时间，比如令牌桶就是每经过一段时间就向桶中放入一个单位的资源，而我们的目的就是限制服务器接口从中获取资源来处理自己的逻辑，示意图如下：<br><img src="/imgs/%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E5%88%86%E5%B8%83%E5%BC%8F%E9%99%90%E6%B5%81%E5%99%A8/ResourcePool.png" alt="ResourcePool示意图" title="ResourcePool示意图"></p>
+<h3 id="LeakyBucket（漏桶算法）"><a href="#LeakyBucket（漏桶算法）" class="headerlink" title="LeakyBucket（漏桶算法）"></a>LeakyBucket（漏桶算法）</h3><p>为了消除<code>突刺现象</code>，可以采用漏桶算法实现限流。不管服务调用方多么不稳定，通过漏桶算法进行限流，每 10 毫秒处理一次请求。因为处理的速度是固定的，请求进来的速度是未知的，可能突然进来很多请求，没来得及处理的请求就先放在桶里，既然是个桶，肯定是有容量上限，如果桶满了，那么新进来的请求就丢弃。<br>漏桶算法同样存在弊端：无法应对短时间内的突发流量。<br>实现思路可以是准备一个队列，用来保存请求，另外通过一个线程池定期从队列中获取请求并执行，可以一次性获取多个并发执行。<br><img src="/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E9%99%90%E6%B5%81/LeakyBucket.png" alt="LeakyBucket示意图" title="LeakyBucket示意图"></p>
+<ul>
+<li><code>leakyRate</code> 表示资源消耗速度，即单位时间可获取的资源数，或者说单位时间内可以执行的任务数；</li>
+<li><code>capacity</code> 表示可以预留的资源数，或者说可以排队的任务数。</li>
+</ul>
+<p>当 <code>acquire</code> 时没有足量的资源，有两种策略：</p>
+<ul>
+<li><code>TRAFFIC_SHAPING</code> ， <code>sleep</code> 至资源足够的时间点；</li>
+<li><code>TRAFFIC_POLICING</code> ，直接放弃该任务。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 容量阈值</span><br><span class="line"> */</span><br><span class="line">private final double capacity;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 漏水速率，单位为s</span><br><span class="line"> */</span><br><span class="line">private double leakyRate;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 超出阈值后执行策略</span><br><span class="line"> */</span><br><span class="line">private final OverCapPolicyEnum overCapPolicy;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 1. 无锁算法</span><br><span class="line"> * 2. Long 和 Double 间的转换</span><br><span class="line"> *</span><br><span class="line"> * @see [Java: is there no AtomicFloat or AtomicDouble?](https://stackoverflow.com/questions/5505460/java-is-there-no-atomicfloat-or-atomicdouble)</span><br><span class="line"> */</span><br><span class="line">private volatile AtomicLong freeTime = new AtomicLong(</span><br><span class="line">        TimeUtil.getTime());</span><br><span class="line"></span><br><span class="line">@Override</span><br><span class="line">public void acquire() throws ResAllocException &#123;</span><br><span class="line">    acquire(1);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 比如 capacity = 3 ， leakyRate = 0.(3) ，则每秒能攫取 0.(3) 单位的资源，且最多有 3 单位的资源待取。</span><br><span class="line"> * 此时若 freeTime = now + 2 秒，调用 acquire(1) 表示获取一个单位资源，则共被占用 1.(6) 单位资源， freeTime 更新为 5 秒</span><br><span class="line"> *</span><br><span class="line"> * @param count 获取资源数量</span><br><span class="line"> */</span><br><span class="line">@Override</span><br><span class="line">public void acquire(double count) throws ResAllocException &#123;</span><br><span class="line">    checkArg(count &gt; 0, &quot;攫取资源数必须大于0&quot;);</span><br><span class="line">    while (true) &#123;</span><br><span class="line">        long curTime = TimeUtil.getTime();</span><br><span class="line">        long curFreeTime = freeTime.get();</span><br><span class="line">        long nextFreeTime =</span><br><span class="line">                max(TimeUtil.getTime(), curFreeTime)</span><br><span class="line">                        + (long) (count / leakyRate * TIME_BASE);</span><br><span class="line">        // 检查流量是否超出“桶”的容量</span><br><span class="line">        if (isOverCap(curTime, curFreeTime, count)) &#123;</span><br><span class="line">            // 本次获取资源将导致&quot;溢出&quot;，根据配置执行对应策略</span><br><span class="line">            applyPolicy(curTime, curFreeTime, count);</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line">        // 更新时间</span><br><span class="line">        if (freeTime.compareAndSet(curFreeTime, nextFreeTime)) &#123;</span><br><span class="line">            // 设置成功，休眠到下一个空闲时间</span><br><span class="line">            UninterruptiblesUtil.sleepUninterruptibly(max(curFreeTime - curTime, 0));</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private void applyPolicy(long curTime, long curFreeTime, double count) throws ResAllocException &#123;</span><br><span class="line">    if (OverCapPolicyEnum.TRAFFIC_SHAPING == overCapPolicy) &#123;</span><br><span class="line">        // 等到桶中留出足够的空间</span><br><span class="line">        UninterruptiblesUtil.sleepUninterruptibly(</span><br><span class="line">                (long) (count / leakyRate * TIME_BASE) - (curFreeTime - curTime));</span><br><span class="line">    &#125; else if (OverCapPolicyEnum.TRAFFIC_POLICING == overCapPolicy) &#123;</span><br><span class="line">        throw new ResAllocException(&quot;[流量超出阈值]抛弃&quot;);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        // won&#x27;t happen...</span><br><span class="line">        throw new ResAllocException(&quot;[流量超出阈值]未知策略&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private boolean isOverCap(long curTime, long curFreeTime, double count) &#123;</span><br><span class="line">    // 已有部分资源被占用，且占用的部分超过阈值</span><br><span class="line">    long occupiedTime = curFreeTime &gt; curTime ? curFreeTime - curTime : 0;</span><br><span class="line">    double occupiedRes =</span><br><span class="line">            leakyRate * occupiedTime / TIME_BASE;</span><br><span class="line">    return occupiedRes + count &gt; capacity;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="TokenBucket（令牌桶算法）"><a href="#TokenBucket（令牌桶算法）" class="headerlink" title="TokenBucket（令牌桶算法）"></a>TokenBucket（令牌桶算法）</h3><p>从某种意义上讲，令牌桶算法是对漏桶算法的一种改进，桶算法能够限制请求调用的速率，而令牌桶算法能够在限制调用的平均速率的同时还允许一定程度的突发调用。<br>在令牌桶算法中，存在一个桶，用来存放固定数量的令牌。算法中存在一种机制，以一定的速率往桶中放令牌。每次请求调用需要先获取令牌，只有拿到令牌，才有机会继续执行，否则选择选择等待可用的令牌、或者直接拒绝。<br>实现令牌桶时可以准备一个队列，用来保存令牌，另外通过一个线程池定期生成令牌放到队列中，每来一个请求，就从队列中获取一个令牌，并继续执行。<br>Guava 中的<code>RateLimiter</code>就是令牌桶的一种实现。<br><img src="/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E9%99%90%E6%B5%81/TokenBucket.png" alt="TokenBucket示意图" title="TokenBucket示意图"></p>
+<ul>
+<li><code>addingRate</code> 令牌添加速率。</li>
+</ul>
+<p><code>acquire</code> 时如果有足够的令牌则可以继续执行，否则同样有两种策略：</p>
+<ul>
+<li><code>TRAFFIC_SHAPING</code> ， <code>sleep</code> 至令牌足够的时间点；</li>
+<li><code>TRAFFIC_POLICING</code> ，直接放弃该任务。</li>
+</ul>
+<p>令牌桶与漏桶最大的区别是令牌桶能缓存令牌，以应对网络中的突发流量，可以看作网络中的缓存。并且这个令牌的积累过程是随着时间慢慢增加的，可以看作一种预热的过程——服务器在刚启动时总是会因为处理一些初始化任务而非常繁忙。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 令牌添加速率</span><br><span class="line"> */</span><br><span class="line">private double addingRate;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 超出阈值后执行策略</span><br><span class="line"> */</span><br><span class="line">private final OverCapPolicyEnum overCapPolicy;</span><br><span class="line"></span><br><span class="line">private volatile AtomicLong freeTime = new AtomicLong(TimeUtil.getTime());</span><br><span class="line"></span><br><span class="line">private static CircularSequence&lt;Long&gt; circularSequence =</span><br><span class="line">        new CircularSequence&lt;&gt;(SequenceUtil.genContinuousLongSeq(1L, 100L, 10L));</span><br><span class="line"></span><br><span class="line">@Override</span><br><span class="line">public void acquire() throws ResAllocException &#123;</span><br><span class="line">    acquire(1);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @param count 获取令牌数量</span><br><span class="line"> */</span><br><span class="line">@Override</span><br><span class="line">public void acquire(double count) throws ResAllocException &#123;</span><br><span class="line">    checkArg(count &gt; 0, &quot;获取令牌数必须大于0&quot;);</span><br><span class="line">    while (true) &#123;</span><br><span class="line">        long curTime = TimeUtil.getTime();</span><br><span class="line">        long curFreeTime = this.freeTime.get();</span><br><span class="line">        long nextFreeTime = curFreeTime + (long) (count / addingRate * TIME_BASE);</span><br><span class="line">        // 检查“桶”中令牌是否满足当前请求</span><br><span class="line">        if (isOverCap(curTime, curFreeTime, count)) &#123;</span><br><span class="line">            applyPolicy(curTime, curFreeTime, count);</span><br><span class="line">            continue;</span><br><span class="line">        &#125;</span><br><span class="line">        // 更新时间</span><br><span class="line">        if (freeTime.compareAndSet(curFreeTime, nextFreeTime)) &#123;</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private void applyPolicy(long curTime, long freeTime, double count) throws ResAllocException &#123;</span><br><span class="line">    if (OverCapPolicyEnum.TRAFFIC_SHAPING == overCapPolicy) &#123;</span><br><span class="line">        // 加个抖动，减少竞争（可能会发生某个线程饥饿的情况，但是一般不会那么敏感）</span><br><span class="line">        long shake = circularSequence.fetch();</span><br><span class="line">        // 等到桶中产生足够的令牌</span><br><span class="line">        UninterruptiblesUtil.sleepUninterruptibly(</span><br><span class="line">                (long) (count / addingRate * TIME_BASE) - (curTime - freeTime) + shake);</span><br><span class="line">    &#125; else if (OverCapPolicyEnum.TRAFFIC_POLICING == overCapPolicy) &#123;</span><br><span class="line">        throw new ResAllocException(&quot;[流量超出阈值]抛弃&quot;);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        // won&#x27;t happen...</span><br><span class="line">        throw new ResAllocException(&quot;[流量超出阈值]未知策略&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private boolean isOverCap(long curTime, long freeTime, double count) &#123;</span><br><span class="line">    // 计算“桶”中当前存在的令牌，必须满足 freeTime &lt; curTime ，因为桶中资源不能“透支”</span><br><span class="line">    long remainingTime = freeTime &lt; curTime ? curTime - freeTime : 0;</span><br><span class="line">    double remainingTokens = addingRate * remainingTime / TIME_BASE;</span><br><span class="line">    return count &gt; remainingTokens;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="限流原理"><a href="#限流原理" class="headerlink" title="限流原理"></a>限流原理</h2><h3 id="限流维度"><a href="#限流维度" class="headerlink" title="限流维度"></a>限流维度</h3><p>这属于应用的范畴，应该由限流器的使用者来关注，即限流可以在不同维度执行，比如：</p>
+<ol>
+<li>对请求的 URL 进行限流；</li>
+<li>对客户端的访问 IP 进行限流；</li>
+<li>对某些特定用户或者用户组进行限流；</li>
+<li>多维度混合的限流。</li>
+</ol>
+<h3 id="负载变化"><a href="#负载变化" class="headerlink" title="负载变化"></a>负载变化</h3><ol>
+<li>压力普通，正常服务，耗时正常 。</li>
+<li>压力上升，服务开始出现大面积超时，由于使用不公平锁竞争，偶尔会有正常耗时的需求。</li>
+<li>压力继续增大，服务器开始进入假死状态，几乎不能再接受新的请求。</li>
+</ol>
+<h3 id="并发度评估"><a href="#并发度评估" class="headerlink" title="并发度评估"></a>并发度评估</h3><p>限流器的参数设置很多时候没有一个固定的套路，但是回到开头的讨论：</p>
+<blockquote>
+<p>…限流器的作用是限制吞吐率…</p>
+</blockquote>
+<p>那么怎么才能正确评估系统的吞吐率呢？（注意平均处理时间是吞吐率的倒数）</p>
+<ol>
+<li>评估总访问量<br>问运营和产品上线后的总访问量，一般用 PV 等单位估算。</li>
+<li>评估平均访问量 QPS<br>总量除以时间即可，一天 86400 秒，一般认为请求发生在白天，即 4w 秒。</li>
+<li>评估高峰 QPS<br>系统容量规划时，不能只考虑平均 QPS，而是要抗住高峰的 QPS，如何知道高峰 QPS 呢？根据业务特性，通过业务访问曲线评估。<br>有一些业务例如“秒杀业务”比较难画出业务访问趋势图，这类业务的容量评估不在此列。</li>
+<li>评估系统、单机极限 QPS<br>压力测试</li>
+<li>提出方案<br>比较上述计算出的所需服务器数量和当前线上已有服务器数量的差值，判断需要加几台机器。</li>
+</ol>
+<p>但是这种评估没有权衡其他接口的流量，因为并不是只有一个接口在接收请求，只能作为一个调参的参考。</p>
+<blockquote>
+<p>Web 服务器不会因为来了多少个请求就建立多少个连接，一个用户可能会发出多个请求，内核会使用同一个文件描述符来处理。</p>
+</blockquote>
+<h3 id="Little’s-Law"><a href="#Little’s-Law" class="headerlink" title="Little’s Law"></a>Little’s Law</h3><p><strong>Little’s Law</strong> 是排队论中的一个定律：一个系统中顾客的长期平均数量 L 等于顾客的长期平均到达速率λ乘以顾客在系统中平均花费的时间 W。用公式表示为：<br><code>L = λ W</code><br>虽然这个定律看起来很简单，但是这是一个非常有名的结果，因为这种关系“不受到达过程的分布，服务分布，服务顺序，或其他任何因素的影响”。这个结果适用于任何系统，特别是适用于系统内的系统。唯一的要求是系统必须是<strong>稳定</strong>的<strong>非抢占式</strong>的。<br>因为这个公式是在普遍意义上成立的，因此也可以在 Web 服务中应用，用于定性描述平均响应时间 W、平均请求数 L、平均吞吐率λ之间的关系。<br>但是要注意的是<strong>稳定</strong>的定义，根据 Wiki 上的定义，如果<strong>到达速度超过离开速度就代表是一个不稳定的系统，这会造成等待的顾客数量逐渐增加到无穷大</strong>。对这种现象的定性描述需要深入研究排队论。</p>
+<h3 id="使用-原子变量-而不是-锁"><a href="#使用-原子变量-而不是-锁" class="headerlink" title="使用 原子变量 而不是 锁"></a>使用 原子变量 而不是 锁</h3><p>多个线程同时去获取一个限流器的资源的时候，会产生竞态条件，这在漏桶和令牌桶算法的实现中采取的是基于原子操作工具来解决的，下面这段代码是 Java 中原子变量的使用示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">AtomicLong atomicLong = new AtomicLong(0);</span><br><span class="line">public void test &#123;</span><br><span class="line">    long v, newV;</span><br><span class="line">    do &#123;</span><br><span class="line">        v = atomicLong.get();</span><br><span class="line">        newV = 2 * v;</span><br><span class="line">    &#125; while (atomicLong.compareAndSet(v, newV));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>AtomicXxx 的原理是 CAS ，它是一种无锁算法，相对 Lock 来说一般会更加高效，但是要注意存在多个线程同时去竞争同一原子变量的情况，可能会导致某个线程长时间的在“空转”（有点像进程调度中的“饥饿”现象），但是在限流器场景内发生的概率比较小，因为一个线程拿到资源后会去执行自己的逻辑或者睡眠一段时间，这段时间内它是不会再加入到抢资源的队伍里的。<br>大并发下 AtomicXxx 会有明显的空转现象，最好使用<code>LongAdder</code>替代，LongAdder 将对一个 AtomicLong 的请求分摊到多个 AtomicLong，其原理类似负载均衡。</p>
+<h3 id="最大流量限制"><a href="#最大流量限制" class="headerlink" title="最大流量限制"></a>最大流量限制</h3><p>如果需要单机承载上万 &#x2F; s 的流量，过大的流量会导致响应时间变长，甚至冲垮进程，这时限流的意义就不大了。<br>缓解单机压力的最常用方法是均摊，在 DNS、反向代理层都可以做流量的分摊，具体如何实现这里就不展开了。</p>
+<h3 id="动态限流（自适应）"><a href="#动态限流（自适应）" class="headerlink" title="动态限流（自适应）"></a>动态限流（自适应）</h3><p>动态化是一个比较好的想法，可以在调整机器负载后自动反馈到限流器，但是现实环境比较复杂：</p>
+<ul>
+<li>需要根据业务需求进行设计，比如一个接口是热点，需要进行限流以提高整体的吞吐率，但是该接口有流量高峰期，可以考虑在这段时间内临时提高限流器的阈值，避免这些请求直接被丢弃了；</li>
+<li>需要考虑即时系统负载（CPU、内存、网络连接数、数据库连接数）参数来考虑。</li>
+<li>如果不能直接获取机器配置，可以从系统吞吐率、积压的请求数、响应时间、可用率等来间接推导出系统负载。</li>
+</ul>
+<h3 id="WarmUp（预热）"><a href="#WarmUp（预热）" class="headerlink" title="WarmUp（预热）"></a>WarmUp（预热）</h3><h4 id="为什么要预热"><a href="#为什么要预热" class="headerlink" title="为什么要预热"></a>为什么要预热</h4><p>WarmUp，即冷启动&#x2F;预热的方式。当系统长期处于低水位的情况下，流量突然增加时，直接把系统拉升到高水位可能瞬间把系统压垮。通过”冷启动”，让通过的流量缓慢增加，在一定时间内逐渐增加到阈值上限，给冷系统一个预热的时间，可以避免冷系统被压垮。<br>如果直接跳过预热，系统很容易出现各种问题，比如：</p>
+<ol>
+<li>DB 重启后，瞬间死亡<br>一个高并发环境下的 DB，进程死亡后进行重启。由于业务处在高峰期间，上游的负载均衡策略发生了重分配。刚刚启动的 DB 瞬间接受了 1&#x2F;3 的流量，然后 load 疯狂飙升，直至再无响应。<br>原因就是：新启动的 DB，各种 Cache 并没有准备完毕，系统状态与正常运行时截然不同。可能平常 1&#x2F;10 的量，就能够把它带入死亡。</li>
+<li>服务重启后，访问异常<br>另外一个常见的问题是：我的一台服务器发生了问题，由于负载均衡的作用，剩下的机器立马承载了这些请求，运行的很好。当服务重新加入集群时，却发生了大量高耗时的请求，在请求量高的情况下，甚至大批大批的失败。<br>引起的原因大概可以归结于：<ul>
+<li>服务启动后，jvm 并未完全准备完毕，JIT 未编译等。</li>
+<li>应用程序使用的各种资源未准备就绪。</li>
+<li>负载均衡发生了 rebalance。</li>
+</ul>
+</li>
+</ol>
+<h4 id="添加预热的位置"><a href="#添加预热的位置" class="headerlink" title="添加预热的位置"></a>添加预热的位置</h4><p>warmup 最合适的切入层面就是网关。集成在网关中的负载均衡组件，将能够识别出这台刚加入的实例，然后逐步放量到这台机器，直到它能够真正承受高速流量。<br>但现实情况往往不能满足条件。比如：</p>
+<ol>
+<li>你的应用直接获取了注册中心的信息，然后在客户端组件中进行了流量分配。</li>
+<li>你的应用通过了一些复杂的中间件和路由规则，最终定位到某一台 DB 上。</li>
+<li>你的终端，可能通过了 MQTT 协议，直接连上了 MQTT 服务端。</li>
+</ol>
+<h4 id="预热方案-接口放量"><a href="#预热方案-接口放量" class="headerlink" title="预热方案 - 接口放量"></a>预热方案 - 接口放量</h4><p>我们进行一下抽象，可以看到：所有这些流量分配逻辑，包括网关，都可以叫做客户端。即所有的 warmup 逻辑都是放在客户端的，它们都与负载均衡紧密耦合在一起。</p>
+<ol>
+<li>我要能拿到所有要调用资源的集合，以及启动时间，冷启动的配置等。</li>
+<li>给这些资源分配一些权重，比如最大权重为 100，配置 100 秒之后冷启动成功。假如现在是第 15 秒，则总权重就是 100*(n-1)+15。</li>
+<li>根据算好的权重，进行分配，流量会根据时间流逝逐步增加，直到与其他节点等同。</li>
+<li>一个极端情况，我的后端只有 1 个实例，根本就启动不起来。</li>
+</ol>
+<h4 id="预热方案-走马观花"><a href="#预热方案-走马观花" class="headerlink" title="预热方案 - 走马观花"></a>预热方案 - 走马观花</h4><p>顾名思义，意思就是把所有的接口都提前访问一遍，让系统对资源进行提前准备。<br>比如，遍历所有的 http 连接，然后发送请求。<br>这种方法是部分有效的，一些懒加载的资源会在这个阶段陆续加载进来，但不是全部。<br>JIT 等一些增强功能，可能使得预热过程变得非常的长，走马观花的方式，只能在一定程度上有作用。<br>再比如某些 DB，在启动之后，会执行一些非常有特点的 sql，使得 PageCache 里加载到最需要的热数据。</p>
+<h4 id="预热方案-状态保留"><a href="#预热方案-状态保留" class="headerlink" title="预热方案 - 状态保留"></a>预热方案 - 状态保留</h4><p>系统在死亡时做一个快照，然后在启动时，原封不动的还原回来。<br>这个过程就比较魔幻了，因为一般的非正常关闭，系统根本没有机会发表遗言，所以只能定时的，在运行中的系统中做快照。<br>节点在启动时，再将快照加载到内存中。这在一些内存型的组件中应用广泛。</p>
+<h4 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h4><p>Guava - RateLimiter 中的 <code>SmoothWarmingUp</code> 提供了<strong>预热</strong>的功能，预热的功能主要是为了应对突发的流量：在没有预热的情况下，如果突发的大量流量直接打到后台服务器，如果后台服务的缓存陈旧、DB 或其他 IO 操作耗时，就有可能拖垮后台服务。预热属性可以通过设置 warmupPeriod 参数来实现。<br>另外， RateLimiter 还允许选择 SmoothBursty 或 SmoothWarmingUp 策略，举个例子：<br>比如当前桶中有 5 个令牌，此时来了一个新请求需要消耗 9 个令牌，那么它需要等待生成 4 个令牌的时间（SmoothBursty），或等待 9 个令牌的时间（SmoothWarmingUp）。<br>为了简单起见，我在代码里采用的是较简单的实现，令牌的添加速度总是均匀的，没有预热的过程，且没有阈值的限制，当桶中令牌数不足以承载请求时会等待直到足够的令牌被添加进来（或者直接抛出异常）。</p>
+<h3 id="请求丢失策略"><a href="#请求丢失策略" class="headerlink" title="请求丢失策略"></a>请求丢失策略</h3><p>限流器——特别是基于令牌桶的限流器，当流量超过阈值，一般会提供两种对溢出流量的处理策略，分别是 <code>Traffic Shaping</code> 和 <code>Traffic Policing</code> ，简单来说，前者会暂时拦截住上方水的向下流动、等待容量空闲后再放行，而后者碰到溢出的流量会直接抛弃，这些流量可以通过日志追溯，但是已经没有实际的作用。</p>
+<h2 id="分布式限流"><a href="#分布式限流" class="headerlink" title="分布式限流"></a>分布式限流</h2><p>正如开头所说，现存的（至少是网上可以随便找到的）一些限流方案不能有效、高效地实现分布式系统的限流，因此我建议使用服务注册中心来注册所有服务，然后动态更新每个业务服务实例内的限流属性。为此，我们先分析一下一般基于 Redis 的限流器实现模式，然后讨论一下服务注册中心的相关问题，最后给出这个限流器的一个大致运作流程。</p>
+<ul>
+<li>服务注册中心可以使用 ZooKeeper 、 Eureka 、 Etcd 等技术来实现。</li>
+<li>我们需要的是 <code>&lt;ServiceId, ServiceProp&gt;</code> 这样的结构，姑且称为服务注册项，其中，服务 ID 唯一标识一个服务，服务属性包括版本号、实例数量等，不需要记录每个服务的地址等信息。</li>
+</ul>
+<h3 id="基于-Redis-的限流器"><a href="#基于-Redis-的限流器" class="headerlink" title="基于 Redis 的限流器"></a>基于 Redis 的限流器</h3><p>简而言之就是为每个请求生成一个 key（可以是 IP+接口 URL，也可以直接根据接口 URL 生成），value 变量为计数值，设置过期时间。<br>需要注意 Redis 的过期策略是混合的：</p>
+<ul>
+<li>被动删除：当读 &#x2F; 写一个已经过期的 key 时，会触发惰性删除策略，直接删除掉这个过期 key；</li>
+<li>主动删除：Redis 会定期（默认似乎是 100ms）主动淘汰一批已过期的 key，当已用内存超过限定时，也会触发主动清理策略。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line">-- KEYS[1] map key</span><br><span class="line">-- ARGV[1] current time</span><br><span class="line">-- ARGV[2] duration</span><br><span class="line">-- ARGV[3] limitation</span><br><span class="line">-- ARGV[4] precision</span><br><span class="line">-- ARGV[5] permits</span><br><span class="line"></span><br><span class="line">local function clear(il, i2, key, count_key, dele)</span><br><span class="line">    local sum = 0</span><br><span class="line">    for id = il, i2 do</span><br><span class="line">        local bkey = count_key .. &quot;:&quot; .. id;</span><br><span class="line">        local bcount = redis.call(&#x27;HGET&#x27;, key, bkey)</span><br><span class="line">        if bcount then</span><br><span class="line">            sum = sum + tonumber(bcount)</span><br><span class="line">            table.insert(dele, bkey)</span><br><span class="line">        end</span><br><span class="line">    end</span><br><span class="line">    return sum</span><br><span class="line">end</span><br><span class="line"></span><br><span class="line">local count_key = &quot;cnt&quot;</span><br><span class="line">local ts_key = &quot;ts&quot;</span><br><span class="line"></span><br><span class="line">// 限流记录的 key, 此处的 key 由外部传入, 一般根据我们需要限流的维度来生成. 例如如果是按 ip 对某个 url 做访问限流限制, 则 key 可能是 url:/test:ip:192.168.1.1</span><br><span class="line">local key = KEYS[1]</span><br><span class="line">// 当前时间, 使用服务端 redis 时间, 为了保证分布式情况下时间的一致性, 这里的使用通过 redis.time 获取并传入 lua 脚本</span><br><span class="line">local now = tonumber(ARGV[1])</span><br><span class="line">// 限流的总时长, 例如 1 分钟则是 60 * 1000 ms</span><br><span class="line">local duration = tonumber(ARGV[2])</span><br><span class="line">// 最高流量限制, 例如每分钟 10 次, 则为 10</span><br><span class="line">local limit = tonumber(ARGV[3])</span><br><span class="line">// 限流精度, 例如精度是 1s, 则为 1000 ms, 限流精度也是保证能实现上图红框内限流的关键, 精度越小, 限流越精确, block 数也越多, 占用的内存也越大. 实际上上图的简单限流即是 duration = precision 的一种特殊情况</span><br><span class="line">local precision = tonumber(ARGV[4])</span><br><span class="line">// 本次需要增加多少流量, 对于频率来说一般是 1, 而对于流量来说则是数据流量的字节数</span><br><span class="line">local permits = tonumber(ARGV[5])</span><br><span class="line"></span><br><span class="line">// 限流总时长按精度拆分成blocks块</span><br><span class="line">local blocks = math.ceil(duration / precision)</span><br><span class="line">// 当前时间在第几块</span><br><span class="line">local block_id = math.floor(now / precision) % blocks</span><br><span class="line">local last_ts = redis.call(&#x27;HGET&#x27;, key, ts_key)</span><br><span class="line">last_ts = last_ts and tonumber(last_ts) or 0</span><br><span class="line">if last_ts ~= 0 then</span><br><span class="line">    local decr = 0;</span><br><span class="line">    local dele = &#123;&#125;</span><br><span class="line">    local last_id = math.floor(last_ts / precision) % blocks</span><br><span class="line">    local elapsed = now - last_ts;</span><br><span class="line"></span><br><span class="line">    if elapsed &gt; duration then</span><br><span class="line">        -- clear all</span><br><span class="line">        clear(O, blocks - 1, key, count_key, dele)</span><br><span class="line">        if permits &gt; 0 then</span><br><span class="line">            redis.call(&#x27;HSET&#x27;, key, ts_key, now)</span><br><span class="line">            redis.call(&#x27;HINCRBY&#x27;, key, count_key, permits)</span><br><span class="line">            redis.call(&#x27;HINCRBY&#x27;, key, count_key .. &quot;:&quot; .. block_id, permits)</span><br><span class="line">            redis.call(&#x27;PEXPIRE&#x27;, key, duration)</span><br><span class="line">        end</span><br><span class="line">        return false</span><br><span class="line">    elseif block_id &gt; last_id then</span><br><span class="line">        decr = decr + clear(last_id + 1, block_id, key, count_key, dele)</span><br><span class="line">    elseif block_id &lt; last_id then</span><br><span class="line">        decr = decr + clear(O, block_id, key, count_key, dele)</span><br><span class="line">        decr = decr + clear(last_id + 1, blocks - 1, key, count_key, dele)</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    local cur</span><br><span class="line">    if #dele &gt; 0 then</span><br><span class="line">        redis.call(&#x27;HDEL&#x27;, key, unpack(dele))</span><br><span class="line">        cur = redis.call(eHINCRBY, key, count_key, -decr)</span><br><span class="line">    else</span><br><span class="line">        cur = redis.call(&#x27;HGET&#x27;, key, count_key)</span><br><span class="line">    end</span><br><span class="line"></span><br><span class="line">    if tonumber(cur or &#x27;0&#x27;) + permits &gt; limit then</span><br><span class="line">        return true</span><br><span class="line">    end</span><br><span class="line">end</span><br><span class="line">if permits &gt; 0 then</span><br><span class="line">    redis.call(&#x27;HSET&#x27;, key, ts_key, now)</span><br><span class="line">    redis.call(&#x27;HINCRBY&#x27;, key, count_key, permits)</span><br><span class="line">    redis.call(&#x27;HINCRBY&#x27;, key, count_key .. &quot;:&quot; .. block_id, permits)</span><br><span class="line">    redis.call(&#x27;PEXPIRE&#x27;, key, duration)</span><br><span class="line">end</span><br><span class="line">return false</span><br></pre></td></tr></table></figure>
+<ul>
+<li>redis 集群问题<br>由于 redis 是集群环境, 集群环境下实际上直接执行 lua 脚本是有问题的. 试想 lua 脚本内可能涉及到多个 key 的操作, 而 redis 实际执行节点的选择也是通过 key 来选择的. 在多 key 情况下可能会造成 lua 脚本内 key 的执行混乱, 所以我们需要先手动选择好 redis 节点.<br>此处我们可以先用限流的 key 将 redis 选择出来, 再将 lua 脚本传到某个 redis 节点执行. 也就是我们必须要可以通过限流 key 唯一确定一个 redis 节点, 例如 url:&#x2F;test:ip:192.168.1.1 是可以确定使用某个 redis 节点的.</li>
+<li>分布式时间问题<br>分布式系统需要考虑多客户端时间不一致问题, 此处使用 redis 时间解决.</li>
+<li>客户端性能问题<br>由于这是一个公用的限流服务, 也就是所有接入该服务的应用的每次请求都会调用该服务, 再加上所有接入服务的应用共用一个 redis, 显然如果客户端使用同步等待限流服务的返回结果并不太合适, 会影响客户端的服务调用性能.<br>所以我们可以使用一种折中策略, 即将限流结果保存到本地, 每次请求直接检查本地限流结果是否被限流, 同时使用异步的方式调用限流服务, 并在异步回调中更新限流结果. 这种做法会让限流数据略有延迟, 但是影响不大.</li>
+<li>限流服务本身的负载<br>作为限流服务, 一个主要的作用是限制恶意流量对正常业务造成冲击, 但如果所有流量都需要经过限流服务, 当流量激增的时候, 谁来保证限流服务自己不被压垮？其实可以添加一个兜底方案：设定一个阈值, 当流量超过某个阈值(一般来讲, 这个阈值可以设置为 机器数 * 限流阈值)时, 直接退化为本地限流.</li>
+</ul>
+<h3 id="Push-Or-Pull"><a href="#Push-Or-Pull" class="headerlink" title="Push Or Pull"></a>Push Or Pull</h3><p>当服务上下线时，首先由上线的服务实例发起请求更新服务注册中心的服务注册项，然后由服务注册中心通知其他相关服务实例，其实这是一种 <strong>发布 &#x2F; 订阅模式</strong>。</p>
+<ul>
+<li>更新服务注册项<br>推的模式，由客户端主动发起请求，更新服务注册项。</li>
+<li>更新本地限流器<br>如果是推的模式——即由服务端主动通知相关的所有服务实例——需要服务端维持和客户端之间的长连接，一个实例是 Zk 中的 Watcher 机制。<br>如果是拉的模式——即由客户端定期从服务端拉取服务注册信息——则可能会面临对实时性和性能之间的权衡，如果频率过高可能会影响服务的整体吞吐量，频率过低又会在一定程度上影响实时性。</li>
+</ul>
+<h3 id="强一致性-Or-弱一致性"><a href="#强一致性-Or-弱一致性" class="headerlink" title="强一致性 Or 弱一致性"></a>强一致性 Or 弱一致性</h3><p>像 ZooKeeper 这样的具有强一致性的 KV 数据库在实践中常被用于实现分布式锁等功能，但是用于服务发现并不合适，因为每当有 Zk 实例上下线时都需要重新选举，此时 Zk 集群将不提供服务（意味着不管访问哪一个实例都一样），<strong>提高一致性的代价是牺牲了可用性</strong>。<br>如果采用 Zk 作为我们的服务发现提供器，可能会导致服务接口可用性与 Zk 集群健康程度关联紧密，当 Zk 集群重新选举时，集群不能很好地提供服务。<br>与此相对的，像 Eureka 是专门为微服务架构提供的一种服务发现组件，它采用心跳机制来同步多个副本，没有 Zk 中“至少一半存活才能提供服务”之类的限制，还有一些像“出现大量服务上下线时不修改服务注册表”之类的保底机制，可以有效提高服务的可用性。<br>总而言之，弱一致性就足够了。</p>
+<h3 id="如何实现流量的分摊"><a href="#如何实现流量的分摊" class="headerlink" title="如何实现流量的分摊"></a>如何实现流量的分摊</h3><p>每个服务实例在使用限流器时需要指定服务 ID 和流量，这些流量会添加到服务注册项内，然后每个实例在接到更新通知后除以实例数量即可分到<strong>平均流量</strong>。</p>
+<h3 id="时间同步"><a href="#时间同步" class="headerlink" title="时间同步"></a>时间同步</h3><p>分布式系统中的一个常见问题是多个服务器上的时间不一致，但是在我们的实现中不会有影响，因为就算两台机器的时间差了 1 个小时，它们时间的流速总该是一样的吧？<br>时间的同步需求在定时任务中涉及到的比较多。</p>
+<h3 id="如何实现服务上线"><a href="#如何实现服务上线" class="headerlink" title="如何实现服务上线"></a>如何实现服务上线</h3><p>当有两个服务实例同时上线时，它们会<strong>竞争</strong>同一个服务注册项，在服务集群启动时这个冲突是很频繁的，出于实现上的方便，我更倾向于借助乐观锁来实现同步（如果要采用分布式锁，可能还要起一个锁服务器）。<br>正如前面所说，服务注册项在更新后需要通知到所有相关的服务实例，经过观察比较，常见的可以用于实现服务发现功能的 KV 存储中间件都提供了 Watcher 机制，即在监听的数据发生变更后注册中心能够主动通知客户端，如果不存在这样的机制，则只能退而求其次选择客户端轮询了。</p>
+<h3 id="如何实现服务下线"><a href="#如何实现服务下线" class="headerlink" title="如何实现服务下线"></a>如何实现服务下线</h3><p>服务下线可能是非常突然的，比如断电、人为重启等，服务注册中心需要通过某种机制感知到这种情况。<br>一种常见的实现方式是由服务端维持和客户端之间的长连接，通过心跳检测来检查服务的健康状况。</p>
+<h2 id="替代方案及延伸思考"><a href="#替代方案及延伸思考" class="headerlink" title="替代方案及延伸思考"></a>替代方案及延伸思考</h2><p>上边的实现考虑的比较多，实际上开发时出于稳妥和降低工作量起见，会采取其他更方便的方案。</p>
+<h3 id="Counter（计数器）"><a href="#Counter（计数器）" class="headerlink" title="Counter（计数器）"></a>Counter（计数器）</h3><p>单位时间内只允许一定数量的流量通过，类似于令牌桶的简化版。<br>计数算法不能防止两段相邻时间区间边界处的突发流量：<code>[----o][o----]</code></p>
+<h3 id="SlidingWindow（滑动窗口算法）"><a href="#SlidingWindow（滑动窗口算法）" class="headerlink" title="SlidingWindow（滑动窗口算法）"></a>SlidingWindow（滑动窗口算法）</h3><p>和 CounterResPool 思路差不多，但是滑动窗口可以避免两个相邻时间区间边界处的突发流量。<br><img src="/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E9%99%90%E6%B5%81/SlidingWindow.png" alt="SlidingWindow示意图" title="SlidingWindow示意图"></p>
+<h3 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h3><p>信号量不同于计数器，在结束请求后需要把计数器“加回来”。限流器限制的是<strong>吞吐率</strong>（单位时间内请求数或者流量），而 Semaphore 限制的则是<strong>并发度</strong>，因为同时正在执行的请求数是由信号量的初始信号数决定的，我们可以利用这一点来实现并发数的精确控制。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">private static Semaphore semaphore = new Semaphore(100);</span><br><span class="line"></span><br><span class="line">public void acquire(Consumer&lt;T&gt; consumer, T arg,</span><br><span class="line">        Consumer&lt;T&gt; onAcquireFailed, Consumer&lt;Exception&gt; onException) &#123;</span><br><span class="line">    if(!semaphore.tryAcquire()) &#123;</span><br><span class="line">        onAcquireFailed.accept(arg);</span><br><span class="line">        return ;</span><br><span class="line">    &#125;</span><br><span class="line">    try &#123;</span><br><span class="line">        consumer.accept(arg);</span><br><span class="line">    &#125; catch(Exception e) &#123;</span><br><span class="line">        onException.accept(e);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        semaphore.release();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">private final static ExecutorService pool = new ThreadPoolExecutor(100, 100, 1, TimeUnit.MINUTES, new SynchronousQueue&lt;&gt;());</span><br><span class="line"></span><br><span class="line">public static &lt;T&gt; T execute(Supplier&lt;T&gt; supplier) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        Future&lt;T&gt; future = pool.submit(supplier::get);</span><br><span class="line">        return future.get();</span><br><span class="line">    &#125; catch (Exception e) &#123;</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>这种方案无法完美地做到“如果超过 100，超出的请求就直接返回 null 或抛出异常”，哪怕是使用 SynchronousQueue。</li>
+</ul>
+<h3 id="计数器"><a href="#计数器" class="headerlink" title="计数器"></a>计数器</h3><p>用计数器会有多种方案，而且每一种都有竞态条件，在高并发场景下都会有问题，方案一：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">private AtomicInteger counter = new AtomicInteger(0);</span><br><span class="line"></span><br><span class="line">public &lt;T&gt; void execute(Consumer&lt;T&gt; consumer, T arg, Consumer&lt;T&gt; onAcquireFailed, Consumer&lt;Exception&gt; onException) &#123;</span><br><span class="line">    int v = counter.incrementAndGet();</span><br><span class="line">    if(v &gt; 100) &#123;</span><br><span class="line">        onAcquireFailed(arg);</span><br><span class="line">        return ;</span><br><span class="line">    &#125;</span><br><span class="line">    try &#123;</span><br><span class="line">        supplier.accept(arg);</span><br><span class="line">    &#125; catch(Exception e) &#123;</span><br><span class="line">        onException(e);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        counter.decrementAndGet();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>方案二:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">private AtomicInteger counter = new AtomicInteger(0);</span><br><span class="line"></span><br><span class="line">public &lt;T&gt; void execute(Consumer&lt;T&gt; consumer, T arg, Consumer&lt;T&gt; onAcquireFailed, Consumer&lt;Exception&gt; onException) &#123;</span><br><span class="line">    int v = counter.get();</span><br><span class="line">    if(v &gt; 100) &#123;</span><br><span class="line">        onAcquireFailed(arg);</span><br><span class="line">        return ;</span><br><span class="line">    &#125;</span><br><span class="line">    counter.incrementAndGet();</span><br><span class="line">    try &#123;</span><br><span class="line">        supplier.accept(arg);</span><br><span class="line">    &#125; catch(Exception e) &#123;</span><br><span class="line">        onException(e);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        counter.decrementAndGet();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>方案一在计数器已经达到 100 的情况下如果再进来请求，会有只加不减的情况；</li>
+<li>方案二是在先检查计数器后再执行 incrementAndGet，在计数器已经达到 100 的情况下如果并发调用该方法会导致计数器超出 100。</li>
+</ul>
+<h3 id="阻塞队列"><a href="#阻塞队列" class="headerlink" title="阻塞队列"></a>阻塞队列</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">private BlockingQueue&lt;Integer&gt; reqQueue = new ArrayBlockingQueue&lt;&gt;();</span><br><span class="line"></span><br><span class="line">public void execute(Consumer&lt;T&gt; consumer, T arg, Consumer&lt;T&gt; onAcquireFailed, Consumer&lt;Exception&gt; onException) &#123;</span><br><span class="line">    if(!reqQueue.offer()) &#123;</span><br><span class="line">        onAcquireFailed(arg);</span><br><span class="line">        return ;</span><br><span class="line">    &#125;</span><br><span class="line">    try &#123;</span><br><span class="line">        consumer.accept(arg);</span><br><span class="line">    &#125; catch(Exception e) &#123;</span><br><span class="line">        onException(e);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        reqQueue.poll();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="可配置"><a href="#可配置" class="headerlink" title="可配置"></a>可配置</h3><p>上面我们给出的并发限制都是写死的，但是如果上线后发现不合适怎么办？比如容量评估失败，实际上的并发数要求更高、机器效率过剩了，会导致大量请求阻塞，特别是在和三方系统对接的时候。<br>解决办法是让并发数可配置化，以信号量为例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">private static Semaphore semaphore;</span><br><span class="line"></span><br><span class="line">@ConfigParam(&quot;permits&quot;) // 1</span><br><span class="line">public void onUpdate(int permits) &#123;</span><br><span class="line">    if(permits &lt;= 0) &#123;</span><br><span class="line">        throw new IllegalArgumentException(&quot;并发数配置必须大于0&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    semaphore = new Semaphore(permits);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public &lt;T&gt; void acquire(Consumer&lt;T&gt; consumer, T arg,</span><br><span class="line">        Consumer&lt;T&gt; onAcquireFailed, Consumer&lt;Exception&gt; onException) &#123;</span><br><span class="line">    Semaphore semaphore = semaphore; // 2</span><br><span class="line">    if (!semaphore.tryAcquire()) &#123; // 3</span><br><span class="line">        onAcquireFailed.accept(arg);</span><br><span class="line">        return ;</span><br><span class="line">    &#125;</span><br><span class="line">    try &#123;</span><br><span class="line">        consumer.accept(arg);</span><br><span class="line">    &#125; catch(Exception e) &#123;</span><br><span class="line">        onException.accept(e);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        semaphore.release(); // 4</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>1 处的 @ConfigParam 是一个配置注解，表示从<strong>配置中心</strong>读取一个属性，它需要能动态感知配置的变化；</li>
+<li>2 处需要取到 semaphore 的一个引用，不能直接使用成员变量的引用，因为配置修改后会把对象成员变量的 semaphore 给覆盖掉，这样 3 和 4 处获取和释放的可能不是同一个。</li>
+</ul>
+<h3 id="用户访问频率限制"><a href="#用户访问频率限制" class="headerlink" title="用户访问频率限制"></a>用户访问频率限制</h3><p>用户体验是一个容易被忽略的设计要点，按照上边的算法的设计思路，虽然<code>ReteLmiter.create(0.1666)</code>这么声明确实可以限制用户 1 分钟内只能访问 10 次，但是因为是均匀的限流、用户在每次点击后都需要再等 6 秒才能进行下一步操作，这给用户的体验当然是非常差的，更好的方案是先给用户点击 10 次的机会，然后再限制他在接下来的时间内无法继续点击。<br>这个方案不能通过一个本地计数器来实现，因为无法确认用户点击时请求被负载均衡到哪台服务器上，对用户来说，就是有时候点击会提示“您操作过于频繁，请稍后再试”、有时候不会，这同样会降低用户体验。<br>一般来说这种限流器是通过 Redis 来实现的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">String key = buildKey(userId);</span><br><span class="line">String count = redisClient.incr(key);</span><br><span class="line">if(count &gt; countThreshold) &#123;</span><br><span class="line">    throw new BizException(&quot;您操作过于频繁，请稍后再试&quot;);</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    redisClient.expire(key, expireTime);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当然在判断之前设置也存在问题，这样只要用户点击就会重新刷新过期时间，比如过期时间是 1 分钟，用户在 55 秒的时候又点击了一次，结果又要再等 1 分钟才能继续操作。<br>解决方案一般是引入 Lua 脚本、将这段逻辑包装成一个脚本批量执行，减少网络出错导致失败的概率，提供一种近似的原子操作，当然随意引入 Redis-Lua 是非常危险的，我暂时没有想到更好的解决方案，如果你有想法，欢迎联系我讨论。</p>
+<h3 id="限流器和队列"><a href="#限流器和队列" class="headerlink" title="限流器和队列"></a>限流器和队列</h3><ul>
+<li>非公平调度<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">private ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();</span><br><span class="line"></span><br><span class="line">private Semaphore semaphore = new Semaphore(10);</span><br><span class="line"></span><br><span class="line">private LongAdder counter = new LongAdder();</span><br><span class="line"></span><br><span class="line">private &lt;T&gt; void doAcquire(long expire, Supplier&lt;T&gt; onSucceed, Supplier&lt;T&gt; onFailed) &#123;</span><br><span class="line">    // 判断超时、队列是否已满</span><br><span class="line">    if (System.currentTimeMillis() &gt; expire) &#123;</span><br><span class="line">        onFailed.get();</span><br><span class="line">        return;</span><br><span class="line">    &#125; else if (counter.longValue() &gt; 100) &#123;</span><br><span class="line">        onFailed.get();</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    if (semaphore.tryAcquire()) &#123;</span><br><span class="line">        onSucceed.get();</span><br><span class="line">        return ;</span><br><span class="line">    &#125;</span><br><span class="line">    counter.increment();</span><br><span class="line">    // 进入队列等待下一次调度</span><br><span class="line">    executorService.schedule(() -&gt; &#123;</span><br><span class="line">        counter.decrement();</span><br><span class="line">        doAcquire(expire, onSucceed, onFailed);</span><br><span class="line">    &#125;, 100, TimeUnit.MILLISECONDS);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public void test() &#123;</span><br><span class="line">    doAcquire(100 + System.currentTimeMillis(),</span><br><span class="line">            () -&gt; &quot;SUCCESS&quot;,</span><br><span class="line">            () -&gt; &quot;FAILED&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>公平调度<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">void syncDoAcquire(long expire, Supplier onSucceed, Supplier onFailed) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        if (semaphore.tryAcquire(expire, TimeUnit.MILLISECONDS)) &#123;</span><br><span class="line">            onSucceed.get();</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; catch (InterruptedException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">        onFailed.get();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/haoxinyue/p/6792309.html">谈谈高并发系统的限流</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/tianyaleixiaowu/article/details/74942405">限流算法之漏桶算法、令牌桶算法</a></li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Traffic_shaping">Traffic shaping</a></li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Traffic_policing_(communications)">Traffic policing</a></li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Bandwidth_management">Bandwidth management</a></li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Little%27s_law">Little’s law</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.devopszen.com/queue-theory">排队论在架构的应用：对服务延迟、稳定性的影响</a></li>
+</ol>
+<h3 id="Guava"><a href="#Guava" class="headerlink" title="Guava"></a>Guava</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000012875897?utm_source=tag-newest">Guava RateLimiter 源码解析</a></li>
+<li><a target="_blank" rel="noopener" href="https://tech.kujiale.com/ratelimiter-architecture/">RateLimiter 解析(一) ——设计哲学与快速使用</a></li>
+</ol>
+<h3 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h3><ol>
+<li><a target="_blank" rel="noopener" href="http://nginx.org/en/docs/http/ngx_http_limit_req_module.html">Nginx Module ngx_http_limit_req_module</a></li>
+</ol>
+<h3 id="HAProxy"><a href="#HAProxy" class="headerlink" title="HAProxy"></a>HAProxy</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.serverfault.com/2010/08/26/1016491873/">Better Rate Limiting For All with HAProxy</a></li>
+</ol>
+<h3 id="Radis"><a href="#Radis" class="headerlink" title="Radis"></a>Radis</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://redis.io/commands/INCR#pattern-rate-limiter">Redis INCR rate limiter</a></li>
+<li><a target="_blank" rel="noopener" href="http://doc.redisfans.com/string/incr.html">Redis 命令参考 - INCR key</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.binpress.com/rate-limiting-with-redis-1/">Introduction to rate limiting with Redis [Part 1]</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.binpress.com/rate-limiting-with-redis-2/">Introduction to rate limiting with Redis [Part 2]</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%99%90%E6%B5%81/" rel="tag"># 限流</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/d6d73555.html" rel="prev" title="Linux 无线网卡驱动器丢失问题">
+                  <i class="fa fa-angle-left"></i> Linux 无线网卡驱动器丢失问题
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/5ac9459.html" rel="next" title="多级缓存原理">
+                  多级缓存原理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

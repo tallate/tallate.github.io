@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="MyBatis 整体结构 配置文件配置类提供的功能几乎贯穿了整个处理过程：  解析 Xml 文件 创建 SQL 处理器 Executor 对语句进行缓存 MappedStatement  怎么定位路径 getResourceAsStream  怎么解析文件xml 文件的解析方式有两种，一种 DOM 是直接读入整个 xml 文件，根据标签的嵌套关系构建一棵文档树；另一种方式叫 SAX（Simp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MyBatis 原理">
+<meta property="og:url" content="https://tallate.github.io/37173fb7.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="MyBatis 整体结构 配置文件配置类提供的功能几乎贯穿了整个处理过程：  解析 Xml 文件 创建 SQL 处理器 Executor 对语句进行缓存 MappedStatement  怎么定位路径 getResourceAsStream  怎么解析文件xml 文件的解析方式有两种，一种 DOM 是直接读入整个 xml 文件，根据标签的嵌套关系构建一棵文档树；另一种方式叫 SAX（Simp">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://8.219.79.196/imgs/MyBatis/MyBatis%E7%BB%93%E6%9E%84.png">
+<meta property="article:published_time" content="2020-07-21T03:14:01.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.867Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="MyBatis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://8.219.79.196/imgs/MyBatis/MyBatis%E7%BB%93%E6%9E%84.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/37173fb7.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/37173fb7.html","path":"/37173fb7.html","title":"MyBatis 原理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MyBatis 原理 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MyBatis-%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">MyBatis 整体结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E5%AE%9A%E4%BD%8D%E8%B7%AF%E5%BE%84"><span class="nav-number">2.1.</span> <span class="nav-text">怎么定位路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E8%A7%A3%E6%9E%90%E6%96%87%E4%BB%B6"><span class="nav-number">2.2.</span> <span class="nav-text">怎么解析文件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5"><span class="nav-number">3.</span> <span class="nav-text">构建数据库连接</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%BF%9E%E6%8E%A5"><span class="nav-number">3.1.</span> <span class="nav-text">数据库连接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SqlSessionFactoryBuilder"><span class="nav-number">3.1.1.</span> <span class="nav-text">SqlSessionFactoryBuilder</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SqlSessionFactory"><span class="nav-number">3.1.2.</span> <span class="nav-text">SqlSessionFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SqlSession"><span class="nav-number">3.1.3.</span> <span class="nav-text">SqlSession</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%BA%90"><span class="nav-number">3.2.</span> <span class="nav-text">数据源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%98%A0%E5%B0%84%E5%99%A8"><span class="nav-number">3.3.</span> <span class="nav-text">映射器</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#SQL-%E6%89%A7%E8%A1%8C"><span class="nav-number">4.</span> <span class="nav-text">SQL 执行</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Executor"><span class="nav-number">5.</span> <span class="nav-text">Executor </span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E7%B1%BB%E5%9E%8B%E5%92%8C%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">6.</span> <span class="nav-text">参数类型和返回值 </span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86"><span class="nav-number">7.</span> <span class="nav-text">动态代理 </span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91"><span class="nav-number">7.0.1.</span> <span class="nav-text">并发 </span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#QA"><span class="nav-number">8.</span> <span class="nav-text">QA</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/37173fb7.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MyBatis 原理 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MyBatis 原理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-21 11:14:01" itemprop="dateCreated datePublished" datetime="2020-07-21T11:14:01+08:00">2020-07-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+
+<h1 id="MyBatis-整体结构"><a href="#MyBatis-整体结构" class="headerlink" title="MyBatis 整体结构"></a>MyBatis 整体结构</h1><p><img src="http://8.219.79.196/imgs/MyBatis/MyBatis%E7%BB%93%E6%9E%84.png" alt="MyBatis结构" title="MyBatis结构"></p>
+<h1 id="配置文件"><a href="#配置文件" class="headerlink" title="配置文件"></a>配置文件</h1><p>配置类提供的功能几乎贯穿了整个处理过程：</p>
+<ol>
+<li>解析 Xml 文件</li>
+<li>创建 SQL 处理器 Executor</li>
+<li>对语句进行缓存 MappedStatement</li>
+</ol>
+<h2 id="怎么定位路径"><a href="#怎么定位路径" class="headerlink" title="怎么定位路径"></a>怎么定位路径</h2><ul>
+<li>getResourceAsStream</li>
+</ul>
+<h2 id="怎么解析文件"><a href="#怎么解析文件" class="headerlink" title="怎么解析文件"></a>怎么解析文件</h2><p>xml 文件的解析方式有两种，一种 DOM 是直接读入整个 xml 文件，根据标签的嵌套关系构建一棵文档树；另一种方式叫 SAX（Simple API for XML），是一种事件驱动的文档解析方式，什么是事件驱动呢？比如说 SAX 驱动扫描到了起始标签，就代表发生了一个事件，它会转而调用某个由用户定义的函数（startElement）执行逻辑。<br>有一种设计原则叫好莱坞法则（Hollywood），形象地说就是“你不要 call 我，需要你时我会 call 你”，一个例子是异步调用，这是一种通信机制，客户端在发出请求后不必等待服务端处理完毕就可以返回处理自己的逻辑，等到服务端处理完毕后再将结果传回，这种方式一定程度上可以解决客户端长期阻塞的问题、改善用户体验，回调函数也是一个例子。<br>据网上的说法，DOM 需要一次构建整棵 DOM 树，所以比较占内存，不适合大的 xml 文档解析，但是由于 DOM 树上可以任意遍历，所以自由度很高，相对来说，SAX 是读到什么就调用什么回调函数，所以内存占用小，但是编程多少会复杂一些。  </p>
+<h1 id="构建数据库连接"><a href="#构建数据库连接" class="headerlink" title="构建数据库连接"></a>构建数据库连接</h1><h2 id="数据库连接"><a href="#数据库连接" class="headerlink" title="数据库连接"></a>数据库连接</h2><h3 id="SqlSessionFactoryBuilder"><a href="#SqlSessionFactoryBuilder" class="headerlink" title="SqlSessionFactoryBuilder"></a>SqlSessionFactoryBuilder</h3><p>应用了建造者模式，根据配置文件来创建 SqlSessionFactory，创建后其任务就结束了，生命周期在一个方法内。</p>
+<h3 id="SqlSessionFactory"><a href="#SqlSessionFactory" class="headerlink" title="SqlSessionFactory"></a>SqlSessionFactory</h3><p>创建和数据库连接的工具，在整个应用运行期间应该作为一个单例存在，或者使用依赖注入管理其生命周期。</p>
+<h3 id="SqlSession"><a href="#SqlSession" class="headerlink" title="SqlSession"></a>SqlSession</h3><p>代表和数据库的一次连接，在 MyBatis 中其实现是线程不安全的，生命周期最好控制在一次请求之间。  </p>
+<h2 id="数据源"><a href="#数据源" class="headerlink" title="数据源"></a>数据源</h2><ul>
+<li>DBCP</li>
+<li>C3P0</li>
+<li>Druid</li>
+<li>MyBatis 内置数据源（UNPOOLED、POOLED、JNDI）</li>
+<li>自定义数据源</li>
+</ul>
+<h2 id="映射器"><a href="#映射器" class="headerlink" title="映射器"></a>映射器</h2><ul>
+<li>mapper 文件</li>
+<li>注解</li>
+</ul>
+<h1 id="SQL-执行"><a href="#SQL-执行" class="headerlink" title="SQL 执行"></a>SQL 执行</h1><p>SqlSession 本身是可以直接执行 sql 语句的，它的所有 update、query 等方法都是对语句进行了包装（MappedStatement），然后再调用 Executor 的相应方法，Executor 是执行器，是 MyBatis 的核心。<br>SQL 的执行是由 Executor 负责的，Executor 对象是和 SqlSession 同时创建的，SqlSessionFactory 会为 Executor 创建事务，事务类默认为 ManagedTransactionFactory，Executor 需要从事务对象获取数据库连接（包装上一层事务后扩展性更好），事务会从环境对象中获取 DataSource 对象，然后委托 DataSource 创建连接，并且可以根据事务等级来为连接设置事务。说白了，把 Config 对象传给新建的 Transaction，由 Transaction 创建连接。<br>Executor 并不是直接执行 SQL 语句，SQL 语句由 MappedStatement 包装，再交给 StatementHandler 执行  </p>
+<h1 id="Executor"><a href="#Executor" class="headerlink" title="Executor "></a>Executor </h1><p>MyBatis 提供 4 种 Executor，他们都继承于 BaseExecutor   <br><strong>BaseExecutor</strong> 是一个抽象类，实现了延迟加载、一级缓存（PerpetualCache）等功能   <br><strong>SimpleExecutor</strong> 语句使用 PreparedStatement 保存，使用 StatementHandler 处理   <br><strong>ReuseExecutor</strong> 与 SimpleExecutor 的区别是它使用一个 Map&lt;String, Statement&gt;来缓存 SQL 语句对应的 Statement，如果某些 Sql 复杂且使用频繁的话可以使用这个执行器，因为这个 Map 不是静态的，并且 MyBatis 实际上会为每个新建的 SqlSession 创建一个 Executor，所以这个缓存只在同一个 Session 内有效   </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">private final Map&lt;String, Statement&gt; statementMap = new HashMap&lt;String, Statement&gt;();</span><br><span class="line">if (hasStatementFor(sql)) &#123;</span><br><span class="line">    //如果缓存中已经有了，直接得到Statement</span><br><span class="line">    stmt = getStatement(sql);</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    //如果缓存没有找到，则和SimpleExecutor处理完全一样，然后加入缓存</span><br><span class="line">    Connection connection = getConnection(statementLog);</span><br><span class="line">    stmt = handler.prepare(connection);</span><br><span class="line">    putStatement(sql, stmt);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>BatchExecutor（批量执行器）</strong> 将一些 SQL 语句放在一个 List 中，最后 doFlushStatements 一块执行，并且如果两个相邻的 SQL 语句是相同的，还会复用前一个 Statement 对象。<br><strong>CachingExecutor（二级缓存执行器）</strong> 为什么说是二级缓存？一级缓存由 BaseExecutor 中的 PerpetualCache 实现，CachingExecutor 会先在二级缓存中查找，如果找不到再委托给 delegate 执行，delegate 是 BaseExecutor 的子类，当然有一级缓存的功能。   <br> </p>
+<h1 id="参数类型和返回值"><a href="#参数类型和返回值" class="headerlink" title="参数类型和返回值 "></a>参数类型和返回值 </h1><p>我们很多时候会指定 parameterType 和 resultType 为复杂类型，怎么将这些类型和数据库表结构进行映射正是 orm 框架的任务之一。   <br>parameterType 表示传入参数类型，在 sql 语句中可以使用#{参数名}来调用，比如 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlSession.selectOne(&quot;com.tallate.UserMapper.selectUser&quot;, 1); </span><br></pre></td></tr></table></figure>
+<p>传入了一个 Integer 类型的参数 1，那么 PreparedStatementHandler 在准备语句时，应该对这个参数的类型进行判断，这个是由 ParameterHandler 负责的。   <br>resultType 表示返回值类型，PreparedStatementHandler 在获得 ResultSet 后应该将查询到的表记录转换为 Java 对象，这个是由 ResultSetHandler 负责的，它最终会调用对应类的构造函数将查询出的结果传入。   <br> </p>
+<h1 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理 "></a>动态代理 </h1><p>我们平常使用 MyBatis 时都会定义一个 XXMapper 接口，对应 mapper.xml 中的一个 namespace，而且我们也不必显示写出其实现类，调用过程都是由动态代理实现的。   <br>一般来说，代理类和被代理类应该实现相同的接口，但是现在我们的被代理类是一个 xxmapper.xml 文件，所以问题现在变成了：怎么将 xxmapper.xml 文件转换成被代理类。   <br>查看源码中的 MapperProxyFactory 和 MapperProxy 可以知道，MyBatis 实现 Mapper 接口其实是调用了 SqlSession 中的方法（select、selectOne 等，已经实现了），但是它们的方法名并不相同，比如 selectUser 怎么和 selectOne 关联上呢？   <br>MapperProxy 的 invoke 方法并不是直接调用被代理对象的方法，而是使用 MapperMethod 来表示映射的方法，通过 MapperMethod 可以判断接口方法的返回值、方法名等来确定应该调用 SqlSession 的哪个方法   </p>
+<ol>
+<li>启动时 XMLConfigBuilder 会为 config.xml 中所有 mapper 节点扫描包下所有映射器 </li>
+<li>创建对应的映射 interface -&gt; MapperProxyFactory </li>
+<li>添加动态代理对象到 MapperRegistry 中（我为了方便，直接加到 Config 中了，其实是刚开始对 MapperRegistry 的功能理解错了…） </li>
+<li>之后每次 getMapper，都可以根据接口名来找到对应的动态代理对象，调用方法时实际上是调用了相应的 MapperMethod <br> </li>
+</ol>
+<h3 id="并发"><a href="#并发" class="headerlink" title="并发 "></a>并发 </h3><p>有哪些资源是中心化的？如果是，会不会被多线程同时访问？在 web 环境中，假设每个用户代表一个线程，当他们同时访问服务器就会出现并发问题。   </p>
+<ul>
+<li>线程池（数据源）   <br>如果线程池是使用链表（LinkedList）实现的，可以使用 Collections.synchronizedList 进行包装，或者直接使用 Vector   </li>
+<li>Map&lt;String, MappedStatement&gt; MappedStatements <br>使用 Map 容器储存 MappedStatement，MappedStatement 表示调用语句到 sql 语句的映射，比如”namespace.selectUser”到 mapper.xml 中对应的 sql 语句（使用 SqlSource 包装）。   </li>
+<li>List<Environment> environments <br>表示 config.xml 中注册的所有环境对象列表   </li>
+<li>List<MapperRegistry> mappers <br>表示 config.xml 中注册的所有 mapper 的列表   </li>
+<li>Map&lt;Method, MapperMethod&gt; methodCache <br>MapperProxyFactory 中的映射器方法缓冲是使用 ConcurrentHashMap 实现的   <br> <br> </li>
+</ul>
+<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><ol>
+<li>一级缓存不够吗？为什么要有二级缓存？<br>一级缓存是会话级缓存，在 BaseExecutor 中，是成员变量，生命周期在一个 SqlSession 内，连接断开就没了；<br>二级缓存是语句级缓存，在 MappedStatement 中，可以跨多个 SqlSession，当一些数据不常发生变化或者允许偶尔的并发的时候，二级缓存可能更有效率。  </li>
+<li>为什么不推荐使用 MyBatis 中的缓存？<br>一级缓存会产生脏数据。因为作用范围是会话，如果有俩会话，会话 1 加载数据到缓存，会话 2 修改该条数据，之后会话 1 读到的是缓存里的老数据。<br>二级缓存同样会产生脏数据。二级缓存作用范围是语句，需要手动刷新或在 xml 中配置需要刷新，一般在写入操作和事务提交后都需要刷新一下。但是如果表 A 的 Amapper.xml 中关联了表 B，即使表 B 的数据有变更，我们在 Amapper.xml 中执行查询语句仍然会读到缓存中的脏数据。</li>
+<li>MyBatis 与 JDBC 对象之前的关联？<br>ParameterStatement - ParameterStatementHandler<br>SimpleStatement - SimpleStatementHandler<br>ResultSet - ResultSetHandler</li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MyBatis/" rel="tag"># MyBatis</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/4eb3381c.html" rel="prev" title="分布式锁">
+                  <i class="fa fa-angle-left"></i> 分布式锁
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/679dc1ee.html" rel="next" title="MySQL3_3缓存">
+                  MySQL3_3缓存 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

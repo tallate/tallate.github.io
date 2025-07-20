@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Spring Cloud 是一系列框架的有序集合，它利用 Spring Boot 的开发便利性简化了分布式系统的开发，比如服务发现、服务网关、服务路由、链路追踪等。Spring Cloud 并不重复造轮子，而是将市面上开发得比较好的模块集成进去，进行封装，从而减少了各模块的开发成本。换句话说：Spring Cloud 提供了构建分布式系统所需的“全家桶”。Spring Cloud 常常被拿来和 D">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringCloud 配置总结">
+<meta property="og:url" content="https://tallate.github.io/92a28d62.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="Spring Cloud 是一系列框架的有序集合，它利用 Spring Boot 的开发便利性简化了分布式系统的开发，比如服务发现、服务网关、服务路由、链路追踪等。Spring Cloud 并不重复造轮子，而是将市面上开发得比较好的模块集成进去，进行封装，从而减少了各模块的开发成本。换句话说：Spring Cloud 提供了构建分布式系统所需的“全家桶”。Spring Cloud 常常被拿来和 D">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-09-21T05:09:11.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.882Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="Spring Cloud">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tallate.github.io/92a28d62.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/92a28d62.html","path":"/92a28d62.html","title":"SpringCloud 配置总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>SpringCloud 配置总结 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Context%EF%BC%88%E5%BA%94%E7%94%A8%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">Context（应用上下文）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bus%EF%BC%88%E6%9C%8D%E5%8A%A1%E6%80%BB%E7%BA%BF%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">Bus（服务总线）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%AE%9E%E4%BE%8B"><span class="nav-number">3.</span> <span class="nav-text">配置实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E7%9F%A5%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%9A%84%E6%9B%B4%E6%94%B9"><span class="nav-number">3.1.</span> <span class="nav-text">通知配置文件的更改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E4%BB%A3%E7%90%86"><span class="nav-number">3.2.</span> <span class="nav-text">消息代理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Zuul%EF%BC%88%E8%B7%AF%E7%94%B1%E7%BD%91%E5%85%B3%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">Zuul（路由网关）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E8%BD%AC%E5%8F%91"><span class="nav-number">4.1.</span> <span class="nav-text">路由转发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4"><span class="nav-number">4.2.</span> <span class="nav-text">过滤</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Config%EF%BC%88%E5%88%86%E5%B8%83%E5%BC%8F%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">Config（分布式配置中心）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Config-Server"><span class="nav-number">5.1.</span> <span class="nav-text">Config Server</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Config-Client"><span class="nav-number">5.2.</span> <span class="nav-text">Config Client</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ZooKeeper"><span class="nav-number">6.</span> <span class="nav-text">ZooKeeper</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0-Server-%E5%8F%8A-Client"><span class="nav-number">6.1.</span> <span class="nav-text">服务发现 Server 及 Client</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-number">6.2.</span> <span class="nav-text">服务端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Consul%EF%BC%88%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E5%92%8C%E5%8F%91%E7%8E%B0%EF%BC%89"><span class="nav-number">7.</span> <span class="nav-text">Consul（服务注册和发现）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Consul-%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-number">7.1.</span> <span class="nav-text">Consul 的配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E6%9C%8D%E5%8A%A1%E9%85%8D%E7%BD%AE"><span class="nav-number">8.1.</span> <span class="nav-text">常用服务配置</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/92a28d62.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="SpringCloud 配置总结 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SpringCloud 配置总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-21 13:09:11" itemprop="dateCreated datePublished" datetime="2019-09-21T13:09:11+08:00">2019-09-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E7%82%B9%E6%80%BB%E7%BB%93/" itemprop="url" rel="index"><span itemprop="name">技术点总结</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Spring Cloud 是一系列框架的有序集合，它利用 Spring Boot 的开发便利性简化了分布式系统的开发，比如服务发现、服务网关、服务路由、链路追踪等。Spring Cloud 并不重复造轮子，而是将市面上开发得比较好的模块集成进去，进行封装，从而减少了各模块的开发成本。换句话说：Spring Cloud 提供了构建分布式系统所需的“全家桶”。<br>Spring Cloud 常常被拿来和 Dubbo 比较，实际上 Dubbo 只实现了服务治理，接入 Dubbo 的服务能够实现自动上下线、能通过 Dubbo 协议（其实 Dubbo 还支持其他很多协议）互联，但是 Dubbo 并不提供网关、配置中心、链路追踪等一系列微服务架构常用的技术，需要单独引入。</p>
+<span id="more"></span>
+
+
+<p>Spring Cloud 的主要优点有：</p>
+<ul>
+<li>集大成者，Spring Cloud 包含了微服务架构的方方面面。</li>
+<li>约定优于配置，基于注解，没有配置文件。</li>
+<li>轻量级组件，Spring Cloud 整合的组件大多比较轻量级，且都是各自领域的佼佼者。</li>
+<li>开发简便，Spring Cloud 对各个组件进行了大量的封装，从而简化了开发。</li>
+<li>开发灵活，Spring Cloud 的组件都是解耦的，开发人员可以灵活按需选择组件。</li>
+</ul>
+<p>接下来，我们看下它的缺点：</p>
+<ul>
+<li>项目结构复杂，每一个组件或者每一个服务都需要创建一个项目。</li>
+<li>部署门槛高，项目部署需要配合 Docker 等容器技术进行集群部署，而要想深入了解 Docker，学习成本高。</li>
+</ul>
+<h2 id="Context（应用上下文）"><a href="#Context（应用上下文）" class="headerlink" title="Context（应用上下文）"></a>Context（应用上下文）</h2><p>引导应用程序上下文<br>Spring Cloud Context：bootstrap context, encryption, refresh scope and environment endpoints<br>Spring Cloud Commons：a set of abstractions and common classes used in different Spring Cloud implementations</p>
+<h2 id="Bus（服务总线）"><a href="#Bus（服务总线）" class="headerlink" title="Bus（服务总线）"></a>Bus（服务总线）</h2><ul>
+<li>通知配置文件的更改</li>
+<li>服务间通讯</li>
+<li>监控</li>
+</ul>
+<h2 id="配置实例"><a href="#配置实例" class="headerlink" title="配置实例"></a>配置实例</h2><h3 id="通知配置文件的更改"><a href="#通知配置文件的更改" class="headerlink" title="通知配置文件的更改"></a>通知配置文件的更改</h3><ol>
+<li>在本地安装 RabbitMQ<br>一般来说访问端口号是 5672</li>
+<li>创建 Spring Initializr 项目<br>勾选 Eureka Discovery、Config Client 和 Stream Rabbit<br>或者在已创建的 Config Client 项目中添加下面的依赖： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-cloud-starter-bus-amqp&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></li>
+<li>为 ConfigClientApplication 应用类添加 <strong>@RefreshScope</strong> 注解<br>如果不添加会导致本地看不到更新后的值。</li>
+<li>添加 RabbitMQ 配置 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">spring.rabbitmq.host=localhost</span><br><span class="line">spring.rabbitmq.port=5672</span><br><span class="line"># spring.rabbitmq.username= # 如果RabbitMQ中有用户名密码需要设置</span><br><span class="line"># spring.rabbitmq.password=</span><br></pre></td></tr></table></figure></li>
+<li>访问<br>普通访问属性：localhost:8881&#x2F;hi<br>更新 git 仓库中的属性 foo 并提交<br>然后刷新属性：localhost:8881&#x2F;bus&#x2F;refresh，注意要用 <strong>POST</strong> 方法访问<br>刷新某个指定服务的属性：localhost:8881&#x2F;bus&#x2F;refresh?destination&#x3D;config-client:**，刷新服务名为 config-client 的所有服务器，不管 ip。<br>发送刷新请求后该服务就会去确认配置文件是否修改，如果修改了就会发送一个消息，由消息总线向其他服务传递，从而更新整个微服务集群中的配置。</li>
+<li>出现授权问题 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;timestamp&quot;: 1515304345965,</span><br><span class="line">    &quot;status&quot;: 401,</span><br><span class="line">    &quot;error&quot;: &quot;Unauthorized&quot;,</span><br><span class="line">    &quot;message&quot;: &quot;Full authentication is required to access this resource.&quot;,</span><br><span class="line">    &quot;path&quot;: &quot;/bus/refresh&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+可以忽略权限拦截： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">management.security.enabled=false</span><br></pre></td></tr></table></figure>
+或者添加一个 SpringBoot 的健康监控组件的依赖： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-security&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;1.5.7.RELEASE&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+至于添加用户名密码等安全配置还是另外看 starter-security 模块的内容.</li>
+</ol>
+<h3 id="消息代理"><a href="#消息代理" class="headerlink" title="消息代理"></a>消息代理</h3><ol>
+<li>配置和上边的一样</li>
+<li>跟踪消息总线 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spring.cloud.bus.trace.enabled=true</span><br></pre></td></tr></table></figure>
+这样每个服务实例发送的所有事件和所有的 ack 都将显示到 <strong>Spring Boot TraceRepository</strong> 。</li>
+</ol>
+<h2 id="Zuul（路由网关）"><a href="#Zuul（路由网关）" class="headerlink" title="Zuul（路由网关）"></a>Zuul（路由网关）</h2><ol>
+<li>路由转发</li>
+<li>过滤器<br>Authentication<br>Insights<br>Stress Testing<br>Canary Testing<br>Dynamic Routing<br>Service Migration<br>Load Shedding<br>Security<br>Static Response handling<br>Active&#x2F;Active traffic management</li>
+</ol>
+<h3 id="路由转发"><a href="#路由转发" class="headerlink" title="路由转发"></a>路由转发</h3><ol>
+<li>创建 Spring Initializr 应用<br>勾选 Eureka Discovery 和 Zuul</li>
+<li>为 <strong>ServiceZuulApplication</strong> 类添加 <strong>@EnableZuulProxy</strong> 和 <strong>@EnableEurekaClient</strong> 注解</li>
+<li>添加配置 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">eureka.client.service-url.default-zone=http://localhost:8761/eureka/</span><br><span class="line">server.port=8769</span><br><span class="line">spring.application.name=service-zuul</span><br><span class="line">zuul.routes.api-a.path=/api-a/**</span><br><span class="line">zuul.routes.api-a.serviceId=service-ribbon</span><br><span class="line">zuul.routes.api-b.path=/api-b/**</span><br><span class="line">zuul.routes.api-b.serviceId=service-feign</span><br></pre></td></tr></table></figure></li>
+<li>访问<br>这样配置后，访问<a target="_blank" rel="noopener" href="http://localhost:8769/api-a/hi?name=forezp">http://localhost:8769/api-a/hi?name=forezp</a> 链接就会被转发到 service-ribbon，访问 <a target="_blank" rel="noopener" href="http://localhost:8769/api-b/hi?name=forezp">http://localhost:8769/api-b/hi?name=forezp</a> 就会被转发到 service-feign</li>
+</ol>
+<h3 id="过滤"><a href="#过滤" class="headerlink" title="过滤"></a>过滤</h3><ol>
+<li>添加过滤器</li>
+<li>访问<br>请求必须带上 token 不然会被拦截：<br><a target="_blank" rel="noopener" href="http://localhost:8769/api-a/hi?name=forezp&token=22">http://localhost:8769/api-a/hi?name=forezp&amp;token=22</a></li>
+</ol>
+<h2 id="Config（分布式配置中心）"><a href="#Config（分布式配置中心）" class="headerlink" title="Config（分布式配置中心）"></a>Config（分布式配置中心）</h2><ul>
+<li>将配置文件放在配置服务内存中（本地）</li>
+<li>远程保存配置文件到 Git 仓库<br>有两种配置方式，一种将 Config Server 独立部署，Config Client 通过 ip 访问配置服务器（加入 starter-web 依赖），另一种将他们加入一个 Eureka 集群中，Config Client 可以通过服务名访问到 Config Server（改为加入 starter-eureka 依赖）。</li>
+</ul>
+<h3 id="Config-Server"><a href="#Config-Server" class="headerlink" title="Config Server"></a>Config Server</h3><ol>
+<li>创建 Spring Initializr 项目<br>勾选 Eureka Discovery 和 Config Server</li>
+<li>然后添加配置 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">spring.application.name=service-config</span><br><span class="line">server.port=8888</span><br><span class="line"></span><br><span class="line">spring.cloud.config.server.git.uri=https://github.com/tallate/springcloudconfig.git 仓库地址</span><br><span class="line">spring.cloud.config.server.git.search-paths=configs # 表示配置文件所在目录</span><br><span class="line">spring.cloud.config.label=master # 仓库分支</span><br></pre></td></tr></table></figure>
+ 因为是公开仓库可以不填写用户名和密码，如果是私有仓库，还需用加上下面两条： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">spring.cloud.config.server.git.username：访问git仓库的用户名</span><br><span class="line">spring.cloud.config.server.git.password：访问git仓库的用户密码</span><br></pre></td></tr></table></figure></li>
+<li>为 ServiceConfigApplication 类添加 <strong>@EnableConfigServer</strong></li>
+<li>访问配置<br> 请求链接： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/&#123;application&#125;/&#123;profile&#125;[/&#123;label&#125;]</span><br></pre></td></tr></table></figure>
+ 资源文件名： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/&#123;appli cation&#125;-&#123;profile&#125;.yml</span><br><span class="line">/&#123;label&#125;/&#123;application&#125;-&#123;profile&#125;.yml</span><br><span class="line">/&#123;application&#125;-&#123;profile&#125;.properties</span><br><span class="line">/&#123;label&#125;/&#123;application&#125;-&#123;profile&#125;.properties</span><br></pre></td></tr></table></figure>
+ 比如在仓库中新建一个配置文件 config-client-dev.properties： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">name = Mike</span><br></pre></td></tr></table></figure>
+ 访问链接就可以得到 Json 格式的该配置文件内容： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8888/config-client/dev</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="Config-Client"><a href="#Config-Client" class="headerlink" title="Config Client"></a>Config Client</h3><ol>
+<li>创建 Spring Initializr 项目<br>勾选 Eureka Discovery 和 Config Client</li>
+<li>添加配置 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">spring.application.name=config-client</span><br><span class="line">spring.cloud.config.label=master # 远程仓库的分支</span><br><span class="line">spring.cloud.config.profile=dev # 开发环境配置文件，test测试环境，pro正式环境</span><br><span class="line">spring.cloud.config.uri=http://localhost:8888/ # 配置服务中心的地址</span><br><span class="line">server.port=8881</span><br></pre></td></tr></table></figure>
+ 因为是作为 Eureka 集群内的组件启动的，所以可以使用服务名直接访问配置中心，为此需要去掉 spring.cloud.config.uri 项，然后添加： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">spring.cloud.config.discovery.enabled 是从配置中心读取文件</span><br><span class="line">spring.cloud.config.discovery.serviceId 配置中心的servieId，即服务名</span><br></pre></td></tr></table></figure></li>
+<li>写服务接口，返回从配置中心读取的一个配置项的值 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">@SpringBootApplication</span><br><span class="line">@RestController</span><br><span class="line">public class ConfigClientApplication &#123;</span><br><span class="line"></span><br><span class="line">        public static void main(String[] args) &#123;</span><br><span class="line">            SpringApplication.run(ConfigClientApplication.class, args);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        @Value(&quot;$&#123;foo&#125;&quot;)</span><br><span class="line">        private String foo;</span><br><span class="line"></span><br><span class="line">        @RequestMapping(&quot;/hi&quot;)</span><br><span class="line">        public String hi() &#123;</span><br><span class="line">            return foo;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>访问配置项<br><a target="_blank" rel="noopener" href="http://localhost:8881/hi">http://localhost:8881/hi</a></li>
+</ol>
+<h2 id="ZooKeeper"><a href="#ZooKeeper" class="headerlink" title="ZooKeeper"></a>ZooKeeper</h2><h3 id="服务发现-Server-及-Client"><a href="#服务发现-Server-及-Client" class="headerlink" title="服务发现 Server 及 Client"></a>服务发现 Server 及 Client</h3><p>加入依赖后使得 app 可以将其本身注册到 zookeeper 服务中（Server），且可以从 zookeeper 集群中定位其他服务（Client），如果要禁用 Client 功能，可以添加配置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spring.cloud.zookeeper.discovery.enabled=false</span><br></pre></td></tr></table></figure>
+<h3 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h3><ol>
+<li>依赖 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br><span class="line"></span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-cloud-starter-zookeeper-discovery&lt;/artifactId&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure></li>
+<li>配置 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># zookeeper对外开放的服务地址</span><br><span class="line">spring.cloud.zookeeper.connect-string=59.110.172.126:2181</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="Consul（服务注册和发现）"><a href="#Consul（服务注册和发现）" class="headerlink" title="Consul（服务注册和发现）"></a>Consul（服务注册和发现）</h2><ul>
+<li>服务注册</li>
+<li>健康检查</li>
+</ul>
+<h3 id="Consul-的配置"><a href="#Consul-的配置" class="headerlink" title="Consul 的配置"></a>Consul 的配置</h3><ol>
+<li>创建 Spring Initializr 项目<br>勾选 Consul 和 Web</li>
+<li>添加 <strong>@EnableDiscoveryClient</strong> 注解</li>
+<li>添加配置 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">server.port=8502</span><br><span class="line">spring.cloud.consul.host=localhost</span><br><span class="line">spring.cloud.consul.port=8500</span><br><span class="line">​</span><br><span class="line"># 健康检查接口地址</span><br><span class="line">​</span><br><span class="line">spring.cloud.consul.discovery.health-check-path=/health</span><br><span class="line">spring.cloud.consul.discovery.health-check-interval=15s</span><br><span class="line">spring.cloud.consul.discovery.instance-id=consul-client</span><br><span class="line">spring.application.name=consul-client</span><br></pre></td></tr></table></figure></li>
+<li>为 Service 添加”&#x2F;health”接口 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//健康检查的实现REST部分</span><br><span class="line">@RequestMapping(&quot;/health&quot;)</span><br><span class="line">public String health() &#123;</span><br><span class="line">    return &quot;hello health &quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+之后 Consul 通过检查这个接口来判断服务是否健康。</li>
+<li>查看<br>一般 consul 启动后访问链接是 localhost:8500，可以看到服务已经注册到了其中。</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="http://www.chinacloud.cn/show.aspx?id=20273&cid=12">如何利用 Spring Cloud 构建起自我修复型分布式系统</a></li>
+<li><a target="_blank" rel="noopener" href="http://projects.spring.io/spring-cloud/spring-cloud.html">Spring Cloud 英文文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://springcloud.cc/">Spring Cloud 中文网</a></li>
+</ol>
+<h3 id="常用服务配置"><a href="#常用服务配置" class="headerlink" title="常用服务配置"></a>常用服务配置</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://springcloud.cc/spring-cloud-dalston.html#_spring_cloud_context_application_context_services">Spring Cloud 上下文：应用程序上下文服务</a></li>
+<li><a target="_blank" rel="noopener" href="https://springcloud.cc/spring-cloud-dalston.html#_spring_cloud_bus">Spring Cloud Bus</a></li>
+<li><a target="_blank" rel="noopener" href="https://springcloud.cc/spring-cloud-dalston.html#_router_and_filter_zuul">路由器和过滤器：Zuul</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Netflix/zuul/wiki">Netflix&#x2F;zuul</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/26205495?hmsr=toutiao.io&utm_medium=toutiao.io&utm_source=toutiao.io">Netflix Zuul 与 Nginx 的性能对比</a></li>
+<li><a target="_blank" rel="noopener" href="https://springcloud.cc/spring-cloud-dalston.html#_spring_cloud_config">Spring Cloud Config</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.spring.io/spring-cloud-zookeeper/">Spring Cloud Zookeeper</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/spring-cloud/spring-cloud-zookeeper/blob/master/spring-cloud-zookeeper-sample/src/main/java/org/springframework/cloud/zookeeper/sample/SampleZookeeperApplication.java">spring-cloud-zookeeper-sample</a></li>
+<li><a target="_blank" rel="noopener" href="https://springcloud.cc/spring-cloud-dalston.html#_spring_cloud_consul">Spring Cloud Consul</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Spring-Cloud/" rel="tag"># Spring Cloud</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/3e0c4ce6.html" rel="prev" title="Spring 总结">
+                  <i class="fa fa-angle-left"></i> Spring 总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/b27f4a82.html" rel="next" title="JVM与垃圾收集器">
+                  JVM与垃圾收集器 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

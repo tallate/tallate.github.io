@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="参考 数据库范式简单讲解(1NF、2NF、3NF、4NF、BCNF) 缓存与数据库一致性之二：高并发下的 key 重建（先淘汰 cache 再写 db）的问题  由来公司比较看重这批新员工（基本来自 985 院校），做了比较多的培训，从公司文化到衣着讲究都专门开了课，很切合应届毕业生的需求（强制参加的…）。规范类似设计模式，是对最佳实践的总结，有点收获，这里把还记得的部分总结一下。   Ja">
+<meta property="og:type" content="article">
+<meta property="og:title" content="公司大佬关于编码规范的一次分享">
+<meta property="og:url" content="https://tallate.github.io/9b8ed85e.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="参考 数据库范式简单讲解(1NF、2NF、3NF、4NF、BCNF) 缓存与数据库一致性之二：高并发下的 key 重建（先淘汰 cache 再写 db）的问题  由来公司比较看重这批新员工（基本来自 985 院校），做了比较多的培训，从公司文化到衣着讲究都专门开了课，很切合应届毕业生的需求（强制参加的…）。规范类似设计模式，是对最佳实践的总结，有点收获，这里把还记得的部分总结一下。   Ja">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E5%85%AC%E5%8F%B8%E5%A4%A7%E4%BD%AC%E5%85%B3%E4%BA%8E%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83%E7%9A%84%E4%B8%80%E6%AC%A1%E5%88%86%E4%BA%AB/%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0%E9%97%AE%E9%A2%98.png">
+<meta property="article:published_time" content="2018-08-13T08:13:15.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.867Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="编码规范">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/%E5%85%AC%E5%8F%B8%E5%A4%A7%E4%BD%AC%E5%85%B3%E4%BA%8E%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83%E7%9A%84%E4%B8%80%E6%AC%A1%E5%88%86%E4%BA%AB/%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0%E9%97%AE%E9%A2%98.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/9b8ed85e.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/9b8ed85e.html","path":"/9b8ed85e.html","title":"公司大佬关于编码规范的一次分享"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>公司大佬关于编码规范的一次分享 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%B1%E6%9D%A5"><span class="nav-number">2.</span> <span class="nav-text">由来</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java-%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83"><span class="nav-number">3.</span> <span class="nav-text">Java 编码规范</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C%E5%88%86%E4%BA%AB"><span class="nav-number">4.</span> <span class="nav-text">用户体验分享</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A7%84%E8%8C%83"><span class="nav-number">5.</span> <span class="nav-text">数据库规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%81%B5%E5%AE%88%E8%A7%84%E8%8C%83%E6%9C%89%E4%BB%80%E4%B9%88%E5%A5%BD%E5%A4%84"><span class="nav-number">5.1.</span> <span class="nav-text">遵守规范有什么好处</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80"><span class="nav-number">5.2.</span> <span class="nav-text">基础</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE"><span class="nav-number">5.2.1.</span> <span class="nav-text">设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E5%90%8D"><span class="nav-number">5.2.2.</span> <span class="nav-text">命名</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1"><span class="nav-number">5.3.</span> <span class="nav-text">设计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%EF%BC%9A%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1%E7%90%86%E8%AE%BA"><span class="nav-number">5.3.1.</span> <span class="nav-text">补充：数据库设计理论</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E7%BC%96%E5%86%99"><span class="nav-number">5.4.</span> <span class="nav-text">SQL 编写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="nav-number">5.5.</span> <span class="nav-text">性能优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%EF%BC%9A%E7%BC%93%E5%AD%98%E5%91%BD%E4%B8%AD%E7%8E%87%E5%92%8C%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0"><span class="nav-number">5.5.1.</span> <span class="nav-text">补充：缓存命中率和缓存淘汰</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A5%E5%85%85%EF%BC%9A%E6%89%A7%E8%A1%8C%E8%AE%A1%E5%88%92"><span class="nav-number">5.5.2.</span> <span class="nav-text">补充：执行计划</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E8%A7%84%E8%8C%83"><span class="nav-number">5.6.</span> <span class="nav-text">操作规范</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%80%83%E8%AF%95"><span class="nav-number">6.</span> <span class="nav-text">考试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%80%83%E8%AF%95%E9%A2%98"><span class="nav-number">6.1.</span> <span class="nav-text">考试题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AD%94%E6%A1%88-%E5%88%86%E6%9E%90"><span class="nav-number">6.2.</span> <span class="nav-text">答案&amp;分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8D%E6%80%9D"><span class="nav-number">6.3.</span> <span class="nav-text">反思</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/9b8ed85e.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="公司大佬关于编码规范的一次分享 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          公司大佬关于编码规范的一次分享
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-08-13 16:13:15" itemprop="dateCreated datePublished" datetime="2018-08-13T16:13:15+08:00">2018-08-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/SevenGirl2017/article/details/77678233">数据库范式简单讲解(1NF、2NF、3NF、4NF、BCNF)</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/duanxz/p/3783369.html">缓存与数据库一致性之二：高并发下的 key 重建（先淘汰 cache 再写 db）的问题</a></li>
+</ol>
+<h2 id="由来"><a href="#由来" class="headerlink" title="由来"></a>由来</h2><p>公司比较看重这批新员工（基本来自 985 院校），做了比较多的培训，从公司文化到衣着讲究都专门开了课，很切合应届毕业生的需求（强制参加的…）。<br>规范类似设计模式，是对最佳实践的总结，有点收获，这里把还记得的部分总结一下。</p>
+<!-- more -->
+
+<h2 id="Java-编码规范"><a href="#Java-编码规范" class="headerlink" title="Java 编码规范"></a>Java 编码规范</h2><p>基本没听（其实是因为不知道下午要考试），内容和阿里 Java 规范很接近，有时间考个证书。</p>
+<h2 id="用户体验分享"><a href="#用户体验分享" class="headerlink" title="用户体验分享"></a>用户体验分享</h2><p>这个大佬比较惨了，大家都是程序员、还都是偏后台的那种，讲课时间还是刚吃完饭那会，大家不是特别能接受，反正我是没听进去。</p>
+<h2 id="数据库规范"><a href="#数据库规范" class="headerlink" title="数据库规范"></a>数据库规范</h2><p>公司一个架构师大佬讲的，大部分内容仍然来自阿里 Java 规范，掺杂了一些干货。</p>
+<h3 id="遵守规范有什么好处"><a href="#遵守规范有什么好处" class="headerlink" title="遵守规范有什么好处"></a>遵守规范有什么好处</h3><ol>
+<li>约定大于配置（这个理念是 SpringBoot 的基础），规范属于一种约定。</li>
+<li>提高沟通效率</li>
+<li>提升后续管理效率</li>
+</ol>
+<h3 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h3><h4 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h4><ol>
+<li>使用 UTF8MB4。</li>
+<li>注释很重要。</li>
+<li>数据库内大小写不敏感，像 MySQL、Oracle 都是大小写不敏感的，如果出现敏感的情况注意设置成不敏感的。</li>
+</ol>
+<h4 id="命名"><a href="#命名" class="headerlink" title="命名"></a>命名</h4><ol>
+<li>尽量取有意义的名字</li>
+<li>如果有多个单词使用下划线分割</li>
+<li>长度不要过长，如果设置得过长了，后面创建该表的备份表、表名末尾带上一些特殊的后缀，可能会超出数据库对表名长度的限制。</li>
+</ol>
+<h3 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h3><ol>
+<li>尽量达到 3NF<br>达到 1NF 和 2NF 是理所当然的，BCNF 又太严格了，会把表结构拆得过碎了，由此引入的多表关联会严重影响 DCL 效率，4NF 更是会把表结构拆稀碎了，达到 3NF 是比较理想的，但是不排斥使用 NoSQL 后产生的冗余。</li>
+<li>逻辑删除而不是物理删除<br>好处是可以反悔，坏处是表里数据会多很多。<br>但是实践表明删除是很少被使用的，换句话说，被删除的数据相对总数来说是很少的，比如说我们把商品加到购物车里一般都会买掉而不是删除了，因此我们更倾向于使用逻辑删除。当然也不能排除有些业务删除是常用的，那就另说了。<br>补充：其实我觉得完全可以另开一个表来存被逻辑删除的数据，我在毕设中就是这么做的。</li>
+<li>为数据加上时间戳<br>加上时间戳的主要目的是实现数据的增量同步，比如将数据同步到搜索系统（一般是 Elasticsearch）中，全量同步是无法忍受的。<br>补充：时间戳还可以当作乐观锁。</li>
+<li>合理利用 char<br>varchar 能满足大部分用到字符串的场景，但是 varchar 的效率是不如 char 的，对于手机号、身份证号这种固定长度的属性完全可以使用 char 类型保存。</li>
+<li>复杂的处理逻辑放到应用层而不是持久化层，不要用触发器、存储过程、视图，因为在云计算环境下应用层的扩展成本要远低于持久化层。<br>补充：视图其实还是可以用一下的，比如给另一个部门查点数据，又不会暴露数据库的真正结构。</li>
+</ol>
+<h4 id="补充：数据库设计理论"><a href="#补充：数据库设计理论" class="headerlink" title="补充：数据库设计理论"></a>补充：数据库设计理论</h4><p>元组&#x2F;行：一个持久化对象。<br>属性&#x2F;字段&#x2F;列：某类持久化对象的属性，属性集一般使用 U 表示。<br>超键：能唯一标识一条元组的属性集。<br>候选键：不包含多余属性的超键。<br>主键：被用户选作元组标识的候选键。<br>主属性：构成候选键的属性。<br>函数依赖（FD）：由业务确定的属性之间的依赖关系，即由一组属性可以唯一确定另一组属性。<br>关系模式（R(U)）：指在属性集中存在的所有函数依赖。<br>平凡函数依赖：在 R(U)中存在 X→Y，若 Y 包含于 X，则称 X→Y 为平凡函数依赖。<br>完全依赖：在 R(U)中，如果 X→Y，并且对于 X 的任何真子集 X’都有 X’-&#x2F;-&gt;Y’，则称 Y 完全依赖于 X，记作 X→Y。比如确定一批书的印刷时间需要给出版次和印次，不管是单独给出版次或印次都无法确认这批书。<br>部分依赖：与完全依赖相反，如果 X→Y，且 X 中存在一个真子集 X’，使得 X’→Y 成立，则称 Y 部分依赖于 X。比如学号和姓名可以确定一个学生，但其实学号就可以确定一个学生了。<br>传递依赖：指的是形如 X→Y→Z 的函数依赖。<br>多值依赖(MVD)：原始定义比较难理解，用一个特殊情况来说明，就是在同一个表里存在 X:Y、X:Z 分别是 1 对多关系，即有 Y→X、Z→X，比如[课程, 学生, 先修课]是一张表，其中课程对学生、课程对先修课都是 1 对多关系。<br>1NF：不能有复合字段（不可分的原子值）。<br>实现方法：如果有，则拆成多个字段。<br>例子：一个人可能有多个联系电话，比如手机号、固话等，应该被拆分到多列内，或者多行保存同一人的多个电话。</p>
+<table>
+<thead>
+<tr>
+<th>身份证号</th>
+<th>姓名</th>
+<th>手机号</th>
+<th>固定电话</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3303012313</td>
+<td>赵</td>
+<td>18012341234</td>
+<td>123-12341234</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>身份证号</th>
+<th>姓名</th>
+<th>手机号</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3303012313</td>
+<td>赵</td>
+<td>18012341234</td>
+</tr>
+<tr>
+<td>3303012313</td>
+<td>赵</td>
+<td>123-12341234</td>
+</tr>
+</tbody></table>
+<p>缺陷：<br>2NF：实体属性完全依赖于主键、不能仅依赖主键的一部分属性（严格地说，非主属性完全依赖于候选键）。<br>实现方法：如果存在对主键的部分依赖，则拆出来作为一个新实体。<br>例子：<br>缺陷：<br>3NF：非主键属性不能间接依赖于主键（严格地说，不能有非主属性对候选键的传递依赖）。<br>实现方法：如果存在上述传递依赖，则将依赖的两个非主属性拆出成为新表，原表和新表之间是 1 对多的关系。<br>例子：<br>缺陷：<br>BCNF：消除任何属性对候选键的传递依赖（在 3NF 的基础上，不允许候选键属性传递依赖于候选键的属性）。<br>实现方法：同 3NF。<br>例子：<br>缺陷：<br>4NF：消除非平凡且非 FD 的多值依赖。<br>实现方法：<br>例子：<br>缺陷</p>
+<h3 id="SQL-编写"><a href="#SQL-编写" class="headerlink" title="SQL 编写"></a>SQL 编写</h3><ol>
+<li>明确指出所有列，不要省略或使用通配符，比如： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select * from t;</span><br><span class="line">insert into t values(&#x27;1&#x27;, 2);</span><br></pre></td></tr></table></figure></li>
+<li>连接操作给出表的别名，否则容易混淆</li>
+</ol>
+<h3 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h3><ol>
+<li>分库分表<br>将数据从一张表拆到多张表，后续再将这些表转移到多个数据库实例内，一般情况下可以减少单个数据库的压力，提升整体性能。常见的拆库方法如：<ul>
+<li>按业务纬度分表（垂直拆分）：将负责不同业务的表拆到不同库中。</li>
+<li>id hash（水平拆分）：对业务数据 id 求模 hash(id) % n，hash 函数是自定义的，如果 id 是数值可以直接返回 id 本身，如果是字符串可以取前几位的和（遍历每一位太慢了），n 表示我们需要将数据拆到几张表里。<br> 日期 hash（水平拆分）：将不同月甚至日的数据分散到不同的库中。<br> 特殊 hash（水平拆分）：按照某个特定的字段求模，或者根据特定范围段分散到不同的库中。 </li>
+<li>读写分离：将数据拷贝到多个读库和写库内，读库加上索引，而写库不需要，这样，当然写库还需要通过某种机制将数据增量更新到读库内。</li>
+<li>冷热分离：将冷数据分离出去，比如微信聊天中 3 天前的数据就可以算作冷数据，这部分数据比较少用到，分离出去后可以提高查询最近聊天数据的响应效率。</li>
+</ul>
+</li>
+<li>NoSQL<br>NoSQL 常用于冗余数据，可以避免复杂的关联查询。</li>
+<li>索引<br>索引可以避免全表扫描，正确使用索引可以大大提高查询效率，但要注意函数可能导致索引失效，分析 SQL 语句问题的主要工具是<strong>执行计划</strong>。</li>
+<li>分页<ul>
+<li>数据库分页优于内存分页</li>
+<li>分页前最好先过滤</li>
+<li>order by 子句中最好不要使用会重复的字段（比如 name 就有可能重名）</li>
+<li>海量数据下可以只现实前 500 条数据，而不显示总条数和页数（百科和 Google 搜索都是这么做的）。</li>
+</ul>
+</li>
+</ol>
+<h4 id="补充：缓存命中率和缓存淘汰"><a href="#补充：缓存命中率和缓存淘汰" class="headerlink" title="补充：缓存命中率和缓存淘汰"></a>补充：缓存命中率和缓存淘汰</h4><p>缓存命中率 &#x3D; 查询命中数 &#x2F; 总查询数<br><strong>缓存命中率</strong>是度量缓存有效性的常用参数，为了提高缓存命中率，最好对不变数据进行缓存。<br><strong>缓存淘汰</strong>是在服务器内存不够用时触发的，将一些<strong>价值较小的</strong>数据从缓存中淘汰，减少不必要的 swap，提升内存的有效利用率。<br>缓存淘汰还有一个问题：是先写入还是先淘汰呢？<br>首先看先写入再淘汰的情况，如下图所示。<br><img src="/imgs/%E5%85%AC%E5%8F%B8%E5%A4%A7%E4%BD%AC%E5%85%B3%E4%BA%8E%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83%E7%9A%84%E4%B8%80%E6%AC%A1%E5%88%86%E4%BA%AB/%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0%E9%97%AE%E9%A2%98.png" alt="X"><br>我们交换操作 3 和 4 的顺序，第一步数据库操作成功，第二步如果淘汰缓存失败，则会出现 DB 中是新数据，Cache 中是旧数据的情况，即产生了<strong>数据不一致</strong>的问题。<br>然后是先淘汰再写入的情况，同样如上图所示。<br>写和读操作是并发执行的，应用实例 1 首先发起对缓存的淘汰，应用实例 2 读缓存 miss，于是从数据库读，而应用实例 1 这才将新值写入数据库，此时实例 2 得到的数就是<strong>脏数据</strong>了，注意在分布式环境下这种执行顺序完全是有可能的。</p>
+<h4 id="补充：执行计划"><a href="#补充：执行计划" class="headerlink" title="补充：执行计划"></a>补充：执行计划</h4><h3 id="操作规范"><a href="#操作规范" class="headerlink" title="操作规范"></a>操作规范</h3><ol>
+<li>变更需要明确范围</li>
+<li>为上线预留时间和空间</li>
+<li>给最专业的人进行评估</li>
+<li>错峰操作</li>
+</ol>
+<h2 id="考试"><a href="#考试" class="headerlink" title="考试"></a>考试</h2><h3 id="考试题"><a href="#考试题" class="headerlink" title="考试题"></a>考试题</h3><p>一、单选题（每道题 2 分，共 12 分）<br>1、现有一张系统用户操作日志表，合理命名应该是（    ）<br>A、XTYHRZB<br>B、SysUserOpLog<br>C、Sys_User_Oplog<br>D、SYS_T_USER_OPLOG</p>
+<p>2、下面数据库设计不符合规范的是（    ）<br>A、大数据量表进行分库分表<br>B、为了方便查看，表中使用明文存储用户密码<br>C、使用数字格式存储时间<br>D、将 json 格式数据存储到 Nosql 数据库</p>
+<p>3、下面 SQL 编写不符合规范的是（    ）<br>A、select column1, column2 from table1<br>B、select column1, b.columna from table1, table2 b where column1 &#x3D; b.columna<br>C、insert into table1(column1,column2) values(?,?)<br>D、update table1 set column1 &#x3D; ‘aaa’  where id &#x3D; ‘001’</p>
+<p>4、下面关于性能优化不正确做法的是（    ）<br>A、尽量避免一条 SQL 从大于 4 张表中取数<br>B、如果一条 SQL 有三层以上的嵌套查询，在设计上考虑解决<br>C、为了提升代码执行效率，大量的公式运算交给数据库后端运行<br>D、为常用的分组排序字段建立索引</p>
+<p>5、下面不正确的索引建立方法的是（    ）<br>A、业务表唯一标识字段必须制定唯一索引<br>B、只要是查询可能用到的字段，都要建立索引<br>C、尽量使用数据量少的索引<br>D、索引列上不使用函数计算</p>
+<p>6、下面数据库操作符合规范的是（    ）<br>A、为了方便，应用程序使用超级管理员账号<br>B、为了快速解决问题，直接在后端数据库中修改业务数据<br>C、修改表结构告知影响人员，并预留一定时间评估、审核<br>D、程序测试完成后直接上线新功能<br>二、多选题（每道题 6 分，共 60 分）<br>1、关于领域模型命名，下列哪些说法符合规范：（      ）<br> A、数据对象命名：xxxDO，xxx 即为数据表名，例如：ResellerAccountDO。<br> B、数据传输对象：xxxDTO，xxx 为业务领域相关的名称，例如 ProductDTO。<br> C、展示层对象：xxxVO，xxx 一般为网页名称，例如 RecommendProductVO。<br> D、POJO 是 DO&#x2F;DTO&#x2F;BO&#x2F;VO 的统称，命名成 xxxPOJO。</p>
+<p>2、关于代码注释，下列哪些说法符合规范：（      ）<br>A、所有的抽象方法（包括接口中的方法）必须要用 javadoc 注释。<br>B、所有的方法，包括私有方法，最好都增加注释，有总比没有强。<br>C、过多过滥的注释，代码的逻辑一旦修改，修改注释是相当大的负担。<br>D、我的命名和代码结构非常好，可以减少注释的内容。</p>
+<p>3、关于类命名，下列哪些说法符合规范：（      ）<br>A、抽象类命名使用 Abstract 或 Base 开头。<br>B、异常类命名使用 Exception 结尾。<br>C、测试类命名以它要测试的类的名称开始，以 Test 结尾。<br>D、如果使用到了设计模式，建议在类名中体现出具体模式。例如代理模式的类命名：LoginProxy；观察者模式命名：ResourceObserver。</p>
+<p>4、关于加锁，下列哪些说法符合规范：（      ）<br>A、可以只锁代码区块的情况下，就不要锁整个方法体。<br>B、高并发的业务场景下，要考虑加锁及同步处理带来的性能损耗，能用无锁数据结构，就不要用锁。<br>C、能用对象锁的情况下，就不要用类锁。<br>D、加锁时需要保持一致的加锁顺序，否则可能会造成死锁。</p>
+<p>5、关于方法的返回值是否可以为 null，下列哪些说法符合规范：（      ）<br>A、方法的返回值可以为 null，如果是集合，必须返回空集合。<br>B、方法的返回值可以为 null，不强制返回空集合，或者空对象等。<br>C、方法实现者必须添加注释，充分说明什么情况下会返回 null 值。<br>D、防止 NPE 是调用者的责任。</p>
+<p>6、关于控制语句，下列哪些说法符合规范：（      ）<br>A、推荐 if-else 的方式可以改写成卫语句的形式。<br>B、尽量减少 try-catch 块内的逻辑，定义对象、变量、获取数据库连接等操作可以移到 try-catch 块外处理。<br>C、if ( condition) statements; 单行语句不需要使用大括号。<br>D、在一个 switch 块内，都必须包含一个 default 语句并且放在最后，即使它什么代码也没有。</p>
+<p>7、关于捕获异常和抛异常，下列哪些说法符合规范：（      ）<br>A、如果需要捕获不同类型异常，为了方便处理，可以使用 catch(Exception e){…}。<br>B、不要捕获异常后不处理，丢弃异常信息。<br>C、捕获异常与抛异常，必须是完全匹配，或者捕获异常是抛异常的父类。<br>D、异常定义时区分 unchecked &#x2F; checked 异常，避免直接使用 RuntimeException 抛出。</p>
+<p>8、关于变量和常量定义，下列哪些符合规范：（      ）<br>A、Long a&#x3D;2L；&#x2F;&#x2F;大写的 L。<br>B、Long a&#x3D;2l; &#x2F;&#x2F;小写的 l。<br>C、常量只定义一次，不再赋值，所以不需要命名规范。<br>D、不要使用一个常量类维护所有常量，应该按常量功能进行归类，分开维护。</p>
+<p>9、数组使用 Arrays.asList 转化为集合，下列说法哪些正确的：（      ）<br>A、数组元素的修改，会影响到转化过来的集合。<br>B、数组元素的修改，不会影响到转化过来的集合。<br>C、对于转换过来的集合，它的 add&#x2F;remove&#x2F;clear 方法会抛出: UnsupportedOperationException。<br>D、Arrays.asList 体现的是适配器模式，只是转换接口，后台的数据仍是数组。</p>
+<p>10、关于并发处理，下列哪些说法符合规范：（      ）<br>A、线程资源必须通过线程池提供，不允许在应用中自行显式创建线程。<br>B、同步处理时，能锁部分代码区块的情况下不要锁整个方法；高并发时，同步调用应该考虑到性能损耗。<br>C、创建线程或线程池时，推荐给线程指定一个有意义的名称，方便出错时回溯。<br>D、推荐使用 Executors.newFixedThreadPool(int x)生成指定大小的线程池。</p>
+<p>三、问答题(4 道题，共 28 分)<br>1、人力云（HR）业务需要建立人员表（含姓名、年龄、性别）和人员工作情况表（含工作开始时间、工作结束时间、工作单位、工作简介），请写出具体的建表语句。（8 分）</p>
+<p>2、请列举你所了解的分库分表方式。(6 分)</p>
+<p>3、现有业务需求要修改表结构，开发库已经修改测试完成，需要在生产库同步修改并发布新程序，请问你具体的步骤。(5 分)</p>
+<p>4、现在有一张表 tablea，主键 key1，只有主键含有唯一索引，字段 columna，columnb,columnc，数量级 100 万，现在按照主键升序，每页 100 条分页，请写去取出第 900000 到 900100 条数据的 SQL 语句。（9 分）</p>
+<h3 id="答案-分析"><a href="#答案-分析" class="headerlink" title="答案&amp;分析"></a>答案&amp;分析</h3><p>一、单项选择<br>1.D 数据库大小写不敏感，应该全部用大写<br>2.B 选项 C 时间用数字格式存储，可以方便最后的国际化时区转化<br>3.B 连接语句要对每个表给出别名，对每个字段的使用都要带上表别名，否则有子查询的情况下，语句可能出现执行计划错误，甚至结果集错误。<br>4.C 选项 B 建议使用 NoSQL 缓存或其他可以在架构上优化的措施来减少复杂的数据库操作；选项 C 公式运算容易使得索引失效因此不建议在数据库中使用；选项 D 中的建议是因为 order by 和 group by 会使用到索引。<br>5.B 选项 B 索引是有代价的，对于一些值重复性较大的列最好不建索引；选项 C 也是考虑在写操作时更新索引会拉低性能。<br>6.C 操作一般是越谨慎越好，数据库操作最好交给专业人员来做（DBA），选项 B 是为了避免数据库出问题时互相甩锅。</p>
+<p>二、多项选择<br>1.ABC 选项 C 我似乎没选，因为把 VO 当成 DO 来用了，而且现在开发都是前后台分离，很少用到页面模板；选项 D 中 POJO 确实是 DO&#x2F;DTO&#x2F;BO&#x2F;VO 的统称，但不能把所有都命名成 XxxPOJO，会分不清该类的职责。<br>2.ACD 一般接口和抽象类里的抽象方法需要加上注释，而类里面的私有方法没有这个要求，也要避免注释过多的情况。<br>3.ABCD<br>4.ABCD 使用锁时要考虑锁的粒度、性能等特性，同时应该避免死锁等问题。<br>5.BCD 我和大部分人一样非常厌恶方法返回 null，尽量返回空集合或空对象能减少很多烦恼，但是手册中认为方法可以返回 null，防止 NPE 是调用者的责任，我觉得原因很大程度上是因为难以避免远程调用失败、序列化失败、运行时异常等场景返回 null 的情况。<br>6.ABD 选项 A 卫语句指的是处理完一个分支后直接返回；选项 B 强调我们分清稳定代码和非稳定代码，不要将不会出错的稳定代码也加到 try 中，这是不负责任的。<br>7.BCD 异常最好有业务含义，能提高后期排错效率。<br>8.AD 选项 B 不规范是因为 l 和 1 容易混淆。<br>9.ACD 最好看一下 Arrays.asList()源码。<br>10.ABC FixedThreadPool 不推荐使用，因为其允许的请求队列长度为 Integer.MAX_VALUE ，可能会堆积大量的请求，从而导致 OOM 。</p>
+<p>三、简答题<br>第一题：表名和字段名按规范，表名前缀 HR，使用有意义的单词，单词间用_分割，有中文注释。<br>第二题：读写分离，冷热分离，按照特定业务纬度分表，使用 ID Hash 取余平均分表等。<br>第三题：<br>1、明确影响范围<br>2、预留应变空间时间<br>3、交由专家评估合理性和性能<br>4、脚本交由专人在生产库执行，记录；<br>5、错峰操作。<br>第四题：参考规范 3 性能优化 22  ，或者先查询 id，在根据 id 查询数据等都可。<br>补充：后一个方法为什么可行呢？因为规范要求所有删除都是逻辑删除，能保证库里的数据 id 是从 1 到 1000000 排列的。</p>
+<h3 id="反思"><a href="#反思" class="headerlink" title="反思"></a>反思</h3><p>有的题目比较抠细节，但是上课好好听应该不难。<br>大部分规范都取自阿里 Java 编码规范，但很多数据库优化策略很有见地，在日后多作总结。</p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83/" rel="tag"># 编码规范</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/6ca318ec.html" rel="prev" title="Linux 环境下硬盘数据的迁移">
+                  <i class="fa fa-angle-left"></i> Linux 环境下硬盘数据的迁移
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/179723ca.html" rel="next" title="NCC 后台简析">
+                  NCC 后台简析 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

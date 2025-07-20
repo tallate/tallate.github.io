@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="性能指标平均负载平均负载是指单位时间内，处于可运行状态和不可中断状态的平均进程数，也就是平均活跃进程数。所以，它不仅包括了正在使用 CPU 的进程，还包括等待 CPU 和等待 I&#x2F;O 的进程，因此和CPU使用率也并没有直接关系。  所谓可运行状态的进程，是指正在使用 CPU 或者正在等待 CPU 的进程，也就是我们常用 ps 命令看到的，处于 R 状态（Running 或 Runn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="性能分析-CPU">
+<meta property="og:url" content="https://tallate.github.io/4621ba57.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="性能指标平均负载平均负载是指单位时间内，处于可运行状态和不可中断状态的平均进程数，也就是平均活跃进程数。所以，它不仅包括了正在使用 CPU 的进程，还包括等待 CPU 和等待 I&#x2F;O 的进程，因此和CPU使用率也并没有直接关系。  所谓可运行状态的进程，是指正在使用 CPU 或者正在等待 CPU 的进程，也就是我们常用 ps 命令看到的，处于 R 状态（Running 或 Runn">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/Linux/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90-CPU.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/Linux/%E8%BF%9B%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2.png">
+<meta property="article:published_time" content="2022-03-20T12:09:11.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.875Z">
+<meta property="article:author" content="tallate">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/Linux/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90-CPU.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/4621ba57.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/4621ba57.html","path":"/4621ba57.html","title":"性能分析-CPU"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>性能分析-CPU | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87"><span class="nav-number">1.</span> <span class="nav-text">性能指标</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B3%E5%9D%87%E8%B4%9F%E8%BD%BD"><span class="nav-number">1.1.</span> <span class="nav-text">平均负载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU%E4%BD%BF%E7%94%A8%E7%8E%87"><span class="nav-number">1.2.</span> <span class="nav-text">CPU使用率</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CPU%E4%BD%BF%E7%94%A8%E7%8E%87%E7%9A%84%E5%AE%9A%E4%B9%89%E5%92%8C%E8%AE%A1%E7%AE%97"><span class="nav-number">1.2.1.</span> <span class="nav-text">CPU使用率的定义和计算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">1.3.</span> <span class="nav-text">CPU上下文切换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">1.3.1.</span> <span class="nav-text">进程上下文切换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">1.3.2.</span> <span class="nav-text">线程上下文切换</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2"><span class="nav-number">1.3.3.</span> <span class="nav-text">中断上下文切换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU%E7%93%B6%E9%A2%88%E5%AE%9A%E4%BD%8D"><span class="nav-number">1.4.</span> <span class="nav-text">CPU瓶颈定位</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E5%89%96%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">性能剖析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#mpstat-%E5%A4%84%E7%90%86%E5%99%A8%E7%BB%9F%E8%AE%A1"><span class="nav-number">2.1.</span> <span class="nav-text">mpstat - 处理器统计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pidstat-%E8%BF%9B%E7%A8%8B%E7%BB%9F%E8%AE%A1"><span class="nav-number">2.2.</span> <span class="nav-text">pidstat - 进程统计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#stress-%E7%B3%BB%E7%BB%9F%E5%8E%8B%E6%B5%8B"><span class="nav-number">2.3.</span> <span class="nav-text">stress - 系统压测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sysstat-Linux%E5%B8%B8%E7%94%A8%E6%80%A7%E8%83%BD%E5%B7%A5%E5%85%B7"><span class="nav-number">2.4.</span> <span class="nav-text">sysstat - Linux常用性能工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vmstat-%E6%9F%A5%E7%9C%8B%E7%B3%BB%E7%BB%9F%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2%E6%83%85%E5%86%B5"><span class="nav-number">2.5.</span> <span class="nav-text">vmstat - 查看系统上下文切换情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#top-%E9%BB%98%E8%AE%A4%E4%BB%A53%E7%A7%92%E6%97%B6%E9%97%B4%E9%97%B4%E9%9A%94%E7%BB%9F%E8%AE%A1CPU%E4%BD%BF%E7%94%A8%E7%8E%87"><span class="nav-number">2.6.</span> <span class="nav-text">top - 默认以3秒时间间隔统计CPU使用率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ps-%E7%BB%9F%E8%AE%A1%E8%BF%9B%E7%A8%8B%E6%95%B4%E4%B8%AA%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%9A%84CPU%E4%BD%BF%E7%94%A8%E7%8E%87"><span class="nav-number">2.7.</span> <span class="nav-text">ps - 统计进程整个生命周期的CPU使用率</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pidstat-%E5%88%86%E6%9E%90%E6%AF%8F%E4%B8%AA%E8%BF%9B%E7%A8%8BCPU%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5"><span class="nav-number">2.8.</span> <span class="nav-text">pidstat - 分析每个进程CPU使用情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#perf-%E5%88%86%E6%9E%90%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98-%E6%AF%94%E5%A6%82CPU%E4%BD%BF%E7%94%A8%E7%8E%87%E8%BF%87%E9%AB%98"><span class="nav-number">2.9.</span> <span class="nav-text">perf 分析性能问题 比如CPU使用率过高</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/4621ba57.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="性能分析-CPU | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          性能分析-CPU
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-03-20 20:09:11" itemprop="dateCreated datePublished" datetime="2022-03-20T20:09:11+08:00">2022-03-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+<p><img src="/imgs/Linux/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90-CPU.png" alt="性能分析-CPU" title="性能分析-CPU"></p>
+<h1 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h1><h2 id="平均负载"><a href="#平均负载" class="headerlink" title="平均负载"></a>平均负载</h2><p>平均负载是指单位时间内，处于<strong>可运行状态</strong>和<strong>不可中断状态</strong>的平均进程数，也就是<strong>平均活跃进程数</strong>。所以，它不仅包括了正在使用 CPU 的进程，还包括等待 CPU 和等待 I&#x2F;O 的进程，因此和CPU使用率也并没有直接关系。</p>
+<ul>
+<li>所谓可运行状态的进程，是指正在使用 CPU 或者正在等待 CPU 的进程，也就是我们常用 ps 命令看到的，处于 R 状态（Running 或 Runnable）的进程。</li>
+<li>不可中断状态的进程则是正处于内核态关键流程中的进程，并且这些流程是不可打断的，比如最常见的是等待硬件设备的 I&#x2F;O 响应，也就是我们在 ps 命令中看到的 D 状态（Uninterruptible Sleep，也称为 Disk Sleep）的进程。</li>
+</ul>
+<p>当平均负载为2时，意味着：</p>
+<ul>
+<li>在只有2个CPU的系统上，意味着所有CPU都刚好被完全占用；</li>
+<li>在4个CPU的系统上，意味着CPU有50%的空闲；</li>
+<li>在只有一个CPU的系统中，意味着有一半的进程竞争不到CPU。</li>
+</ul>
+<p>平均负载为多少比较合适？</p>
+<ul>
+<li>先看系统有几个CPU，可以通过top命令或文件&#x2F;proc&#x2F;cpuinfo读取</li>
+<li>经验讲当平均负载高于CPU数量70%时，需要分析排查负载过高的问题</li>
+<li>uptime查看负载变化趋势，把系统的平均负载监控起来，根据更多的历史数据来判断负载变化趋势，如果有明显升高趋势再做分析。</li>
+</ul>
+<h2 id="CPU使用率"><a href="#CPU使用率" class="headerlink" title="CPU使用率"></a>CPU使用率</h2><h3 id="CPU使用率的定义和计算"><a href="#CPU使用率的定义和计算" class="headerlink" title="CPU使用率的定义和计算"></a>CPU使用率的定义和计算</h3><p>CPU 使用率，是单位时间内 CPU 繁忙情况的统计，跟平均负载并不一定完全对应。<br>比如：<br>CPU 密集型进程，使用大量 CPU 会导致平均负载升高，此时这两者是一致的；<br>I&#x2F;O 密集型进程，等待 I&#x2F;O 也会导致平均负载升高，但 CPU 使用率不一定很高；<br>大量等待 CPU 的进程调度也会导致平均负载升高，此时的 CPU 使用率也会比较高。</p>
+<p>Linux 通过 &#x2F;proc 虚拟文件系统,向用户空间提供了系统内部状态的信息,而 &#x2F;proc&#x2F;stat 提供的就是系统的 CPU 和任务统计信息：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ cat /proc/stat | grep ^cpu</span><br><span class="line">cpu 280580 7407 286084 172900810 83602 0 583 0 0 0</span><br><span class="line">cpu0 144745 4181 176701 86423902 52076 0 301 0 0 0</span><br><span class="line">cpu1 135834 3226 109383 86476907 31525 0 282 0 0 0</span><br></pre></td></tr></table></figure>
+<ul>
+<li>第一行cpu指所有cpu的累加，后面的cpu0, cpu1表示各个cpu的统计</li>
+<li>user(通常缩写为 us),代表<strong>用户态 CPU 时间</strong>。注意,它不包括下面的 nice 时间,但包括了 guest 时间。</li>
+<li>nice(通常缩写为 ni),代表低优先级用户态 CPU 时间,也就是进程的 nice 值被调整为 1-19 之间时的 CPU 时间。这里注意,nice 可取值范围是 -20 到 19,数值越</li>
+<li>大,优先级反而越低。</li>
+<li>system(通常缩写为sys),代表<strong>内核态 CPU 时间</strong>。</li>
+<li>idle(通常缩写为id),代表空闲时间。注意,它不包括等待 I&#x2F;O 的时间(iowait)。</li>
+<li>iowait(通常缩写为 wa),代表等待 I&#x2F;O 的 CPU 时间。</li>
+<li>irq(通常缩写为 hi),代表处理硬中断的 CPU 时间。</li>
+<li>softirq(通常缩写为 si),代表处理软中断的 CPU 时间。</li>
+<li>steal(通常缩写为 st),代表当系统运行在虚拟机中的时候,被其他虚拟机占用的 CPU 时间。</li>
+<li>guest(通常缩写为 guest),代表通过虚拟化运行其他操作系统的时间,也就是运行虚拟机的 CPU 时间。</li>
+<li>guest_nice(通常缩写为 gnice),代表以低优先级运行虚拟机的时间。</li>
+</ul>
+<p>而<strong>CPU使用率</strong>，就是除了空闲时间外的其他时间占总CPU时间的百分比，用公式来表示就是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CPU使用率 = 1 - 空闲时间 / 总CPU时间</span><br></pre></td></tr></table></figure>
+<p>但是这个值是<strong>开机以来的CPU使用率</strong>，没什么参考价值，重要的是计算<strong>单位时间内的CPU使用率</strong>或简称<strong>平均CPU使用率</strong>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">平均CPU使用率 = 1 - (空闲时间new - 空闲时间old) / (总CPU时间new - 总CPU时间old)</span><br></pre></td></tr></table></figure>
+<p>平均CPU使用率可以通过top、ps命令来查看。</p>
+<p><strong>造成CPU使用率过高的原因</strong>可能是：</p>
+<ul>
+<li>用户CPU过高</li>
+<li>系统CPU过高（如上下文切换）</li>
+<li>等待IO的CPU（如等待磁盘的响应）</li>
+<li>中断CPU（包括软中断和硬中断）</li>
+</ul>
+<h2 id="CPU上下文切换"><a href="#CPU上下文切换" class="headerlink" title="CPU上下文切换"></a>CPU上下文切换</h2><p>CPU 上下文切换，就是先把前一个任务的 CPU 上下文（也就是 CPU 寄存器和程序计数器）保存起来，然后加载新任务的上下文到这些寄存器和程序计数器，最后再跳转到程序计数器所指的新位置，运行新任务。<br>根据任务的不同，CPU 的上下文切换可以分为几个不同的场景，也就是<strong>进程上下文切换</strong>、<strong>线程上下文切换</strong>以及<strong>中断上下文切换</strong>。</p>
+<h3 id="进程上下文切换"><a href="#进程上下文切换" class="headerlink" title="进程上下文切换"></a>进程上下文切换</h3><p>根据Linux的特权等级分级：</p>
+<ul>
+<li>内核空间（Ring 0）具有最高权限，可以直接访问所有资源；</li>
+<li>用户空间（Ring 3）只能访问受限资源，不能直接访问内存等硬件设备，必须通过 <strong>系统调用</strong> 陷入到内核中，才能访问这些特权资源。<br>需要注意的是，系统调用陷入内核态执行完毕后，还需要切换回用户态，此时其实又发生了一次上下文切换，所以一次系统调用伴随了2次的CPU上下文切换。</li>
+</ul>
+<p>系统调用过程的CPU上下文切换：</p>
+<ol>
+<li>CPU 寄存器里原来用户态的指令位置，需要先保存起来。</li>
+<li>接着，为了执行内核态代码，CPU 寄存器需要更新为内核态指令的新位置。</li>
+<li>最后才是跳转到内核态运行内核任务。</li>
+<li>系统调用结束后，CPU寄存器需要恢复原来保存的用户态，然后再切换到用户空间，继续运行进程。<blockquote>
+<p>需要注意的是，系统调用过程中，并不会涉及到虚拟内存等进程用户态的资源，也不会切换进程。</p>
+</blockquote>
+</li>
+</ol>
+<p>进程上下文切换：<br><img src="/imgs/Linux/%E8%BF%9B%E7%A8%8B%E4%B8%8A%E4%B8%8B%E6%96%87%E5%88%87%E6%8D%A2.png" alt="进程上下文切换" title="进程上下文切换"><br>进程的上下文切换就比系统调用时多了一步：在保存当前进程的内核状态和 CPU 寄存器之前，需要先把该进程的虚拟内存、栈等保存下来；而加载了下一进程的内核态后，还需要刷新进程的虚拟内存和用户栈。</p>
+<ul>
+<li>进程上下文切换，是指从一个进程切换到另一个进程运行。而系统调用过程中一直是同一个进程在运行。</li>
+<li>进程是由内核来管理和调度的，进程的切换只能发生在内核态。所以，进程的上下文不仅包括了虚拟内存、栈、全局变量等用户空间的资源，还包括了内核堆栈、寄存器等内核空间的状态。</li>
+</ul>
+<p>进程上下文潜在的性能问题：</p>
+<ol>
+<li>频繁的上下文切换容易导致平均负载升高：每次上下文切换都需要几十纳秒到数微秒的 CPU 时间。这个时间还是相当可观的，特别是在进程上下文切换次数较多的情况下，很容易导致 CPU 将大量时间耗费在寄存器、内核栈以及虚拟内存等资源的保存和恢复上，进而大大缩短了真正运行进程的时间。这也正是上一节中我们所讲的，导致平均负载升高的一个重要因素。</li>
+<li>Linux 通过 TLB（Translation Lookaside Buffer）来管理虚拟内存到物理内存的映射关系。当虚拟内存更新后，TLB 也需要刷新，内存的访问也会随之变慢。特别是在多处理器系统上，缓存是被多个处理器共享的，刷新缓存不仅会影响当前处理器的进程，还会影响共享缓存的其他处理器的进程。</li>
+</ol>
+<p>切换进程上下文的时机：<br>只有在进程调度的时候，才需要切换上下文。Linux 为每个 CPU 都维护了一个就绪队列，将活跃进程（即正在运行和正在等待 CPU 的进程）按照优先级和等待 CPU 的时间排序，然后选择最需要 CPU 的进程，也就是优先级最高和等待 CPU 时间最长的进程来运行。</p>
+<ol>
+<li>进程执行完终止了，它之前使用的 CPU 会释放出来，这个时候再从就绪队列里，拿一个新的进程过来运行。</li>
+<li>为了保证所有进程可以得到公平调度，CPU 时间被划分为一段段的时间片，这些时间片再被轮流分配给各个进程。这样，当某个进程的时间片耗尽了，就会被系统挂起，切换到其它正在等待 CPU 的进程运行。</li>
+<li>进程在系统资源不足（比如内存不足）时，要等到资源满足后才可以运行，这个时候进程也会被挂起，并由系统调度其他进程运行。</li>
+<li>当进程通过睡眠函数 sleep 这样的方法将自己主动挂起时，自然也会重新调度。</li>
+<li>当有优先级更高的进程运行时，为了保证高优先级进程的运行，当前进程会被挂起，由高优先级进程来运行。</li>
+<li>发生硬件中断时，CPU 上的进程会被中断挂起，转而执行内核中的中断服务程序。</li>
+</ol>
+<h3 id="线程上下文切换"><a href="#线程上下文切换" class="headerlink" title="线程上下文切换"></a>线程上下文切换</h3><p>线程与进程最大的区别在于，线程是调度的基本单位，而进程则是资源拥有的基本单位。说白了，所谓内核中的任务调度，实际上的调度对象是线程；而进程只是给线程提供了虚拟内存、全局变量等资源。</p>
+<blockquote>
+<p>当进程只有一个线程时，可以认为进程就等于线程。<br>当进程拥有多个线程时，这些线程会共享相同的虚拟内存和全局变量等资源。这些资源在上下文切换时是不需要修改的。<br>另外，线程也有自己的私有数据，比如栈和寄存器等，这些在上下文切换时也是需要保存的。</p>
+</blockquote>
+<p>因此，根据切换的多个线程所属的进程不同，有2种情况：</p>
+<ol>
+<li>前后两个线程属于不同进程。此时，因为资源不共享，所以切换过程就跟进程上下文切换是一样。</li>
+<li>前后两个线程属于同一个进程。此时，因为虚拟内存是共享的，所以在切换时，虚拟内存这些资源就保持不动，只需要切换线程的私有数据、寄存器等不共享的数据。<blockquote>
+<p>同进程内的线程切换消耗的资源更少。</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="中断上下文切换"><a href="#中断上下文切换" class="headerlink" title="中断上下文切换"></a>中断上下文切换</h3><p>为了快速响应硬件的事件，中断处理会打断进程的正常调度和执行，转而调用中断处理程序，响应设备事件。而在打断其他进程时，就需要将进程当前的状态保存下来，这样在中断结束后，进程仍然可以从原来的状态恢复运行。<br>跟进程上下文不同，中断上下文切换并不涉及到进程的用户态。所以，即便中断过程打断了一个正处在用户态的进程，也不需要保存和恢复这个进程的虚拟内存、全局变量等用户态资源。中断上下文，其实只包括内核态中断服务程序执行所必需的状态，包括 CPU 寄存器、内核堆栈、硬件中断参数等。</p>
+<h2 id="CPU瓶颈定位"><a href="#CPU瓶颈定位" class="headerlink" title="CPU瓶颈定位"></a>CPU瓶颈定位</h2><p>1、平均负载<br>系统平均活跃进程数，反映了系统的整体负载情况<br>2、CPU使用率<br>根据CPU上运行任务的不同，CPU使用率可以分为：</p>
+<ul>
+<li>用户 CPU 使用率,包括用户态 CPU 使用率(user)和低优先级用户态 CPU 使用率(nice),表示 CPU 在用户态运行的时间百分比。用户 CPU 使用率高,通常说明有应用程序比较繁忙。</li>
+<li>系统 CPU 使用率,表示 CPU 在内核态运行的时间百分比(不包括中断)。系统 CPU 使用率高,说明内核比较繁忙。</li>
+<li>等待 I&#x2F;O 的CPU使用率,通常也称为iowait,表示等待 I&#x2F;O 的时间百分比。iowait 高,通常说明系统与硬件设备的 I&#x2F;O 交互时间比较长。</li>
+<li>软中断和硬中断的 CPU 使用率,分别表示内核调用软中断处理程序、硬中断处理程序的时间百分比。它们的使用率高,通常说明系统发生了大量的中断。</li>
+<li>除了上面这些,还有在虚拟化环境中会用到的窃取 CPU 使用率(steal)和客户 CPU 使用率(guest),分别表示被其他虚拟机占用的 CPU 时间百分比,和运行客户虚拟机的 CPU 时间百分比。</li>
+</ul>
+<p>3、进程上下文切换<br>过多的上下文切换会将原本运行进程的CPU时间，消耗在寄存器、内核栈以及虚拟内存等数据的保存和回复上，缩短进程真正运行的时间，成为性能瓶颈。包括：</p>
+<ul>
+<li>无法获取资源而导致的自愿上下文切换;</li>
+<li>被系统强制调度导致的非自愿上下文切换。</li>
+</ul>
+<p>4、CPU缓存的命中率<br>包括L1、L2、L3等三级缓存。</p>
+<h1 id="性能剖析"><a href="#性能剖析" class="headerlink" title="性能剖析"></a>性能剖析</h1><p>uptime - 查看平均负载<br>平均负载最理想情况下等于CPU个数，超过时表示发生了过载，达到70%时就应该分析排查负载高的问题，。</p>
+<p>watch - 可用于观察负载变化情况</p>
+<p>top 或 读取&#x2F;proc&#x2F;cpuinfo - 查看系统有几个CPU</p>
+<p>top - 查看CPU使用率</p>
+<h2 id="mpstat-处理器统计"><a href="#mpstat-处理器统计" class="headerlink" title="mpstat - 处理器统计"></a>mpstat - 处理器统计</h2><h2 id="pidstat-进程统计"><a href="#pidstat-进程统计" class="headerlink" title="pidstat - 进程统计"></a>pidstat - 进程统计</h2><p>-w 查看进程上下文切换情况</p>
+<ul>
+<li>cswch 每秒自愿上下文切换(voluntary context switches)的次数<br>是指进程无法获取所需资源,导致的上下文切换。比如说, I&#x2F;O、内存等系统资源不足时,就会发生自愿上下文切换。</li>
+<li>nvcswch 每秒非自愿上下文切换(non voluntary context switches)的次数。<br>是指进程由于时间片已到等原因,被系统强制调度,进而发生的上下文切换。比如说,大量进程都在争抢 CPU 时,就容易发生非自愿上下文切换。</li>
+</ul>
+<h2 id="stress-系统压测"><a href="#stress-系统压测" class="headerlink" title="stress - 系统压测"></a>stress - 系统压测</h2><h2 id="sysstat-Linux常用性能工具"><a href="#sysstat-Linux常用性能工具" class="headerlink" title="sysstat - Linux常用性能工具"></a>sysstat - Linux常用性能工具</h2><blockquote>
+<p>sysstat包含mpstat、pidstat<br>mpstat 是一个常用的多核 CPU 性能分析工具，用来实时查看每个 CPU 的性能指标，以及所有 CPU 的平均指标。<br>pidstat 是一个常用的进程性能分析工具，用来实时查看进程的 CPU、内存、I&#x2F;O 以及上下文切换等性能指标。</p>
+</blockquote>
+<h2 id="vmstat-查看系统上下文切换情况"><a href="#vmstat-查看系统上下文切换情况" class="headerlink" title="vmstat - 查看系统上下文切换情况"></a>vmstat - 查看系统上下文切换情况</h2><p>主要用来分析系统的内存使用情况，也常用来分析CPU上下文切换和中断的次数</p>
+<ul>
+<li>cs(context switch)是每秒上下文切换的次数。</li>
+<li>in(interrupt)则是每秒中断的次数。</li>
+<li>r(Running or Runnable)是就绪队列的长度,也就是正在运行和等待CPU的进程数。</li>
+<li>b(Blocked)则是处于不可中断睡眠状态的进程数。</li>
+</ul>
+<p>vmstat主要用于看系统整体的上下文切换情况，如果想看每个进程的详细情况，可以用pidstat</p>
+<h2 id="top-默认以3秒时间间隔统计CPU使用率"><a href="#top-默认以3秒时间间隔统计CPU使用率" class="headerlink" title="top - 默认以3秒时间间隔统计CPU使用率"></a>top - 默认以3秒时间间隔统计CPU使用率</h2><h2 id="ps-统计进程整个生命周期的CPU使用率"><a href="#ps-统计进程整个生命周期的CPU使用率" class="headerlink" title="ps - 统计进程整个生命周期的CPU使用率"></a>ps - 统计进程整个生命周期的CPU使用率</h2><h2 id="pidstat-分析每个进程CPU使用情况"><a href="#pidstat-分析每个进程CPU使用情况" class="headerlink" title="pidstat - 分析每个进程CPU使用情况"></a>pidstat - 分析每个进程CPU使用情况</h2><h2 id="perf-分析性能问题-比如CPU使用率过高"><a href="#perf-分析性能问题-比如CPU使用率过高" class="headerlink" title="perf 分析性能问题 比如CPU使用率过高"></a>perf 分析性能问题 比如CPU使用率过高</h2><p>perf top 实时显示占用CPU时钟最多的函数或指令，因此可以用来查找热点函数<br>perf record、perf report 保存性能分析结果及展示结果</p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/40fca579.html" rel="prev" title="并发和线程任务编排">
+                  <i class="fa fa-angle-left"></i> 并发和线程任务编排
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/9acacb00.html" rel="next" title="Kubernetes原理">
+                  Kubernetes原理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

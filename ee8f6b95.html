@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Linux 下工作常用工具，用于提升效率。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 环境实用工具">
+<meta property="og:url" content="https://tallate.github.io/ee8f6b95.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="Linux 下工作常用工具，用于提升效率。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-04-30T09:35:12.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.873Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tallate.github.io/ee8f6b95.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/ee8f6b95.html","path":"/ee8f6b95.html","title":"Linux 环境实用工具"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Linux 环境实用工具 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%93%9D%E7%89%99"><span class="nav-number">1.</span> <span class="nav-text">蓝牙</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wxwork%EF%BC%88%E4%BC%81%E4%B8%9A%E5%BE%AE%E4%BF%A1%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">wxwork（企业微信）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wget"><span class="nav-number">3.</span> <span class="nav-text">wget</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E7%B3%BB%E7%BB%9F%E7%BB%B4%E6%8A%A4"><span class="nav-number">4.</span> <span class="nav-text">简单系统维护</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#reboot"><span class="nav-number">4.1.</span> <span class="nav-text">reboot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#poweroff"><span class="nav-number">4.2.</span> <span class="nav-text">poweroff</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#uname"><span class="nav-number">4.3.</span> <span class="nav-text">uname</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sosreport"><span class="nav-number">4.4.</span> <span class="nav-text">sosreport</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pandoc%EF%BC%88%E6%96%87%E6%A1%A3%E6%A0%BC%E5%BC%8F%E8%BD%AC%E6%8D%A2%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">pandoc（文档格式转换）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux-%E6%8E%A7%E5%88%B6%E5%8F%B0"><span class="nav-number">6.</span> <span class="nav-text">Linux 控制台</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#crontab"><span class="nav-number">7.</span> <span class="nav-text">crontab</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">7.1.</span> <span class="nav-text">参考</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WIFI"><span class="nav-number">8.</span> <span class="nav-text">WIFI</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%BE%E5%BD%A2%E7%95%8C%E9%9D%A2%E5%88%9B%E5%BB%BA-WIFI"><span class="nav-number">8.1.</span> <span class="nav-text">图形界面创建 WIFI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E8%BF%9E%E6%8E%A5-WIFI"><span class="nav-number">8.2.</span> <span class="nav-text">命令行连接 WIFI</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tmux"><span class="nav-number">9.</span> <span class="nav-text">tmux</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83-1"><span class="nav-number">9.1.</span> <span class="nav-text">参考</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#i3wm"><span class="nav-number">10.</span> <span class="nav-text">i3wm</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-i3"><span class="nav-number">10.1.</span> <span class="nav-text">配置 i3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83-2"><span class="nav-number">10.2.</span> <span class="nav-text">参考</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gdb"><span class="nav-number">11.</span> <span class="nav-text">gdb</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91"><span class="nav-number">11.1.</span> <span class="nav-text">编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C-gdb"><span class="nav-number">11.2.</span> <span class="nav-text">运行 gdb</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%AD%E7%82%B9%E6%A3%80%E6%9F%A5"><span class="nav-number">11.3.</span> <span class="nav-text">断点检查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E6%AD%A5"><span class="nav-number">11.4.</span> <span class="nav-text">单步</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E5%8F%98%E9%87%8F"><span class="nav-number">11.5.</span> <span class="nav-text">检查变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5%E6%AE%B5%E9%94%99%E8%AF%AF%E5%92%8C%E6%8C%87%E9%92%88%E9%97%AE%E9%A2%98"><span class="nav-number">11.6.</span> <span class="nav-text">检查段错误和指针问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83-3"><span class="nav-number">11.7.</span> <span class="nav-text">参考</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#valgrind"><span class="nav-number">12.</span> <span class="nav-text">valgrind</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85"><span class="nav-number">12.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2"><span class="nav-number">12.2.</span> <span class="nav-text">内存泄露</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91-1"><span class="nav-number">12.3.</span> <span class="nav-text">编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C-valgrind"><span class="nav-number">12.4.</span> <span class="nav-text">运行 valgrind</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%BE%E9%9D%9E%E6%B3%95%E6%8C%87%E9%92%88"><span class="nav-number">12.5.</span> <span class="nav-text">找非法指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E6%9C%AA%E5%88%9D%E5%A7%8B%E5%8C%96%E5%8F%98%E9%87%8F%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-number">12.6.</span> <span class="nav-text">检测未初始化变量的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">12.7.</span> <span class="nav-text">其他</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#valgrind-%E7%9A%84%E7%9B%B2%E7%82%B9"><span class="nav-number">12.8.</span> <span class="nav-text">valgrind 的盲点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">12.9.</span> <span class="nav-text">注意事项</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/ee8f6b95.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Linux 环境实用工具 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux 环境实用工具
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-04-30 17:35:12" itemprop="dateCreated datePublished" datetime="2018-04-30T17:35:12+08:00">2018-04-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Linux 下工作常用工具，用于提升效率。</p>
+<span id="more"></span>
+
+<h2 id="蓝牙"><a href="#蓝牙" class="headerlink" title="蓝牙"></a>蓝牙</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">bluetoothctl</span><br><span class="line">[bluetooth]# power off</span><br><span class="line">[bluetooth]# power on</span><br><span class="line">[bluetooth]# scan on</span><br><span class="line">[bluetooth]# connect XX:XX:XX:XX:XX:XX</span><br><span class="line">[Arc Touch Mouse SE]# trust</span><br><span class="line">[Arc Touch Mouse SE]# pair</span><br><span class="line">[Arc Touch Mouse SE]# unblock</span><br><span class="line">[Arc Touch Mouse SE]# power off</span><br><span class="line">[bluetooth]# power on</span><br></pre></td></tr></table></figure>
+<p>比如我想连自己的蓝牙键盘，<code>scan on</code>后会打印出来一堆搜到的蓝牙设备，其中可以看到自己的蓝牙键盘：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[CHG] Device 90:7F:61:56:8A:CE Name: ThinkPad Multi Connect Bluetooth Keyboard with Trackpoint</span><br><span class="line">[CHG] Device 90:7F:61:56:8A:CE Alias: ThinkPad Multi Connect Bluetooth Keyboard with Trackpoint</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="wxwork（企业微信）"><a href="#wxwork（企业微信）" class="headerlink" title="wxwork（企业微信）"></a>wxwork（企业微信）</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_32087115/article/details/85261860">https://blog.csdn.net/weixin_32087115/article/details/85261860</a><br>创建一个执行脚本：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nohup /usr/lib/gnome-settings-daemon/gsd-xsettings &gt; /dev/null 2&gt;&amp;1 &amp;</span><br><span class="line">/opt/deepinwine/apps/Deepin-WXWork/run.sh</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="wget"><a href="#wget" class="headerlink" title="wget"></a>wget</h2><p>wget 命令用于在终端中下载网络文件，格式为：<code>wget [参数] 下载地址</code>。</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-b</td>
+<td>后台下载模式。</td>
+</tr>
+<tr>
+<td>-O</td>
+<td>下载到指定目录。</td>
+</tr>
+<tr>
+<td>-t</td>
+<td>最大尝试次数。</td>
+</tr>
+<tr>
+<td>-c</td>
+<td>断点续传</td>
+</tr>
+<tr>
+<td>-p</td>
+<td>下载页面内所有资源,包括图片、视频等。</td>
+</tr>
+<tr>
+<td>-r</td>
+<td>递归下载</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 递归下载网站所有页面和图片等资料</span><br><span class="line">wget -r -p http://www.baidu.com</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="简单系统维护"><a href="#简单系统维护" class="headerlink" title="简单系统维护"></a>简单系统维护</h2><h3 id="reboot"><a href="#reboot" class="headerlink" title="reboot"></a>reboot</h3><p>重启计算机这种操作涉及到对硬件资源的管理权限，因此默认只能使用 root 用户来调用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ reboot</span><br></pre></td></tr></table></figure>
+<h3 id="poweroff"><a href="#poweroff" class="headerlink" title="poweroff"></a>poweroff</h3><p>关机命令也同理，只有 root 用户才能关闭电脑：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ poweroff</span><br></pre></td></tr></table></figure>
+<h3 id="uname"><a href="#uname" class="headerlink" title="uname"></a>uname</h3><p>查看系统内核与系统版本等信息<br>一般我们会固定搭配上-a 参数来完整查看当前系统的信息，包括内核名称、主机名、内核发行版本、节点名、系统时间、硬件名称、硬件平台、处理器类型以及操作系统名称等</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@dm-slave-slave:~# uname</span><br><span class="line">Linux</span><br><span class="line">root@dm-slave-slave:~# uname -a</span><br><span class="line">Linux dm-slave-slave 4.4.0-105-generic #128-Ubuntu SMP Thu Dec 14 12:42:11 UTC 2017 x86_64 x86_64 x86_64 GNU/Linux</span><br></pre></td></tr></table></figure>
+<p>uname 命令只能看到内核版本，如果要查看发行版的版本，可以找找 release 文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">root@dm-slave-slave:~# ls /etc/ | grep release</span><br><span class="line">lsb-release</span><br><span class="line">os-release</span><br><span class="line">root@dm-slave-slave:~# cat /etc/os-release</span><br><span class="line">NAME=&quot;Ubuntu&quot;</span><br><span class="line">VERSION=&quot;16.04.3 LTS (Xenial Xerus)&quot;</span><br><span class="line">ID=ubuntu</span><br><span class="line">ID_LIKE=debian</span><br><span class="line">PRETTY_NAME=&quot;Ubuntu 16.04.3 LTS&quot;</span><br><span class="line">VERSION_ID=&quot;16.04&quot;</span><br><span class="line">HOME_URL=&quot;http://www.ubuntu.com/&quot;</span><br><span class="line">SUPPORT_URL=&quot;http://help.ubuntu.com/&quot;</span><br><span class="line">BUG_REPORT_URL=&quot;http://bugs.launchpad.net/ubuntu/&quot;</span><br><span class="line">VERSION_CODENAME=xenial</span><br><span class="line">UBUNTU_CODENAME=xenial</span><br></pre></td></tr></table></figure>
+
+<h3 id="sosreport"><a href="#sosreport" class="headerlink" title="sosreport"></a>sosreport</h3><p>收集系统配置并诊断信息后输出结论文档<br>当我们的 Linux 系统出现故障需要联系红帽厂商或其他技术支持时，大多数时候都要先使用这个 SOS 功能来简单收集计算机的状态和配置信息，以便让技术支持公司能够通过远程就解决了一些小问题，又或者让他们能对复杂问题能提前有些了解</p>
+<h2 id="pandoc（文档格式转换）"><a href="#pandoc（文档格式转换）" class="headerlink" title="pandoc（文档格式转换）"></a>pandoc（文档格式转换）</h2><p>Markdown -&gt; PPT：<a target="_blank" rel="noopener" href="https://blog.csdn.net/yyw794/article/details/73697810">https://blog.csdn.net/yyw794/article/details/73697810</a></p>
+<h2 id="Linux-控制台"><a href="#Linux-控制台" class="headerlink" title="Linux 控制台"></a>Linux 控制台</h2><p>unity-control-center<br>gnome-control-center</p>
+<h2 id="crontab"><a href="#crontab" class="headerlink" title="crontab"></a>crontab</h2><h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ol>
+<li><a target="_blank" rel="noopener" href="http://linuxtools-rst.readthedocs.io/zh_CN/latest/tool/crontab.html">19. crontab 定时任务</a></li>
+</ol>
+<h2 id="WIFI"><a href="#WIFI" class="headerlink" title="WIFI"></a>WIFI</h2><h3 id="图形界面创建-WIFI"><a href="#图形界面创建-WIFI" class="headerlink" title="图形界面创建 WIFI"></a>图形界面创建 WIFI</h3><ol>
+<li>点击有上角网络标志，点开编辑链接。</li>
+<li>选择 WiFi ，添加一个网络。</li>
+<li>设置这个网络 做如下编辑:<ul>
+<li>编辑 wifi 的名字：SSID, </li>
+<li>选择 Hotspot （热点）模式.</li>
+<li>在 Wifi Security（wifi 安全性） 页, 选择 WPA &amp; WPA2 Personal（WPA &amp; WPA2 个人）选项并输入你要创建的 wifi 密码，8 位以上.</li>
+<li>在 IPv4 设置页面, 选择 “Share to other computers”（与其他计算机共享）</li>
+</ul>
+</li>
+<li>点击 save ，然后点击右上角网络选项中的 Connect to Hidden Wi-Fi network (连接到隐藏的 WIFI 网络)，在连接选择框里，选择你刚刚创建的网络。</li>
+<li>完成，你可以用手机等连接了</li>
+</ol>
+<p>最后，如果出现“Connection ‘xxx’ is not available on the device wlp3s0 at this time”问题……<br>主要因为你使用了 Broadcom Corporation 网卡驱动，换过来就好了。<br>解决方案：系统设置–&gt;软件和更新–&gt;附加驱动–&gt;将 Broadcom Corporation….那一项选择“不使用设备”–&gt;应用更改–&gt;重新启动</p>
+<h3 id="命令行连接-WIFI"><a href="#命令行连接-WIFI" class="headerlink" title="命令行连接 WIFI"></a>命令行连接 WIFI</h3><p><a target="_blank" rel="noopener" href="http://askubuntu.com/questions/461825/connect-to-wifi-from-command-line">http://askubuntu.com/questions/461825/connect-to-wifi-from-command-line</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo nmcli radio wifi on # 开启wifi</span><br><span class="line">nmcli dev wifi # 查看附近可用wifi</span><br><span class="line">nmcli c up NEU # 连接</span><br><span class="line">nmcli c down NEU # 断开</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="tmux"><a href="#tmux" class="headerlink" title="tmux"></a>tmux</h2><p>1.安装<br>2.在~目录下创建文件.tmux.conf</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">setw -g c0-change-trigger 100</span><br><span class="line">setw -g c0-change-interval 250</span><br><span class="line">​</span><br><span class="line">bind-key c new-window -c &quot;#&#123;pane_current_path&#125;&quot;</span><br><span class="line">bind-key % split-window -h -c &quot;#&#123;pane_current_path&#125;&quot;</span><br><span class="line">bind-key &#x27;&quot;&#x27; split-window -c &quot;#&#123;pane_current_path&#125;&quot;</span><br></pre></td></tr></table></figure>
+<p>3.打开</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tmux</span><br></pre></td></tr></table></figure>
+<p>4.操作<br>下面命令前面必须加上 ctrl+b<br>session 操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">s 查看/切换session  </span><br><span class="line">d 离开Session </span><br><span class="line">$ 重命名当前Session  </span><br></pre></td></tr></table></figure>
+<p>window 操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">c 新建窗口</span><br><span class="line">space 切换到上一个活动的窗口   </span><br><span class="line">&amp; 关闭一个窗口    </span><br><span class="line">窗口号 使用窗口号切换 </span><br></pre></td></tr></table></figure>
+<p>pane 操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">o 切换到下一个窗格</span><br><span class="line">q 查看所有窗格的编号</span><br><span class="line">&quot; 水平拆分出一个新窗格</span><br><span class="line">% 垂直拆分出一个新窗格</span><br><span class="line">z 暂时把一个窗体放到最大</span><br><span class="line">x 删除一个窗格</span><br></pre></td></tr></table></figure>
+<h3 id="参考-1"><a href="#参考-1" class="headerlink" title="参考"></a>参考</h3><ol>
+<li><a target="_blank" rel="noopener" href="http://harttle.com/2015/11/06/tmux-startup.html">优雅地使用命令行：Tmux 终端复用</a></li>
+</ol>
+<h2 id="i3wm"><a href="#i3wm" class="headerlink" title="i3wm"></a>i3wm</h2><h3 id="配置-i3"><a href="#配置-i3" class="headerlink" title="配置 i3"></a>配置 i3</h3><p>&#x2F;etc&#x2F;i3&#x2F;config<br>~&#x2F;.config&#x2F;i3&#x2F;config</p>
+<h3 id="参考-2"><a href="#参考-2" class="headerlink" title="参考"></a>参考</h3><ol>
+<li>使用<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq907482638/article/details/54576516">ubuntu+i3wm 桌面</a><br><a target="_blank" rel="noopener" href="http://tieba.baidu.com/p/4332307704">debian 使用 i3 教程：从 0 开始</a><br><a target="_blank" rel="noopener" href="http://blog.topspeedsnail.com/archives/3615">安装使用 i3wm 窗口管理器</a><br><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/62251457/answer/196854381">如何配置 linux 平铺式窗口管理器 i3wm？</a></li>
+<li>配置<br><a target="_blank" rel="noopener" href="https://github.com/ID1258/oh-my-i3">oh-my-i3</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/JBGSWF">Linux 桌面平铺管理器 - i3wm</a><br><a target="_blank" rel="noopener" href="https://i3wm.org/docs/userguide.html">i3</a></li>
+<li>小控件<br>配置文件为&#x2F;etc&#x2F;i3status<br><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/24037403">（选用 pnmixer）i3wm 音量控制挂件有哪些?</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/yaakire/article/details/78932593">（选用 arandr）i3-wm 设置多屏显示</a><br>温度：查看 man i3status 搜索“CPU-Temperature”即可得到温度设置方法</li>
+</ol>
+<h2 id="gdb"><a href="#gdb" class="headerlink" title="gdb"></a>gdb</h2><h3 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c -g -Wall -Werror -o main</span><br></pre></td></tr></table></figure>
+<p>其中-g 选项生成调试用的符号表，-Wall 显示所有 warning，-Werror 使得 warning 变成 error。</p>
+<h3 id="运行-gdb"><a href="#运行-gdb" class="headerlink" title="运行 gdb"></a>运行 gdb</h3><h3 id="断点检查"><a href="#断点检查" class="headerlink" title="断点检查"></a>断点检查</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">list</span><br><span class="line">break 5</span><br><span class="line">run</span><br><span class="line">continue</span><br></pre></td></tr></table></figure>
+<h3 id="单步"><a href="#单步" class="headerlink" title="单步"></a>单步</h3><p>next 总是保持在当前 scope 下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">list</span><br><span class="line">break 5</span><br><span class="line">run</span><br><span class="line">next</span><br><span class="line">step将进入每个scope</span><br></pre></td></tr></table></figure>
+<h3 id="检查变量"><a href="#检查变量" class="headerlink" title="检查变量"></a>检查变量</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">print a</span><br><span class="line">set var a = 10</span><br><span class="line">watch a</span><br></pre></td></tr></table></figure>
+<h3 id="检查段错误和指针问题"><a href="#检查段错误和指针问题" class="headerlink" title="检查段错误和指针问题"></a>检查段错误和指针问题</h3><p>1.段错误：访问了未分配的地址。<br>2.常见原因</p>
+<ul>
+<li>对 NULL 解引用；</li>
+<li>对未分配的指针解引用；</li>
+<li>对已释放的指针解引用；</li>
+<li>数组访问越界，并进行了写操作；</li>
+<li>函数无限递归，占用了所有的栈空间。<br>3.调试<br>使用 gdb 工具加载 core 文件，打印变量值找错。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gcc -g -Wall -Werror main.c -o main # 编译时加上-g选项</span><br><span class="line">gdb main core # 使用core文件加载</span><br><span class="line">run # gdb将会在发生段错误的位置停下</span><br><span class="line">print x # 打印可能引起错误的指针值</span><br></pre></td></tr></table></figure>
+4.库函数调试<br>使用 backtrace 命令回溯找错<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">backtrace # 列出函数调用栈</span><br><span class="line">up # 回到上一个调用frame</span><br><span class="line">print x # 打印可能出错的变量</span><br></pre></td></tr></table></figure>
+注意：</li>
+<li>检查 malloc 的返回值，内存分配失败会返回 NULL；</li>
+<li>检查自定义的内存分配函数的返回值，比如 Stack_new，理由同上；<br>5.解引用未初始化（局部）指针<br>有以下三个策略</li>
+<li>注意将它们都初始化为 NULL 或直接分配一块内存；</li>
+<li>调试时检查指针之间的值是否接近，因为未初始化的局部变量会保存一个垃圾值；</li>
+<li>使用 gdb 打印命令<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print *x # 若不是正确的地址将打印错误信息</span><br></pre></td></tr></table></figure>
+6.解引用已释放内存</li>
+<li>释放后立刻将指针赋值 NULL，转换为 5 的问题；</li>
+<li>不要返回局部变量的地址<br>7.写操作超出数组范围</li>
+<li>如果是局部数组，写超出范围将直接 segfault；</li>
+<li>如果是分配的数组，可能不会立刻 segfault，可以关掉随机数种子，并使用 watch 命令跟踪变量<br>8.stack overflows</li>
+<li>使用 backtrace，如果发现一个函数被大量调用，可能这个函数中的递归的终止条件不对。</li>
+</ul>
+<h3 id="参考-3"><a href="#参考-3" class="headerlink" title="参考"></a>参考</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.cprogramming.com/gdb.html">A GDB Tutorial with Examples</a></li>
+</ol>
+<h2 id="valgrind"><a href="#valgrind" class="headerlink" title="valgrind"></a>valgrind</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install valgrind</span><br></pre></td></tr></table></figure>
+<h3 id="内存泄露"><a href="#内存泄露" class="headerlink" title="内存泄露"></a>内存泄露</h3><p>内存泄露问题不容易被检测，因为它不会在运行时产生明显的反应，除了内存空间用完后再调用 malloc 会发生失败。</p>
+<h3 id="编译-1"><a href="#编译-1" class="headerlink" title="编译"></a>编译</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -g main.c -o main</span><br></pre></td></tr></table></figure>
+<p>加上-g 选项是为了保存符号表，供之后 valgrind 定位错误用。</p>
+<h3 id="运行-valgrind"><a href="#运行-valgrind" class="headerlink" title="运行 valgrind"></a>运行 valgrind</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">valgrind --tool=memcheck ./main</span><br></pre></td></tr></table></figure>
+<p>如果 alloc 数和 free 数不相等，说明发生了内存泄露。<br>加上 leak-check 选项<br>显示所有没有被释放（free）的内存分配（malloc&#x2F;new&#x2F;etc）调用，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">valgrind --tool=memcheck --leak-check=yes ./main</span><br></pre></td></tr></table></figure>
+<p>加上–show-reachable&#x3D;yes 可以显示更多未释放的内存。</p>
+<h3 id="找非法指针"><a href="#找非法指针" class="headerlink" title="找非法指针"></a>找非法指针</h3><p>比如对动态数组的访问超出了分配的空间</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">==23457== Invalid write of size 1</span><br><span class="line">==23457==    at 0x400544: main (main.c:6)</span><br><span class="line">==23457==  Address 0x520304a is 0 bytes after a block of size 10 alloc&#x27;d</span><br><span class="line">==23457==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)</span><br><span class="line">==23457==    by 0x400537: main (main.c:5)</span><br></pre></td></tr></table></figure>
+<p>上面的结果表明，我们企图写入一个 1 个 size 大小的对象到一个分配的空间的末尾，这个错误发生在第 6 行（main 函数中），内存块的分配是在第 5 行。</p>
+<h3 id="检测未初始化变量的使用"><a href="#检测未初始化变量的使用" class="headerlink" title="检测未初始化变量的使用"></a>检测未初始化变量的使用</h3><ul>
+<li>int a;</li>
+<li>int a; foo(a); &#x2F;&#x2F; 即将未初始化的值赋给了别的变量<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">==23757== Conditional jump or move depends on uninitialised value(s)</span><br><span class="line">==23757==    at 0x400531: foo (main.c:5)</span><br><span class="line">==23757==    by 0x40054D: main (main.c:11)</span><br></pre></td></tr></table></figure>
+上面的结果说明，跳转语句使用了一个未初始化的变量作为条件，该变量的传递路径为 main-&gt;foo。</li>
+</ul>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><ul>
+<li>多次释放（free）<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">==23883== Invalid free() / delete / delete[] / realloc()</span><br><span class="line">==23883==    at 0x4C2EDEB: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)</span><br><span class="line">==23883==    by 0x4005A9: main (main.c:12)</span><br><span class="line">==23883==  Address 0x5203040 is 0 bytes inside a block of size 4 free&#x27;d</span><br><span class="line">==23883==    at 0x4C2EDEB: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)</span><br><span class="line">==23883==    by 0x40059D: main (main.c:11)</span><br><span class="line">==23883==  Block was alloc&#x27;d at</span><br><span class="line">==23883==    at 0x4C2DB8F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)</span><br><span class="line">==23883==    by 0x40058D: main (main.c:10)</span><br></pre></td></tr></table></figure>
+上面结果表明，在 12 行处发生了 free 同一块内存多次的情况，且这个内存在第 10 行被分配并已在第 11 行被释放。</li>
+<li>使用了不正确的方法释放内存<br>malloc()&#x2F;new&#x2F;new[]与 free()&#x2F;delete&#x2F;delete[]必须一一对应，否则报错：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Mismatched free() / delete / delete []</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="valgrind-的盲点"><a href="#valgrind-的盲点" class="headerlink" title="valgrind 的盲点"></a>valgrind 的盲点</h3><ul>
+<li>不检查静态数组（栈分配）的边界<br>可以选择使用动态分配替换，不过会拖慢速度。</li>
+</ul>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><ul>
+<li>valgrind 占用大量空间；</li>
+<li>valgrind 不会检查出所有错误，比如缓冲区溢出。</li>
+</ul>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/ea6e9398.html" rel="prev" title="内存池介绍">
+                  <i class="fa fa-angle-left"></i> 内存池介绍
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/f3fb008f.html" rel="next" title="博客搭建">
+                  博客搭建 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

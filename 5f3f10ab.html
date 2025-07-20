@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="这篇文档集中于概念的梳理，不会谈太多实现上的细节。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式事务-从本地事务到分布式事务">
+<meta property="og:url" content="https://tallate.github.io/5f3f10ab.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="这篇文档集中于概念的梳理，不会谈太多实现上的细节。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-06T02:26:49.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.891Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="本地事务">
+<meta property="article:tag" content="分布式事务">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tallate.github.io/5f3f10ab.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/5f3f10ab.html","path":"/5f3f10ab.html","title":"分布式事务-从本地事务到分布式事务"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>分布式事务-从本地事务到分布式事务 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%95%E6%9C%BA%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.</span> <span class="nav-text">单机事务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ACID"><span class="nav-number">1.1.</span> <span class="nav-text">ACID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E4%B8%AA%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">三个问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E4%BC%A0%E6%92%AD%E7%BA%A7%E5%88%AB%EF%BC%88Spring%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">事务传播级别（Spring）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%EF%BC%88DB%EF%BC%89"><span class="nav-number">1.4.</span> <span class="nav-text">事务隔离级别（DB）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E5%B8%B8%E7%94%A8%E5%B1%9E%E6%80%A7%EF%BC%88Spring-Transactional%EF%BC%89"><span class="nav-number">1.5.</span> <span class="nav-text">事务常用属性（Spring - Transactional）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-number">1.6.</span> <span class="nav-text">实现事务隔离级别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%BA%E6%88%91%E4%BB%AC%E6%8F%90%E4%BE%9B%E5%9B%9B%E7%A7%8D%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB%EF%BC%9A"><span class="nav-number">1.6.1.</span> <span class="nav-text">MySQL数据库为我们提供四种隔离级别：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDBC%E9%A9%B1%E5%8A%A8"><span class="nav-number">1.6.2.</span> <span class="nav-text">JDBC驱动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring%E6%A1%86%E6%9E%B6%E4%BA%8B%E5%8A%A1%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-number">1.6.3.</span> <span class="nav-text">Spring框架事务隔离级别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-%E4%BA%8B%E5%8A%A1%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">1.6.4.</span> <span class="nav-text">Spring 事务的实现原理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1"><span class="nav-number">2.</span> <span class="nav-text">分布式事务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E3%80%81CAP%E4%B8%8EBASE"><span class="nav-number">2.1.</span> <span class="nav-text">一致性、CAP与BASE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%94%E6%80%A7%E4%BA%8B%E5%8A%A1%E5%92%8C%E5%88%9A%E6%80%A7%E4%BA%8B%E5%8A%A1"><span class="nav-number">2.2.</span> <span class="nav-text">柔性事务和刚性事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">2.3.</span> <span class="nav-text">最佳实践</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%82%E7%AD%89%E6%80%A7"><span class="nav-number">2.4.</span> <span class="nav-text">幂等性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">2.5.</span> <span class="nav-text">分布式一致性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">2.6.</span> <span class="nav-text">数据一致性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.7.</span> <span class="nav-text">一致性模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%BA%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">2.7.1.</span> <span class="nav-text">强一致性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%B1%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">2.7.2.</span> <span class="nav-text">弱一致性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">2.7.3.</span> <span class="nav-text">最终一致性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%8F%98%E7%A7%8D"><span class="nav-number">2.7.4.</span> <span class="nav-text">最终一致性模型的变种</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1-1"><span class="nav-number">2.8.</span> <span class="nav-text">分布式事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E7%9A%84%E6%9B%BF%E4%BB%A3%E6%96%B9%E6%A1%88"><span class="nav-number">2.9.</span> <span class="nav-text">分布式事务的替代方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A5%E5%81%BF%E4%BA%8B%E5%8A%A1"><span class="nav-number">2.9.1.</span> <span class="nav-text">补偿事务</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">2.10.</span> <span class="nav-text">应用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E4%BB%98"><span class="nav-number">2.10.1.</span> <span class="nav-text">支付</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E7%BA%BF%E4%B8%8B%E5%8D%95"><span class="nav-number">2.10.2.</span> <span class="nav-text">在线下单</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">2.11.</span> <span class="nav-text">参考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5%E7%90%86%E8%A7%A3"><span class="nav-number">2.11.1.</span> <span class="nav-text">概念理解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%A1%88"><span class="nav-number">2.11.2.</span> <span class="nav-text">方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.11.3.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ByteTCC"><span class="nav-number">2.11.4.</span> <span class="nav-text">ByteTCC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E8%A1%A5%E5%81%BF%E6%9C%BA%E5%88%B6"><span class="nav-number">2.11.5.</span> <span class="nav-text">事务补偿机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%82%E7%AD%89%E6%80%A7-1"><span class="nav-number">2.11.6.</span> <span class="nav-text">幂等性</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/5f3f10ab.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="分布式事务-从本地事务到分布式事务 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分布式事务-从本地事务到分布式事务
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-06 10:26:49" itemprop="dateCreated datePublished" datetime="2020-12-06T10:26:49+08:00">2020-12-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>这篇文档集中于概念的梳理，不会谈太多实现上的细节。</p>
+<span id="more"></span>
+
+<h1 id="单机事务"><a href="#单机事务" class="headerlink" title="单机事务"></a>单机事务</h1><h2 id="ACID"><a href="#ACID" class="headerlink" title="ACID"></a>ACID</h2><ul>
+<li>Atomicity	<br>Atomicity requires that each transaction be “all or nothing”: if one part of the transaction fails, then the entire transaction fails, and the database state is left unchanged. An atomic system must guarantee atomicity in each and every situation, including power failures, errors and crashes. To the outside world, a committed transaction appears (by its effects on the database) to be indivisible (“atomic”), and an aborted transaction does not happen.</li>
+<li>Consistency	<br>The consistency property ensures that any transaction will bring the database from one valid state to another. Any data written to the database must be valid according to all defined rules, including constraints, cascades,triggers, and any combination thereof. This does not guarantee correctness of the transaction in all ways the application programmer might have wanted (that is the responsibility of application-level code), but merely that any programming errors cannot result in the violation of any def ined rules.</li>
+<li>Isolation	<br>The isolation property ensures that the concurrent execution of transactions results in a system state that would be obtained if transactions were executed sequentially, i.e., one after the other. Providing isolation is the main goal of concurrency control. Depending on the concurrency control method (i.e., if it uses strict - as opposed to relaxed - serializability), the effects of an incomplete transaction might not even be visible to another transaction.</li>
+<li>Durability	<br>The durability property ensures that once a transaction has been committed, it will remain so, even in the event of power loss, crashes, or errors. In a relational database, for instance, once a group of SQL statements execute, the results need to be stored permanently (even if the database crashes immediately thereafter). To defend against power loss, transactions (or their effects) must be recorded in a non-volatile memory.</li>
+</ul>
+<h2 id="三个问题"><a href="#三个问题" class="headerlink" title="三个问题"></a>三个问题</h2><ol>
+<li>脏读<br>脏读是指在一个事务T1处理过程里读取了另一个 <strong>未提交</strong> 的事务T2中的数据。（注意T2是可能再次修改该条数据甚至回滚的）</li>
+<li>不可重复读<br>不可重复读是指在对于数据库中的某个数据，一个事务T1在多次查询时返回了不同的数据值，这是由于在查询间隔，被另一个事务T2修改并提交了。（注意事务T1包含多次查询操作）</li>
+<li>幻读<br>幻读是指在对数据进行 <strong>批量修改</strong> T1时，由其他事务T2<strong>插入</strong>了一条数据，于是这条数据没有受到修改，这时T1的用户再查询数据库会发现有一条数据没有被修改，就像发生了幻觉。（注意事务T1包含批量写和读这两个过程）</li>
+</ol>
+<h2 id="事务传播级别（Spring）"><a href="#事务传播级别（Spring）" class="headerlink" title="事务传播级别（Spring）"></a>事务传播级别（Spring）</h2><p>传播级别定义的是事务的控制范围：</p>
+<ol>
+<li>PROPAGATION_REQUIRED ，默认的spring事务传播级别，使用该级别的特点是，如果上下文中已经存在事务，那么就加入到事务中执行，如果当前上下文中不存在事务，则新建事务执行。所以这个级别通常能满足处理大多数的业务场景。</li>
+<li>PROPAGATION_SUPPORTS ，从字面意思就知道，supports，支持，该传播级别的特点是，如果上下文存在事务，则支持事务加入事务，如果没有事务，则使用非事务的方式执行。所以说，并非所有的包在transactionTemplate.execute中的代码都会有事务支持。这个通常是用来处理那些并非原子性的非核心业务逻辑操作。应用场景较少。</li>
+<li>PROPAGATION_MANDATORY ， 该级别的事务要求上下文中必须要存在事务，否则就会抛出异常！配置该方式的传播级别是有效的控制上下文调用代码遗漏添加事务控制的保证手段。比如一段代码不能单独被调用执行，但是一旦被调用，就必须有事务包含的情况，就可以使用这个传播级别。</li>
+<li>PROPAGATION_REQUIRES_NEW ，从字面即可知道，new即每次都要一个新事务，该传播级别的特点是，每次都会新建一个事务，并且同时将上下文中的事务挂起，执行当前新建事务完成以后，上下文事务恢复再执行。<br>这是一个很有用的传播级别，举一个应用场景：现在有一个发送100个红包的操作，在发送之前，要做一些系统的初始化、验证、数据记录操作，然后发送100封红包，然后再记录发送日志，发送日志要求100%的准确，如果日志不准确，那么整个父事务逻辑需要回滚。<br>怎么处理整个业务需求呢？就是通过这个PROPAGATION_REQUIRES_NEW 级别的事务传播控制就可以完成。发送红包的子事务不会直接影响到父事务的提交和回滚。</li>
+<li>PROPAGATION_NOT_SUPPORTED ，这个也可以从字面得知，not supported ，不支持，当前级别的特点就是上下文中存在事务，则挂起事务，执行当前逻辑，结束后恢复上下文的事务。<br>这个级别有什么好处？可以帮助你将事务极可能的缩小。我们知道一个事务越大，它存在的风险也就越多。所以在处理事务的过程中，要保证尽可能的缩小范围。比如一段代码，是每次逻辑操作都必须调用的，比如循环1000次的某个非核心业务逻辑操作。这样的代码如果包在事务中，势必造成事务太大，导致出现一些难以考虑周全的异常情况。所以这个事务这个级别的传播级别就派上用场了。用当前级别的事务模板抱起来就可以了。</li>
+<li>PROPAGATION_NEVER ，该事务更严格，上面一个事务传播级别只是不支持而已，有事务就挂起，而PROPAGATION_NEVER传播级别要求上下文中不能存在事务，一旦有事务，就抛出runtime异常，强制停止执行！这个级别上辈子跟事务有仇。</li>
+<li>PROPAGATION_NESTED ，字面也可知道，nested，嵌套级别事务。该传播级别特征是，如果上下文中存在事务，则嵌套事务执行，如果不存在事务，则新建事务。<br>嵌套是子事务套在父事务中执行，子事务是父事务的一部分，在进入子事务之前，父事务建立一个回滚点，叫save point，然后执行子事务，这个子事务的执行也算是父事务的一部分，然后子事务执行结束，父事务继续执行。重点就在于那个save point。看几个问题就明了了：<ul>
+<li>如果子事务回滚，会发生什么？<br>父事务会回滚到进入子事务前建立的save point，然后尝试其他的事务或者其他的业务逻辑，父事务之前的操作不会受到影响，更不会自动回滚。</li>
+<li>如果父事务回滚，会发生什么？<br>父事务回滚，子事务也会跟着回滚！为什么呢，因为父事务结束之前，子事务是不会提交的，我们说子事务是父事务的一部分，正是这个道理。那么：</li>
+<li>事务的提交，是怎样的顺序？<br>是父事务先提交，然后子事务提交，还是子事务先提交，父事务再提交？答案是第二种情况，还是那句话，子事务是父事务的一部分，由父事务统一提交。</li>
+</ul>
+</li>
+</ol>
+<h2 id="事务隔离级别（DB）"><a href="#事务隔离级别（DB）" class="headerlink" title="事务隔离级别（DB）"></a>事务隔离级别（DB）</h2><p>事务隔离级别定义的是事务在数据库读写方面的控制范围</p>
+<ol>
+<li>Serializable（对事务本身加锁）：最严格的级别，事务串行执行，资源消耗最大；</li>
+<li>REPEATABLE READ（乐观锁？）：保证了一个事务不会修改已经由另一个事务读取但未提交（回滚）的数据。避免了“脏读取”和“不可重复读取”的情况，但是带来了更多的性能损失。</li>
+<li>READ COMMITTED（互斥锁？）：大多数主流数据库的默认事务等级，保证了一个事务不会读到另一个并行事务已修改但未提交的数据，避免了“脏读取”。该级别适用于大多数系统。</li>
+<li>Read Uncommitted ：保证了读取过程中不会读取到非法数据。</li>
+</ol>
+<p>事务隔离级别 | Dirty reads | non-repeatable reads | phantom reads<br>Serializable | 不会 | 不会 | 不会<br>REPEATABLE READ | 不会 | 不会 | 会<br>READ COMMITTED | 不会 | 会 | 会<br>Read Uncommitted | 会 | 会 | 会</p>
+<h2 id="事务常用属性（Spring-Transactional）"><a href="#事务常用属性（Spring-Transactional）" class="headerlink" title="事务常用属性（Spring - Transactional）"></a>事务常用属性（Spring - Transactional）</h2><ul>
+<li>readonly<br>设置事务为只读以提升性能</li>
+<li>timeout<br>设置事务的超时时间，一般用于防止大事务的发生（事务应该尽可能小）</li>
+</ul>
+<h2 id="实现事务隔离级别"><a href="#实现事务隔离级别" class="headerlink" title="实现事务隔离级别"></a>实现事务隔离级别</h2><ol>
+<li>数据库层</li>
+<li>JDBC驱动</li>
+<li>MyBatis框架</li>
+<li>Spring框架</li>
+</ol>
+<h3 id="MySQL数据库为我们提供四种隔离级别："><a href="#MySQL数据库为我们提供四种隔离级别：" class="headerlink" title="MySQL数据库为我们提供四种隔离级别："></a>MySQL数据库为我们提供四种隔离级别：</h3><ul>
+<li>Serializable (串行化)：可避免脏读、不可重复读、幻读的发生。</li>
+<li>（默认）Repeatable read (可重复读)：可避免脏读、不可重复读的发生。</li>
+<li>Read committed (读已提交)：可避免脏读的发生。</li>
+<li>Read uncommitted (读未提交)：最低级别，任何情况都无法保证。</li>
+</ul>
+<p>修改隔离级别</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select @@tx_isolation;</span><br><span class="line">mysql&gt; set transaction isolation level repeatable read;</span><br><span class="line">mysql&gt; set tx_isolation=&#x27;read-uncommitted&#x27;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="JDBC驱动"><a href="#JDBC驱动" class="headerlink" title="JDBC驱动"></a>JDBC驱动</h3><p>JDBC的一切行为包括事务是基于一个Connection的，在JDBC中是通过Connection对象进行事务管理。在JDBC中，常用的和事务相关的方法是：setAutoCommit、commit、rollback等。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);</span><br><span class="line">conn.setAutoCommit(false);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Connection类提供几个静态成员变量可作为事务的级别。</li>
+<li>设置事务必须在调用setAutoCommit(false)开启事务之前。设置为 true （默认）则sql命令的提交（commit）由驱动程序负责、数据库将会把每一次数据更新认定为一个事务并自动提交；若为false则sql命令的提交由应用程序负责，程序必须调用commit或者rollback方法</li>
+<li>一个Connection对象相当于一次session，只在一次数据库访问期间有效。</li>
+</ul>
+<h3 id="Spring框架事务隔离级别"><a href="#Spring框架事务隔离级别" class="headerlink" title="Spring框架事务隔离级别"></a>Spring框架事务隔离级别</h3><p>PROPAGATION_REQUIRED:<br>    如果存在一个事务，则支持当前事务。如果没有事务则开启。<br>PROPAGATION_SUPPORTS:<br>    如果存在一个事务，支持当前事务。如果没有事务，则非事务的执行。<br>PROPAGATION_MANDATORY:<br>    如果已经存在一个事务，支持当前事务。如果没有一个活动的事务，则抛出异常。<br>PROPAGATION_REQUIRES_NEW:<br>    总是开启一个新的事务。如果一个事务已经存在，则将这个存在的事务挂起。<br>PROPAGATION_NOT_SUPPORTED:<br>    总是非事务地执行，并挂起任何存在的事务。<br>PROPAGATION_NEVER:<br>    总是非事务地执行，如果存在一个活动事务，则抛出异常。<br>PROPAGATION_NESTED：<br>    如果一个活动的事务存在，则运行在一个嵌套的事务中. 如果没有活动事务, 则按TransactionDefinition.PROPAGATION_REQUIRED 属性执行。</p>
+<h3 id="Spring-事务的实现原理"><a href="#Spring-事务的实现原理" class="headerlink" title="Spring 事务的实现原理"></a>Spring 事务的实现原理</h3><p>源码入口可以看<code>TransactionAspectSupport#invokeWithinTransaction</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">// 从方法的@Transactional注解中获取事务属性</span><br><span class="line">final TransactionAttribute txAttr = getTransactionAttributeSource().getTransactionAttribute(method, targetClass);</span><br><span class="line">// 获取事务管理器</span><br><span class="line">final PlatformTransactionManager tm = determineTransactionManager(txAttr);</span><br><span class="line">final String joinpointIdentification = methodIdentification(method, targetClass);</span><br><span class="line"></span><br><span class="line">if (txAttr == null || !(tm instanceof CallbackPreferringPlatformTransactionManager)) &#123;</span><br><span class="line">    // 创建事务信息，包含事务管理器和事务状态</span><br><span class="line">    TransactionInfo txInfo = createTransactionIfNecessary(tm, txAttr, joinpointIdentification);</span><br><span class="line">    Object retVal = null;</span><br><span class="line">    try &#123;</span><br><span class="line">        // 执行目标方法</span><br><span class="line">        retVal = invocation.proceedWithInvocation();</span><br><span class="line">    &#125;</span><br><span class="line">    catch (Throwable ex) &#123;</span><br><span class="line">        // 回滚</span><br><span class="line">        completeTransactionAfterThrowing(txInfo, ex);</span><br><span class="line">        throw ex;</span><br><span class="line">    &#125;</span><br><span class="line">    finally &#123;</span><br><span class="line">        // 清理当前线程的事务相关信息</span><br><span class="line">        cleanupTransactionInfo(txInfo);</span><br><span class="line">    &#125;</span><br><span class="line">    // 提交事务</span><br><span class="line">    commitTransactionAfterReturning(txInfo);</span><br><span class="line">    return retVal;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">protected TransactionInfo createTransactionIfNecessary(</span><br><span class="line">        PlatformTransactionManager tm, TransactionAttribute txAttr, final String joinpointIdentification) &#123;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    TransactionStatus status = null;</span><br><span class="line">    if (txAttr != null) &#123;</span><br><span class="line">        if (tm != null) &#123;</span><br><span class="line">            // 从事务管理器获取当前事务状态</span><br><span class="line">            status = tm.getTransaction(txAttr);</span><br><span class="line">        &#125;</span><br><span class="line">        else &#123;</span><br><span class="line">            if (logger.isDebugEnabled()) &#123;</span><br><span class="line">                logger.debug(&quot;Skipping transactional joinpoint [&quot; + joinpointIdentification +</span><br><span class="line">                        &quot;] because no transaction manager has been configured&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return prepareTransactionInfo(tm, txAttr, joinpointIdentification, status);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>1、createTransactionIfNecessary<br>准备事务状态，主要任务是开启事务，即调用JDBC的con.setAutoCommit(false)<br>2、proceedWithInvocation<br>执行目标方法<br>3、事务管理器<br>事务管理器可以提供数据源的接口，包括begin、commit、rollback等。<br>事务状态也由TransactionManager保存，表示事务当前执行的阶段。<br>4、事务的传播<br>Spring事务的传播级别描述的是多个使用了@Transactional注解的方法互相调用时，Spring对事务的处理。<br>事务传播的实现原理主要看两个角度：一个角度是刚进入事务时，针对不同的传播级别，它们的行为有什么区别，另一个角度是当事务提交或回滚时，传播级别对事务行为的影响。<br>也就是上边源码中的<code>createTransactionIfNecessary</code>和<code>completeTransactionAfterThrowing</code>这两个入口。<br>这里标记出了源码的入口，但是我并没有再继续深入捋事务传播机制的实现原理了，想必也不会是特别复杂的。<br>refer: <a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44366439/article/details/89030080">https://blog.csdn.net/weixin_44366439/article/details/89030080</a></p>
+<h1 id="分布式事务"><a href="#分布式事务" class="headerlink" title="分布式事务"></a>分布式事务</h1><h2 id="一致性、CAP与BASE"><a href="#一致性、CAP与BASE" class="headerlink" title="一致性、CAP与BASE"></a>一致性、CAP与BASE</h2><h2 id="柔性事务和刚性事务"><a href="#柔性事务和刚性事务" class="headerlink" title="柔性事务和刚性事务"></a>柔性事务和刚性事务</h2><p>刚性事务是指严格遵循ACID原则的事务, 例如单机环境下的数据库事务.<br>柔性事务是指遵循BASE理论的事务, 通常用在分布式环境中, 常见的实现方式有: 两阶段提交(2PC), TCC补偿型提交, 基于消息的异步确保型, 最大努力通知型.<br>通常对本地事务采用刚性事务, 分布式事务使用柔性事务.</p>
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><p>如果业务场景需要强一致性, 那么尽量避免将它们放在不同服务中, 也就是尽量使用<strong>本地事务</strong>, 避免使用强一致性的分布式事务.<br>如果业务场景能够接受最终一致性, 那么最好是使用<strong>基于消息的最终一致性的方案</strong>(异步确保型)来解决.<br>如果业务场景需要强一致性, 并且只能够进行分布式服务部署, 那么最好是使用<strong>TCC方案</strong>而不是2PC方案来解决.</p>
+<h2 id="幂等性"><a href="#幂等性" class="headerlink" title="幂等性"></a>幂等性</h2><p>幂等性则是指业务方法调用一次与调用多次的执行返回结果是一样的。分布式事务的设计中一般会需要服务接口提供者再提供一个逆向操作接口，在正向接口失败后被调用，以实现事务补偿机制。正向接口和逆向接口都是有可能被重试调用的，因此将接口设计成幂等的是必须的。</p>
+<h2 id="分布式一致性"><a href="#分布式一致性" class="headerlink" title="分布式一致性"></a>分布式一致性</h2><p>在分布式系统中，为了保证数据的高可用，通常，我们会将数据保留多个副本(replica)，这些副本会放置在不同的物理的机器上。为了对用户提供正确的增\删\改\差等语义，我们需要保证这些放置在不同物理机器上的副本是一致的。<br>一般来说一致性是必须满足的，不然那个系统就是完全不可靠的了，我们说在某些场景下需要牺牲一致性，指的是牺牲强一致性。</p>
+<h2 id="数据一致性"><a href="#数据一致性" class="headerlink" title="数据一致性"></a>数据一致性</h2><p>通常情况下，我们所说的分布式一致性问题通常指的是数据一致性问题。<br>数据一致性其实是数据库系统中的概念。我们可以简单的把一致性理解为正确性或者完整性，那么数据一致性通常指关联数据之间的逻辑关系是否正确和完整。我们知道，在数据库系统中通常用事务（访问并可能更新数据库中各种数据项的一个程序执行单元）来保证数据的一致性和完整性。而在分布式系统中，数据一致性往往指的是由于数据的复制，不同数据节点中的数据内容是否完整并且相同。<br>为了提高可用性，我们往往会将数据复制到多台服务器上，以消除单点故障问题，然后使用负载均衡来提高整个系统的性能。在分布式系统引入复制机制后，不同的数据节点之间由于网络延时等原因很容易产生数据不一致的情况。<br>比如两个用户访问一个服务的两个实例，两个实例都知道票只有一张，所以他们都会提示购票成功，但是整个系统也只有这一张票的情况下，必须得有一个用户手上的票作废，或者说购票不成功。</p>
+<h2 id="一致性模型"><a href="#一致性模型" class="headerlink" title="一致性模型"></a>一致性模型</h2><h3 id="强一致性"><a href="#强一致性" class="headerlink" title="强一致性"></a>强一致性</h3><p>当更新操作完成之后，任何多个后续进程或者线程的访问都会返回最新的更新过的值。这种是对用户最友好的，就是用户上一次写什么，下一次就保证能读到什么。但是这种实现对性能影响较大。</p>
+<h3 id="弱一致性"><a href="#弱一致性" class="headerlink" title="弱一致性"></a>弱一致性</h3><p>系统并不保证续进程或者线程的访问都会返回最新的更新过的值。系统在数据写入成功之后，不承诺立即可以读到最新写入的值，也不会具体的承诺多久之后可以读到。但会尽可能保证在某个时间级别（比如秒级别）之后，可以让数据达到一致性状态。</p>
+<h3 id="最终一致性"><a href="#最终一致性" class="headerlink" title="最终一致性"></a>最终一致性</h3><p>弱一致性的特定形式。系统保证在没有后续更新的前提下，系统最终返回上一次更新操作的值。在没有故障发生的前提下，不一致窗口的时间主要受通信延迟，系统负载和复制副本的个数影响。DNS是一个典型的最终一致性系统。</p>
+<h3 id="最终一致性模型的变种"><a href="#最终一致性模型的变种" class="headerlink" title="最终一致性模型的变种"></a>最终一致性模型的变种</h3><ul>
+<li>因果一致性：如果A进程在更新之后向B进程通知更新的完成，那么B的访问操作将会返回更新的值。如果没有因果关系的C进程将会遵循最终一致性的规则。</li>
+<li>读己所写一致性：因果一致性的特定形式。一个进程总可以读到自己更新的数据。</li>
+<li>会话一致性：读己所写一致性的特定形式。进程在访问存储系统同一个会话内，系统保证该进程读己之所写。</li>
+<li>单调读一致性：如果一个进程已经读取到一个特定值，那么该进程不会读取到该值以前的任何值。</li>
+<li>单调写一致性：系统保证对同一个进程的写操作串行化。</li>
+<li>上述最终一致性的不同方式可以进行组合，例如单调读一致性和读己之所写一致性就可以组合实现。并且从实践的角度来看，这两者的组合，读取自己更新的 数据，和一旦读取到最新的版本不会再读取旧版本，对于此架构上的程序开发来说，会少很多额外的烦恼。</li>
+</ul>
+<h2 id="分布式事务-1"><a href="#分布式事务-1" class="headerlink" title="分布式事务"></a>分布式事务</h2><p>分布式事务是指会涉及到操作多个数据库的事务。其实就是将对同一库事务的概念扩大到了对多个库的事务。目的是为了保证分布式系统中的数据一致性。分布式事务处理的关键是必须有一种方法可以知道事务在任何地方所做的所有动作，提交或回滚事务的决定必须产生统一的结果（全部提交或全部回滚）。<br>常用的几个方案：</p>
+<ol>
+<li>XA两阶段提交<br>锁定资源时间长，对性能影响大，不适合微服务场景。</li>
+<li>TCC方案<br>对应用侵入性强，实现难度大。</li>
+<li>基于消息的最终一致性方案<br>侵入性强，需要对业务进行大量改造，成本较高。</li>
+</ol>
+<h2 id="分布式事务的替代方案"><a href="#分布式事务的替代方案" class="headerlink" title="分布式事务的替代方案"></a>分布式事务的替代方案</h2><h3 id="补偿事务"><a href="#补偿事务" class="headerlink" title="补偿事务"></a>补偿事务</h3><p>在业务端实施业务逆向操作事务。<br>包括正向（重试）和逆向（回滚）两个部分，</p>
+<p>补偿事务有什么缺点？</p>
+<ul>
+<li>不同的业务要写不同的补偿事务，不具备通用性；</li>
+<li>没有考虑补偿事务的失败；</li>
+<li>如果业务流程很复杂，if&#x2F;else会嵌套非常多层；</li>
+</ul>
+<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><h3 id="支付"><a href="#支付" class="headerlink" title="支付"></a>支付</h3><p>最经典的场景就是支付了，一笔支付，是对买家账户进行扣款，同时对卖家账户进行加钱，这些操作必须在一个事务里执行，要么全部成功，要么全部失败。而对于买家账户属于买家中心，对应的是买家数据库，而卖家账户属于卖家中心，对应的是卖家数据库，对不同数据库的操作必然需要引入分布式事务。</p>
+<h3 id="在线下单"><a href="#在线下单" class="headerlink" title="在线下单"></a>在线下单</h3><p>买家在电商平台下单，往往会涉及到两个动作，一个是扣库存，第二个是更新订单状态，库存和订单一般属于不同的数据库，需要使用分布式事务保证数据一致性。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><h3 id="概念理解"><a href="#概念理解" class="headerlink" title="概念理解"></a>概念理解</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://en.m.wikipedia.org/wiki/ACID_transactions">ACID</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.linkedkeeper.com/detail/blog.action?bid=1013">浅谈分布式事务</a></li>
+<li>分布式系统常见的事务处理机制 <a target="_blank" rel="noopener" href="https://waylau.com/distributed-system-transaction/">https://waylau.com/distributed-system-transaction/</a></li>
+<li>分布式系统的事务处理 <a target="_blank" rel="noopener" href="https://coolshell.cn/articles/10910.html">https://coolshell.cn/articles/10910.html</a></li>
+<li>分布式系统事务一致性解决方案 <a target="_blank" rel="noopener" href="http://www.infoq.com/cn/articles/solution-of-distributed-system-transaction-consistency">http://www.infoq.com/cn/articles/solution-of-distributed-system-transaction-consistency</a></li>
+<li>分布式服务的事务如何处理？比如dubbo，服务与服务之间的事务怎么处理比较好，现在有没有开源的解决方案？ <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/29483490">https://www.zhihu.com/question/29483490</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/48627764/answer/259103512">如何理解TCC分布式事务?</a></li>
+</ol>
+<h3 id="方案"><a href="#方案" class="headerlink" title="方案"></a>方案</h3><ol>
+<li><a target="_blank" rel="noopener" href="http://xiaorui.cc/2016/02/25/%E7%90%86%E8%A7%A3%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E7%9A%84%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A42pc/">理解分布式事务的两阶段提交2pc</a></li>
+<li>如何用消息系统避免分布式事务？ <a target="_blank" rel="noopener" href="http://blog.jobbole.com/89140/">http://blog.jobbole.com/89140/</a><br><a target="_blank" rel="noopener" href="http://blog.csdn.net/congyihao/article/details/70195154">微服务–分布式事务的实现方法及替代方案</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.roncoo.com/article/detail/124243">微服务架构的分布式事务解决方案</a></li>
+<li><a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/29548.html?spm=5176.doc29558.6.575.CPDsKK">收发事务消息</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/31813039">支付宝运营架构中柔性事务指的是什么？</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/rainwang/p/7099648.html">TCC事务机制简介</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/clsaa/Distributed-Transaction-Notes/blob/master/5-TCC%E5%9E%8B%E6%96%B9%E6%A1%88.md">Distributed-Transaction-Notes</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/FMvAqmN8SHhLqMssAlAR8Q">微服务架构下处理分布式事务，你必须知道的事儿</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/MWy9LjWtC9d7mrBxh745Jw">支付核心系统设计：Airbnb的分布式事务方案简介</a></li>
+</ol>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/q/1010000005998615">TCC分布式事务实现原理</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/prontera/spring-cloud-rest-tcc">spring-cloud-rest-tcc</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/zeq9069/tcc-transaction">tcc-transaction</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/qq_17612199/article/details/74826099">tcc-transaction 执行流程源码分析</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.iocoder.cn/categories/TCC-Transaction/">芋道源码</a></li>
+<li><a target="_blank" rel="noopener" href="http://geek.csdn.net/news/detail/240045">TCC分布式事务框架源码解析系列（一）之项目结构</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.atomikos.com/Blog/TransactionManagementAPIForRESTTCC">Transaction management API for REST: TCC</a></li>
+</ol>
+<h3 id="ByteTCC"><a href="#ByteTCC" class="headerlink" title="ByteTCC"></a>ByteTCC</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://wenku.baidu.com/view/be946bec0975f46527d3e104.html">大规模SOA系统中的分布事务处事_程立</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.bytesoft.org/">ByteTCC</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/liuyangming/ByteTCC">liuyangming&#x2F;ByteTCC</a></li>
+</ol>
+<h3 id="事务补偿机制"><a href="#事务补偿机制" class="headerlink" title="事务补偿机制"></a>事务补偿机制</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/yuliying/article/details/52813302">事务补偿机制</a></li>
+</ol>
+<h3 id="幂等性-1"><a href="#幂等性-1" class="headerlink" title="幂等性"></a>幂等性</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/27744795">分布式高并发系统如何保证对外接口的幂等性？</a></li>
+<li><a target="_blank" rel="noopener" href="http://outofmemory.cn/wiki/service-idempotency">服务幂等以及常用实现方式</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9C%AC%E5%9C%B0%E4%BA%8B%E5%8A%A1/" rel="tag"># 本地事务</a>
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1/" rel="tag"># 分布式事务</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/f5668bf0.html" rel="prev" title="分布式系统的设计原理">
+                  <i class="fa fa-angle-left"></i> 分布式系统的设计原理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/c6369e85.html" rel="next" title="分布式事务实现">
+                  分布式事务实现 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

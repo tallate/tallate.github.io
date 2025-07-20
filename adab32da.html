@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="请求体查询（查询表达式）包含了ES大部分查询功能。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ES3_4请求体查询">
+<meta property="og:url" content="https://tallate.github.io/adab32da.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="请求体查询（查询表达式）包含了ES大部分查询功能。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-08-21T01:03:54.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.860Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="ElasticSearch">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tallate.github.io/adab32da.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/adab32da.html","path":"/adab32da.html","title":"ES3_4请求体查询"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ES3_4请求体查询 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E6%9F%A5%E8%AF%A2%E6%98%AF%E5%90%A6%E5%90%88%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">验证查询是否合法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B2%BE%E7%A1%AE%E5%8C%B9%E9%85%8D-term"><span class="nav-number">2.</span> <span class="nav-text">精确匹配 - term</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E6%96%87%E6%9F%A5%E8%AF%A2-match"><span class="nav-number">3.</span> <span class="nav-text">全文查询 - match</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#match"><span class="nav-number">3.1.</span> <span class="nav-text">match</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#match-phrase"><span class="nav-number">3.2.</span> <span class="nav-text">match_phrase</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#match-all"><span class="nav-number">3.3.</span> <span class="nav-text">match_all</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%95%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%9A%E5%AD%97%E6%AE%B5%E6%9F%A5%E8%AF%A2-multi-match"><span class="nav-number">3.4.</span> <span class="nav-text">单字符串多字段查询 - multi_match</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Query-String"><span class="nav-number">4.</span> <span class="nav-text">Query String</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4-constant-score%E3%80%81filter"><span class="nav-number">5.</span> <span class="nav-text">过滤 - constant_score、filter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E5%90%88%E6%9F%A5%E8%AF%A2%E5%8F%8A%E7%AE%97%E5%88%86%E6%8E%A7%E5%88%B6-bool"><span class="nav-number">6.</span> <span class="nav-text">复合查询及算分控制 - bool</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E5%88%86%E8%BF%87%E7%A8%8B"><span class="nav-number">6.1.</span> <span class="nav-text">算分过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#disjunction-max-query"><span class="nav-number">6.2.</span> <span class="nav-text">disjunction max query</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B5%8C%E5%A5%97bool"><span class="nav-number">6.3.</span> <span class="nav-text">嵌套bool</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%80%BCcount"><span class="nav-number">6.4.</span> <span class="nav-text">多值count</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#boosting"><span class="nav-number">6.5.</span> <span class="nav-text">boosting</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%BB%93%E6%9E%84%E5%8C%96%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5"><span class="nav-number">7.</span> <span class="nav-text">其他结构化查询语句</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/adab32da.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ES3_4请求体查询 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ES3_4请求体查询
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-08-21 09:03:54" itemprop="dateCreated datePublished" datetime="2019-08-21T09:03:54+08:00">2019-08-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>请求体查询（查询表达式）包含了ES大部分查询功能。</p>
+<span id="more"></span>
+
+<p>es 倾向于使用 GET 来表达查询操作，查询条件可以放到请求体中，而事实是这个 RFC 文档 <strong>RFC 7231</strong> — 一个专门负责处理 HTTP 语义和内容的文档 — 并没有规定一个带有请求体的 GET 请求应该如何处理！结果是，一些 HTTP 服务器允许这样子，而有一些 — 特别是一些用于缓存和代理的服务器 — 则不允许。所以 es 作了一个妥协，下面的 GET 请求同样可以使用 POST 来实现：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET /megacorp/employee/_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot; : &#123;</span><br><span class="line">        &quot;match&quot; : &#123;</span><br><span class="line">            &quot;last_name&quot; : &quot;Smith&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>查询表达式主要有两种结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    QUERY_NAME: &#123;</span><br><span class="line">        ARGUMENT: VALUE,</span><br><span class="line">        ARGUMENT: VALUE,...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">    QUERY_NAME: &#123;</span><br><span class="line">        FIELD_NAME: &#123;</span><br><span class="line">            ARGUMENT: VALUE,</span><br><span class="line">            ARGUMENT: VALUE,...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="验证查询是否合法"><a href="#验证查询是否合法" class="headerlink" title="验证查询是否合法"></a>验证查询是否合法</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET /_validate/query?explain</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot; : &#123; ... &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="精确匹配-term"><a href="#精确匹配-term" class="headerlink" title="精确匹配 - term"></a>精确匹配 - term</h2><ul>
+<li>term：精确值 匹配，这些精确值可能是数字、时间、布尔或者那些 not_analyzed 的字符串，注意<strong>term 不会对输入的文本进行分析</strong>，这样和索引过的目标字符串比较很有可能出现明明看起来一样却匹配不上的现象（比如”Jane”被分析后变成”jane”，term 查询时使用”Jane”进行精确匹配当然匹配不上了！）；</li>
+<li>terms：同样是精确值匹配，但可以指定一个数组进行匹配；<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123; &quot;term&quot; : &#123;&quot;first_name&quot;: &quot;jane&quot;&#125;&#125;</span><br><span class="line">&#123; &quot;terms&quot;: &#123; &quot;tag&quot;: [ &quot;search&quot;, &quot;full_text&quot;, &quot;nosql&quot; ] &#125;&#125;</span><br></pre></td></tr></table></figure></li>
+<li>keyword严格匹配<br>keyword类型字段可以精确匹配：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET /products/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;term&quot;: &#123;</span><br><span class="line">      &quot;productId.keyword&quot;: &#123;</span><br><span class="line">        &quot;value&quot;: &quot;123&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="全文查询-match"><a href="#全文查询-match" class="headerlink" title="全文查询 - match"></a>全文查询 - match</h2><p>全文查询的特点：</p>
+<ul>
+<li>索引和搜索时都会进行分词，查询字符串先传递到一个合适的分词器，然后生成一个供查询的词项列表；</li>
+<li>查询的时候，先会对输入的查询进行分词，然后每个词项逐个进行底层的查询，最终将结果进行合并，并为每个文档生成一个算分。<br>比如查询”Hello World“，会查到包括”Hello“或”World“的所有结果。</li>
+</ul>
+<h3 id="match"><a href="#match" class="headerlink" title="match"></a>match</h3><p>如果你在一个全文字段上使用 match 查询，在执行查询前，它将用正确的分析器去分析查询字符串；<br>如果在一个精确值的字段上使用它， 例如数字、日期、布尔或者一个 not_analyzed 字符串字段，那么它将会精确匹配给定的值；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">PUT test/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;match&quot;: &#123;</span><br><span class="line">      &quot;content&quot;: &quot;Hello World&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>match会对查询条件进行分词，然后拿分词结果去索引中匹配，多个词的组合是OR关系，比如上面的”Hello World”，会分成”hello”和”world”，且字段只要包含其中之一就返回。<br>可以通过<code>operator</code>来指定组合逻辑：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">PUT test/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;match&quot;: &#123;</span><br><span class="line">      &quot;content&quot;: &#123;</span><br><span class="line">        &quot;query&quot;: &quot;Hello World&quot;,</span><br><span class="line">        &quot;operator&quot;: &quot;AND&quot; // 必须同时包含hello和world</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，如果使用match方法查询keyword字段，查询会被自动转成term，而term查询不会做分词处理：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">PUT test/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;match&quot;: &#123;</span><br><span class="line">      &quot;content.keyword&quot;: &quot;hello world&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="match-phrase"><a href="#match-phrase" class="headerlink" title="match_phrase"></a>match_phrase</h3><p>短语匹配，同样会先解析查询字符串来产生一个词条列表，但只返回包含所有搜索词条的文档，且词条的位置要邻接。<br>当然精确匹配要求太过严格了，一般可以加slop来引入一些灵活性，即相隔多远时仍视为匹配：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">PUT test/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;,</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;match_phrase&quot;: &#123;</span><br><span class="line">      &quot;content&quot;: &#123;</span><br><span class="line">        &quot;query&quot;: &quot;Hello World&quot;,</span><br><span class="line">        &quot;slop&quot;: 1</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="match-all"><a href="#match-all" class="headerlink" title="match_all"></a>match_all</h3><p>简单的匹配所有文档，往往和 filter 搭配；</p>
+<h3 id="单字符串多字段查询-multi-match"><a href="#单字符串多字段查询-multi-match" class="headerlink" title="单字符串多字段查询 - multi_match"></a>单字符串多字段查询 - multi_match</h3><p>常见的场景：</p>
+<ul>
+<li>最佳匹配（Best Fields）<br>当字段之间相互竞争，又相互关联。例如title和content字段，最终评分来自最匹配字段。</li>
+<li>多数字段（Most Fields）<br>一个用来调优相关度的常用技术是将相同的数据（也可以包含拼音、同义词等）索引到多个字段中。它用来尽可能多地匹配文档。</li>
+<li>混合字段（Cross Field）<br>对于某些实体需要在多个字段中确定信息，比如要确定一个人需要同时搜索first_name和last_name字段，确定一本书需要同时搜索title、author和description。</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">GET doc/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;multi_match&quot;: &#123;</span><br><span class="line">      &quot;type&quot;: &quot;best_fields&quot;,</span><br><span class="line">      &quot;query&quot;: &quot;a&quot;,</span><br><span class="line">      &quot;fields&quot;: [&quot;title&quot;, &quot;content&quot;],</span><br><span class="line">      &quot;tie_breaker&quot;: 0.2,</span><br><span class="line">      &quot;minimum_should_match&quot;: &quot;20%&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>best_fields：类似dis_max</li>
+<li>most_fields：ES会为每个字段生成一个match查询，然后将它们包含在一个bool查询中。</li>
+<li>cross_fields：首先分析查询字符串并生成一个词列表，然后从所有字段中依次搜索每个词，然后取最小的的IDF作为最终的IDF</li>
+</ul>
+<h2 id="Query-String"><a href="#Query-String" class="headerlink" title="Query String"></a>Query String</h2><p>查询字符串，类似查询脚本：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">POST blogs/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;query_string&quot;: &#123;</span><br><span class="line">      &quot;default_field&quot;: &quot;content&quot;,</span><br><span class="line">      &quot;query&quot;: &quot;Elasticsearch AND rocks&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">POST blogs/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;query_string&quot;: &#123;</span><br><span class="line">      &quot;default_field&quot;: &quot;content&quot;,</span><br><span class="line">      &quot;query&quot;: &quot;(Elasticsearch AND rocks) OR (Java)&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="过滤-constant-score、filter"><a href="#过滤-constant-score、filter" class="headerlink" title="过滤 - constant_score、filter"></a>过滤 - constant_score、filter</h2><p>constant_score查询可以将Query转换成Filter，不再计算相关性，且Filter可以有效利用缓存。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GET /products/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;explain&quot;: true,</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;constant_score&quot;: &#123;</span><br><span class="line">      &quot;filter&quot;: &#123;</span><br><span class="line">        &quot;term&quot;: &#123;</span><br><span class="line">          &quot;productId.keyword&quot;: &quot;123&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将一个不变的常量评分（即 1）应用于所有匹配的文档。经常用于你只需要执行一个 filter 而没有其它查询的情况下，如果使用 bool 查询_score 值将总是为 0：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;constant_score&quot;: &#123;</span><br><span class="line">        &quot;filter&quot;: &#123;</span><br><span class="line">            &quot;term&quot;: &#123; &quot;category&quot;: &quot;ebooks&quot; &#125; </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>filter：不评分查询，实际上是给了每个查询出的文档一个默认的中性评价 1，并且<strong>过滤结果将会被缓存</strong>；</p>
+<h2 id="复合查询及算分控制-bool"><a href="#复合查询及算分控制-bool" class="headerlink" title="复合查询及算分控制 - bool"></a>复合查询及算分控制 - bool</h2><p>bool复合语句，可以组合其他语句：</p>
+<ul>
+<li>must 必须匹配，贡献算分</li>
+<li>must_not 必须不匹配</li>
+<li>should 如果满足则增加 _score，否则无影响</li>
+<li>filter 用来排除文档，不评分</li>
+</ul>
+<p>每一个子查询都独自地计算文档的相关性得分，一旦他们的得分被计算出来， bool 查询就将这些得分进行合并并且返回一个代表整个布尔操作的得分。（虽说是布尔操作，但是结果分数其实是<code>[0, 1]</code>范围内的小数）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;bool&quot;: &#123;</span><br><span class="line">        &quot;must&quot;: &#123; &quot;match&quot;: &#123; &quot;title&quot;: &quot;how to make millions&quot; &#125;&#125;,</span><br><span class="line">        &quot;must_not&quot;: &#123; &quot;match&quot;: &#123; &quot;tag&quot;: &quot;spam&quot; &#125;&#125;,</span><br><span class="line">        &quot;should&quot;: [</span><br><span class="line">            &#123; &quot;match&quot;: &#123; &quot;tag&quot;: &quot;starred&quot; &#125;&#125;</span><br><span class="line">        ],</span><br><span class="line">        &quot;filter&quot;: &#123;</span><br><span class="line">          &quot;range&quot;: &#123; &quot;date&quot;: &#123; &quot;gte&quot;: &quot;2014-01-01&quot; &#125;&#125; </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>语法如上所示：</p>
+<ul>
+<li>子查询（指must这些）可以以任意顺序出现</li>
+<li>可以嵌套多个查询</li>
+<li>如果你的bool查询中，如果没有 must 语句，那么至少需要能够匹配其中的一条 should 语句；如果存在至少一条 must 语句，则对 should 语句的匹配没有要求。</li>
+</ul>
+<h3 id="算分过程"><a href="#算分过程" class="headerlink" title="算分过程"></a>算分过程</h3><p>should语句算分：</p>
+<ul>
+<li>查询should语句中的两个查询</li>
+<li>对算分加和</li>
+<li>乘以匹配语句的总数</li>
+<li>除以所有语句的总数</li>
+</ul>
+<h3 id="disjunction-max-query"><a href="#disjunction-max-query" class="headerlink" title="disjunction max query"></a>disjunction max query</h3><p>比如查询一篇文档，我们用两个条件分别查询title和body字段，两个查询的算分是竞争的。<br>实际上应该找到单个最佳匹配的字段的评分，比如body中查询算分更高的话，应该采用body的算分结果。<br>在ES中可以采用<code>dis_max</code>来实现，查询结果采用字段上最匹配的评分作为最终评分返回。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">PUT /doc/doc/3</span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;: &quot;asdsadaaadsa a a dwedewd&quot;,</span><br><span class="line">  &quot;content&quot;: &quot;asdewr a asdgreger&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">GET /doc/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;dis_max&quot;: &#123;</span><br><span class="line">      &quot;queries&quot;: [</span><br><span class="line">        &#123;&quot;match&quot;: &#123; &quot;title&quot;: &quot;a&quot; &#125;&#125;,</span><br><span class="line">        &#123;&quot;match&quot;: &#123; &quot;content&quot;: &quot;a&quot; &#125;&#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>因为title中a出现了2次，因此评分会更高，最后的评分结果也是返回的title的算分</li>
+<li>和下面的查询算分是相同的：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET /doc/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;match&quot;: &#123;</span><br><span class="line">      &quot;title&quot;: &quot;a&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>最佳匹配和次佳匹配的算分是可以用系数调整的，如下面的tie_breaker参数：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">GET /doc/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;dis_max&quot;: &#123;</span><br><span class="line">      &quot;queries&quot;: [</span><br><span class="line">        &#123;&quot;match&quot;: &#123; &quot;title&quot;: &quot;a&quot; &#125;&#125;,</span><br><span class="line">        &#123;&quot;match&quot;: &#123; &quot;content&quot;: &quot;a&quot; &#125;&#125;</span><br><span class="line">      ],</span><br><span class="line">      &quot;tie_breaker&quot;: 0.2</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>tie_breaker是一个介于0-1之间的浮点数，0代表使用最佳匹配最为最终评分，1代表所有语句同等重要，其计算过程如下所示：</p>
+<ol>
+<li>获取最佳匹配语句的评分_score</li>
+<li>将其他匹配语句的评分与tie_breaker相乘</li>
+<li>对以上评分求和并规范化</li>
+</ol>
+<h3 id="嵌套bool"><a href="#嵌套bool" class="headerlink" title="嵌套bool"></a>嵌套bool</h3><p>比如下面的语句实现了should not的逻辑：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">GET /doc/doc/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;bool&quot;: &#123;</span><br><span class="line">      &quot;must&quot;: [</span><br><span class="line">        &#123;&quot;term&quot;: &#123; &quot;tag&quot;: &quot;a&quot; &#125;&#125;</span><br><span class="line">      ],</span><br><span class="line">      &quot;should&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">          &quot;bool&quot;: &#123;</span><br><span class="line">            &quot;must_not&quot;: [</span><br><span class="line">              &quot;term&quot;: &#123;</span><br><span class="line">                &quot;avaliable&quot;: &quot;false&quot;</span><br><span class="line">              &#125;,</span><br><span class="line">              &quot;term&quot;: &#123;</span><br><span class="line">                &quot;count&quot;: &quot;1&quot;</span><br><span class="line">              &#125;</span><br><span class="line">            ]</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ],</span><br><span class="line">      &quot;minimum_should_match&quot;: 1</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>同一层级下的竞争字段，具有相同的权重</li>
+<li>通过嵌套bool查询，可以改变对算分的影响<br>比如上面should子句中的两个条件合起来贡献的算分才和must相同。</li>
+</ul>
+<h3 id="多值count"><a href="#多值count" class="headerlink" title="多值count"></a>多值count</h3><p>在ES中所有字段都是多值的，普通查询都是包含关系，比如下面查询tag字段包含”a”这项的文档：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">GET /doc/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;bool&quot;: &#123;</span><br><span class="line">      &quot;must&quot;: [</span><br><span class="line">        &#123;&quot;term&quot;: &#123; &quot;tag&quot;: &quot;a&quot; &#125;&#125;</span><br><span class="line">      ],</span><br><span class="line">      ...其他查询条件</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>新建文档时记录tag字段的count：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">PUT /doc/1</span><br><span class="line">&#123;</span><br><span class="line">  &quot;tag&quot;: [&quot;a&quot;, &quot;b&quot;],</span><br><span class="line">  &quot;count&quot;: 2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>匹配的时候，同时要匹配count：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">GET /doc/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;bool&quot;: &#123;</span><br><span class="line">      &quot;must&quot;: [</span><br><span class="line">        &#123;&quot;term&quot;: &#123; &quot;tag&quot;: &quot;a&quot; &#125;&#125;,</span><br><span class="line">        &#123;&quot;term&quot;: &#123; &quot;count&quot;: 1 &#125;&#125;</span><br><span class="line">      ],</span><br><span class="line">      ...其他查询条件</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="boosting"><a href="#boosting" class="headerlink" title="boosting"></a>boosting</h3><p>boosting是控制相关度的一种方法：</p>
+<ul>
+<li>当<code>boost &gt; 1</code>时，打分的相关度相对性提升</li>
+<li>当<code>0 &lt; boost &lt; 1</code>时，打分的权重相对性降低</li>
+<li>当<code>boost &lt; 0</code>时，贡献负分</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">GET /doc/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;bool&quot;: &#123;</span><br><span class="line">      &quot;should&quot;: [</span><br><span class="line">        &#123;</span><br><span class="line">          &quot;match&quot;: &#123;</span><br><span class="line">            &quot;title&quot;: &#123;</span><br><span class="line">              &quot;query&quot;: &quot;a&quot;,</span><br><span class="line">              &quot;boost&quot;: 2</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &#123;</span><br><span class="line">          &quot;match&quot;: &#123;</span><br><span class="line">            &quot;content&quot;: &#123;</span><br><span class="line">              &quot;query&quot;: &quot;a&quot;,</span><br><span class="line">              &quot;boost&quot;: 1.1</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      ]</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="其他结构化查询语句"><a href="#其他结构化查询语句" class="headerlink" title="其他结构化查询语句"></a>其他结构化查询语句</h2><ul>
+<li><p>range（范围查询）：查询找出那些落在指定区间内的数字或者时间，gt 大于、gte 大于等于、lt 小于、lte 小于等于；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">GET /megacorp/employee/_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot; : &#123;</span><br><span class="line">        &quot;bool&quot;: &#123;</span><br><span class="line">            &quot;must&quot;: &#123;</span><br><span class="line">                &quot;match&quot; : &#123;</span><br><span class="line">                    &quot;last_name&quot; : &quot;smith&quot; </span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            &quot;filter&quot;: &#123;</span><br><span class="line">                &quot;range&quot; : &#123;</span><br><span class="line">                    &quot;age&quot; : &#123; &quot;gt&quot; : 30 &#125; </span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>exists 和 missing：指定字段有值或无值，但后来的版本中废弃了 missing，因为可以通过 must_not+exists 来实现类似的效果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; &quot;exists&quot; : &#123; &quot;field&quot; : &quot;age&quot; &#125;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>about（全文搜索）<br>搜索结果将根据相关性排序。</p>
+</li>
+<li><p>match_phrase（短语搜索）<br>针对”rock climbing”这样的短语，如果直接使用 match 会分别使用”rock”和”climbing”两个单词进行搜索，而使用 match_phrase 则会直接使用整个短语进行搜索。</p>
+</li>
+<li><p>highlight（高亮）<br>指定某个属性中的匹配部分应该被高亮（结果会使用<em>标签包裹）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GET /megacorp/employee/_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot; : &#123;</span><br><span class="line">        &quot;match_phrase&quot; : &#123;</span><br><span class="line">            &quot;about&quot; : &quot;rock climbing&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;highlight&quot;: &#123;</span><br><span class="line">        &quot;fields&quot; : &#123;</span><br><span class="line">            &quot;about&quot; : &#123;&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>前缀查询<br>prefix</p>
+</li>
+<li><p>正则表达式查询<br>regexp</p>
+</li>
+<li><p>通配符匹配<br>使用<code>*</code>匹配字符序列（包括空字符），使用<code>?</code>匹配单个字符。<br>最好不要把通配符放在前面，这样会很慢。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET mts_sample_order/orders/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;from&quot;: 1,</span><br><span class="line">  &quot;size&quot;: 10,</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;wildcard&quot;: &#123;</span><br><span class="line">      &quot;sample_type_name&quot;: &quot;咽拭子*&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ElasticSearch/" rel="tag"># ElasticSearch</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/a26aff96.html" rel="prev" title="ES3_5聚合查询">
+                  <i class="fa fa-angle-left"></i> ES3_5聚合查询
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/8772904b.html" rel="next" title="ES3_2分析">
+                  ES3_2分析 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

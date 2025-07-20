@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Elasticsearch 是一个实时的分布式搜索和分析引擎。它可以帮助你用前所未有的速度去处理大规模数据。ElasticSearch 是一个基于 Lucene 的搜索服务器。它提供了一个分布式多用户能力的全文搜索引擎，基于 RESTful web 接口。Elasticsearch 是用 Java 开发的，并作为 Apache 许可条款下的开放源码发布，是当前流行的企业级搜索引擎。设计用于云计算中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ES1_1使用ES">
+<meta property="og:url" content="https://tallate.github.io/c395b48b.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="Elasticsearch 是一个实时的分布式搜索和分析引擎。它可以帮助你用前所未有的速度去处理大规模数据。ElasticSearch 是一个基于 Lucene 的搜索服务器。它提供了一个分布式多用户能力的全文搜索引擎，基于 RESTful web 接口。Elasticsearch 是用 Java 开发的，并作为 Apache 许可条款下的开放源码发布，是当前流行的企业级搜索引擎。设计用于云计算中">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-29T12:14:29.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.856Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="ElasticSearch">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tallate.github.io/c395b48b.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/c395b48b.html","path":"/c395b48b.html","title":"ES1_1使用ES"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ES1_1使用ES | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8-ES"><span class="nav-number">1.</span> <span class="nav-text">开始使用 ES</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%8C%85%E7%AE%A1%E7%90%86%E5%AE%89%E8%A3%85"><span class="nav-number">1.1.</span> <span class="nav-text">使用包管理安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-Docker-%E8%BF%90%E8%A1%8C-Elasticsearch"><span class="nav-number">1.2.</span> <span class="nav-text">使用 Docker 运行 Elasticsearch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E8%AF%95debug-ES"><span class="nav-number">1.3.</span> <span class="nav-text">调试debug ES</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%B4%A2%E5%BC%95%EF%BC%8C%E5%B9%B6%E4%B8%BA%E7%B4%A2%E5%BC%95%E5%88%86%E9%85%8D%E5%88%86%E7%89%87"><span class="nav-number">1.4.</span> <span class="nav-text">创建索引，并为索引分配分片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%A4%9A%E4%B8%AA%E8%8A%82%E7%82%B9%EF%BC%8C%E4%B8%80%E4%B8%AA%E4%B8%BB%E8%8A%82%E7%82%B9%E5%8F%8A%E4%B8%80%E4%B8%AA%E5%89%AF%E8%8A%82%E7%82%B9%E5%A4%87%E4%BB%BD"><span class="nav-number">1.5.</span> <span class="nav-text">创建多个节点，一个主节点及一个副节点备份</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8logstash%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="nav-number">1.6.</span> <span class="nav-text">使用logstash导入数据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E9%85%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">节点配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%89%87%E5%89%AF%E6%9C%AC%E9%85%8D%E7%BD%AE"><span class="nav-number">2.1.</span> <span class="nav-text">分片副本配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cluster"><span class="nav-number">2.2.</span> <span class="nav-text">Cluster</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Node"><span class="nav-number">2.3.</span> <span class="nav-text">Node</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Paths"><span class="nav-number">2.4.</span> <span class="nav-text">Paths</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Memory"><span class="nav-number">2.5.</span> <span class="nav-text">Memory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Network"><span class="nav-number">2.6.</span> <span class="nav-text">Network</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Discovery"><span class="nav-number">2.7.</span> <span class="nav-text">Discovery</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E6%81%A2%E5%A4%8D"><span class="nav-number">2.8.</span> <span class="nav-text">集群恢复</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Various"><span class="nav-number">2.9.</span> <span class="nav-text">Various</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E5%8F%8A%E5%AE%89%E8%A3%85"><span class="nav-number">3.1.</span> <span class="nav-text">文档及安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Search"><span class="nav-number">3.2.</span> <span class="nav-text">Search</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cluster-1"><span class="nav-number">3.3.</span> <span class="nav-text">Cluster</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Client"><span class="nav-number">3.4.</span> <span class="nav-text">Client</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kibana"><span class="nav-number">3.5.</span> <span class="nav-text">Kibana</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#logstash"><span class="nav-number">3.6.</span> <span class="nav-text">logstash</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%BF%81%E7%A7%BB"><span class="nav-number">3.7.</span> <span class="nav-text">数据迁移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">3.8.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8"><span class="nav-number">3.9.</span> <span class="nav-text">应用</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/c395b48b.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ES1_1使用ES | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ES1_1使用ES
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-07-29 20:14:29" itemprop="dateCreated datePublished" datetime="2019-07-29T20:14:29+08:00">2019-07-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Elasticsearch 是一个实时的分布式搜索和分析引擎。它可以帮助你用前所未有的速度去处理大规模数据。ElasticSearch 是一个基于 Lucene 的搜索服务器。它提供了一个分布式多用户能力的全文搜索引擎，基于 RESTful web 接口。Elasticsearch 是用 Java 开发的，并作为 Apache 许可条款下的开放源码发布，是当前流行的企业级搜索引擎。设计用于云计算中，能够达到实时搜索，稳定，可靠，快速，安装使用方便。<br>Elasticsearch 是一个分布式、可扩展、实时的搜索与数据分析引擎。大致上，它有以下重要特征：</p>
+<ul>
+<li>面向文档</li>
+<li>Lucene 索引</li>
+<li>分布式</li>
+</ul>
+<p>这篇文档主要介绍如何配置测试环境、搭建ES集群。</p>
+<span id="more"></span>
+
+<h2 id="开始使用-ES"><a href="#开始使用-ES" class="headerlink" title="开始使用 ES"></a>开始使用 ES</h2><h3 id="使用包管理安装"><a href="#使用包管理安装" class="headerlink" title="使用包管理安装"></a>使用包管理安装</h3><ol>
+<li>使用包管理器安装比较方便，但是需要添加一个源，默认的版本比较低可能出现启动服务失败或启动了服务也不能访问的情况 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget -qO - https://artifacts.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add - # 横杠替代文件名，可以从标准收入读取</span><br><span class="line">sudo apt-get install apt-transport-https # 安装[apt-transport-https](https://packages.debian.org/wheezy/apt-transport-https)后包管理器可以解析/etc/apt/sources.list文件中 &#x27;deb https://foo distro main&#x27; 这样的项，即可以通过https来访问包的元数据及下载</span><br><span class="line">echo &quot;deb https://artifacts.elastic.co/packages/6.x/apt stable main&quot; | sudo tee -a /etc/apt/sources.list.d/elastic-6.x.list # 将仓库的定义保存到一个.list文件</span><br><span class="line">sudo apt-get update &amp;&amp; sudo apt-get install elasticsearch</span><br></pre></td></tr></table></figure></li>
+<li>如果没有包管理器，或者只有 yum 不方便安装 apt，可以用 wget 下载 deb 包安装 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.1.3.deb</span><br><span class="line">wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-6.1.3.deb.sha512</span><br><span class="line">shasum -a 512 -c elasticsearch-6.1.3.deb.sha512 </span><br><span class="line">sudo dpkg -i elasticsearch-6.1.3.deb</span><br></pre></td></tr></table></figure></li>
+<li>修改配置文件&#x2F;etc&#x2F;elasticsearch&#x2F;elasticsearch.yml <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># network.host: 192.168.0.1</span><br><span class="line">network.host: 0.0.0.0</span><br></pre></td></tr></table></figure></li>
+<li>启动服务<br>elasticsearch 默认安装在&#x2F;usr&#x2F;share&#x2F;elasticsearch，日志在&#x2F;var&#x2F;log&#x2F;elasticsearch 目录，启动时的错误信息可以在&#x2F;var&#x2F;log&#x2F;elasticsearch&#x2F;elasticsearch.log 中看到，数据在&#x2F;var&#x2F;lib&#x2F;elasticsearch 目录 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">service elasticsearch start</span><br><span class="line">elasticsearch -d # 如果是通过安装包运行的，加上-d作为守护进程运行</span><br></pre></td></tr></table></figure></li>
+<li>安装 Kibana Sense <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">apt-get install kibana</span><br></pre></td></tr></table></figure>
+ 修改配置文件&#x2F;etc&#x2F;kibana&#x2F;kibana.yml，修改服务监听： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#server.host: &quot;localhost&quot;</span><br><span class="line">server.host: &quot;0.0.0.0&quot;</span><br></pre></td></tr></table></figure>
+ 启动： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service kibana start</span><br></pre></td></tr></table></figure></li>
+<li>访问 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">curl -i -X&lt;VERB&gt; &#x27;&lt;PROTOCOL&gt;://&lt;HOST&gt;:&lt;PORT&gt;/&lt;PATH&gt;?&lt;QUERY_STRING&gt;&#x27; -d &#x27;&lt;BODY&gt;&#x27;</span><br><span class="line">curl -i -XGET &#x27;http://localhost:9200/_count?pretty&#x27; -d &#x27;</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot;: &#123;</span><br><span class="line">        &quot;match_all&quot;: &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#x27;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="使用-Docker-运行-Elasticsearch"><a href="#使用-Docker-运行-Elasticsearch" class="headerlink" title="使用 Docker 运行 Elasticsearch"></a>使用 Docker 运行 Elasticsearch</h3><p>创建网络：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker network create -d bridge --attachable network_es</span><br></pre></td></tr></table></figure>
+<p>查找可用的镜像，以 elasticsearch 为例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker search elasticsearch</span><br></pre></td></tr></table></figure>
+<p>上<a target="_blank" rel="noopener" href="https://hub.docker.com/_/elasticsearch?tab=tags">Docker Hub</a>查看可用的Tag，然后就可以下载及运行容器了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 单机单节点</span><br><span class="line">mkdir -p /opt/elasticsearch/config</span><br><span class="line">mkdir -p /opt/elasticsearch/data</span><br><span class="line">echo &quot;http.host: 0.0.0.0&quot; &gt;&gt; /opt/elasticsearch/config/elasticsearch.yml</span><br><span class="line">docker run -d -p 9200:9200 -p 9300:9300 -e &quot;discovery.type=single-node&quot; -v /opt/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml -v /opt/elasticsearch/data:/usr/share/elasticsearch/data --network network_es --name es elasticsearch:5.6.11</span><br></pre></td></tr></table></figure>
+<p>为了方便起见，跑一个 Kibana 作为控制台来操作：</p>
+<blockquote>
+<p>ELASTICSEARCH_URL 必须是容器的 IP，不能是 127.0.0.1 或 localhost，如果启动 kibana 的时候 ELASTICSEARCH_URL 写的 localhost:9200 那么 kibana 可以启动，但进入页面就会显示连接不上 elasticsearch。所以就需要进入 es 容器中查看 es 容器 ip（<code>ip addr</code>），然后将 ELASTICSEARCH_URL 改为 es 容器 ip 地址才行。</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 5601:5601 -e ELASTICSEARCH_URL=http://172.19.0.1:9200 --network network_es kibana:5.6.11</span><br></pre></td></tr></table></figure>
+<p>如果启动失败，一般是 Elasticsearch 的<code>bootstrap checks</code>没有通过，先找到镜像 ID 然后再查看日志：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker ps -a</span><br><span class="line">docker logs &lt;Container ID&gt;</span><br></pre></td></tr></table></figure>
+
+<p>如果碰到类似：<code>[blocked by: [FORBIDDEN/12/index read-only / allow delete (api)];</code>这样的异常<br>可以运行下面的命令解决：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -XPUT -H &quot;Content-Type: application/json&quot; http://localhost:9204/_all/_settings -d &#x27;&#123;&quot;index.blocks.read_only_allow_delete&quot;: null&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的点：</p>
+<ol>
+<li>kibana的版本要和elasticsearch匹配；</li>
+<li>如果是在本地启动es和kibana，那么kibana的参数ELASTICSEARCH_URL不要设置为localhost，而是用<code>ifconfig</code>确定网卡的IP。</li>
+</ol>
+<h3 id="调试debug-ES"><a href="#调试debug-ES" class="headerlink" title="调试debug ES"></a>调试debug ES</h3><p>从github上下载源码，切到5.6分支（我读的版本），在debug模式下运行ES：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./gradlew run --debug-jvm</span><br></pre></td></tr></table></figure>
+<p>然后启动Idea的远程调试，端口选<code>8000</code>，模块选择<code>elasticsearch</code>。<br>在源码的<code>RestSearchAction</code>里打断点，再在url里执行：<br><code>http://localhost:9200/_search</code><br>就可以看到执行到断点中断了。<br>单机下只用到一个9200端口，9200用于开放HTTP服务，而9300用于节点间的通信。</p>
+<h3 id="创建索引，并为索引分配分片"><a href="#创建索引，并为索引分配分片" class="headerlink" title="创建索引，并为索引分配分片"></a>创建索引，并为索引分配分片</h3><ol>
+<li>创建索引<br>下面的请求创建了一个索引，并且为其分配了 3 个主分片和一份副本（每个主分片拥有一个副本分片）：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">PUT /blogs</span><br><span class="line">&#123;</span><br><span class="line">   &quot;settings&quot; : &#123;</span><br><span class="line">      &quot;number_of_shards&quot; : 3,</span><br><span class="line">      &quot;number_of_replicas&quot; : 1</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>健康检查<br>下面的请求查询集群的健康状况，此时 status 的值为 yellow，因为副分片还没有被分配，因为在同一个节点上既保存原始数据又保存副本是没有意义的，因为一旦失去了那个节点，我们也将丢失该节点上的所有副本数据。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 节点情况</span><br><span class="line">GET /_nodes/stats</span><br><span class="line"># 集群情况</span><br><span class="line">GET /_cluster/health</span><br><span class="line"># 打印更紧凑的集群信息</span><br><span class="line">GET /_cat/health</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="创建多个节点，一个主节点及一个副节点备份"><a href="#创建多个节点，一个主节点及一个副节点备份" class="headerlink" title="创建多个节点，一个主节点及一个副节点备份"></a>创建多个节点，一个主节点及一个副节点备份</h3><ol>
+<li>创建配置文件目录<br>一个在&#x2F;etc&#x2F;esconf&#x2F;esins1&#x2F;，一个在&#x2F;etc&#x2F;esconf&#x2F;esins2&#x2F;，保证下面参数相等： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cluster.name: es_prod</span><br><span class="line">node.master: true</span><br><span class="line">node.data: true</span><br><span class="line">network.host: 0.0.0.0</span><br><span class="line">discovery.zen.minimum_master_nodes: 2</span><br><span class="line">node.max_local_storage_nodes: 2</span><br></pre></td></tr></table></figure>
+下面参数由节点名确定： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">node.name: node1</span><br><span class="line">path.data: /var/lib/es/esins1/data</span><br><span class="line">path.logs: /var/log/es/esins1/logs</span><br><span class="line">discovery.zen.ping.unicast.hosts: [&quot;host1:post&quot;] # 副结点的 ip:post 数组：[&quot;host1:post&quot;, &quot;host2:port&quot;]</span><br></pre></td></tr></table></figure></li>
+<li>分配用户<br>Elasticsearch 不允许以 root 权限执行，这是由于 Elasticsearch 可以接收用户输入的脚本并且执行，为了系统安全考虑，创建一个单独的用户用来运行 Elasticsearch： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">groupadd es</span><br><span class="line">useradd es -g es -p 123456</span><br><span class="line">usermod -g es es</span><br><span class="line">chown -R es:es /etc/esconf/esins1/ # 将相关的文件的权限分配给这个用户</span><br></pre></td></tr></table></figure></li>
+<li>修改文件描述符的限制，编辑&#x2F;etc&#x2F;security&#x2F;limits.conf，然后注销重新登入这个用户</li>
+</ol>
+<p>es soft nofile 65536<br>es hard nofile 65536<br>    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1. 启动节点</span><br><span class="line">当第二个节点加入到集群后，3 个 副本分片 将会分配到这个节点上——每个主分片对应一个副本分片。</span><br></pre></td></tr></table></figure><br>export ES_PATH_CONF&#x3D;&#x2F;etc&#x2F;esconf&#x2F;esins1&#x2F; # 修改环境变量，指定配置文件位置<br>export ES_HEAP_SIZE&#x3D;1g # 默认是 1g，-Xms&#x3D;-Xmx，且最小值也是 1g<br>.&#x2F;elasticsearch -d -p &#x2F;etc&#x2F;esconf&#x2F;esins1.pid<br>    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. 查看节点情况</span><br><span class="line">    </span><br><span class="line">http://59.110.172.126:9200/_nodes</span><br></pre></td></tr></table></figure></p>
+<h3 id="使用logstash导入数据"><a href="#使用logstash导入数据" class="headerlink" title="使用logstash导入数据"></a>使用logstash导入数据</h3><h2 id="节点配置"><a href="#节点配置" class="headerlink" title="节点配置"></a>节点配置</h2><h3 id="分片副本配置"><a href="#分片副本配置" class="headerlink" title="分片副本配置"></a>分片副本配置</h3><ul>
+<li>number_of_shards<br>每个索引的主分片数，默认值是 5 。这个配置在<strong>索引创建后不能修改</strong>。</li>
+<li>number_of_replicas<br>每个主分片的副本数，默认值是 1 。对于活动的索引库，这个配置<strong>可以随时修改</strong>，比如使用 API 动态修改：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PUT /my_temp_index/_settings</span><br><span class="line">&#123;</span><br><span class="line">    &quot;number_of_replicas&quot;: 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="Cluster"><a href="#Cluster" class="headerlink" title="Cluster"></a>Cluster</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cluster.name: es_prod # 用于区分节点属于哪个集群，默认为elasticsearch</span><br></pre></td></tr></table></figure>
+<h3 id="Node"><a href="#Node" class="headerlink" title="Node"></a>Node</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">node.name: es_001_data # 节点名一般在记录日志时使用，默认随机生成</span><br><span class="line">node.master: true # 是否让这个节点作为默认的master，若不是，默认会选择集群里面的第一个作为master，es有一套选择那个节点作为master的机制</span><br><span class="line">node.data: false # </span><br></pre></td></tr></table></figure>
+<h3 id="Paths"><a href="#Paths" class="headerlink" title="Paths"></a>Paths</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">path.data: /var/lib/es1,/var/lib/es2 # 数据会被以条带化（简单地说就是把数据分段，然后把属于不同磁盘的数据并发地写入）的方式写入到两个目录中，但是坏掉一个就肯定会丢失掉一部分数据，所以Elasticsearch会将一个分片的数据仅保存到一个磁盘上，大部分时候一个节点只有一个分片，所以这种条带化并不会带来性能提升，除非为一个节点分配了多个分片</span><br><span class="line">path.logs: /var/log/elasticsearch # 节点日志存放目录</span><br></pre></td></tr></table></figure>
+<h3 id="Memory"><a href="#Memory" class="headerlink" title="Memory"></a>Memory</h3><p>TODO</p>
+<h3 id="Network"><a href="#Network" class="headerlink" title="Network"></a>Network</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">network.host: 0.0.0.0 # 配置节点绑定的地址，全0表示可以绑定任何地址，当然这里，本机可以是127.0.0.1回环地址，也可以是ifconfig看到的eth1的地址。</span><br><span class="line">http.port: 9200 # 配置当前节点对外http访问的端口号，默认是9200，不配的话，es会从9200-9299当中找一个未用过的。</span><br><span class="line">transport.tcp.port: 9300 #es集群节点之间的通信端口号。默认9300</span><br></pre></td></tr></table></figure>
+<h3 id="Discovery"><a href="#Discovery" class="headerlink" title="Discovery"></a>Discovery</h3><ol>
+<li>最小主节点数<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">discovery.zen.minimum_master_nodes: 2 # 告诉 Elasticsearch 当没有足够 master 候选节点的时候，就不要进行 master 节点选举，等 master 候选节点足够了才进行选举。这个值应该=(候选主节点数 / 2) + 1，候选主节点即准备成为主节点的节点，。在设定后，节点必须&quot;看到&quot;集群范围内运作的一定数量的节点才会执行动作</span><br></pre></td></tr></table></figure>
+也可以通过请求动态配置，这对集群的弹性扩展是很有帮助的：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PUT /_cluster/settings</span><br><span class="line">&#123;</span><br><span class="line">    &quot;persistent&quot; : &#123;</span><br><span class="line">        &quot;discovery.zen.minimum_master_nodes&quot; : 2</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>使用单播代替组播<br>Elasticsearch 默认使用单播，组播容易受到错误的组播信号影响，可能是一个节点意外的加入到了你的生产环境。<br>使用单播，你可以为 Elasticsearch 提供一些它应该去尝试连接的节点列表。 当一个节点联系到单播列表中的成员时，它就会得到整个集群所有节点的状态，然后它会联系 master 节点，并加入集群。<br>这意味着你的单播列表不需要包含你的集群中的所有节点， 它只是需要足够的节点，当一个新节点联系上其中一个并且说上话就可以了。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">discovery.zen.ping.unicast.hosts: [&quot;host1&quot;, &quot;host2:port&quot;]</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="集群恢复"><a href="#集群恢复" class="headerlink" title="集群恢复"></a>集群恢复</h3><p>假设你有 10 个节点，每个节点只保存一个分片，这个分片是一个主分片或者是一个副本分片，或者说有一个有 5 个主分片／1 个副本分片的索引。有时你需要为整个集群做离线维护（比如，为了安装一个新的驱动程序）， 当你重启你的集群，恰巧出现了 5 个节点已经启动，还有 5 个还没启动的场景。<br>假设其它 5 个节点出问题，或者他们根本没有收到立即重启的命令。不管什么原因，你有 5 个节点在线上，这五个节点会相互通信，选出一个 master，从而形成一个集群。 他们注意到数据不再均匀分布，因为有 5 个节点在集群中丢失了，所以他们之间会立即启动分片复制。<br>最后，你的其它 5 个节点打开加入了集群。这些节点会发现 它们 的数据正在被复制到其他节点，所以他们删除本地数据（因为这份数据要么是多余的，要么是过时的）。 然后整个集群重新进行平衡，因为集群的大小已经从 5 变成了 10。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gateway.recover_after_nodes: 8</span><br><span class="line">gateway.recover_after_time: 5m</span><br><span class="line">gateway.expected_nodes: 10</span><br></pre></td></tr></table></figure>
+<ul>
+<li>存在至少 8 个节点（数据节点或者 master 节点）并等待 5 分钟才进行数据恢复。</li>
+<li>或者 10 个节点上线后，才进行数据恢复，这取决于和上面那个条件哪个条件先达到。</li>
+</ul>
+<h3 id="Various"><a href="#Various" class="headerlink" title="Various"></a>Various</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node.max_local_storage_nodes: 2 #默认情况下，是不建议单机启动多个node的，这里这个参数，就是告知es单机上启动了几个实例，这里我们配置2个，若是要配置3个或者更多实例，修改这个数字即可</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><h3 id="文档及安装"><a href="#文档及安装" class="headerlink" title="文档及安装"></a>文档及安装</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/index.html">Elastic Stack and Product Documentation</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/deb.html">Install Elasticsearch with Debian Package</a></li>
+<li><a target="_blank" rel="noopener" href="https://stefanprodan.com/2016/elasticsearch-cluster-with-docker/">Running an Elasticsearch cluster with Docker</a></li>
+<li><a target="_blank" rel="noopener" href="http://derpturkey.com/elasticsearch-cluster-with-docker-engine-swarm-mode/">Elasticsearch Cluster with Docker Engine Swarm Mode</a></li>
+</ol>
+<h3 id="Search"><a href="#Search" class="headerlink" title="Search"></a>Search</h3><p><a target="_blank" rel="noopener" href="http://www.dcharm.com/?p=521">elasticsearch 中的 field data（正排索引）</a><br><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/master/fielddata.html">官方文档 fielddata</a></p>
+<h3 id="Cluster-1"><a href="#Cluster-1" class="headerlink" title="Cluster"></a>Cluster</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/guide/current/backing-up-your-cluster.html">Backing Up Your Cluster</a></li>
+</ol>
+<h3 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/client/java-rest/current/java-rest-high.html">Java High Level REST Client</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-data/elasticsearch/docs/3.1.10.RELEASE/reference/html/">Spring Data Elasticsearch</a></li>
+</ol>
+<h3 id="Kibana"><a href="#Kibana" class="headerlink" title="Kibana"></a>Kibana</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/kibana/current/introduction.html">Kibana Guide</a></li>
+</ol>
+<h3 id="logstash"><a href="#logstash" class="headerlink" title="logstash"></a>logstash</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/logstash/current/index.html">Logstash Reference</a></li>
+</ol>
+<h3 id="数据迁移"><a href="#数据迁移" class="headerlink" title="数据迁移"></a>数据迁移</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.quora.com/Is-it-worth-migrating-from-MySQL-to-Elasticsearch">Is it worth migrating from MySQL to Elasticsearch?</a></li>
+</ol>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/settings.html">Configuring Elasticsearch</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/important-settings.html">Important Elasticsearch configuration</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/system-config.html">Important System Configuration</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/guide/current/deploy.html">Production Deployment</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-network.html">Network Settings</a></li>
+</ol>
+<h3 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/wjm1991/article/details/78160861?locationNum=9&fps=1">elasticsearch项目踩坑记</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/z50L2O08e2u4afToR9A/article/details/88968083">“搜索”的原理，架构，实现，实践</a><br>介绍了fetch阶段合并结果的几种算法</li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ElasticSearch/" rel="tag"># ElasticSearch</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/8762395.html" rel="prev" title="ES2_1索引原理">
+                  <i class="fa fa-angle-left"></i> ES2_1索引原理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/6394be1e.html" rel="next" title="一些有意思的观点">
+                  一些有意思的观点 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

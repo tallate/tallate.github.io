@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="降级有几种方案降级分类降级主要分手动降级和自动降级，手动降级其实就是在代码里加上一些开关把功能直接关闭，自动降级可以分为以下几种：  超时降级配置好超时时间和超时重试次数和机制，并使用异步机制探测恢复情况。 失败次数降级失败次数达到阈值自动降级，同样要使用异步机制探测回复情况。 故障降级如要调用的远程服务挂掉了（网络故障、DNS 故障、HTTP 服务返回错误的状态码和 RPC 服务抛出异常）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hystrix 原理分析">
+<meta property="og:url" content="https://tallate.github.io/1d8a54ea.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="降级有几种方案降级分类降级主要分手动降级和自动降级，手动降级其实就是在代码里加上一些开关把功能直接关闭，自动降级可以分为以下几种：  超时降级配置好超时时间和超时重试次数和机制，并使用异步机制探测恢复情况。 失败次数降级失败次数达到阈值自动降级，同样要使用异步机制探测回复情况。 故障降级如要调用的远程服务挂掉了（网络故障、DNS 故障、HTTP 服务返回错误的状态码和 RPC 服务抛出异常）">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/Hystrix/Hystrix%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/Hystrix/%E7%86%94%E6%96%AD%E7%8A%B6%E6%80%81%E6%89%AD%E8%BD%AC.png">
+<meta property="article:published_time" content="2019-10-19T04:21:48.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.887Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="Hystrix">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/Hystrix/Hystrix%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/1d8a54ea.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/1d8a54ea.html","path":"/1d8a54ea.html","title":"Hystrix 原理分析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Hystrix 原理分析 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%8D%E7%BA%A7%E6%9C%89%E5%87%A0%E7%A7%8D%E6%96%B9%E6%A1%88"><span class="nav-number">1.</span> <span class="nav-text">降级有几种方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%8D%E7%BA%A7%E5%88%86%E7%B1%BB"><span class="nav-number">1.1.</span> <span class="nav-text">降级分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%8D%E7%BA%A7%E5%A4%84%E7%90%86%E6%96%B9%E6%A1%88"><span class="nav-number">1.2.</span> <span class="nav-text">降级处理方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hystrix-%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">Hystrix 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E7%A7%8D%E8%B0%83%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">4 种调用方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%94%E7%A6%BB"><span class="nav-number">2.2.</span> <span class="nav-text">隔离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%90%E6%B5%81"><span class="nav-number">2.3.</span> <span class="nav-text">限流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%86%94%E6%96%AD"><span class="nav-number">2.4.</span> <span class="nav-text">熔断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%8D%E7%BA%A7%EF%BC%88Fallback%EF%BC%89"><span class="nav-number">2.5.</span> <span class="nav-text">降级（Fallback）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98"><span class="nav-number">2.6.</span> <span class="nav-text">缓存</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/1d8a54ea.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Hystrix 原理分析 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hystrix 原理分析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-19 12:21:48" itemprop="dateCreated datePublished" datetime="2019-10-19T12:21:48+08:00">2019-10-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+
+<h2 id="降级有几种方案"><a href="#降级有几种方案" class="headerlink" title="降级有几种方案"></a>降级有几种方案</h2><h3 id="降级分类"><a href="#降级分类" class="headerlink" title="降级分类"></a>降级分类</h3><p>降级主要分手动降级和自动降级，手动降级其实就是在代码里加上一些开关把功能直接关闭，自动降级可以分为以下几种：</p>
+<ol>
+<li>超时降级<br>配置好超时时间和超时重试次数和机制，并使用异步机制探测恢复情况。</li>
+<li>失败次数降级<br>失败次数达到阈值自动降级，同样要使用异步机制探测回复情况。</li>
+<li>故障降级<br>如要调用的远程服务挂掉了（网络故障、DNS 故障、HTTP 服务返回错误的状态码和 RPC 服务抛出异常），则可以直接降级。<br>和上面那种失败次数降级原理类似，只是需要区分错误类型。</li>
+<li>限流降级<br>单位时间内调用次数超过阈值，可以使用暂时屏蔽的方式来进行短暂的屏蔽。</li>
+</ol>
+<h3 id="降级处理方案"><a href="#降级处理方案" class="headerlink" title="降级处理方案"></a>降级处理方案</h3><p>降级后，在代码层面，可以进行的处理策略如下：</p>
+<ol>
+<li>抛异常</li>
+<li>返回 NULL</li>
+<li>调用 Mock 数据</li>
+<li>调用 Fallback 处理逻辑</li>
+</ol>
+<h2 id="Hystrix-原理"><a href="#Hystrix-原理" class="headerlink" title="Hystrix 原理"></a>Hystrix 原理</h2><p><img src="/imgs/Hystrix/Hystrix%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B.png" alt="Hystrix工作流程" title="Hystrix工作流程"></p>
+<h3 id="4-种调用方法"><a href="#4-种调用方法" class="headerlink" title="4 种调用方法"></a>4 种调用方法</h3><ul>
+<li>toObservable()<br>最基础的 API，直接返回 Observable，未作订阅，需要由用户来发起订阅；</li>
+<li>observe()<br>调用 #toObservable() 方法，并向 Observable 注册 rx.subjects.ReplaySubject 发起订阅，这会立刻触发 run()方法的执行。</li>
+<li>queue()<br>调用 #toObservable() 方法的基础上，调用：Observable#toBlocking() 和 BlockingObservable#toFuture() 返回 Future 对象，实现了异步调用</li>
+<li>execute()<br>调用 #queue() 方法的基础上，调用 Future#get() 方法，同步返回 #run() 的执行结果。</li>
+</ul>
+<p>HystrixCommand.execute<br>    -&gt; HystrixCommand.queue<br>    -&gt; AbstractCommand.toObservable</p>
+<p>AbstractCommand.observe<br>    -&gt; AbstractCommand.toObservable</p>
+<h3 id="隔离"><a href="#隔离" class="headerlink" title="隔离"></a>隔离</h3><p>限制调用分布式服务的资源使用，某一个调用的服务出现问题不会影响其他服务调用，包括<strong>线程池隔离</strong>和<strong>信号量隔离</strong>。<br>开启配置：<br>HystrixCommand(…, Setter.andCommandPropertiesDefaults(<br>        HystrixCommandProperties.Setter().withExecutionIsolationStrategy(ExecutionIsolationStrategy.SEMAPHORE)), …)<br>    -&gt; withExecutionIsolationStrategy(ExecutionIsolationStrategy.SEMAPHORE) 配置隔离策略，线程池同理</p>
+<p>实施信号量隔离：<br>AbstractCommand.toObservable<br>…中略<br>    -&gt; AbstractCommand.applyHystrixSemantics<br>    -&gt; TryableSemaphore.tryAcquire 如果没开启信号量模式，这个方法永远返回 true</p>
+<p>实施线程隔离：<br>AbstractCommand.toObservable<br>…中略<br>    -&gt; AbstractCommand.applyHystrixSemantics<br>    -&gt; AbstractCommand.executeCommandAndObserve<br>    -&gt; AbstractCommand.executeCommandWithSpecifiedIsolation 创建一个新线程来执行<br>    -&gt; AbstractCommand.getUserExecutionObservable<br>    -&gt; HystrixCommand.getExecutionObservable</p>
+<h3 id="限流"><a href="#限流" class="headerlink" title="限流"></a>限流</h3><p>Hystrix的限流限制的是并发量，其实和隔离特性的实现方式一样，可以通过调整信号量或线程池大小来实现限流。</p>
+<h3 id="熔断"><a href="#熔断" class="headerlink" title="熔断"></a>熔断</h3><p>熔断是一种异常处理机制，如果接口的失败率达到了阈值就触发降级，<br>当失败率达到阈值自动触发降级(如因网络故障&#x2F;超时造成的失败率高)，之后熔断器会尝试进行恢复。<br>Hystrix 会为降级的接口维持一个熔断状态，状态扭转如下图所示：<br><img src="/imgs/Hystrix/%E7%86%94%E6%96%AD%E7%8A%B6%E6%80%81%E6%89%AD%E8%BD%AC.png" alt="熔断状态扭转" title="熔断状态扭转"></p>
+<ol>
+<li>熔断关闭状态（Closed）<br>服务没有故障时，熔断器所处的状态，对调用方的调用不做任何限制。</li>
+<li>熔断开启状态（Open）<br>在固定时间窗口内（Hystrix 默认是 10 秒），接口调用出错比率达到一个阈值（Hystrix 默认为 50%），会进入熔断开启状态。进入熔断状态后，后续对该服务接口的调用不再经过网络，直接执行本地的 fallback 方法。</li>
+<li>半熔断状态（Half-Open）<br>在进入熔断开启状态一段时间之后（Hystrix 默认是 5 秒），熔断器会进入半熔断状态。所谓半熔断就是尝试恢复服务调用，允许有限的流量调用该服务，并监控调用成功率。如果成功率达到预期，则说明服务已恢复，进入熔断关闭状态；如果成功率仍旧很低，则重新进入熔断关闭状态。</li>
+</ol>
+<p>Hystrix 使用 HystrixCircuitBreaker 这个类来维持状态：<br>AbstractCommand.applyHystrixSemantics<br>    -&gt; HystrixCircuitBreaker.attemptExecution 是否已开启熔断（OPEN），如果超过时间窗口则切换到半熔断状态（HALF_OPEN）<br>AbstractCommand.executeCommandAndObserve<br>    -&gt; HystrixCircuitBreaker.markSuccess &#x2F; markNonSuccess</p>
+<h3 id="降级（Fallback）"><a href="#降级（Fallback）" class="headerlink" title="降级（Fallback）"></a>降级（Fallback）</h3><p>降级是一种状态，当一个接口被降级后，再对这个接口进行调用会直接走降级逻辑。可以触发降级的条件一般是调用超时（比如网络故障、超时）或资源不足（线程或信号量）。但是代码中会更复杂一些，具体地说，触发降级的条件包括：</p>
+<ol>
+<li>run()方法抛出非 HystrixBadRequestException 异常<br>AbstractCommand.executeCommandAndObserve<br> -&gt; handleFallback 是一个回调接口匿名实现类的对象，会在出现异常时被调用<br>HystrixBadRequestException 表示一类可以被忽略的异常，在 AbstractHystrixCommand 和 GenericObservableCommand 可以抛出，可以在 HystrixCommand 注解上的 ignoreExceptions 中声明这些可以被忽略的异常。</li>
+<li>run()方法调用超时<br>对超时的异常检测和上边的一样，但是抛出的位置不一样。<br>AbstractCommand.executeCommandAndObserve<br> -&gt; Observable.lift 添加超时操作 HystrixObservableTimeoutOperator<br> -&gt; HystrixTimer.addTimerListener 添加一个 TimerListener 用于判断执行时间是否达到阈值，若超过则抛出 HystrixTimeoutException<br> -&gt; ScheduledThreadPoolExecutor.scheduleAtFixedRate 定时触发滴答（tick）<br>可以看到超时检测最终还是通过 Scheduled 线程池来实现的。</li>
+<li>熔断器开启拦截调用<br>AbstractCommand.applyHystrixSemantics<br> -&gt; HystrixCircuitBreaker.attemptExecution</li>
+<li>线程池&#x2F;队列&#x2F;信号量是否跑满<br>在《隔离》那一节中已经说明了代码的位置。</li>
+<li>没有实现 getFallback 的 Command 将直接抛出异常，fallback 降级逻辑调用成功直接返回，降级逻辑调用失败抛出异常<br>HystrixCommand.getFallback 直接抛出了一个 UnsupportedOperationException 异常。</li>
+</ol>
+<h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><p>提供了请求缓存、请求合并实现。支持实时监控、报警、控制（修改配置）<br>结果缓存这个功能我觉得应该由幂等框架来做。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/bjweimengshu/article/details/79441695">漫画：什么是服务熔断？</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/b9af028efebb">Hystrix 使用入门手册（中文）</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_23181091/article/details/80785453">从源码看 hystrix 的工作原理</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/lldouble/article/details/80743930">hystrix 适用场景</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/star2478/java-hystrix">Github - star2478&#x2F;java-hystrix</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Netflix/Hystrix">Netflix &#x2F; Hystrix</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Hystrix/" rel="tag"># Hystrix</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/807599f6.html" rel="prev" title="JVM 与编译器">
+                  <i class="fa fa-angle-left"></i> JVM 与编译器
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/abe4b1f3.html" rel="next" title="SpringBoot原理总结">
+                  SpringBoot原理总结 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="异步编程富有魅力，但是错误的使用不仅不会带来益处，还会使得系统变得难以维护、Bug 遍地，接下来我希望总结一下遇到的异步任务场景，减少以后遇到类似问题阻塞在设计上的时间。  曾经经历过因三方（传统行业）接口效率过低而导致服务不可用的情况，交流发现对方根本没有考虑在系统里加入缓存、消息队列等中间件，原因竟然是希望保证高一致性。实际上大部分场景中，查询操作并没有保证一致性的意义，而写操作就算不能马上被">
+<meta property="og:type" content="article">
+<meta property="og:title" content="并发的定义">
+<meta property="og:url" content="https://tallate.github.io/9d02e43e.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="异步编程富有魅力，但是错误的使用不仅不会带来益处，还会使得系统变得难以维护、Bug 遍地，接下来我希望总结一下遇到的异步任务场景，减少以后遇到类似问题阻塞在设计上的时间。  曾经经历过因三方（传统行业）接口效率过低而导致服务不可用的情况，交流发现对方根本没有考虑在系统里加入缓存、消息队列等中间件，原因竟然是希望保证高一致性。实际上大部分场景中，查询操作并没有保证一致性的意义，而写操作就算不能马上被">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E5%B9%B6%E5%8F%91/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E5%B9%B6%E5%8F%91/%E4%BD%BF%E7%94%A8%E9%82%AE%E7%AE%B1%E6%9D%A5%E8%A7%A3%E9%87%8AActor%E6%A8%A1%E5%9E%8B.png">
+<meta property="article:published_time" content="2019-09-01T13:07:49.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.871Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="并发">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/%E5%B9%B6%E5%8F%91/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/9d02e43e.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/9d02e43e.html","path":"/9d02e43e.html","title":"并发的定义"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>并发的定义 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.</span> <span class="nav-text">异步是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E5%92%8C%E9%9D%9E%E9%98%BB%E5%A1%9E"><span class="nav-number">1.1.</span> <span class="nav-text">异步和非阻塞</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E6%84%8F%E5%91%B3%E7%9D%80%E5%B9%B6%E8%A1%8C%E5%90%97"><span class="nav-number">1.2.</span> <span class="nav-text">异步意味着并行吗</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="nav-number">1.3.</span> <span class="nav-text">异步的优势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E7%9A%84%E7%BC%BA%E9%99%B7"><span class="nav-number">1.4.</span> <span class="nav-text">异步的缺陷</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91"><span class="nav-number">2.</span> <span class="nav-text">并发</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%92%8C%E5%B9%B6%E8%A1%8C"><span class="nav-number">2.1.</span> <span class="nav-text">并发和并行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8-%E5%B9%B6%E5%8F%91%E5%AE%89%E5%85%A8"><span class="nav-number">2.2.</span> <span class="nav-text">线程安全 &#x2F; 并发安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%BA%A6%E8%AE%A1%E7%AE%97"><span class="nav-number">2.3.</span> <span class="nav-text">并发度计算</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E6%A0%87"><span class="nav-number">2.3.1.</span> <span class="nav-text">指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E9%87%8F%E7%BA%A7"><span class="nav-number">2.3.2.</span> <span class="nav-text">并发量级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%99%9A%E5%81%87%E7%9A%84-QPS"><span class="nav-number">2.3.3.</span> <span class="nav-text">虚假的 QPS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%BA%A6%E8%AE%A1%E7%AE%97-1"><span class="nav-number">2.3.4.</span> <span class="nav-text">并发度计算</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E9%A2%84%E4%BC%B0"><span class="nav-number">2.3.5.</span> <span class="nav-text">负载预估</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E5%B9%B6%E5%8F%91%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="nav-number">2.4.</span> <span class="nav-text">高并发设计原则</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E7%8A%B6%E6%80%81"><span class="nav-number">2.4.1.</span> <span class="nav-text">无状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%86%E5%88%86"><span class="nav-number">2.4.2.</span> <span class="nav-text">拆分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="nav-number">2.4.3.</span> <span class="nav-text">消息队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98"><span class="nav-number">2.4.4.</span> <span class="nav-text">缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BC%82%E6%9E%84"><span class="nav-number">2.4.5.</span> <span class="nav-text">数据异构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E5%8C%96"><span class="nav-number">2.4.6.</span> <span class="nav-text">并发化</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E4%BB%BB%E5%8A%A1%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">3.</span> <span class="nav-text">异步任务的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E5%BA%A6%E6%96%B9%E5%BC%8F"><span class="nav-number">3.1.</span> <span class="nav-text">调度方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E4%BC%98%E5%8C%96%E4%B8%AD%E7%9A%84%E5%90%AF%E5%8F%91"><span class="nav-number">3.2.</span> <span class="nav-text">架构优化中的启发</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B"><span class="nav-number">3.3.</span> <span class="nav-text">多线程并发编程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Actor"><span class="nav-number">4.</span> <span class="nav-text">Actor</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Actors"><span class="nav-number">4.1.</span> <span class="nav-text">Actors</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E5%8F%AA%E8%9A%82%E8%9A%81%E7%9B%B8%E5%BD%93%E4%BA%8E%E6%B2%A1%E6%9C%89%E8%9A%82%E8%9A%81"><span class="nav-number">4.1.1.</span> <span class="nav-text">一只蚂蚁相当于没有蚂蚁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Actors-%E9%9C%80%E8%A6%81%E9%82%AE%E7%AE%B1%E6%9D%A5%E6%8E%A5%E6%94%B6"><span class="nav-number">4.1.2.</span> <span class="nav-text">Actors 需要邮箱来接收</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Actor-%E5%81%9A%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number">4.1.3.</span> <span class="nav-text">Actor 做了什么</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%B9%E9%94%99"><span class="nav-number">4.2.</span> <span class="nav-text">容错</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%8F%91"><span class="nav-number">4.3.</span> <span class="nav-text">分发</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E4%B8%80%E6%AD%A5"><span class="nav-number">4.4.</span> <span class="nav-text">下一步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Actor-%E4%B8%8E%E5%85%B6%E4%BB%96%E7%BC%96%E7%A8%8B%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.5.</span> <span class="nav-text">Actor 与其他编程模型的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Actor-%E6%A8%A1%E5%9E%8B"><span class="nav-number">4.5.1.</span> <span class="nav-text">Actor 模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reactor-%E6%A8%A1%E5%9E%8B"><span class="nav-number">4.5.2.</span> <span class="nav-text">Reactor 模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Proactor"><span class="nav-number">4.5.3.</span> <span class="nav-text">Proactor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#React-%E4%B8%8E-Proactor-%E5%8C%BA%E5%88%AB"><span class="nav-number">4.5.4.</span> <span class="nav-text">React 与 Proactor 区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QA"><span class="nav-number">4.6.</span> <span class="nav-text">QA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.7.</span> <span class="nav-text">参考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E4%B8%8E%E9%AB%98%E6%80%A7%E8%83%BD-Web-%E6%9C%8D%E5%8A%A1"><span class="nav-number">4.7.1.</span> <span class="nav-text">并发与高性能 Web 服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E5%8C%96"><span class="nav-number">4.7.2.</span> <span class="nav-text">并行化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Actor-1"><span class="nav-number">4.7.3.</span> <span class="nav-text">Actor</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/9d02e43e.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="并发的定义 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          并发的定义
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-01 21:07:49" itemprop="dateCreated datePublished" datetime="2019-09-01T21:07:49+08:00">2019-09-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>异步编程富有魅力，但是错误的使用不仅不会带来益处，还会使得系统变得难以维护、Bug 遍地，接下来我希望总结一下遇到的异步任务场景，减少以后遇到类似问题阻塞在设计上的时间。</p>
+<blockquote>
+<p>曾经经历过因三方（传统行业）接口效率过低而导致服务不可用的情况，交流发现对方根本没有考虑在系统里加入缓存、消息队列等中间件，原因竟然是希望保证高一致性。<br>实际上大部分场景中，查询操作并没有保证一致性的意义，而写操作就算不能马上被看到结果也不会对体验造成太大的影响——只要最终能成功即可，这是符合<code>BASE</code>设计原则的。这个问题后续经排查发现原因是对方因为系统设计有问题、导致频繁大规模的接口超时，重启了后问题缓解，对方就不再追究了，非常无奈。没有不能解决的技术难题，只是有时候沟通、惰性等会阻碍问题的定位。<br>并发的话题真是非常的多，从最底层的硬件到高级语言 Java 中的 JUC，从最繁琐的业务系统（现在一般是微服务架构）到比较新的人工智能（如分布式机器学习），几乎无所不包，一直想爬出坑来，但是总觉得差点意思，在此我也仅仅能根据一些现成的资料总结出一些结论。</p>
+</blockquote>
+<p>[x] 异步和非阻塞<br>[x] 并发和并行<br>[x] 并发模式 STM 介绍<br>[x] 并发模式 Actor 介绍</p>
+<span id="more"></span>
+
+<h1 id="异步是什么"><a href="#异步是什么" class="headerlink" title="异步是什么"></a>异步是什么</h1><h2 id="异步和非阻塞"><a href="#异步和非阻塞" class="headerlink" title="异步和非阻塞"></a>异步和非阻塞</h2><p>异步和非阻塞是容易混淆的两个概念，异步聚焦的是消息的通信方式——是由另一个线程来通知任务已完成的，而非阻塞定义的是方法调用逻辑——是直接返回的、不会等待任务实际执行完毕了的，当我们讨论异步时，并不一定非得牵扯上阻塞或非阻塞，异步也并不意味着一定是非阻塞的：</p>
+<ul>
+<li>异步阻塞：方法调用不会马上返回，线程任务交给一个任务处理框架的实例来处理，调用方会轮询查看任务的执行状况，直到任务执行完毕。<br>举一个例子：Java 的 Future#get 方法会等待直到任务执行完毕并准备好数据后才会返回；</li>
+<li>异步非阻塞：方法调用会马上返回，任务执行完毕时由另一个线程来通知完成情况，一般调用方还会提供一个回调方法，供被调用方通知使用。<br>举一个例子，购物下单场景中，用户支付时会提交一个支付表单，然后执行具体的支付操作，支付完毕后再由三方（如果微信支付就是微信）回调某个接口来通知支付的状态。</li>
+</ul>
+<h2 id="异步意味着并行吗"><a href="#异步意味着并行吗" class="headerlink" title="异步意味着并行吗"></a>异步意味着并行吗</h2><p>并行是“真的同时运行”，指的是多个 CPU 或机器同时执行。<br>并发是假的并行，指的是由 CPU 通过时间片轮转等调度算法产生可以同时执行多个任务的假象，往往使用并发数来表现一个系统的效率。<br>在多线程同时运行时，往往只是并发的，CPU 通过分配时间片让多线程轮流执行，如果这些线程同时操作一段内存，根据 CPU 分配时间片的顺序不同可能会出现不同的结果，就会出现线程安全的问题。  </p>
+<h2 id="异步的优势"><a href="#异步的优势" class="headerlink" title="异步的优势"></a>异步的优势</h2><ul>
+<li>性能<br>将任务丢到线程池中执行虽然不能提高这个任务本身被执行的效率、甚至必然会降低效率，但是，对用户来说，复杂而耗时的逻辑被抽到了线程池中执行、不会拖慢接口响应速度；从整体上来说，任务由线程池来调度，可以根据预定义的策略来优化调度过程，比如因为服务器的 CPU 是 4 核 8 线程，那么我们就可以控制线程池同时执行的任务数是 8 个，如果是 IO 密集型的场景（大部分情况下都是），则这个数可以扩大到 16；</li>
+<li>异步<br>一些诸如发邮件、下单后扣减库存这样的对用户来说并不是非得“马上看到结果”的功能，就完全可以丢到线程池里去异步执行，实际上这样的功能本身也无法执行太快，很多用户甚至默许了需要等一会。</li>
+<li>隔离<br>Tomcat 通过线程池来隔离多个应用服务器实例，这样一个服务器或崩溃、或阻塞，并不会影响另一个服务器（其实只能尽量降低影响，不过也足够达到我们的目的了）。</li>
+</ul>
+<h2 id="异步的缺陷"><a href="#异步的缺陷" class="headerlink" title="异步的缺陷"></a>异步的缺陷</h2><p>异步同样存在很多缺陷，滥用很容易导致项目随着规模的扩大而变得不可维护：</p>
+<ul>
+<li>可读性差。</li>
+<li>会导致更多并发问题，而且大部分情况下不能通过简单的内存锁来同步。</li>
+<li>测试困难，出现线上问题难以排查定位，甚至无法复现。</li>
+</ul>
+<h1 id="并发"><a href="#并发" class="headerlink" title="并发"></a>并发</h1><h2 id="并发和并行"><a href="#并发和并行" class="headerlink" title="并发和并行"></a>并发和并行</h2><ul>
+<li><strong>并发</strong><br>同一个时间段内多个任务同时都在执行，并且都没有执行结束，并发任务强调在一个时间段内同时执行，而一个时间段有多个单位时间累积而成，所以说并发的多个任务在单位时间内不一定同时在执行；</li>
+<li><strong>并行</strong><br>在单位时间内多个任务同时在执行。</li>
+</ul>
+<p>在<strong>单 CPU</strong>的时代多个任务同时运行都是并发，这是因为 CPU 同时只能执行一个任务，单个 CPU 时代多任务是共享一个 CPU 的，当一个任务占用 CPU 运行时候，其它任务就会被挂起，当占用 CPU 的任务时间片用完后，会把 CPU 让给其它任务来使用，所以在单 CPU 时代多线程编程相对来说意义不大，并且线程间频繁的上下文切换还会带来开销。<br>当计算机存在<strong>多 CPU</strong>时，每个 CPU 都可以分配时间片给线程执行，因此在线程数小于等于 CPU 数的情况下，可以实现真正的并行，而在多线程编程实践中线程的个数往往多于 CPU 的个数，所以平时都是称多线程并发编程而不是多线程并行编程。</p>
+<h2 id="线程安全-并发安全"><a href="#线程安全-并发安全" class="headerlink" title="线程安全 &#x2F; 并发安全"></a>线程安全 &#x2F; 并发安全</h2><p>单机的 Java 环境下并发安全 &#x3D; 线程安全，分布式环境下会有多个 JVM 进程协调的问题，不过我们讨论的粒度还是线程。<br>线程安全问题是指当多个线程同时读写一个共享资源（多线程都可以访问的资源）并且没有任何同步措施的时候，导致脏数据或者其它不可预见的结果的问题。<br>但是并不是多线程访问共享资源就会触发线程安全问题，<strong>只有当至少一个线程修改共享资源时候才会存在线程安全问题</strong>。</p>
+<h2 id="并发度计算"><a href="#并发度计算" class="headerlink" title="并发度计算"></a>并发度计算</h2><h3 id="指标"><a href="#指标" class="headerlink" title="指标"></a>指标</h3><p>并发编程的核心目标是高性能，高性能的体现是高并发，那么怎么样才能算是高并发呢？</p>
+<ul>
+<li>QPS：每秒请求数</li>
+<li>TPS：每秒事务数</li>
+<li>PV：每日页面访问量</li>
+<li>峰值 QPS &#x3D; (总 PV * 80%) &#x2F; (一天时间的秒数 * 20%)<br>PV 统计的量相对较粗，但是页面的访问量可以使用这个公式转换为对接口的 QPS，一般用作预估线上容量时的参考。<br>比如一个页面的 PV 为 300W，那么可以估算该页面上的接口的峰值 QPS &#x3D; (3000000 * 0.8) &#x2F; (86400 * 0.2) &#x3D; 138.8。</li>
+<li>每日 PV &#x3D; 网站各页面被浏览的总次数，一种说法是每日千万级的 PV 才算得上是高并发。</li>
+<li>SLA（Service-Level Agreement）：许多基础设施建设比较完善的公司会为业务划分 SLA，等级比较高的表示比较重要的业务，对接口延时、并发承载能力相对也会更高。</li>
+<li>专线：专线给某个机构提供一条独立的网络信道，包括物理上独立的网线或由运营商划分的虚拟专用信道等，我们平时使用的 VPN 也是一种专线。</li>
+<li>吞吐率：单位时间内请求数（有时候也用数据量来表示）</li>
+<li>并发用户数：某一时刻同时向服务器发送请求的用户总数<br>100 个用户同时分别向服务器进行 10 次请求，和 1 个用户连续进行 1000 次请求是不一样的，因为网卡接收缓冲区中的请求数总是和用户数有关。<br>实际的并发用户数也可以理解为 Web 服务器当前维护的代表不同用户的文件描述符总数，也就是并发连接数，当然，不是同时来了多少用户请求就建立多少连接，Web 服务器一般会限制同时服务的最多用户数。<br>但是最大并发用户数和最大并发连接数的决定因素从本质来说是不同的：如果每个用户请求所需的处理时间非常少，那么每个请求都可以被快速处理然后释放文件描述符，这样从用户的角度而言，等待时间几乎不会减少太多，适合使用 select 模型来处理；如果每个请求都需要花费相当长的时间，比如下载 10M 大小的静态文件，那么除了服务器的并发处理能力，还需要考虑带宽等因素，而对于请求动态内容，可能由于 CPU 的时间瓜分导致每个用户的等待时间过长，因此，在这种情况下，我们希望服务的最大并发用户数小于理论上的最大并发连接数。<br>这样看来，其实 Web 服务器所做的工作的本质就是争取以最快的速度将内核缓冲区中的用户请求数据拿出来，然后尽可能快地处理完毕，并将响应数据放到内核维护的另一块用于发送数据的缓冲区中，以使用户不会等待太久。</li>
+<li>请求等待时间和请求处理时间<br>不一样，因为用户发出请求后需要经过发送到服务器、进入内核网卡接收缓冲区中等待被处理，之后才会被服务器处理，而且 Web 服务器一般会采用多进程或多线程的并发模型，通过多个执行流来同时处理多个并发用户的请求，它们会轮流交错使用 CPU 时间片，所以每个执行流的时间都被拉长，对每个用户来说，每个请求的平均等待时间必然增加，而对于服务器来说，如果并发策略得当，每个请求的平均处理时间可能减少。<br>这两个时间的本质区别在于，用户平均请求等待时间主要用户衡量服务器在一定并发用户数的情况下，对于单个用户的服务质量。而服务器平均请求处理时间与前者相比，则用于衡量服务器的整体服务质量，它其实是吞吐率的倒数。</li>
+</ul>
+<h3 id="并发量级"><a href="#并发量级" class="headerlink" title="并发量级"></a>并发量级</h3><ul>
+<li>QPS &lt; 50：没有太多技术瓶颈的小网站；</li>
+<li>QPS &lt; 100：DB 为瓶颈，一般关系型数据库一次请求的时间能控制在 0.01s 内，如果希望加快页面加载速度，就不得不考虑对网站进行重构，如引入缓存或分库分表；</li>
+<li>QPS &lt; 800：网络带宽成为瓶颈，假设机房的出口带宽是百兆，那么分给每个用户的就只有不到 1M，用户侧的入口带宽更为复杂，因为绝大多数下都是整栋房的所有用户共用带宽，因此存在网速有时慢有时快的情况。这种情况下，最好的方案是将机房流量迁出，比如 CDN 加速、异地缓存、多机负载等技术；</li>
+<li>QPS &lt; 1000：超过内网带宽和 Linux 文件系统的极限，实际上网络读写也可以看作是一种文件 IO。这种情况下，必须将网站重构为分布式架构，避免单点。</li>
+</ul>
+<h3 id="虚假的-QPS"><a href="#虚假的-QPS" class="headerlink" title="虚假的 QPS"></a>虚假的 QPS</h3><p>直接计算的 QPS 其实包含很多”水分”，比如，一个用户比较心急，下单时点了好几下，对我们来说，这之中只有一次点击是有效的。<br>一种可行的解决方案是在接入层限制重复下单，在接入层就过滤掉这些流量，也减轻了业务服务做下单校验的压力。</p>
+<ol>
+<li>业务服务提供库存量，作为虚拟库存配置到配置中心；</li>
+<li>Nginx 启动时获取这个虚拟库存，实际上编写 Lus 脚本供 Nginx 执行就可以完成这个功能；</li>
+<li>Nginx 根据用户标识（一般是 openid）来防重，下单操作不能重复，其他普通接口则可以允许重试 1 次，可以根据 SLA 来决定可以放行的重复请求数。</li>
+</ol>
+<h3 id="并发度计算-1"><a href="#并发度计算-1" class="headerlink" title="并发度计算"></a>并发度计算</h3><p>计算系统并发连接阈值的最主要方法是执行<strong>压力测试</strong>。</p>
+<ul>
+<li>JMeter</li>
+<li>TestRunner</li>
+<li>ab<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 查看版本</span><br><span class="line">ab -V</span><br><span class="line"># 总请求数1000，并发用户数10，Requests per second（吞吐率）、Time per request（用户平均等待时间）、Time per request (across all concurrent requests)（服务器平均请求处理时间）这几个属性</span><br><span class="line">ab -n1000 -c10 http://localhost/test.html</span><br><span class="line"># 将并发用户数增加到100，注意观察吞吐率、用户平均请求等待时间、服务器平均请求处理时间</span><br><span class="line">ab -n1000 -c100 http://localhost/test.html</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>一些公式可以估算并发度，但是这些公式多少有点启发式的意味；另一种可行的方案是自适应化，在运行时根据系统负载动态计算系统的并发承载能力。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="负载预估"><a href="#负载预估" class="headerlink" title="负载预估"></a>负载预估</h3><p>通过压力测试计算出当前服务器可支撑的并发度后，还需要评估业务面临的负载强度，从而得出我们应该加服务器还是保持现状的结论。</p>
+<h2 id="高并发设计原则"><a href="#高并发设计原则" class="headerlink" title="高并发设计原则"></a>高并发设计原则</h2><h3 id="无状态"><a href="#无状态" class="headerlink" title="无状态"></a>无状态</h3><p>应用是无状态的，进程内不会保存任何类似 Session 的数据，如果需要则将这些数据放到配置中心。<br>只有做到无状态，才能实现代码一次编写到处运行的目的，Docker、OpenStack 这些技术都是基于这个前提。</p>
+<h3 id="拆分"><a href="#拆分" class="headerlink" title="拆分"></a>拆分</h3><p>根据不同维度进行拆分：</p>
+<ul>
+<li>业务（垂直）：比如订单系统与支付系统完全可以拆开来，它们不会互相占用对方的资源，比如网络带宽、服务器、缓存等。</li>
+<li>复制（水平）：将业务服务器、中间件复制几份，这些副本都可以提供服务，从而可以将负载压力均摊到多台服务器上。在此基础上可以实现读写分离，Master 负责写、Slave 负责读，但是如果对一致性有较高要求也可以 Master 读。</li>
+</ul>
+<h3 id="消息队列"><a href="#消息队列" class="headerlink" title="消息队列"></a>消息队列</h3><p><code>BASE</code>架构风格的核心就是善于利用消息队列，只要不是必须马上看到结果的任务，就可以把这个任务丢到消息队列中异步执行，从而提高效率、提升用户体验。</p>
+<h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><p>业务数据虽然都会被存储到 MySQL 这样的关系数据库中，但是 MySQL 的能力是有限的，一般 QPS 达到 100 左右后 MySQL 就会成为瓶颈，这时最常见的优化方案是缓存，虽然架构的发展，现在几乎任何可利用的组件都包含了缓存功能：</p>
+<ul>
+<li>浏览器或其他客户端；</li>
+<li>代理服务器（CDN）；</li>
+<li>接入层（Nginx、OpenResty）；</li>
+</ul>
+<h3 id="数据异构"><a href="#数据异构" class="headerlink" title="数据异构"></a>数据异构</h3><p>MySQL 并不适合搜索、大数据存储（指的是业务数据库中分表后不适合大数据分析），如果有这种需求，最好通过<code>Canal</code>等工具进行同步，称为数据异构。</p>
+<h3 id="并发化"><a href="#并发化" class="headerlink" title="并发化"></a>并发化</h3><p>利用线程池实现并发化。</p>
+<h1 id="异步任务的应用"><a href="#异步任务的应用" class="headerlink" title="异步任务的应用"></a>异步任务的应用</h1><h2 id="调度方式"><a href="#调度方式" class="headerlink" title="调度方式"></a>调度方式</h2><p>根据需求，异步任务的调度可以有很多种方式，其中最常见的往往有三种：</p>
+<ol>
+<li>本地线程池<br>简单，但是不具备分布式能力，比如如果业务需求需要 baseinfo 服务每 10 分钟同步一次基础数据到 ES，那么有多少台 baseinfo 机器，就会 10 分钟执行多少次同步任务。</li>
+<li>消息队列<br>需要引入消息队列中间件，一般功能都会覆盖到，但是可能出现的问题也比较多，对开发者水平要求比较高。</li>
+<li>分布式任务调度<br>将定时任务放到一个任务调度中间件里管理，实时性相对 MQ 消息更低（只能等到下次调度时才会执行任务）。</li>
+</ol>
+<h2 id="架构优化中的启发"><a href="#架构优化中的启发" class="headerlink" title="架构优化中的启发"></a>架构优化中的启发</h2><p>当系统出现瓶颈时，异步几乎是万金油式的设计优化思路，只要哪里耗时，就将哪里的代码丢到消息队列、任务调度中间件中，可以快速提升响应速度。</p>
+<blockquote>
+<p>虽然说起来很简单，但是一般都需要根据代码逻辑做很多调整。</p>
+</blockquote>
+<h2 id="多线程并发编程"><a href="#多线程并发编程" class="headerlink" title="多线程并发编程"></a>多线程并发编程</h2><p><img src="/imgs/%E5%B9%B6%E5%8F%91/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B.png" alt="多线程并发编程" title="多线程并发编程"></p>
+<h1 id="Actor"><a href="#Actor" class="headerlink" title="Actor"></a>Actor</h1><p>Actor 模型是处理并发计算的一种概念模型。它为系统组件如何表现及互相交互定义了一些一般性规则。使用这种模型最有名的语言是 Erlang。<br>下面关于 Actor 的描述，翻译自《<a target="_blank" rel="noopener" href="https://www.brianstorti.com/the-actor-model/">The actor model in 10 minutes</a>》。</p>
+<h2 id="Actors"><a href="#Actors" class="headerlink" title="Actors"></a>Actors</h2><p>Actor 是计算的原始单元，它会接收消息并在其基础上做一些计算。<br>思想和面向对象语言非常相似：一个对象接收一条消息（方法调用）然后使用消息进行一些特定的处理（根据调用的方法不同而不同）。主要区别是 actors 之间是完全独立的、且不共享内存，每个 actor 会保持一个私有的状态、不能被其他 actor 直接修改。</p>
+<h3 id="一只蚂蚁相当于没有蚂蚁"><a href="#一只蚂蚁相当于没有蚂蚁" class="headerlink" title="一只蚂蚁相当于没有蚂蚁"></a>一只蚂蚁相当于没有蚂蚁</h3><p>一个 actor 相当于没有 actor。actor 来自系统，在 actor 模型中任务事物都是 actor，它们需要有地址，这样一个 actor 才能发送消息给另一个。</p>
+<h3 id="Actors-需要邮箱来接收"><a href="#Actors-需要邮箱来接收" class="headerlink" title="Actors 需要邮箱来接收"></a>Actors 需要邮箱来接收</h3><p>需要注意的是即使多个 actors 可以同时运行，但是一个 actor 仍然会顺序执行一个消息，这意味着如果你发送 3 条消息给同一个 actor，它每次同时只会处理一条。为了并发处理这 3 条消息，你需要创建三个 actors 并分别给每个 actor 发送一条消息。<br>消息是被异步分发给 actor 的，这意味着在处理之前需要先将它们存储到什么地方，“邮箱”即消息要存储的位置。<br><img src="/imgs/%E5%B9%B6%E5%8F%91/%E4%BD%BF%E7%94%A8%E9%82%AE%E7%AE%B1%E6%9D%A5%E8%A7%A3%E9%87%8AActor%E6%A8%A1%E5%9E%8B.png" alt="使用邮箱来解释Actor模型" title="使用邮箱来解释Actor模型"><br>Actors 之间通过发送异步消息来进行通讯，这些消息会被保存到其他 actor 的邮箱里，直到被最终处理。</p>
+<h3 id="Actor-做了什么"><a href="#Actor-做了什么" class="headerlink" title="Actor 做了什么"></a>Actor 做了什么</h3><p>当 Actor 接收到一条消息，它会做三件事：</p>
+<ul>
+<li>创建更多的 actors；</li>
+<li>发送消息到其他 actors；</li>
+<li>指定下条消息要做什么事；</li>
+</ul>
+<p>第三条比较难以理解：每个 actor 会维持一个私有状态，“指定下条消息要做什么事”定义了接收到下条消息后这个状态会怎么变，更准确地说，就是 actor 如何转换状态。<br>假设我们有一个计算器类型的 actor，它的初始状态是数字 0，当这个 actor 接收到 add(1)的消息，不是转换其原始状态，而是指定当它接收到下一条消息后状态会变成 1。</p>
+<h2 id="容错"><a href="#容错" class="headerlink" title="容错"></a>容错</h2><p>Erlang 引入了“let it crash”哲学，它的意思是：你不需要防范错误、试图预料所有可能的问题并找到方法来解决，因为没有办法考虑到所有的错误点。<br>Erlang 简单地让程序崩溃，并把这段危险的代码交给相应的处理代码（比如将这个代码单元重新设置为一个稳定的状态），负责这个功能的是 actor 模块。<br>Erlang 将 actor 称为 process，一个 process 是完全独立的，其状态不会影响任何其他 process。我们有一个监管者（是另一个 process）来处理崩溃了的 process。<br>这让创建一个可自恢复系统成为了可能，当一个 actor 因为某些原因进入了一个异常状态并崩溃，可以由监管者将其恢复到一个一致的状态（有很多策略，最常见的是重启该 actor 并使其进入初始状态）。</p>
+<h2 id="分发"><a href="#分发" class="headerlink" title="分发"></a>分发</h2><p>actor 模型的另一个有趣的主题是消息的分发，我们发消息的目标 actor 处于本地或另一个节点都是可行的。<br>试想如果 actor 只是一个拥有内部状态、带有邮箱的代码单元，它会响应对应的消息，但是谁会在意它运行在哪台机器上？只要目标能接收到消息即可。<br>这让我们在构建系统的时候可以负载多台机器并在部分机器挂掉的时候恢复过来。</p>
+<h2 id="下一步"><a href="#下一步" class="headerlink" title="下一步"></a>下一步</h2><p>应用了 Actor 模式的包括一些像 Erlang、Elixir 这样的语言，还有一些在虚拟机环境内的如 Akka（基于 JVM）、Celluloid（基于 Ruby）。<br>下面这些书是关于 Actor 的：<br><a target="_blank" rel="noopener" href="https://pragprog.com/book/pb7con/seven-concurrency-models-in-seven-weeks">Seven Concurrency Models in Seven Weeks: When Threads Unravel</a><br><a target="_blank" rel="noopener" href="https://pragprog.com/book/elixir/programming-elixir">Programming Elixir</a><br><a target="_blank" rel="noopener" href="http://www.manning.com/juric/">Elixir in Action</a></p>
+<h2 id="Actor-与其他编程模型的区别"><a href="#Actor-与其他编程模型的区别" class="headerlink" title="Actor 与其他编程模型的区别"></a>Actor 与其他编程模型的区别</h2><h3 id="Actor-模型"><a href="#Actor-模型" class="headerlink" title="Actor 模型"></a>Actor 模型</h3><p>消息通讯，各自处理自己的数据，能够实现并行，有点像 RPC。<br>skynet 是 actor 模型的。</p>
+<h3 id="Reactor-模型"><a href="#Reactor-模型" class="headerlink" title="Reactor 模型"></a>Reactor 模型</h3><ol>
+<li>向事件分发器注册事件回调 </li>
+<li>事件发生 </li>
+<li>事件分发器调用之前注册的函数 </li>
+<li>在回调函数中读取数据，对数据进行后续处理</li>
+</ol>
+<p>libevent 是 reactor 模型。</p>
+<h3 id="Proactor"><a href="#Proactor" class="headerlink" title="Proactor"></a>Proactor</h3><ol>
+<li>向事件分发器注册事件回调 </li>
+<li>事件发生 </li>
+<li>操作系统读取数据，并放入应用缓冲区，然后通知事件分发器 </li>
+<li>事件分发器调用之前注册的函数 </li>
+<li>在回调函数中对数据进行后续处理</li>
+</ol>
+<p>ASIO 是 preactor 模型。</p>
+<h3 id="React-与-Proactor-区别"><a href="#React-与-Proactor-区别" class="headerlink" title="React 与 Proactor 区别"></a>React 与 Proactor 区别</h3><p>前者应用在回调函数中读取数据，然后进行后续的数据处理；而后者数据读取有操作系统完成，回调函数制作数据处理。</p>
+<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><ol>
+<li>什么是多线程并发和并行？</li>
+<li>什么是线程安全问题？</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/19732473">怎样理解阻塞非阻塞与同步异步的区别？</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/X5fnncxzq4/article/details/98334744">实战，一般电商应用的订单队列架构思想</a></li>
+</ol>
+<h3 id="并发与高性能-Web-服务"><a href="#并发与高性能-Web-服务" class="headerlink" title="并发与高性能 Web 服务"></a>并发与高性能 Web 服务</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/imstudy/p/9244476.html">网络编程懒人入门(八)：手把手教你写基于 TCP 的 Socket 长连接</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.kegel.com/c10k.html">The C10K problem</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mindwind/p/5787961.html">认清性能问题</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ideawu.net/blog/archives/740.html">构建 C1000K 的服务器(1) – 基础</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/xiaojiaqi/10billionhongbaos/wiki/%E6%89%9B%E4%BD%8F100%E4%BA%BF%E6%AC%A1%E8%AF%B7%E6%B1%82%EF%BC%9F%E6%88%91%E4%BB%AC%E6%9D%A5%E8%AF%95%E4%B8%80%E8%AF%95">扛住 100 亿次请求？我们来试一试</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/xiaojiaqi/C1000kPracticeGuide">xiaojiaqi&#x2F;C1000kPracticeGuide</a></li>
+</ol>
+<h3 id="并行化"><a href="#并行化" class="headerlink" title="并行化"></a>并行化</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/jailman/article/details/78502182">操作系统与多核处理器</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/46898057?from=profile_question_card">有哪些向量化写法让你拍案叫绝？</a></li>
+<li>《并行算法设计与性能优化》</li>
+</ol>
+<h3 id="Actor-1"><a href="#Actor-1" class="headerlink" title="Actor"></a>Actor</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.brianstorti.com/the-actor-model/">The actor model in 10 minutes</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag"># 并发</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/54dfb258.html" rel="prev" title="异地多活">
+                  <i class="fa fa-angle-left"></i> 异地多活
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/e3d5c2fc.html" rel="next" title="Java-线程池">
+                  Java-线程池 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

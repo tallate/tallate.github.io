@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="总体架构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="QMQ 总结">
+<meta property="og:url" content="https://tallate.github.io/b5a259aa.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="总体架构">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/QMQ/QMQ-%E6%B6%88%E6%81%AF%E7%9A%84%E5%8F%91%E9%80%81%E5%92%8C%E6%B6%88%E8%B4%B9%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/QMQ/QMQ-%E6%B6%88%E6%81%AF%E7%9A%84%E5%AD%98%E5%82%A8%E6%A8%A1%E5%9E%8B.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/QMQ/QMQ-%E6%B6%88%E8%B4%B9%E9%9A%94%E7%A6%BB%E9%97%AE%E9%A2%98.png">
+<meta property="article:published_time" content="2020-08-16T12:52:48.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.896Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="QMQ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/QMQ/QMQ-%E6%B6%88%E6%81%AF%E7%9A%84%E5%8F%91%E9%80%81%E5%92%8C%E6%B6%88%E8%B4%B9%E6%B5%81%E7%A8%8B.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/b5a259aa.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/b5a259aa.html","path":"/b5a259aa.html","title":"QMQ 总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>QMQ 总结 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">总体架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Producer"><span class="nav-number">2.</span> <span class="nav-text">Producer</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A5%E5%8F%A3"><span class="nav-number">2.1.</span> <span class="nav-text">入口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E5%90%8C%E6%AD%A5%E6%B6%88%E6%81%AF"><span class="nav-number">2.2.</span> <span class="nav-text">发送同步消息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E5%8F%91%E9%80%81%E6%B6%88%E6%81%AF"><span class="nav-number">2.3.</span> <span class="nav-text">异步发送消息</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Consumer"><span class="nav-number">3.</span> <span class="nav-text">Consumer</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A5%E5%8F%A3-1"><span class="nav-number">3.1.</span> <span class="nav-text">入口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8"><span class="nav-number">3.2.</span> <span class="nav-text">启动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E8%B4%B9%E6%B6%88%E6%81%AF"><span class="nav-number">3.3.</span> <span class="nav-text">消费消息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Consumer%EF%BC%88Subscriber%EF%BC%89%E8%87%AA%E5%8A%A8%E4%B8%8A%E4%B8%8B%E7%BA%BF%E7%AE%A1%E7%90%86"><span class="nav-number">3.4.</span> <span class="nav-text">Consumer（Subscriber）自动上下线管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#At-Least-Once-Consume"><span class="nav-number">3.5.</span> <span class="nav-text">At Least Once Consume</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Server%EF%BC%88Broker%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">Server（Broker）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A5%E5%8F%A3-2"><span class="nav-number">4.1.</span> <span class="nav-text">入口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B"><span class="nav-number">4.2.</span> <span class="nav-text">服务器启动流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%A7%8D%E6%B6%88%E6%81%AF%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E6%89%A7%E8%A1%8C%E6%96%B9%E5%BC%8F"><span class="nav-number">4.3.</span> <span class="nav-text">3 种消息处理器的执行方式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E8%B7%AF%E7%94%B1"><span class="nav-number">5.</span> <span class="nav-text">消息路由</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E7%9A%84%E6%8E%A8%E6%8B%89%E6%A8%A1%E5%9E%8B"><span class="nav-number">6.</span> <span class="nav-text">消息的推拉模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A8%E6%8B%89%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%BF%B0"><span class="nav-number">6.1.</span> <span class="nav-text">推拉系统概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%B3%BB%E7%BB%9F%E4%B8%AD%E7%9A%84%E6%8E%A8%E6%8B%89%E6%A8%A1%E5%9E%8B"><span class="nav-number">6.2.</span> <span class="nav-text">常见系统中的推拉模型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E7%9A%84%E5%AD%98%E5%82%A8%E6%A8%A1%E5%9E%8B"><span class="nav-number">7.</span> <span class="nav-text">消息的存储模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E7%AE%A1%E7%90%86"><span class="nav-number">8.</span> <span class="nav-text">连接管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Actor"><span class="nav-number">9.</span> <span class="nav-text">Actor</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">10.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/b5a259aa.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="QMQ 总结 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          QMQ 总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-16 20:52:48" itemprop="dateCreated datePublished" datetime="2020-08-16T20:52:48+08:00">2020-08-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="总体架构"><a href="#总体架构" class="headerlink" title="总体架构"></a>总体架构</h1><p><img src="/imgs/QMQ/QMQ-%E6%B6%88%E6%81%AF%E7%9A%84%E5%8F%91%E9%80%81%E5%92%8C%E6%B6%88%E8%B4%B9%E6%B5%81%E7%A8%8B.png" alt="QMQ-消息的发送和消费流程" title="QMQ-消息的发送和消费流程"></p>
+<span id="more"></span>
+
+
+<h1 id="Producer"><a href="#Producer" class="headerlink" title="Producer"></a>Producer</h1><h2 id="入口"><a href="#入口" class="headerlink" title="入口"></a>入口</h2><p>生产者入口：MessageProducerProvider &#x2F; MessageConsumerProvider -&gt; InitializingBean, DisposableBean<br>将消息生产者（MessageProducerProvider）注入到 Spring 容器。</p>
+<h2 id="发送同步消息"><a href="#发送同步消息" class="headerlink" title="发送同步消息"></a>发送同步消息</h2><p>MessageProducerProvider -&gt; RPCQueueSender</p>
+<ol>
+<li>同步发送消息 ProduceMessage::send -&gt; sendSync -&gt; RPCQueueSender::send</li>
+<li>按<strong>路由</strong>分组发送（RPCQueueSender::process -&gt; groupBy -&gt; MessageSenderGroup::send）<br>路由表示将相同类型的请求放到一个 Connection 中处理，每个 Connection 使用客户端类别和发送的主题进行标识<code>clientType.getCode() + &quot;|&quot; + message.getSubject()</code>;<br>构建<code>Map&lt;Connection, MessageSenderGroup&gt;</code>，将向同一 Server 发送的消息分到同一组、打包发送，以提高效率。<br>创建 NettyConnection 的时候，需要将客户端信息发送到 MetaServer 上进行注册（NettyRouter::route -&gt; connection::init）。</li>
+<li>获取 broker 集群信息（NettyConnection::send -&gt; brokerService::getClusterBySubject） </li>
+<li>负载均衡（NettyConnection::send -&gt; BrokerLoadBalance::loadBalance）<br>从集群信息 BrokerClusterInfo 中选出下一个可用的 broker group（一个集群由一个 master 和 0 到多个 slaves 组成）。</li>
+<li>发送消息（NettyClient::sendSync）<br>同步发送其实内部调用了异步发送 sendAsync，只是在发送后直接调用 result.get()等待响应、而不是将接收响应的任务交给用户。<br>封装 Netty 来发送请求。</li>
+<li>发送失败重试（MessageSenderGroup::send -&gt; errorHandler:error）<br>注意它是怎么处理<strong>链路追踪</strong>、<strong>监控</strong>的。</li>
+</ol>
+<h2 id="异步发送消息"><a href="#异步发送消息" class="headerlink" title="异步发送消息"></a>异步发送消息</h2><p>ProduceMessage::send -&gt; QueueSender::offer</p>
+<ol>
+<li>将消息压入一个发送队列<br><code>com.benmu.rapidq.client.producer.sender.RPCQueueSender#offer</code><br>消息被添加到了一个<code>BlockingQueue</code>中，类型是<code>LinkedBlockingQueue</code>，默认的队列长度限制是 1000。</li>
+<li>执行发送<br><code>com.benmu.rapidq.common.batch.BatchExecutor#addItem(Item)</code><br>如果消息被成功添加到发送队列，则提交一个发送消息线程任务到线程池中，线程池核心线程数为 1，最大线程数为 CPU 核心线程数+1。</li>
+<li>实际发送过程与上面发送同步消息的流程并无不同。</li>
+</ol>
+<h1 id="Consumer"><a href="#Consumer" class="headerlink" title="Consumer"></a>Consumer</h1><h2 id="入口-1"><a href="#入口-1" class="headerlink" title="入口"></a>入口</h2><p>消费者入口：MessageConsumerProvider::addListener</p>
+<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><ol>
+<li>MessageConsumerProvider::addListener 添加监听器</li>
+<li>MessageDistributor::addListener</li>
+<li>ConsumerRegister::regist(subjectPrefix, consumerGroup, registParam)</li>
+<li>PullRegister::createAndSubmitPullEntry<br>创建 PullEntry 并将其添加到线程池（Executors.newCachedThreadPool）中，轮询拉取消息。<br>轮询拉取（PullEntry::run），注意 isRunning 是 AtomicBoolean 类型的，它是一个状态变量，用于控制消息循环。</li>
+<li>AbstractPullEntry::pull 执行拉取操作</li>
+<li>AckService::getAckSendInfo 生成请求参数</li>
+<li>PullService::pull<br>使用 Netty 作客户端（NIO），是单例的 NettyClient。<br>使用 Google Guava 包中的 Listenable Future 实现异步获取返回值（伪 AIO）。</li>
+<li>NettyClient::sendAsync</li>
+</ol>
+<h2 id="消费消息"><a href="#消费消息" class="headerlink" title="消费消息"></a>消费消息</h2><p>com.benmu.rapidq.client.consumer.handler.MessageDistributor#handle</p>
+<ol>
+<li><p>找一个 MessageHandler 消费消息</p>
+</li>
+<li><p>消费成功后，向 Broker 返回 ACK<br>java.lang.Runnable#triggerAfterCompletion</p>
+</li>
+</ol>
+<h2 id="Consumer（Subscriber）自动上下线管理"><a href="#Consumer（Subscriber）自动上下线管理" class="headerlink" title="Consumer（Subscriber）自动上下线管理"></a>Consumer（Subscriber）自动上下线管理</h2><p>Consumer 上线注册（AckMessageProcessor::subscribe -&gt; subscriberStatusChecker::addSubscriber，还有 PullMessageProcessor 同理）<br>启动服务器时开启一个线程心跳检测 Consumer 健康状况（ServerWrapper::start -&gt; startConsumerChecker）</p>
+<h2 id="At-Least-Once-Consume"><a href="#At-Least-Once-Consume" class="headerlink" title="At Least Once Consume"></a>At Least Once Consume</h2><p>QMQ 保证至少一次的消费，在失败时会重试，重试需要保证 Consumer 端的消息幂等性，所谓的幂等其实是每次接口或者业务的调用，参数一样，返回结果就必须一样。QMQ 的 producer 可能由于网络问题导致消息发送重复，虽然 QMQ 尽量保证消息的可靠性，但是在业务处理中我们应该进行判重处理，实现业务逻辑处理的幂等，QMQ 消息的特性是保证最少一次，也就是说可能出现重复，对于重复性问题要求严格的自己做业务上的判断。</p>
+<h1 id="Server（Broker）"><a href="#Server（Broker）" class="headerlink" title="Server（Broker）"></a>Server（Broker）</h1><h2 id="入口-2"><a href="#入口-2" class="headerlink" title="入口"></a>入口</h2><p>Bootstrap（qmq-server 包内）</p>
+<h2 id="服务器启动流程"><a href="#服务器启动流程" class="headerlink" title="服务器启动流程"></a>服务器启动流程</h2><ol>
+<li>注册配置<br>主要是 broker.properties 中的配置项</li>
+<li>初始化日志存储<br>日志包括 consumerlog、messagelog、pulllog、actionlog、checkpoint</li>
+<li>startServerHandlers（启动服务器接收请求）<br>启动一个 NettyServer，监听 <code>SEND_MESSAGE</code> 、 <code>PULL_MESSAGE</code> 、 <code>ACK_REQUEST</code> 这几种请求，分别对应消息处理器 <code>SendMessageProcessor</code> 、 <code>PullMessageProcessor</code> 、 <code>AckMessageProcessor</code> 。</li>
+<li>startConsumerChecker（检查订阅者）<br>心跳验活 Subscriber</li>
+<li>addToResources</li>
+</ol>
+<h2 id="3-种消息处理器的执行方式"><a href="#3-种消息处理器的执行方式" class="headerlink" title="3 种消息处理器的执行方式"></a>3 种消息处理器的执行方式</h2><ol>
+<li>SendMessageProcessor<br>接收消息，将消息存放到 store 中（SendMessageWorker）</li>
+<li>PullMessageProcessor<br>根据路由规则</li>
+<li>AckMessageProcessor</li>
+</ol>
+<h1 id="消息路由"><a href="#消息路由" class="headerlink" title="消息路由"></a>消息路由</h1><p>在 Producer 端，发送消息 <code>MessageProducer::generateMessage</code> 需要标识该消息的 <code>subject（主题）</code> 。</p>
+<p>在 Consumer 端，发送消息 <code>MessageConsumerProvider::addListener</code> 有好几个参数，其中有两个和路由关系比较大的消息：</p>
+<ul>
+<li>subject（主题）<br>消息主题，一般与业务相关联。</li>
+<li>consumerGroup（消费者集群）<br>标识一群消费者，一个 group 可以表示订阅该消息主题的一个应用。</li>
+</ul>
+<p>在 Server 端，接收到请求后会先取出 <code>subject</code> 和 <code>group</code> 这两个参数，进行路由的操作：</p>
+<ol>
+<li>将请求分派到一个 <code>actor</code> （比如 PullMessageWorker::pull -&gt; actorSystem::dispatch）</li>
+<li>线程池调度 <code>actor</code> 执行任务</li>
+<li>actor 执行对应 MessageWorker 的任务（比如 PullMessageWorker::process）</li>
+</ol>
+<p>所以 Producer 将某一主题消息发送到 Server 上保存，多个 Consumer 可以同时订阅同一 subject，且它们可能是来自多个 group 的。<br>所以， <code>subject</code> 和 <code>group</code> 其实唯一标识了一个 <code>actor</code> ，一个 <code>actor</code> 服务于一群 <code>Consumer</code> 和 <code>Consumer</code> 。</p>
+<h1 id="消息的推拉模型"><a href="#消息的推拉模型" class="headerlink" title="消息的推拉模型"></a>消息的推拉模型</h1><h2 id="推拉系统概述"><a href="#推拉系统概述" class="headerlink" title="推拉系统概述"></a>推拉系统概述</h2><p>不管是消息队列还是其他涉及到数据同步的应用，在进行数据同步的时候都有 pull 和 push 两种模式：</p>
+<ul>
+<li>pull 模式下，客户端连接上 broker 之后，主动发起方法调用获取远程的结果，说的直白一点就是一次 RPC 调用，即同步方法调用;</li>
+<li>push 模式下，客户端与 broker 建立长连接，当有消息进入 broker，broker 进行消息推送至所有的连接客户端,即异步方法调用；<br>但是真正的实现中 broker 一般是很难维护这么多长连接，因为每个长连接都需要占用一个端口号。</li>
+<li>结合 pull 和 push 的一种方案：客户端连接到 broker 后，启动一个线程，这个线程会循环从 broker 中拉取消息。</li>
+</ul>
+<p>因此通过比较上面两种方式，可以启发我们为什么在互联网上大吞吐量的消息队列都是采用 pull 模式，而非 broker push 模式？</p>
+<ol>
+<li>push 模式下，消费端的性能会影响整个消息队列服务器的性能。</li>
+<li>push 模式下，容易造成 broker 的消息积压。</li>
+</ol>
+<h2 id="常见系统中的推拉模型"><a href="#常见系统中的推拉模型" class="headerlink" title="常见系统中的推拉模型"></a>常见系统中的推拉模型</h2><p>从一些资料（<a target="_blank" rel="noopener" href="https://www.cnblogs.com/charlesblc/p/6045238.html">消息队列-推&#x2F;拉模式学习 &amp; ActiveMQ 及 JMS 学习</a>）上看到消息队列的推拉模型没有固定的实现模式（生产端基本上都是推模型，最常被讨论的是消费端如何实现）：</p>
+<ul>
+<li>ActiveMQ：消费端为拉模型</li>
+<li>RabbitMQ：消费端为推模型</li>
+<li>Kafka：消费端为拉模型</li>
+</ul>
+<h1 id="消息的存储模型"><a href="#消息的存储模型" class="headerlink" title="消息的存储模型"></a>消息的存储模型</h1><p>QMQ 中有 <code>ConsumerLog</code> 、 <code>MessageLog</code> 、 <code>PullLog</code> 、 <code>ActionLog</code> 、<code>Checkpoint</code> 这 5 种日志，其中前三者与消息密切相关，运行示意图如下：<br><img src="/imgs/QMQ/QMQ-%E6%B6%88%E6%81%AF%E7%9A%84%E5%AD%98%E5%82%A8%E6%A8%A1%E5%9E%8B.png" alt="QMQ-消息的存储模型" title="QMQ-消息的存储模型"></p>
+<ol>
+<li>message log<br>存储所有消息</li>
+<li>consume log<br>存储每个主题的消息在 message log 中的位置（偏移）</li>
+<li>pull log<br>记录每个 consumer 消费了主题中的哪些消息</li>
+</ol>
+<p>消息存储的操作在 <code>MessageStoreWrapper</code> 中实现。</p>
+<h1 id="连接管理"><a href="#连接管理" class="headerlink" title="连接管理"></a>连接管理</h1><p>分情况看：</p>
+<ol>
+<li>对 metaServer 的请求属于长连接（连接被缓存了可以重复使用 NettyRouter -&gt; cached）；</li>
+<li>Consumer 端同样会将连接换缓存起来（PullRegister::pullEntryMap），注意一个 PullEntry 并不代表一个 Subscriber，一个 Subscriber 需要使用一组 subject 和 group 来唯一标识；</li>
+<li>Server 端使用 Netty 管理连接，Netty 采用的是 NIO 模型，连接由 Netty 框架进行管理；</li>
+</ol>
+<h1 id="Actor"><a href="#Actor" class="headerlink" title="Actor"></a>Actor</h1><p>正如上边分析所述，消息路由的时候会根据主题（topic）和消费组（group）来定位一条消息，一个 topic 可能会由多个 group 共享，这时候会引起一个<strong>消费隔离</strong>的问题：原本情况下，服务器使用一个 Thread Pool 来处理所有请求，如下图所示，request queue 中白色的属于来自 groupA 的请求，紫色的属于来自 groupB 的请求，来自 groupA 的请求比来自 groupB 的请求要更多，会导致 groupA 分去更多线程池资源来处理请求、占用更多服务器资源。<br><img src="/imgs/QMQ/QMQ-%E6%B6%88%E8%B4%B9%E9%9A%94%E7%A6%BB%E9%97%AE%E9%A2%98.png" alt="QMQ-消费隔离问题" title="QMQ-消费隔离问题"></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="https://github.com/qunarcorp/qmq/blob/master/docs/cn/pattern.md">https://github.com/qunarcorp/qmq/blob/master/docs/cn/pattern.md</a></p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/qunarcorp/qmq/blob/master/docs/cn/actor.md">消息消费隔离</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.brianstorti.com/the-actor-model/">The actor model in 10 minutes</a></li>
+<li><a target="_blank" rel="noopener" href="https://c.benmu-health.org/display/dev/actor-engine">actor-engine</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/34700753">消息队列技术点梳理（思维导图版）</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/QMQ/" rel="tag"># QMQ</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/aedcb996.html" rel="prev" title="RocketMQ 服务发现">
+                  <i class="fa fa-angle-left"></i> RocketMQ 服务发现
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/466d4e65.html" rel="next" title="分布式一致性协议">
+                  分布式一致性协议 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

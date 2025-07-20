@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Docker 是什么 Docker 是开源应用容器引擎，轻量级容器技术。 基于 Go 语言，并遵循 Apache2.0 协议开源。 Docker 可以让开发者打包他们的应用、依赖包及配置文件打包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 系统上，也可以实现虚拟化。 容器完全使用沙箱技术，相互之间不会有任何接口。 类似于虚拟机技术（vmware、vitural），但 dock">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker 概述">
+<meta property="og:url" content="https://tallate.github.io/89826705.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="Docker 是什么 Docker 是开源应用容器引擎，轻量级容器技术。 基于 Go 语言，并遵循 Apache2.0 协议开源。 Docker 可以让开发者打包他们的应用、依赖包及配置文件打包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 系统上，也可以实现虚拟化。 容器完全使用沙箱技术，相互之间不会有任何接口。 类似于虚拟机技术（vmware、vitural），但 dock">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-09-07T10:51:58.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.852Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="Docker">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tallate.github.io/89826705.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/89826705.html","path":"/89826705.html","title":"Docker 概述"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Docker 概述 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker-%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.</span> <span class="nav-text">Docker 是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.1.</span> <span class="nav-text">常见应用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker-%E7%89%B9%E7%82%B9"><span class="nav-number">1.2.</span> <span class="nav-text">Docker 特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker-%E4%BC%98%E5%8A%BF"><span class="nav-number">1.3.</span> <span class="nav-text">Docker 优势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker-%E5%8A%A3%E5%8A%BF"><span class="nav-number">1.4.</span> <span class="nav-text">Docker 劣势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%95%9C%E5%83%8F%E5%92%8C%E5%AE%B9%E5%99%A8%EF%BC%88Images-and-containers%EF%BC%89"><span class="nav-number">1.5.</span> <span class="nav-text">镜像和容器（Images and containers）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%92%8C%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">1.6.</span> <span class="nav-text">服务端和客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#docker-%E4%BB%93%E5%BA%93%EF%BC%88Resoisitory%EF%BC%89"><span class="nav-number">1.7.</span> <span class="nav-text">docker 仓库（Resoisitory）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Containers-virtual-machines"><span class="nav-number">1.8.</span> <span class="nav-text">Containers &amp; virtual machines</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker-%E4%B8%8E-LXC%EF%BC%88Linux-Container%EF%BC%89"><span class="nav-number">1.9.</span> <span class="nav-text">Docker 与 LXC（Linux Container）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker%E4%B8%8EVagrant"><span class="nav-number">1.10.</span> <span class="nav-text">Docker与Vagrant</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E4%BD%BF%E7%94%A8Docker"><span class="nav-number">2.</span> <span class="nav-text">开始使用Docker</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E7%89%88%E6%9C%AC"><span class="nav-number">2.1.</span> <span class="nav-text">查看操作系统版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%EF%BC%88Ubuntu%EF%BC%89"><span class="nav-number">2.2.</span> <span class="nav-text">安装（Ubuntu）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%EF%BC%88CentOS%EF%BC%89"><span class="nav-number">2.3.</span> <span class="nav-text">安装（CentOS）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%EF%BC%88Mac%EF%BC%89"><span class="nav-number">2.4.</span> <span class="nav-text">安装（Mac）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E9%95%9C%E5%83%8F"><span class="nav-number">2.5.</span> <span class="nav-text">下载镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E5%AE%B9%E5%99%A8"><span class="nav-number">2.6.</span> <span class="nav-text">运行容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%9D%E5%AD%98%E5%AF%B9%E5%AE%B9%E5%99%A8%E7%9A%84%E4%BF%AE%E6%94%B9"><span class="nav-number">2.7.</span> <span class="nav-text">保存对容器的修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%91%E5%B8%83%E9%95%9C%E5%83%8F"><span class="nav-number">2.8.</span> <span class="nav-text">发布镜像</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E7%94%A8%E6%88%B7"><span class="nav-number">2.9.</span> <span class="nav-text">设置用户</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%99%BB%E5%BD%95"><span class="nav-number">2.10.</span> <span class="nav-text">登录</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker-Daemon"><span class="nav-number">3.</span> <span class="nav-text">Docker Daemon</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker%E8%BF%81%E7%A7%BB"><span class="nav-number">3.1.</span> <span class="nav-text">Docker迁移</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Docker-Hub"><span class="nav-number">4.</span> <span class="nav-text">Docker Hub</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%93%E5%BA%93%EF%BC%88Repository%EF%BC%89%E3%80%81%E6%B3%A8%E5%86%8C%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88Registry%EF%BC%89%E3%80%81%E6%B3%A8%E5%86%8C%E7%B4%A2%E5%BC%95%EF%BC%88Index%EF%BC%89"><span class="nav-number">4.1.</span> <span class="nav-text">仓库（Repository）、注册服务器（Registry）、注册索引（Index）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QA"><span class="nav-number">5.</span> <span class="nav-text">QA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Docker-Hub-1"><span class="nav-number">5.1.</span> <span class="nav-text">Docker Hub</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">6.1.</span> <span class="nav-text">原理</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/89826705.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Docker 概述 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Docker 概述
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-07 18:51:58" itemprop="dateCreated datePublished" datetime="2019-09-07T18:51:58+08:00">2019-09-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+<h2 id="Docker-是什么"><a href="#Docker-是什么" class="headerlink" title="Docker 是什么"></a>Docker 是什么</h2><ul>
+<li>Docker 是开源应用容器引擎，轻量级容器技术。</li>
+<li>基于 Go 语言，并遵循 Apache2.0 协议开源。</li>
+<li>Docker 可以让开发者打包他们的应用、依赖包及配置文件打包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 系统上，也可以实现虚拟化。</li>
+<li>容器完全使用沙箱技术，相互之间不会有任何接口。</li>
+<li>类似于虚拟机技术（vmware、vitural），但 docker 直接运行在操作系统（Linux）上，而不是运行在虚拟机中，速度快，性能开销极低。<br>Docker 支持将软件编译成一个<strong>镜像</strong>，然后在镜像中对各种软件做好配置，将镜像发布出去（Docker Hub），其他使用者可以直接使用这个镜像。 运行中的这个镜像称为容器，容器启动是非常快速的。类似 windows 里面的 ghost 操 作系统，安装好后什么都有了。<br>docker<strong>容器</strong>可以理解为在沙盒中运行的进程。这个沙盒包含了该进程运行所必须的资源，包括文件系统、系统类库、shell 环境等等。但这个沙盒默认是不会运行任何程序的。你需要在沙盒中运行一个进程来启动某一个容器。这个进程是该容器的唯一进程，所以当该进程结束的时候，容器也会完全的停止。</li>
+</ul>
+<h3 id="常见应用场景"><a href="#常见应用场景" class="headerlink" title="常见应用场景"></a>常见应用场景</h3><ul>
+<li>Web 应用的自动化打包和发布。</li>
+<li>自动化测试和持续集成、发布。</li>
+<li>在服务型环境中部署和调整数据库或其他的后台应用。</li>
+<li>从头编译或者扩展现有的 OpenShift 或 Cloud Foundry 平台来搭建自己的 PaaS 环境。</li>
+</ul>
+<h3 id="Docker-特点"><a href="#Docker-特点" class="headerlink" title="Docker 特点"></a>Docker 特点</h3><p>Docker 是一个基于容器的应用开发、部署和运行平台，它为开发者和系统管理员们提供了一种新式的应用部署方式，具有灵活（最复杂的应用都能容器化）、轻量（容器共享一个服务器内核）、可替换的（可以在容器运行过程中更新服务器）、可移植的（本地、云上皆可）、可伸缩的（可以轻松地进行复制）、可栈化（指的是可以将多个服务部署在一起，比如用 docker-compose）的特性。<br>Docker is a platform for developers and sysadmins to develop, deploy, and run applications with containers. The use of Linux containers to deploy applications is called containerization. Containers are not new, but their use for easily deploying applications is.<br>Containerization is increasingly popular because containers are:</p>
+<ul>
+<li>Flexible: Even the most complex applications can be containerized.</li>
+<li>Lightweight: Containers leverage and share the host kernel.</li>
+<li>Interchangeable: You can deploy updates and upgrades on-the-fly.</li>
+<li>Portable: You can build locally, deploy to the cloud, and run anywhere.</li>
+<li>Scalable: You can increase and automatically distribute container replicas.</li>
+<li>Stackable: You can stack services vertically and on-the-fly.</li>
+</ul>
+<h3 id="Docker-优势"><a href="#Docker-优势" class="headerlink" title="Docker 优势"></a>Docker 优势</h3><p>容器技术相比虚拟机，主要优势在于性能上，其性能优势可以说达到了一个量级的差距。根据 Boden Russell 在 OpenStack 上做的一次基准测试报告，一个 KVM 实例的平均内存消耗有 292MB，而一个 docker 实例的平均内存消耗在 49MB 左右。在 CPU overhead 和启动时间方面，docker 基本都比 KVM 有一个量级的优势。<br>目前，一个 AWS 上的 micro 实例，每小时的按需使用成本大约在一美分多一些。如果用 docker 来提供实例，那么每小时的按需使用成本很可能会做到 0.1 美分。这一点对于云经济至关重要。正如经济学家 William Stanley Jevons 的理论所呈现的，随着商品的价格越便宜，人们使用它们的场景和频率会越来越多。</p>
+<ol>
+<li>container 是一种部署单元，用户可以自由决定部署的范围（dev、test、production），即组织容器的方式，换句话说，容器可以简化工作流和软件的开发、部署生命周期；                         </li>
+<li>可以从传统的虚拟机环境平滑过渡到裸机生产环境内；<br>保证了线上线下环境的一致性。我们在线下的开发环境使用 Docker 构建好 weaapp 的镜像后，可以直接在线上使用一个镜像，保证了线上线下环境的一致性，再也不会有在线下开发环境中运行正常，而部署到线上各种错误了。</li>
+<li>实现了模块化，提高了复用性。<br>我们可以将数据库和 Tomcat 运行在不同的容器中，从某种角度来说，这也降低了模块之间的耦合性，便于拓展。比如我们要把 MySQL 替换为 oracle，只需要再构建一个 oracle 镜像并启动与 Tomcat 连接即可，非常方便。对于我们构建的镜像，在其他 app 中直接拿来用就可以了，不必重复劳动。</li>
+<li>提高整体效率；<br>极大的简化了 webapp 的部署流程。在不使用 Docker 时，我们部署 app 时，要先搭建好 app 运行所需环境，这个过程做过的人都知道多么枯燥繁琐，一不小心还出错。而有了 Docker，我们只需要直接构建一个我们 webapp 的镜像然后将其运行即可，无论在多少台服务器中部署，都是如此。再比如，使用 Docker 之前要搭建一个 WordPress 对于新手来说是有些困难的，而有了 Docker，只需要从 DockerHub 上 pull 一个 WordPress 镜像并启动就可以了，非常非常方便。</li>
+<li>实现了虚拟化，提高硬件利用率，有了 Docker，我们可以在一台服务器上运行很多 webapp，充分利用闲置资源。<br>这时候，服务器的操作系统就类似于货轮，而一个个 Docker 容器就相当于货轮上的一个个集装箱。现在大热的云服务市场，不少就用了 Docker。举个例子来说，现在我们有一台操作系统为 Ubuntu14.04 的服务器，我们构建不同版本的 ubuntu 镜像并启动，并且为不同的用户分配不同的容器。这样，用一台服务器可以虚拟出 n 个运行着不同操作系统的虚拟服务器，而对于用户来说，这些是透明的––用户则认为自己拥有一台完整的服务器。据我推测，阿里云的服务器就是这么干的。这充分利用了闲置的硬件资源。</li>
+<li>Fast<ul>
+<li>传统方式慢，传统情况下，应用服务器扩容缩容步骤繁多流程冗长,从服务器申请、初始化、应用部署、测试、加入退出集群、服务器下线。比如，业务遇到突发的流量高峰时,无法进行快速的扩容,当准备好的时候可能流量高峰已经过去了。</li>
+<li>传统不稳定，代码上线发布历经多个环境,在某个环境中测试时修复了 bug,代码等无法及时同步各环境中,提升了服务上线的风险。</li>
+<li>Runtime performance at near bare metal speeds (typically 97+ percent or bare metal – a few ticks shaven off for bean counters).</li>
+<li>Management operations (boot, stop, start, reboot, etc.) in seconds or milliseconds.</li>
+</ul>
+</li>
+<li>Agile<ul>
+<li>VM-like agility – it’s still “virtualization”.</li>
+<li>Seamlessly move between virtual and bare metal environments permitting new development workflows which reduce costs (e.g. develop on VMs and move to bare metal in the “click of a button” for production).</li>
+</ul>
+</li>
+<li>Flexible<ul>
+<li>Containerize a “system” (OS less the kernel).</li>
+<li>Containerize “application(s)”.</li>
+</ul>
+</li>
+<li>Lightweight<ul>
+<li>Just enough Operating System (JeOS); include only what you need reducing image and container bloat.</li>
+<li>Minimal per container penalty which equates to greater density and hence greater returns on existing assets – imagine packing 100s or 1000s of containers on a single host node.</li>
+</ul>
+</li>
+<li>Inexpensive<ul>
+<li>Open source – free – lower TCO.</li>
+<li>Supported with out-of-the-box modern Linux kernels.</li>
+</ul>
+</li>
+<li>Ecosystem<ul>
+<li>Growing in popularity – just checkout the google trends for docker or LXC.</li>
+<li>Vibrant community and numerous 3rd party applications (1000s of prebuilt images on docker index and 100s of open source apps on github or other public sources).</li>
+</ul>
+</li>
+<li>Cloudy<ul>
+<li>Various Cloud management frameworks provide support for creating and managing Linux Containers – including <strong>OpenStack</strong> my personal favorite.</li>
+</ul>
+</li>
+</ol>
+<h3 id="Docker-劣势"><a href="#Docker-劣势" class="headerlink" title="Docker 劣势"></a>Docker 劣势</h3><p>既然容器技术有如此大的优势，为什么基于容器的云现在还没有成为主流？我认为主要还是安全性的问题。虚拟机可以利用来自硬件的信任机制来提升安全性，这些机制在 Intel Virtualization Technology Evolution 的演示中有详细的介绍。即使如此，虚拟机仍然被视为相对不安全，比如前一段时间 Xen（半虚拟化，在硬件层和 OS 层之间的虚拟层）爆出一个漏洞，导致 AWS 不得不大量升级自己的主机。</p>
+<ol>
+<li>Docker Hub（镜像管理中心）不稳定<br>第一个就是很重要的 Docker Hub 的访问问题。我们知道国内访问一些海外的网站有时候会有稳定性的问题。Docker Hub 在我们的实践中就经常出现访问不了的问题。但这种访问的问题并不是持续的，而是时有时无。由于大量的成熟 Docker 映像（image）都需要从 Docker Hub 下载，很多脚本在执行到这一步时，结果很难预料。一种方案是修改缺省的 Docker Hub 地址，改为采用国内的一些镜像（mirror）。但是在没有官方认证的成熟稳定的镜像网站时，Docker 映像的更新不容易得到保证；另一种方案是自行搭建自己的 Docker Hub。但是一来这样就失去了强大的社区贡献的映像资源，二来要花费很多精力来保持更新和同步。容器技术带来的简单化，又因为映像管理而复杂化，得不偿失。</li>
+<li>运维难度大<br>第二个就是容器技术的资源管理和运维。因为容器技术本身更适于解决大规模应用场景，所以通常都是集群基础上的部署、运维，但是目前对这一系列任务的自动化处理尚无统一的或者标准的框架。如果要让 Docker 真正在实际环境中发挥最大的效能并且易于维护，就需要有很成熟稳定的资源编排（orchestration）、资源调度（scheduling）和部署（deployment）的支持，但是这方面暂时还没有很明显的最佳解决方案，所以大多数人都在摸索和搭建自己的解决方案。我们在微软开放技术内部也是在一些开源技术的基础之上，自行开发了容器在微软公有云 Azure 上的资源管理调度和部署运维的系统，传统上的开发运维和持续集成，持续部署的技术，比如 Chef，Puppet，Jenkins 等，都可以很容易的与容器技术一起工作。</li>
+</ol>
+<h3 id="镜像和容器（Images-and-containers）"><a href="#镜像和容器（Images-and-containers）" class="headerlink" title="镜像和容器（Images and containers）"></a>镜像和容器（Images and containers）</h3><p>A container is launched by running an image. An image is an executable package that includes everything needed to run an application–the code, a runtime, libraries, environment variables, and configuration files.<br>A container is a runtime instance of an image–what the image becomes in memory when executed (that is, an image with state, or a user process). You can see a list of your running containers with the command, docker ps, just as you would in Linux.<br>一个镜像是：</p>
+<ul>
+<li>一个只读模板，可以用来创建容器，一个镜像可以创建多个容器</li>
+<li>Docker 提供了一个很简单的机制来创建和更新现有的镜像，甚至可以直接从其他人那里获取做好的镜像直接使用<br>可以理解为 Java 中的类<br>一个容器是：</li>
+<li>容器是从镜像创建的运行实例，也就是镜像启动后的一个实例称为容器，是独立运行的一个或一组应用。</li>
+<li>docker 利用容器来运行应用，他可以被启动、开始、停止、删除，每个容器都是相互隔离的、保证安全的平台。</li>
+<li>可以把容器看做是一个简易版的 Linux（包括 root 用户权限、进程空间、用户空间和网络空间等）和运行在其中的应用程序。</li>
+<li>可以理解为 Java 中通过类创建的实例。</li>
+</ul>
+<h3 id="服务端和客户端"><a href="#服务端和客户端" class="headerlink" title="服务端和客户端"></a>服务端和客户端</h3><p>Docker系统有两个程序：docker服务端和docker客户端。其中docker服务端是一个服务进程，管理着所有的容器。docker客户端则扮演着docker服务端的远程控制器，可以用来控制docker的服务端进程。大部分情况下，docker服务端和客户端运行在一台机器上。<br>Docker开放的API与Docker的守护进程进行通信。</p>
+<h3 id="docker-仓库（Resoisitory）"><a href="#docker-仓库（Resoisitory）" class="headerlink" title="docker 仓库（Resoisitory）"></a>docker 仓库（Resoisitory）</h3><ul>
+<li>仓库是集中存放镜像文件的场所，类似 git 代码仓库等。</li>
+<li>仓库（Respository）和仓库注册服务器（Registry）是有区别的。仓库注册服务器一般存放多个仓库，每个仓库又有多个镜像，每个镜像又有不同的标签（tag）。</li>
+<li>仓库分为公开仓库（public）和私有仓库（private）两种形式。</li>
+<li>最大的公开仓库是 <strong>Docker Hub</strong>，国内的公开仓库有阿里云等。</li>
+<li>可以在本地网络创建一个私有仓库。</li>
+<li>当创建好自己的镜像后，可以通过 push 命令把它上传到公开或私有仓库。</li>
+<li>仓库的概念类似 Git，仓库注册服务器可以理解为 GitHub 这种托管服务。</li>
+</ul>
+<h3 id="Containers-virtual-machines"><a href="#Containers-virtual-machines" class="headerlink" title="Containers &amp; virtual machines"></a>Containers &amp; virtual machines</h3><p>传统的部署云服务的方式是通过虚拟机完成的，虚拟机会在宿主机上运行一个完整的操作系统、通过hypervisor来间接使用宿主机的硬件资源，实际上这远远超出了应用运行所必须的资源。而容器正相反，它在操作系统中作为进程运行，与所有其他容器共享同一内核、占用相同容量的内存空间，相对来说，会更加轻量。<br>A container runs natively on Linux and shares the kernel of the host machine with other containers. It runs a discrete process, taking no more memory than any other executable, making it lightweight.<br>By contrast, a virtual machine (VM) runs a full-blown “guest” operating system with virtualaccess to host resources through a hypervisor. In general, VMs provide an environment with more resources than most applications need.<br>下图是Docker（容器）和传统虚拟机之间运行架构的示意图。<br>Container stack example Virtual machine stack example<br>In reality virtualization and Docker can and are used together in modern dev-ops. Most VPS providers are running bare-metal full virtualization technologies like Xen and Docker usually runs on top of a virtualized Ubuntu instance.</p>
+<h3 id="Docker-与-LXC（Linux-Container）"><a href="#Docker-与-LXC（Linux-Container）" class="headerlink" title="Docker 与 LXC（Linux Container）"></a>Docker 与 LXC（Linux Container）</h3><p>LXC利用Linux上相关技术实现容器，Docker则在如下的几个方面进行了改进：<br>移植性：通过抽象容器配置，容器可以实现一个平台移植到另一个平台；<br>镜像系统：基于AUFS的镜像系统为容器的分发带来了很多的便利，同时共同的镜像层只需要存储一份，实现高效率的存储；<br>版本管理：类似于GIT的版本管理理念，用户可以更方面的创建、管理镜像文件；<br>仓库系统：仓库系统大大降低了镜像的分发和管理的成本；<br>周边工具：各种现有的工具（配置管理、云平台）对Docker的支持，以及基于Docker的Pass、CI等系统，让Docker的应用更加方便和多样化。 </p>
+<h3 id="Docker与Vagrant"><a href="#Docker与Vagrant" class="headerlink" title="Docker与Vagrant"></a>Docker与Vagrant</h3><p>两者的定位完全不同<br>Vagrant类似于Boot2Docker（一款运行Docker的最小内核），是一套虚拟机的管理环境，Vagrant可以在多种系统上和虚拟机软件中运行，可以在Windows。Mac等非Linux平台上为Docker支持，自身具有较好的包装性和移植性。<br>原生Docker自身只能运行在Linux平台上，但启动和运行的性能都比虚拟机要快，往往更适合快速开发和部署应用的场景。<br>Docker不是虚拟机，而是进程隔离，对于资源的消耗很少，单一开发环境下Vagrant是虚拟机上的封装，虚拟机本身会消耗资源。因此对于开发环境来讲，使用Docker是更好的选择。</p>
+<h2 id="开始使用Docker"><a href="#开始使用Docker" class="headerlink" title="开始使用Docker"></a>开始使用Docker</h2><h3 id="查看操作系统版本"><a href="#查看操作系统版本" class="headerlink" title="查看操作系统版本"></a>查看操作系统版本</h3><p>Docker是基于LXC（Linux Container）的，因此最好在Linux环境下使用。<br>Docker要求内核版本高于3.10（如果是Ubuntu则需要高于12.04的发行版）可以使用下面命令查看操作系统版本：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname -r</span><br></pre></td></tr></table></figure>
+<h3 id="安装（Ubuntu）"><a href="#安装（Ubuntu）" class="headerlink" title="安装（Ubuntu）"></a>安装（Ubuntu）</h3><p>最好上官网下载安装最新版docker-ce，命令行下的太旧了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install docker.io</span><br><span class="line">docker version</span><br></pre></td></tr></table></figure>
+<p>或者按照官网上的步骤：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"># 安装插件，可以使用HTTPS来下载仓库软件</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install \</span><br><span class="line">    apt-transport-https \</span><br><span class="line">    ca-certificates \</span><br><span class="line">    curl \</span><br><span class="line">    software-properties-common</span><br><span class="line"># 获取GPG公钥</span><br><span class="line">curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -</span><br><span class="line"># 验证公钥是正确的</span><br><span class="line">sudo apt-key fingerprint 0EBFCD88</span><br><span class="line"># 设置stable仓库</span><br><span class="line">sudo apt-get install software-properties-common python-software-properties # 如果缺少了add-apt-repository命令需要安装一下</span><br><span class="line">sudo add-apt-repository \</span><br><span class="line">   &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu \</span><br><span class="line">   $(lsb_release -cs) \</span><br><span class="line">   stable&quot;</span><br><span class="line"># 安装</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install docker-ce</span><br><span class="line"># 安装某个特定版本</span><br><span class="line">#apt-cache madison docker-ce # 列出可用版本</span><br><span class="line">#sudo apt-get install docker-ce=&lt;VERSION&gt;</span><br><span class="line"># 运行hello-world</span><br><span class="line">docker run hello-world</span><br></pre></td></tr></table></figure>
+<h3 id="安装（CentOS）"><a href="#安装（CentOS）" class="headerlink" title="安装（CentOS）"></a>安装（CentOS）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum update</span><br><span class="line">yum install docker</span><br><span class="line">systemctl start docker</span><br><span class="line">systemtctl enable docker # 设定为开机启动</span><br><span class="line">systemtctl stop docker</span><br></pre></td></tr></table></figure>
+<h3 id="安装（Mac）"><a href="#安装（Mac）" class="headerlink" title="安装（Mac）"></a>安装（Mac）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="下载镜像"><a href="#下载镜像" class="headerlink" title="下载镜像"></a>下载镜像</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 搜索可用的镜像，或者上http://index.docker.io/查找</span><br><span class="line">docker search tutorial</span><br><span class="line"># 下载镜像，在docker的镜像索引网站上面，镜像都是按照用户名/镜像名的方式来存储的。有一组比较特殊的镜像，比如ubuntu这类基础镜像，经过官方的验证，值得信任，可以直接用镜像名来检索到。</span><br><span class="line">docker pull learn/tutorial</span><br></pre></td></tr></table></figure>
+<h3 id="运行容器"><a href="#运行容器" class="headerlink" title="运行容器"></a>运行容器</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># docker run命令有两个参数，一个是镜像名，一个是要在镜像中运行的命令。</span><br><span class="line">docker run learn/tutorial echo &quot;hello word&quot;</span><br><span class="line"># 在容器中安装一个软件，在执行apt-get 命令的时候，要带上-y参数。如果不指定-y参数的话，apt-get命令会进入交互模式，需要用户输入命令来进行确认，但在docker环境中是无法响应这种交互的</span><br><span class="line">docker run learn/tutorial apt-get install -y ping</span><br></pre></td></tr></table></figure>
+<h3 id="保存对容器的修改"><a href="#保存对容器的修改" class="headerlink" title="保存对容器的修改"></a>保存对容器的修改</h3><p>当你对某一个容器做了修改之后（通过在容器中运行某一个命令），可以把对容器的修改保存下来，这样下次可以从保存后的最新状态运行该容器。docker中保存状态的过程称之为committing，它保存的新旧状态之间的区别，从而产生一个新的版本。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 获得查看正在运行中的、安装完ping命令之后容器的id</span><br><span class="line">docker ps -l</span><br><span class="line">docker container ls --all</span><br><span class="line"># 查看更详细的信息</span><br><span class="line">docker inspect </span><br><span class="line"># 将镜像保存为learn/ping，无需拷贝完整的id，通常来讲最开始的三至四个字母即可区分，比如94b82c71517f可以简写为94b</span><br><span class="line">docker commit [CONTAINER ID] learn/ping</span><br><span class="line"># 查看刚保存的镜像</span><br><span class="line">docker images</span><br><span class="line"># 在新的镜像中运行ping www.baidu.com，旧的镜像中没有安装所以不能运行、会返回奇怪的信息</span><br><span class="line">docker run learn/tutorial ping www.baidu.com</span><br><span class="line">docker run learn/tutorial ping www.baidu.com</span><br></pre></td></tr></table></figure>
+<h3 id="发布镜像"><a href="#发布镜像" class="headerlink" title="发布镜像"></a>发布镜像</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 列出本地的所有镜像</span><br><span class="line">docker images</span><br><span class="line"># 将某一个镜像发布到官网</span><br><span class="line">docker push</span><br></pre></td></tr></table></figure>
+
+<h3 id="设置用户"><a href="#设置用户" class="headerlink" title="设置用户"></a>设置用户</h3><ol>
+<li>使用root用户运行<br>通常我们使用Docker的时候都是使用root用户身份运行的，官方说法如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">The docker daemon binds to a Unix socket instead of a TCP port. By default that Unix socket is owned by the user root and other users can access it with sudo. For this reason, docker daemon always runs as the root user. </span><br><span class="line">To avoid having to use sudo when you use the docker command, create a Unix group called docker and add users to it. When the docker daemon starts, it makes the ownership of the Unix socket read/writable by the docker group.</span><br></pre></td></tr></table></figure></li>
+<li>使用普通用户运行<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo groupadd docker # docker组可能已经存在了</span><br><span class="line">sudo gpasswd -a $&#123;USER&#125; docker # 将当前用户加入docker组</span><br><span class="line">sudo systemctl restart docker # 重新启动docker服务（下面是CentOS7的命令）</span><br></pre></td></tr></table></figure>
+然后当前用户注销再重新登录就可以正常使用docker命令了：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p>要登录容器进行操作，一种办法是在运行容器的时候开放22端口到外部，然后使用ssh来连接：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker create -it --name=容器别名 -p 20022:22 ics-image</span><br><span class="line">ssh -p 20022 root@localhost</span><br></pre></td></tr></table></figure>
+<p>另一种办法是在运行中的容器内执行&#x2F;bin&#x2F;bash：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it 容器名 /bin/bash</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Docker-Daemon"><a href="#Docker-Daemon" class="headerlink" title="Docker Daemon"></a>Docker Daemon</h2><h3 id="Docker迁移"><a href="#Docker迁移" class="headerlink" title="Docker迁移"></a>Docker迁移</h3><p>将一台宿主机上的Docker环境迁移到另一台宿主机上是比较方便的，只需停止Docker服务，将整个docker存储文件复制到另外一台宿主机上，然后调整另外一台宿主机的配置即可。</p>
+<h2 id="Docker-Hub"><a href="#Docker-Hub" class="headerlink" title="Docker Hub"></a>Docker Hub</h2><h3 id="仓库（Repository）、注册服务器（Registry）、注册索引（Index）"><a href="#仓库（Repository）、注册服务器（Registry）、注册索引（Index）" class="headerlink" title="仓库（Repository）、注册服务器（Registry）、注册索引（Index）"></a>仓库（Repository）、注册服务器（Registry）、注册索引（Index）</h3><p>仓库是存放一组关联镜像的集合，比如同一个应用的不同版本的镜像；<br>注册服务器是存放实际的镜像的地方；<br>注册索引则负责维护用户的账号，权限，搜索，标签等管理。注册服务器利用注册索引来实现认证等管理。 </p>
+<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><h3 id="Docker-Hub-1"><a href="#Docker-Hub-1" class="headerlink" title="Docker Hub"></a>Docker Hub</h3><ol>
+<li>docker pull老超时<br>试试国内的加速：<a target="_blank" rel="noopener" href="https://www.daocloud.io/mirror#accelerator-doc">https://www.daocloud.io/mirror#accelerator-doc</a><br>或连接VPN后试试</li>
+<li>pull或push时出现一直Waiting的情况<br>网上没有找到答案，开了VPN也没啥用，最后把环境变量改回来（eval $(docker-machine env -u)）就好了。</li>
+<li>从非官方仓库（如：dl.dockerpool.com）下载镜像的时候，有时候会提示“Error：Invaild registry endpoint <a target="_blank" rel="noopener" href="https://dl.docker.com:5000/v1/%E2%80%A6%E2%80%9D">https://dl.docker.com:5000/v1/…”</a>?<br>Docker 自1.3.0版本往后以来，加强了对镜像安全性的验证，需要手动添加对非官方仓库的信任。<br>DOCKER_OPTS&#x3D;”–insecure-registry dl.dockerpool.com:5000”<br>重启docker服务</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/docker-library/official-images">docker-library &#x2F; official-images</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/develop/develop-images/dockerfile_best-practices/">Best practices for writing Dockerfiles</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.dockone.io/article/932">十分钟带你理解 Kubernetes 核心概念</a></li>
+<li>Install Docker <a target="_blank" rel="noopener" href="https://docs.docker.com/install/">https://docs.docker.com/install/</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/install/linux/docker-ce/ubuntu/">Get Docker CE for Ubuntu</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/get-started/">Get Started</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.docker.org.cn/book/docker/docker-run-8.html">入门教程 中文</a></li>
+<li><a target="_blank" rel="noopener" href="https://hub.docker.com/">Docker Hub</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.docker.com/swarm/tallate/dashboard/onboarding/cloud-registry">Docker Cloud</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/reference/commandline/dockerd/">命令行参考文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/install/linux/linux-postinstall/">安装后配置</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/config/daemon/systemd/">daemon配置</a></li>
+</ol>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://draveness.me/docker">Docker 核心技术与实现原理</a></li>
+<li><a target="_blank" rel="noopener" href="https://monkeyvault.net/docker-vs-virtualization/">Docker vs Virtualization</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/16047306/how-is-docker-different-from-a-virtual-machine">How is Docker different from a virtual machine?</a></li>
+<li><a target="_blank" rel="noopener" href="http://bodenr.blogspot.com/2014/05/kvm-and-docker-lxc-benchmarking-with.html">KVM and Docker LXC Benchmarking with OpenStack</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.mirantis.com/blog/ok-i-give-up-is-docker-now-moby-and-what-is-linuxkit/">OK, I give up. Is Docker now Moby? And what is LinuxKit?</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.oschina.net/news/84176/the-reason-of-docker-launches-moby">Docker 切出 Moby 背后的真实原因分析</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/docker/libcontainer">docker&#x2F;libcontainer</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/zqg5258423/article/details/53843757">docker最新代码源码编译</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/dghpgyss/article/details/72772834">如何编译docker 1.2.0版本的源码</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Docker/" rel="tag"># Docker</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/f70f9ab5.html" rel="prev" title="使用 Docker">
+                  <i class="fa fa-angle-left"></i> 使用 Docker
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/94ee6da6.html" rel="next" title="Docker官方入门文档">
+                  Docker官方入门文档 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

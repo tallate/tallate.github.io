@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="如上图所示，消息的存储分为如下 3 个部分：  CommitLog：日志，存储消息主体； ConsumerQueue：在 CommitLog 中根据 Topic 和 Tag 检索消息是非常低效的，因此引入了 ConsumerQueue 作为消费消息的索引，它保存的其实是 CommitLog 中存储的消息的指针。 IndexFile：hash 索引，提供一种通过 key 或时间区间来查询消息的方法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RocketMQ 消息的存储和查询原理">
+<meta property="og:url" content="https://tallate.github.io/28a7425f.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="如上图所示，消息的存储分为如下 3 个部分：  CommitLog：日志，存储消息主体； ConsumerQueue：在 CommitLog 中根据 Topic 和 Tag 检索消息是非常低效的，因此引入了 ConsumerQueue 作为消费消息的索引，它保存的其实是 CommitLog 中存储的消息的指针。 IndexFile：hash 索引，提供一种通过 key 或时间区间来查询消息的方法。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/RocketMQ/RocketMQ-%E6%B6%88%E6%81%AF%E5%AD%98%E5%82%A8.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/RocketMQ/RocketMQ-Topic%E5%92%8CConsumerQueue.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/RocketMQ/RocketMQ-Queue%E5%92%8C%E6%B6%88%E8%B4%B9%E8%80%85.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/RocketMQ/RocketMQ-%E5%88%B7%E7%9B%98.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/RocketMQ/RocketMQ-IndexFile%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/RocketMQ/RocketMQ-Console%E6%9F%A5%E7%9C%8B%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF1.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/RocketMQ/RocketMQ-Console%E6%9F%A5%E7%9C%8B%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF2.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/RocketMQ/%E6%A0%B9%E6%8D%AEtag%E5%88%92%E5%88%86%E7%8E%AF%E5%A2%83%E5%AF%BC%E8%87%B4%E6%B6%88%E6%81%AF%E8%A2%AB%E8%BF%87%E6%BB%A4%E7%9A%84%E9%97%AE%E9%A2%98.jpg">
+<meta property="article:published_time" content="2020-08-12T04:22:48.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.898Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="RocketMQ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/RocketMQ/RocketMQ-%E6%B6%88%E6%81%AF%E5%AD%98%E5%82%A8.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/28a7425f.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/28a7425f.html","path":"/28a7425f.html","title":"RocketMQ 消息的存储和查询原理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>RocketMQ 消息的存储和查询原理 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E5%AD%98%E5%82%A8"><span class="nav-number">1.</span> <span class="nav-text">消息存储</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B5%E7%BC%93%E5%AD%98%E4%B8%8E%E5%86%85%E5%AD%98%E6%98%A0%E5%B0%84"><span class="nav-number">1.1.</span> <span class="nav-text">页缓存与内存映射</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CommitLog"><span class="nav-number">1.2.</span> <span class="nav-text">CommitLog</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CommitLog%E5%86%99%E5%85%A5%E6%B6%88%E6%81%AF%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">CommitLog写入消息的流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DLedgerCommitLog%E5%86%99%E5%85%A5%E6%B5%81%E7%A8%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">DLedgerCommitLog写入流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Topic-%E5%92%8C-ConsumerQueue"><span class="nav-number">1.3.</span> <span class="nav-text">Topic 和 ConsumerQueue</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88RocketMQ%E4%B8%AD%E9%83%BD%E9%9C%80%E8%A6%81%E6%89%8B%E5%8A%A8%E5%88%9B%E5%BB%BATopic%EF%BC%9F"><span class="nav-number">1.3.1.</span> <span class="nav-text">为什么RocketMQ中都需要手动创建Topic？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88RocketMQ%E4%B8%AD%E6%9C%80%E5%A5%BD%E6%89%8B%E5%8A%A8%E5%88%9B%E5%BB%BAConsumer-Group%EF%BC%9F"><span class="nav-number">1.3.2.</span> <span class="nav-text">为什么RocketMQ中最好手动创建Consumer Group？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E5%88%B7%E7%9B%98"><span class="nav-number">1.4.</span> <span class="nav-text">消息刷盘</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CommitLog%E7%9A%84%E5%88%B7%E7%9B%98"><span class="nav-number">1.4.1.</span> <span class="nav-text">CommitLog的刷盘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ConsumeQueue%E7%9A%84%E5%88%B7%E7%9B%98"><span class="nav-number">1.4.2.</span> <span class="nav-text">ConsumeQueue的刷盘</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E6%9F%A5%E8%AF%A2"><span class="nav-number">2.</span> <span class="nav-text">消息查询</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%89-Message-ID-%E6%9F%A5%E8%AF%A2%E6%B6%88%E6%81%AF"><span class="nav-number">2.1.</span> <span class="nav-text">按 Message ID 查询消息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%89-Message-Key-%E6%9F%A5%E8%AF%A2%E6%B6%88%E6%81%AF"><span class="nav-number">2.2.</span> <span class="nav-text">按 Message Key 查询消息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%89-Tag-%E8%BF%87%E6%BB%A4%E6%B6%88%E6%81%AF"><span class="nav-number">2.3.</span> <span class="nav-text">按 Tag 过滤消息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF%EF%BC%88%E7%A7%AF%E5%8E%8B%EF%BC%89"><span class="nav-number">2.4.</span> <span class="nav-text">消息堆积（积压）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RocketMQ%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E9%AB%98%E6%95%88%E8%AF%BB%E6%B6%88%E6%81%AF"><span class="nav-number">2.5.</span> <span class="nav-text">RocketMQ怎么保证高效读消息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QA"><span class="nav-number">2.6.</span> <span class="nav-text">QA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%91%E4%BB%AC%E5%85%AC%E5%8F%B8%E6%9C%89%E5%A4%9A%E4%B8%AA%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83%EF%BC%8C%E6%B6%88%E8%B4%B9%E6%B6%88%E6%81%AF%E6%97%B6%E9%80%9A%E8%BF%87TAG%E6%9D%A5%E5%8C%BA%E5%88%86%E7%8E%AF%E5%A2%83%EF%BC%8C%E7%BB%93%E6%9E%9C%E5%AF%BC%E8%87%B4%E6%9C%89%E7%9A%84%E6%B6%88%E6%81%AF%E6%B6%88%E8%B4%B9%E4%B8%8D%E5%88%B0%EF%BC%8C%E8%BF%99%E6%98%AF%E5%8F%91%E7%94%9F%E7%94%9A%E4%B9%88%E4%BA%8B%E4%BA%86%EF%BC%9F"><span class="nav-number">2.6.1.</span> <span class="nav-text">我们公司有多个测试环境，消费消息时通过TAG来区分环境，结果导致有的消息消费不到，这是发生甚么事了？</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/28a7425f.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="RocketMQ 消息的存储和查询原理 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RocketMQ 消息的存储和查询原理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-12 12:22:48" itemprop="dateCreated datePublished" datetime="2020-08-12T12:22:48+08:00">2020-08-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><img src="/imgs/RocketMQ/RocketMQ-%E6%B6%88%E6%81%AF%E5%AD%98%E5%82%A8.png" alt="RocketMQ-消息存储" title="RocketMQ-消息存储"><br>如上图所示，消息的存储分为如下 3 个部分：</p>
+<ol>
+<li>CommitLog：日志，存储消息主体；</li>
+<li>ConsumerQueue：在 CommitLog 中根据 Topic 和 Tag 检索消息是非常低效的，因此引入了 ConsumerQueue 作为消费消息的<strong>索引</strong>，它保存的其实是 CommitLog 中存储的消息的指针。</li>
+<li>IndexFile：<strong>hash 索引</strong>，提供一种通过 key 或时间区间来查询消息的方法。</li>
+</ol>
+<span id="more"></span>
+
+<h1 id="消息存储"><a href="#消息存储" class="headerlink" title="消息存储"></a>消息存储</h1><h2 id="页缓存与内存映射"><a href="#页缓存与内存映射" class="headerlink" title="页缓存与内存映射"></a>页缓存与内存映射</h2><ol>
+<li>ConsumerQueue 存储的数据少、且是顺序读取（按顺序被消费），因此在<code>page cache</code>机制的预读取作用下，ConsumerQueue 文件的读取性能几乎接近于读内存。</li>
+<li>RocketMQ 主要通过 MappedByteBuffer 对文件进行读写操作，其主要利用 NIO 中的 FileChannel 模型将磁盘上的物理文件直接映射到用户态的内存地址中，避免了传统 IO 方式需要将磁盘文件数据在操作系统内核地址空间的缓冲区和用户应用程序地址空间的缓冲区之间拷贝带来的开销。</li>
+</ol>
+<h2 id="CommitLog"><a href="#CommitLog" class="headerlink" title="CommitLog"></a>CommitLog</h2><p>CommitLog负责存储所有消息的内容，做个类比可以理解为CommitLog就是MySQL中的主键索引，ConsumerQueue就是MySQL中的辅助索引，主键索引存储的是完整数据，而辅助索引存储的是对主键索引的指针。</p>
+<h3 id="CommitLog写入消息的流程"><a href="#CommitLog写入消息的流程" class="headerlink" title="CommitLog写入消息的流程"></a>CommitLog写入消息的流程</h3><p><code>org.apache.rocketmq.store.CommitLog#asyncPutMessage</code></p>
+<ol>
+<li>构建消息体</li>
+<li>获取可用的MappedFile文件<br>刚开始会取到最后一个文件，并对该文件加锁，如果加锁后发现文件满了，那么再尝试重新创建一个新的文件</li>
+<li>一个一个字段写入CommitLog文件<br><code>CommitLog.DefaultAppendMessageCallback#doAppend</code></li>
+<li>刷盘<br><code>org.apache.rocketmq.store.CommitLog#submitFlushRequest</code><br>看Broker配置的是同步还是异步刷盘，如果是异步刷盘则只是唤醒异步刷盘线程。<br><code>FlushRealTimeService#wakeup</code></li>
+<li>主从同步<br><code>org.apache.rocketmq.store.CommitLog#submitReplicaRequest</code><br>一般Master默认情况下都是<code>ASYNC_MASTER</code>，这种模式下消息都是异步同步给Slave的。</li>
+</ol>
+<h3 id="DLedgerCommitLog写入流程"><a href="#DLedgerCommitLog写入流程" class="headerlink" title="DLedgerCommitLog写入流程"></a>DLedgerCommitLog写入流程</h3><p>DLedger模式和普通模式的区别主要在于消息的高可靠性，写入数据时：<br><code>io.openmessaging.storage.dledger.DLedgerServer#handleAppend</code></p>
+<ol>
+<li>写入本地文件；</li>
+<li>请求其他Slave，等待大多数（quorum）返回写入成功。</li>
+</ol>
+<h2 id="Topic-和-ConsumerQueue"><a href="#Topic-和-ConsumerQueue" class="headerlink" title="Topic 和 ConsumerQueue"></a>Topic 和 ConsumerQueue</h2><p>在消息队列中主题和队列一般是包含的关系，刚开始消息队列只是一个单纯的队列，后来为了应对多消费者重复消费的需求，出现了发布订阅、Topic的概念，一个Topic中的消息是可以被订阅者重复消费的。<br>在RocketMQ中Topic和队列之间的关系如下图所示：<br><img src="/imgs/RocketMQ/RocketMQ-Topic%E5%92%8CConsumerQueue.png" alt="RocketMQ-Topic和ConsumerQueue" title="RocketMQ-Topic和ConsumerQueue"><br>如上图所示，RocketMQ 消息存储中有三个容易混淆的概念：</p>
+<ul>
+<li>Broker：消息代理服务器；</li>
+<li>Topic：消息主题，一个 Topic 分片是 Topic 在一个 Broker 上的子集，是 Queue 的逻辑集合；<br><img src="/imgs/RocketMQ/RocketMQ-Queue%E5%92%8C%E6%B6%88%E8%B4%B9%E8%80%85.png" alt="RocketMQ-Queue和消费者" title="RocketMQ-Queue和消费者"></li>
+<li>Queue：队列，负载均衡过程中资源分配的基本单元，<strong>每个 Queue 只有一个消费者，但一个消费者可以消费多个 Queue</strong>，可以避免消费过程中多线程的竞争，提高多 Consumer 的并发消费效率。</li>
+</ul>
+<p>在RocketMQ中，订阅者的概念是通过<strong>消费组（Consumer Group）</strong>来体现的，多个消费组都能消费主题中的一份完整消息，不同消费组之间消费进度彼此互不影响。<br>但是要注意，一个消费组内可能会有多个消费者，这些消费者不能重复消费一条消息，主要一个消息被其中一个消费者消费了，那同组的其他消费者就不会再收到这条消息。<br>那么如何实现多个消费组能重复消费一条消息的功能呢？<br>在RocketMQ中，Broker会为每个消费组在每个队列上维护一个<strong>消费位置（Consumer Offset）</strong>，这个位置之前的消息都被消费过，之后的消息都没有被消费过，每成功消费一条消息，消费位置就加一。</p>
+<h3 id="为什么RocketMQ中都需要手动创建Topic？"><a href="#为什么RocketMQ中都需要手动创建Topic？" class="headerlink" title="为什么RocketMQ中都需要手动创建Topic？"></a>为什么RocketMQ中都需要手动创建Topic？</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 自动创建topic，默认为false</span><br><span class="line">autoCreateTopicEnable=false</span><br></pre></td></tr></table></figure>
+<p>使用rocketmq的时候，需要去控制台预先创建topic，为什么要这么设计，因为rocketmq topic的创建机制：<br>rocketmq在发送消息时，会先去获取topic的路由信息，如果topic是第一次发送消息，由于nameserver没有topic的路由信息，所以会再次以“TBW102”这个默认topic获取路由信息，假设broker都开启了自动创建开关，那么此时会获取所有broker的路由信息，消息的发送会根据负载算法选择其中一台Broker发送消息，消息到达broker后，发现本地没有该topic，会创建该topic的信息再塞进本地缓存中，同时会将topic路由信息注册到nameserver中，那么这样就会造成一个后果：<strong>以后所有该topic的消息，都将发送到这台broker上，如果该topic消息量非常大，会造成某个broker上负载过大，这样消息的存储就达不到负载均衡的目的了</strong>。<br>因此，自动创建Topic开关一般只会在线下开启，线上是关闭的。</p>
+<h3 id="为什么RocketMQ中最好手动创建Consumer-Group？"><a href="#为什么RocketMQ中最好手动创建Consumer-Group？" class="headerlink" title="为什么RocketMQ中最好手动创建Consumer Group？"></a>为什么RocketMQ中最好手动创建Consumer Group？</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 自动创建group，默认为true</span><br><span class="line">autoCreateSubscriptionGroup=true</span><br></pre></td></tr></table></figure>
+<p>在开源版本RocketMQ中，这个开关是默认打开的，因为RocketMQ面向的是普通用户和量级不大的小公司，他们不想费精力去管控这些事情。<br>但是如果是一些大公司内部的自研版本，会把这个开关给闭掉，因为这个开关打开会带来潜在风险、资源管理风险，比如用户没有预估好用量、自动创建大量group，把name server搞挂。</p>
+<h2 id="消息刷盘"><a href="#消息刷盘" class="headerlink" title="消息刷盘"></a>消息刷盘</h2><p><img src="/imgs/RocketMQ/RocketMQ-%E5%88%B7%E7%9B%98.png" alt="RocketMQ-刷盘" title="RocketMQ-刷盘"><br>刷盘有两种策略：</p>
+<ol>
+<li>同步刷盘，只有在消息真正持久化到磁盘中后 Broker 才会返回给 Producer 一个 ACK 响应。<br>同步刷盘可以保证消息的可靠性，但是对性能会有比较大的影响。</li>
+<li>异步刷盘，利用 OS 的 PageCache，只要消息写入 PageCache 即可将 ACK 返回给 Producer。<br>消息刷盘采用后台异步线程提交的方式进行，降低了读写延迟，提高了 MQ 的性能和吞吐量。</li>
+</ol>
+<p>刷盘策略见配置文件<code>broker.conf</code>，默认为异步刷盘：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">flushDiskType = ASYNC_FLUSH</span><br></pre></td></tr></table></figure>
+<h3 id="CommitLog的刷盘"><a href="#CommitLog的刷盘" class="headerlink" title="CommitLog的刷盘"></a>CommitLog的刷盘</h3><p>异步刷盘的实现代码见：<code>org.apache.rocketmq.store.CommitLog.FlushRealTimeService</code><br>可以看到，默认情况下是每<code>500ms</code>刷新一次，刷盘时先找到要刷盘的<code>MappedFile</code>，刷盘利用了NIO的<code>MappedByteBuffer</code>。<br>一般情况下每次刷4页，并且每10S将未同步的页面全量同步一次。</p>
+<h3 id="ConsumeQueue的刷盘"><a href="#ConsumeQueue的刷盘" class="headerlink" title="ConsumeQueue的刷盘"></a>ConsumeQueue的刷盘</h3><p>实现代码见<code>FlushConsumeQueueService</code><br>每秒执行一次，一般每次刷2页，Broker将退出时将所有缓存页全量刷一次。</p>
+<h1 id="消息查询"><a href="#消息查询" class="headerlink" title="消息查询"></a>消息查询</h1><h2 id="按-Message-ID-查询消息"><a href="#按-Message-ID-查询消息" class="headerlink" title="按 Message ID 查询消息"></a>按 Message ID 查询消息</h2><p>MessageID 包含：</p>
+<ul>
+<li>消息存储的主机地址（IP 和端口号）；</li>
+<li>消息存储的 Commit Log 的 offset；</li>
+</ul>
+<p>按 Message ID 查询的过程是：</p>
+<ol>
+<li>Client 端从 MessageID 中解析出 Broker 地址和 CommitLog 的 offset 地址后封装为一个 RPC 请求，通过 Remoting 通信层发送；</li>
+<li>Broker 端走的是 QueryMessageProcessor，读取消息的过程用其中的 commitLog offset 和 size 去 commitLog 中找到真正的记录并解析成一个完整的消息返回。</li>
+</ol>
+<h2 id="按-Message-Key-查询消息"><a href="#按-Message-Key-查询消息" class="headerlink" title="按 Message Key 查询消息"></a>按 Message Key 查询消息</h2><p>主要是基于 RocketMQ 的 IndexFile 索引文件来实现的，IndexFile 的结构类似 JDK 中 HashMap 的实现：<br><img src="/imgs/RocketMQ/RocketMQ-IndexFile%E7%BB%93%E6%9E%84.png" alt="RocketMQ-IndexFile结构" title="RocketMQ-IndexFile结构"></p>
+<h2 id="按-Tag-过滤消息"><a href="#按-Tag-过滤消息" class="headerlink" title="按 Tag 过滤消息"></a>按 Tag 过滤消息</h2><p>一般来说，Topic 可以用于区分业务类型，Tag 可以细分比如数据的类型、状态等。<br>在 RocketMQ 中，Topic 对应的是一些 ConsumerQueue 文件，而 Tag 是消息的属性，用于过滤消息，RocketMQ 有别于其他 MQ 中间件，Tag 是在 Consumer 端执行过滤的，这和其存储结构有关，Tag 存储在两个地方：</p>
+<ol>
+<li>ConsumerQueue 存储 Tag 的 hash 值；</li>
+<li>CommitLog 存储 Tag 的原值。</li>
+</ol>
+<p>过滤时：</p>
+<ol>
+<li>服务端接收 Pull 消息的请求后，先根据消息 Tag hash 值去过滤 ConsumerQueue 中的数据，得到消息偏移量等信息后到 CommitLog 中查出消息数据；</li>
+<li>Consumer 端接收到消息后，还需要对消息的原始 Tag 字符串进行比对，如果不同，则丢弃该消息，不进行消息消费。</li>
+</ol>
+<h2 id="消息堆积（积压）"><a href="#消息堆积（积压）" class="headerlink" title="消息堆积（积压）"></a>消息堆积（积压）</h2><p>在RocketMQ中，每条消息会记录一个它所在的偏移量offset，我们可以比较当前消息的offset和队列的总偏移量maxOffset来确定是否发生了消息堆积。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">public class PileUpConsumerTest &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws MQClientException &#123;</span><br><span class="line">        // 实例化消费者</span><br><span class="line">        DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(&quot;please_rename_unique_group_name&quot;);</span><br><span class="line">        consumer.setNamesrvAddr(&quot;localhost:9876&quot;);</span><br><span class="line">        consumer.subscribe(&quot;PileUpTopicTest&quot;, &quot;*&quot;);</span><br><span class="line">        // 注册回调实现类来处理从broker拉取回来的消息</span><br><span class="line">        consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -&gt; &#123;</span><br><span class="line">            for (MessageExt msg : msgs) &#123;</span><br><span class="line">                long offset = msg.getQueueOffset();</span><br><span class="line">                String maxOffset = msg.getProperty(MessageConst.PROPERTY_MAX_OFFSET);</span><br><span class="line">                long diff = Long.parseLong(maxOffset) - offset;</span><br><span class="line">                if(diff &gt; 10) &#123;</span><br><span class="line">                    // 处理消息堆积情况</span><br><span class="line">                    System.out.println(&quot;消息堆积 maxOffset:&quot; + maxOffset + &quot; currOffset:&quot; + offset + &quot; 消息堆积个数:&quot; + diff);</span><br><span class="line">                    return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;</span><br><span class="line">                &#125;</span><br><span class="line">                System.out.println(&quot;正常消费 maxOffset:&quot; + maxOffset + &quot; currOffset:&quot; + offset + &quot; 消息堆积个数:&quot; + diff);</span><br><span class="line">            &#125;</span><br><span class="line">            return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;</span><br><span class="line">        &#125;);</span><br><span class="line">        // 启动消费者实例</span><br><span class="line">        consumer.start();</span><br><span class="line">        System.out.printf(&quot;Consumer Started.%n&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>或者可以通过RocketMQ的Console界面来检查堆积情况：<br><img src="/imgs/RocketMQ/RocketMQ-Console%E6%9F%A5%E7%9C%8B%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF1.png" alt="RocketMQ-Console查看消息堆积1" title="RocketMQ-Console查看消息堆积1"><br><img src="/imgs/RocketMQ/RocketMQ-Console%E6%9F%A5%E7%9C%8B%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF2.png" alt="RocketMQ-Console查看消息堆积2" title="RocketMQ-Console查看消息堆积2"></p>
+<p>发生消息堆积的主要原因是消息生产速度远远大于消息消费速度：</p>
+<ul>
+<li>如果堆积不严重，可以放着让消费者继续慢慢消费完；</li>
+<li>如果堆积严重且消息生产速度一直处于远远高于消费速度的程度，可以加机器来提升并发消费能力，但是单纯地加机器不能改善这种堆积情况，因为<strong>每个队列实际上只能被一个Consumer消费</strong>；<br>可以先将堆积的消息发给另一个Topic，该Topic有更多Consumer。<br>或者，可以选择丢弃不重要的消息，即仅仅记录日志，而不真正消费，从而在不影响消息完整性的前提下，达到处理消息堆积问题的目的。<br>解决消息堆积问题的根本还是优化系统本身，比如是赶上大促或抢购这种场景，就很容易引起消息堆积，短时间内不太可能优化消费端的代码来提升消费性能，唯一的方法是通过扩容消费端的实例数来提升总体的消费能力。如果短时间内没有足够的服务器资源进行扩容，没办法的办法是，将系统降级，通过关闭一些不重要的业务，减少发送方发送的数据量，最低限度让系统还能正常运转，服务一些重要业务。</li>
+</ul>
+<h2 id="RocketMQ怎么保证高效读消息"><a href="#RocketMQ怎么保证高效读消息" class="headerlink" title="RocketMQ怎么保证高效读消息"></a>RocketMQ怎么保证高效读消息</h2><ul>
+<li>发送消息时，生产者端的消息确实是<strong>顺序写入</strong>CommitLog；</li>
+<li>订阅消息时，消费者端也是<strong>顺序读取</strong>ConsumeQueue，然而<strong>根据其中的起始物理位置偏移量offset读取消息真实内容却是随机读取CommitLog</strong>。</li>
+<li>RocketMQ通过MappedByteBuffer对文件进行读写操作。其中，利用了NIO中的FileChannel模型直接将磁盘上的物理文件直接映射到用户态的内存地址中，这样程序就好像可以直接从内存中完成对文件读&#x2F;写操作一样。只有当缺页中断发生时，直接将文件从磁盘拷贝至用户态的进程空间内，只进行了一次数据拷贝。对于容量较大的文件来说（文件大小一般需要限制在1.5~2G以下），采用Mmap的方式其读&#x2F;写的效率和性能都非常高。</li>
+</ul>
+<p>优点：</p>
+<ol>
+<li>对ConsumeQueue的读取是顺序读取，在<strong>pageCache</strong>机制的预读取作用下，ConsumeQueue的读性能会比较高近乎内存，即使在有消息堆积情况下也不会影响性能。</li>
+<li>ConsumeQueue消息逻辑队列较为轻量级；</li>
+<li>对磁盘的访问串行化，避免磁盘竟争，不会因为队列增加导致IOWAIT增高；</li>
+</ol>
+<p>缺点：</p>
+<ol>
+<li>对于CommitLog来说写入消息虽然是顺序写，但是读却变成了完全的随机读；</li>
+<li>Consumer端订阅消费一条消息，需要先读ConsumeQueue，再读CommitLog，一定程度上增加了开销；</li>
+</ol>
+<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><h3 id="我们公司有多个测试环境，消费消息时通过TAG来区分环境，结果导致有的消息消费不到，这是发生甚么事了？"><a href="#我们公司有多个测试环境，消费消息时通过TAG来区分环境，结果导致有的消息消费不到，这是发生甚么事了？" class="headerlink" title="我们公司有多个测试环境，消费消息时通过TAG来区分环境，结果导致有的消息消费不到，这是发生甚么事了？"></a>我们公司有多个测试环境，消费消息时通过TAG来区分环境，结果导致有的消息消费不到，这是发生甚么事了？</h3><p>这些消息有着相同的Topic，并且Consumer都有着相同的group。</p>
+<ol>
+<li>根据Rebalance原理，每个Consumer都会分到固定的几个Queue，多个环境的Consumer因为Topic、group相同，它们会均分这些Queue。</li>
+<li>Producer发送消息时，由于负载均衡机制，不确定会发给哪个Queue，也就是说A环境的TagA消息可能会发给任意一个Queue，B环境的TagB消息同理。</li>
+</ol>
+<p>也就是说，有可能Producer会把打上TagA的A环境消息发给任意一个Queue，这个Queue并不是由A环境的Consumer消费的，这个消息会在Consumer端被过滤掉，并且随着offset的更新而被忽略掉，相当于丢失了。<br><img src="/imgs/RocketMQ/%E6%A0%B9%E6%8D%AEtag%E5%88%92%E5%88%86%E7%8E%AF%E5%A2%83%E5%AF%BC%E8%87%B4%E6%B6%88%E6%81%AF%E8%A2%AB%E8%BF%87%E6%BB%A4%E7%9A%84%E9%97%AE%E9%A2%98.jpg" alt="根据tag划分环境导致消息被过滤的问题" title="根据tag划分环境导致消息被过滤的问题"></p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/RocketMQ/" rel="tag"># RocketMQ</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/e095c2f.html" rel="prev" title="RocketMQ 概述">
+                  <i class="fa fa-angle-left"></i> RocketMQ 概述
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/965af9c3.html" rel="next" title="RocketMQ 延时消息">
+                  RocketMQ 延时消息 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

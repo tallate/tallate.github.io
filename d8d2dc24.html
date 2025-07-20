@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="前言该项目是 2017 年参加学院组织的实训项目期间同小组成员开发的，是一个简化版的电商项目。 涉及到的技术 掌握高并发站点的系统架构方法。 熟悉 linux 开发环境,掌握 tomcat、mysql 服务器集群的安装与配置。 理解 web 服务器的负载均衡原理,掌握配置方法。 掌握数据库主从复制,读写分离技术。 理解缓存原理,掌握缓存在程序开发的原理。 掌握 web 站点的动静分离技术。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="淘淘网络商城">
+<meta property="og:url" content="https://tallate.github.io/d8d2dc24.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="前言该项目是 2017 年参加学院组织的实训项目期间同小组成员开发的，是一个简化版的电商项目。 涉及到的技术 掌握高并发站点的系统架构方法。 熟悉 linux 开发环境,掌握 tomcat、mysql 服务器集群的安装与配置。 理解 web 服务器的负载均衡原理,掌握配置方法。 掌握数据库主从复制,读写分离技术。 理解缓存原理,掌握缓存在程序开发的原理。 掌握 web 站点的动静分离技术。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E6%B7%98%E6%B7%98%E7%BD%91%E7%BB%9C%E5%95%86%E5%9F%8E/Search%E5%8A%9F%E8%83%BD%E6%B4%BB%E5%8A%A8%E5%9B%BE.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E6%B7%98%E6%B7%98%E7%BD%91%E7%BB%9C%E5%95%86%E5%9F%8E/%E6%B7%98%E6%B7%98%E5%95%86%E5%9F%8E%E6%A8%A1%E5%9D%97%E7%BB%93%E6%9E%84%E5%9B%BE.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E6%B7%98%E6%B7%98%E7%BD%91%E7%BB%9C%E5%95%86%E5%9F%8E/Search%E5%8A%9F%E8%83%BD%E6%97%B6%E5%BA%8F%E5%9B%BE.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E6%B7%98%E6%B7%98%E7%BD%91%E7%BB%9C%E5%95%86%E5%9F%8E/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A1%A8%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E6%B7%98%E6%B7%98%E7%BD%91%E7%BB%9C%E5%95%86%E5%9F%8E/%E6%90%9C%E7%B4%A2%E6%A1%86.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E6%B7%98%E6%B7%98%E7%BD%91%E7%BB%9C%E5%95%86%E5%9F%8E/%E5%95%86%E5%93%81%E6%90%9C%E7%B4%A2%E7%BB%93%E6%9E%9C.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E6%B7%98%E6%B7%98%E7%BD%91%E7%BB%9C%E5%95%86%E5%9F%8E/%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95%E7%BB%93%E6%9E%9C.png">
+<meta property="article:published_time" content="2018-08-07T11:13:29.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.908Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="电商">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/%E6%B7%98%E6%B7%98%E7%BD%91%E7%BB%9C%E5%95%86%E5%9F%8E/Search%E5%8A%9F%E8%83%BD%E6%B4%BB%E5%8A%A8%E5%9B%BE.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/d8d2dc24.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/d8d2dc24.html","path":"/d8d2dc24.html","title":"淘淘网络商城"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>淘淘网络商城 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B6%89%E5%8F%8A%E5%88%B0%E7%9A%84%E6%8A%80%E6%9C%AF"><span class="nav-number">1.1.</span> <span class="nav-text">涉及到的技术</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">项目分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93"><span class="nav-number">2.1.</span> <span class="nav-text">基础知识总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.2.</span> <span class="nav-text">项目介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%88%86%E6%9E%90"><span class="nav-number">2.3.</span> <span class="nav-text">系统分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.4.</span> <span class="nav-text">系统设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.5.</span> <span class="nav-text">系统实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%B5%8B%E8%AF%95"><span class="nav-number">2.6.</span> <span class="nav-text">系统测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%93%E4%BC%9A"><span class="nav-number">3.</span> <span class="nav-text">体会</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/d8d2dc24.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="淘淘网络商城 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          淘淘网络商城
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-08-07 19:13:29" itemprop="dateCreated datePublished" datetime="2018-08-07T19:13:29+08:00">2018-08-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>该项目是 2017 年参加学院组织的实训项目期间同小组成员开发的，是一个简化版的电商项目。</p>
+<h3 id="涉及到的技术"><a href="#涉及到的技术" class="headerlink" title="涉及到的技术"></a>涉及到的技术</h3><ol>
+<li>掌握高并发站点的系统架构方法。</li>
+<li>熟悉 linux 开发环境,掌握 tomcat、mysql 服务器集群的安装与配置。</li>
+<li>理解 web 服务器的负载均衡原理,掌握配置方法。</li>
+<li>掌握数据库主从复制,读写分离技术。</li>
+<li>理解缓存原理,掌握缓存在程序开发的原理。</li>
+<li>掌握 web 站点的动静分离技术。</li>
+</ol>
+<span id="more"></span>
+
+<h2 id="项目分析"><a href="#项目分析" class="headerlink" title="项目分析"></a>项目分析</h2><h3 id="基础知识总结"><a href="#基础知识总结" class="headerlink" title="基础知识总结"></a>基础知识总结</h3><ol>
+<li>Java 基础<br> 课程刚开始复习了许多 Java 基础知识，虽然开发主要依赖框架，但是磨刀不误砍柴工，只有熟练掌握基础知识，在使用框架中遇到问题时才能游刃有余。<br> 老师的讲解主要分两个阶段，首先讲解了属性文件、注解和反射等的使用方法，这些 java 功能是实现框架的基础，老师也一再强调通用性，而通用也正是框架存在的理由，因此老师第一步带领我们开发了一个简易的数据库访问框架，将常用的增删改查操作抽象出来，使得数据库访问操作的代码量大大减少，我们也得以对一些常见的数据库访问框架的工作原理有了一个较为深刻的理解，同时也为之后 MyBatis 框架的学习做了铺垫。<br> 然后讲解了数据读写方法、多线程操作、网络方面的知识，比较可贵的是老师并不是停留在基础用法上，而是做了很多有益的拓展，比如对数据读写，不仅讲了传统的 Java IO 方法，而且还讲了 Java1.5 引入的 NIO（New IO）；在多线程方面，讲解了一些新的线程创建方法和解决死锁的方法，并且结合理论知识给出了解决生产者-消费者等经典问题的代码；网络编程方面，讲解了使用阻塞式和非阻塞式进行网络访问的方法，并且用这些知识实现了一个简易的聊天室程序。</li>
+<li>MyBatis 框架<br>接下来老师为我们比较了 Hibernate 和 MyBatis 两种框架，并仔细介绍了 MyBatis 框架的使用方法，这个框架主要功能是访问数据库，访问数据库的关键是做好实体类和数据库表之间的映射，如果数据库到应用程序间的抽象做得越好、功能越通用，写出的代码鲁棒性也能越高。<br>对于数据库映射，老师首先讲解了 Mybatis 的配置文件映射，其主要功能是将数据库操作代码和应用程序代码分开。我开始时非常不解，因为这样并没有简化反而使得程序更复杂了，但之后明白了，通过将主要业务逻辑和数据库操作代码分开，真正使得代码解耦、写活了。但我也发现这样的一个缺陷——因为这部分代码文件多了一倍导致程序也变得更加难以管理。所幸老师之后还介绍了注解映射，这种方式使得配置文件大大减少，实现了零配置。</li>
+<li>Spring 框架<br>接下来老师介绍了 Spring 框架，Spring 框架的核心是控制反转，它是通过将对接口的实例化过程转移到配置文件中来解决对实现类的依赖，达到把代码写活的目的。Spring 并不只是一个实体类的工厂，由于集成了许多组件——比如 SpringAOP、SpringMVC 等，Spring 可以很方便地应用于许多场景下。为了详细讲解 Spring 的概念，老师还不厌其烦地为我们讲解 Spring 的部分源码，达到了深入浅出的程度。</li>
+<li>Maven 包管理工具<br>另外，不管是在老师演示还是自己操作时，我发现出现的最多的错误是包依赖产生的错误，因为程序中集成了不少的框架，于是在大到一定程度后，就会出现依赖特别难以管理的情况，为此老师提出了使用 maven 来管理依赖，解决了这个难题，因此我也感悟到工程实践的特点——它是一个不断简化的过程。更多关于实训项目相关的经历我会在下面进一步阐述。</li>
+</ol>
+<h3 id="项目介绍"><a href="#项目介绍" class="headerlink" title="项目介绍"></a>项目介绍</h3><ol>
+<li>项目介绍<br>ebuy 网上商城是一个综合性的 B2C 平台，类似京东商城、天猫商城。会员可以登录商城浏览商品、下订单，管理员可以登录后台对商品信息、商城内容进行管理。</li>
+<li>个人职责<br>本人在该项目开发当中的主要职责是搜索模块，包括网页端的 AJAX 访问逻辑、middle 项目中对搜索结果添加缓存逻辑，及 Solr 搜索服务器的搭建。</li>
+<li>相关技术<br>(1) 项目开发方法<br>该项目的开发应用了增量模型，在各个阶段并不交付一个可运行的完整产品，而是交付满足客户需求的一个子集的可运行产品。整个项目由多个子模块构成，由小组内不同成员负责开发，逐个构建地交付产品，并且最终使用版本管理工具整合进最终的产品中，这样的好处是软件开发可以较好地适应变化，客户可以不断地看到所开发的软件。</li>
+<li>开发环境和工具<br>Ubuntu 16.04<br>IDEA、Maven 3.5.0、Tomcat 7.0.53、JDK 1.8、MySQL 5.6、Nginx 1.8.0、Redis 3.0.0、SVN</li>
+<li>主要技术<br>JSP、JSTL、jQuery、jQuery plugin、EasyUI、KindEditor<br>Spring、SpringMVC、Solr、HttpClient、Nginx<br>MyBatis、MySQL、Redis</li>
+</ol>
+<h3 id="系统分析"><a href="#系统分析" class="headerlink" title="系统分析"></a>系统分析</h3><ol>
+<li>项目总体介绍<br>Ebuy 购物网站的主要目标是使用 MVC 框架实现一个 B2C 电商平台网站，实现的功能包括后台管理、前台、会员管理、订单管理、商品搜索、单点登录等。考虑到电商系统的普遍要求，如高并发、高可用等，使用到了动静分离、redis 集群等技术。</li>
+<li>Search 子系统分析<br>①　业务分析<br>任意用户都可以在前台首页发起搜索请求，点击搜索按钮后会跳转到一个搜索结果显示页面，结果将以分页列表显示，在这个页面上用户也可以再次发起搜索。如果搜索字段为空，系统将以错误状态码响应。<br>②　功能分析<br>搜索子系统主要包含更新索引和搜索两个功能，如图 2 所示，用户参与 Search 模块的商品搜索用例，而商品搜索用例需要包含 Solr 模块搜索用例的执行，Create Index 用例扩展了 Intem Search 用例，当有新的商品数据被添加到数据库时执行。<br><img src="/imgs/%E6%B7%98%E6%B7%98%E7%BD%91%E7%BB%9C%E5%95%86%E5%9F%8E/Search%E5%8A%9F%E8%83%BD%E6%B4%BB%E5%8A%A8%E5%9B%BE.png" alt="X"><br>图 3 是 Search 用例的活动图，表示用户进行搜索时的大致执行过程，用户可以在首页编辑发送搜索请求，此时前台会发送请求获取搜索结果，渲染页面并将结果显示给用户。</li>
+</ol>
+<h3 id="系统设计"><a href="#系统设计" class="headerlink" title="系统设计"></a>系统设计</h3><ol>
+<li>总体设计<br>Portal 模块（门户），主要由静态的页面数据组成，网页中动态数据是由 AJAX 远程调用其他模块异步生成的；<br>Manager 模块（后台管理），主要负责对整个网站的商品的管理和网站内容的管理；<br>Middle 模块（数据中间件），主要目的是从数据库或者其他服务器获取数据，再使用 JSON 格式返回给 Portal；<br>Search 模块（搜索），为商品建立索引，然后在每次调用搜索接口后将搜索结果包装为 JSON 字符串传回；<br>Order 模块（订单），主要使用 Cookie 来保存订单，当要下单时将购物车中的记录保存到数据库；<br>SSO 模块（单点登录模块），使用一个 Redis 集群保存登录 token，实现单点登录。</li>
+<li>详细设计<br>①　功能模块设计<br>搜索子系统主要功能模块为搜索和更新索引，其功能划分如图 2 所示，其中搜索功能需要首先在 Solr 服务器上给每个商品添加索引，然后在用户访问前台的搜索框时提供商品列表，更新索引功能可以在每次将商品添加到数据库中的同时在 Solr 服务器上更新该商品的索引，从而可以在后台添加商品后用户就能马上在前台找到对应的商品记录。<br>②　类和对象设计<br>以 Search 功能主要涉及的类为例，如图 3 所示，这个系统是按照 MVC 框架设计的，其中前台模块的 ItemController 负责接收请求，具体的搜索任务交给 SearchService 执行，SearchService 调用了搜索模块的相应接口 ItemSearchController 的方法，搜索参数配置在 ItemSearchService 中进行，而具体的搜索功能由 ItemSearchDao 调用 SolrServer 的查询方法执行。<br><img src="/imgs/%E6%B7%98%E6%B7%98%E7%BD%91%E7%BB%9C%E5%95%86%E5%9F%8E/%E6%B7%98%E6%B7%98%E5%95%86%E5%9F%8E%E6%A8%A1%E5%9D%97%E7%BB%93%E6%9E%84%E5%9B%BE.png" alt="X"><br>③　动态模型设计<br>Search 子系统中搜索功能的时序图如图 4 所示，，首先用户在首页搜索框中输入搜索条件，点击搜索按钮，此时预设的 AJAX 程序会以搜索条件为参数调用前台的接口，前台模拟 Http 请求调用 Search 模块的搜索服务，进行格式化和分页处理，以及添加一些参数，调用 Solr 服务器的搜索服务获取结果，再由 Portal 渲染到页面中，完成一次搜索过程。<br><img src="/imgs/%E6%B7%98%E6%B7%98%E7%BD%91%E7%BB%9C%E5%95%86%E5%9F%8E/Search%E5%8A%9F%E8%83%BD%E6%97%B6%E5%BA%8F%E5%9B%BE.png" alt="X"><br>④　算法设计<br>Search 子系统的主要功能是搜索，以下是调用 Solr 搜索服务的算法实现： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">public SearchResult searchItem(SolrQuery solrQuery) throws SolrServerException &#123;</span><br><span class="line">    //根据查询条件搜索索引库</span><br><span class="line">    QueryResponse response = solrServer.query(solrQuery);</span><br><span class="line">    //取商品列表</span><br><span class="line">    SolrDocumentList documentList = response.getResults();</span><br><span class="line">    //商品列表</span><br><span class="line">    List&lt;Item&gt; itemList = new ArrayList&lt;&gt;();</span><br><span class="line">    for (SolrDocument solrDocument : documentList) &#123;</span><br><span class="line">        Item item = new Item();</span><br><span class="line">        item.setId(Long.parseLong((String) solrDocument.get(&quot;id&quot;)));</span><br><span class="line">        //取高亮显示</span><br><span class="line">        Map&lt;String, Map&lt;String, List&lt;String&gt;&gt;&gt; highlighting = response.getHighlighting();</span><br><span class="line">        List&lt;String&gt; list = highlighting.get(solrDocument.get(&quot;id&quot;)).get(&quot;item_title&quot;);</span><br><span class="line">        String title = &quot;&quot;;</span><br><span class="line">        if (null != list &amp;&amp; !list.isEmpty()) &#123;</span><br><span class="line">            title = list.get(0);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            title = (String) solrDocument.get(&quot;item_title&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        item.setTitle(title);</span><br><span class="line">        item.setPrice((Long) solrDocument.get(&quot;item_price&quot;));</span><br><span class="line">        item.setSell_point((String) solrDocument.get(&quot;item_sell_point&quot;));</span><br><span class="line">        item.setImage((String) solrDocument.get(&quot;item_image&quot;));</span><br><span class="line">        item.setCategory_name((String) solrDocument.get(&quot;item_category_name&quot;));</span><br><span class="line"></span><br><span class="line">        itemList.add(item);plain</span><br><span class="line">    &#125;</span><br><span class="line">    SearchResult result = new SearchResult();</span><br><span class="line">    //商品列表</span><br><span class="line">    result.setItemList(itemList);</span><br><span class="line">    //总记录数据</span><br><span class="line">    result.setRecordCount(documentList.getNumFound());</span><br><span class="line">    System.out.println(result.getRecordCount());</span><br><span class="line">    return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+⑤　数据库设计<br>Search 子系统主要使用到的表的 ER 图如图 7 所示。其中最重要的表是 tb_item 表，它的每条记录表示一个商品，search 模块需要使用该表的 id、item_title、item_sell_point 等属性建立索引。<br><img src="/imgs/%E6%B7%98%E6%B7%98%E7%BD%91%E7%BB%9C%E5%95%86%E5%9F%8E/%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A1%A8%E7%BB%93%E6%9E%84.png" alt="X"></li>
+</ol>
+<h3 id="系统实现"><a href="#系统实现" class="headerlink" title="系统实现"></a>系统实现</h3><ol>
+<li><p>Search 模块的运行过程<br>①　首先由 portal 模块的 ItemController 接收到请求，将请求关键字转码并调用 SearchService 的方法</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">queryString = new String(queryString.getBytes(&quot;ISO8859-1&quot;), &quot;UTF-8&quot;);</span><br><span class="line">SearchResult searchResult = searchService.searchItemList(queryString, page);</span><br></pre></td></tr></table></figure>
+<p>②　然后在 portal 模块的 SearchService 中构造参数列表并将请求发送给 search 模块处理</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//查询参数</span><br><span class="line">Map&lt;String, String&gt; param = new HashMap&lt;&gt;();</span><br><span class="line">param.put(&quot;kw&quot;, queryString);</span><br><span class="line">param.put(&quot;page&quot;, page==null?&quot;1&quot;:page.toString());</span><br><span class="line">//调用 search 提供的搜索服务</span><br><span class="line">String resultString = MHttpClientUtil.mdoGet(SEARCH_BASE_URL, param);</span><br></pre></td></tr></table></figure>
+<p>③　search 模块的 ItemSearchController 同样先检验传递过来的参数是否有效，再调用 ItemSearchService 的服务</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">if (StringUtils.isBlank(queryString)) &#123;</span><br><span class="line">    return MResult.build(400, &quot;查询条件是必须的参数&quot;);</span><br><span class="line">&#125;</span><br><span class="line">SearchResult result = itemSearchService.searchItem(queryString, page);</span><br></pre></td></tr></table></figure>
+<p>④　在 search 模块的 ItemSearchService 中，需要为 Solr 查询构造查询对象，包括设置一些查询参数和分页设置等，最后调用 ItemSearchDao 的方法</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">//创建一个查询对象</span><br><span class="line">SolrQuery solrQuery = new SolrQuery();</span><br><span class="line">//查询条件</span><br><span class="line">if(StringUtils.isBlank(queryString)) &#123;</span><br><span class="line">    solrQuery.setQuery(&quot;*:*&quot;);</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    solrQuery.setQuery(queryString);</span><br><span class="line">&#125;</span><br><span class="line">//分页条件</span><br><span class="line">if (page == null) &#123;</span><br><span class="line">    page = 1;</span><br><span class="line">&#125;</span><br><span class="line">solrQuery.setStart((page -1) * PAGE_SIZE);</span><br><span class="line">solrQuery.setRows(PAGE_SIZE);</span><br><span class="line">//高亮显示</span><br><span class="line">solrQuery.setHighlight(true);</span><br><span class="line">//设置高亮显示的域</span><br><span class="line">solrQuery.addHighlightField(&quot;item_title&quot;);</span><br><span class="line">//高亮显示前缀</span><br><span class="line">solrQuery.setHighlightSimplePre(&quot;&lt;em style=\&quot;color:red\&quot;&gt;&quot;);</span><br><span class="line">//后缀</span><br><span class="line">solrQuery.setHighlightSimplePost(&quot;&lt;/em&gt;&quot;);</span><br><span class="line">//设置默认搜索域</span><br><span class="line">solrQuery.set(&quot;df&quot;, &quot;item_keywords&quot;);</span><br><span class="line">//执行查询</span><br><span class="line">SearchResult result = itemSearchDao.searchItem(solrQuery);</span><br></pre></td></tr></table></figure>
+<p>⑤　ItemSearchDao 封装了对 Solr 服务器的访问逻辑，主要过程是发送查询请求，获取 Solr 文档对象，从中解析出结果集合</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">//根据查询条件搜索索引库</span><br><span class="line">QueryResponse response = solrServer.query(solrQuery);</span><br><span class="line">//取商品列表</span><br><span class="line">SolrDocumentList documentList = response.getResults();</span><br><span class="line">//商品列表</span><br><span class="line">List&lt;Item&gt; itemList = new ArrayList&lt;&gt;();</span><br><span class="line">for (SolrDocument solrDocument : documentList) &#123;</span><br><span class="line">    Item item = new Item();</span><br><span class="line">    item.setId(Long.parseLong((String) solrDocument.get(&quot;id&quot;)));</span><br><span class="line">    //取高亮显示</span><br><span class="line">    Map&lt;String, Map&lt;String, List&lt;String&gt;&gt;&gt; highlighting = response.getHighlighting();</span><br><span class="line">    List&lt;String&gt; list = highlighting.get(solrDocument.get(&quot;id&quot;)).get(&quot;item_title&quot;);</span><br><span class="line">    String title = &quot;&quot;;</span><br><span class="line">    if (null != list &amp;&amp; !list.isEmpty()) &#123;</span><br><span class="line">        title = list.get(0);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        title = (String) solrDocument.get(&quot;item_title&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    item.setTitle(title);</span><br><span class="line">    item.setPrice((Long) solrDocument.get(&quot;item_price&quot;));</span><br><span class="line">    item.setSell_point((String) solrDocument.get(&quot;item_sell_point&quot;));</span><br><span class="line">    item.setImage((String) solrDocument.get(&quot;item_image&quot;));</span><br><span class="line">    item.setCategory_name((String) solrDocument.get(&quot;item_category_name&quot;));</span><br><span class="line"></span><br><span class="line">    itemList.add(item);plain</span><br><span class="line">&#125;</span><br><span class="line">SearchResult result = new SearchResult();</span><br><span class="line">//商品列表</span><br><span class="line">result.setItemList(itemList);</span><br><span class="line">//总记录数据</span><br><span class="line">result.setRecordCount(documentList.getNumFound());</span><br><span class="line">System.out.println(result.getRecordCount());</span><br><span class="line">return result;</span><br></pre></td></tr></table></figure>
+<p>⑥　返回，按上面的顺序，将结果返回到 portal 模块的控制器 ItemController 中去<br>⑦　最后 portal 模块的 ItemController 将结果渲染到相应的页面中去</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">model.addAttribute(&quot;itemList&quot;, searchResult.getItemList());</span><br><span class="line">model.addAttribute(&quot;query&quot;, queryString);</span><br><span class="line">model.addAttribute(&quot;totalPages&quot;, searchResult.getPageCount());</span><br><span class="line">model.addAttribute(&quot;page&quot;, searchResult.getCurPage());</span><br><span class="line">model.addAttribute(&quot;pages&quot;, searchResult.getPageCount());</span><br><span class="line">return &quot;search&quot;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>初步成果<br>首页搜索框<br><img src="/imgs/%E6%B7%98%E6%B7%98%E7%BD%91%E7%BB%9C%E5%95%86%E5%9F%8E/%E6%90%9C%E7%B4%A2%E6%A1%86.png" alt="X"><br><img src="/imgs/%E6%B7%98%E6%B7%98%E7%BD%91%E7%BB%9C%E5%95%86%E5%9F%8E/%E5%95%86%E5%93%81%E6%90%9C%E7%B4%A2%E7%BB%93%E6%9E%9C.png" alt="X"></p>
+</li>
+</ol>
+<h3 id="系统测试"><a href="#系统测试" class="headerlink" title="系统测试"></a>系统测试</h3><ol>
+<li>测试方案设计<br>对该搜索子系统的测试主要集中在功能测试和压力测试两方面，即确保正常情况下内容的正确显示及高并发下的可用性。</li>
+<li>测试用例设计<br>①　使用英文和中文进行搜索，判断搜索结果是否正确<br>②　使用 100 个线程分别对该搜索功能进行访问，判断网站是否出现崩溃的现象。</li>
+<li>测试结果及评价<br><img src="/imgs/%E6%B7%98%E6%B7%98%E7%BD%91%E7%BB%9C%E5%95%86%E5%9F%8E/%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95%E7%BB%93%E6%9E%9C.png" alt="X"><br>Search 子模块能够有效显示结果，并且如图在 1000 个线程并发访问的情况下能正常工作。</li>
+</ol>
+<h2 id="体会"><a href="#体会" class="headerlink" title="体会"></a>体会</h2><p>通过这次实训，我收获了很多，一方面学习到了许多以前没学过的专业知识与应用，另一方面还提高了自己动手做项目的能力。本次实训，是对我能力的进一步锻炼，也是一种考验。从中获得的诸多收获，也是很可贵的，是非常有意义的。<br>在实训中我学到了许多新的知识。是一个让我把书本上的理论知识运用于实践中的好机会，原来，学的时候感叹学的内容太难懂，现在想来，有些其实并不难，关键在于理解，而且如果能够在实践中把握知识，情况就会好很多。<br>在这次实训中还锻炼了我许多其他方面的能力，提高了我的综合素质。首先，它锻炼了我与小组成员交流的能力，通过沟通我们才能够很好地分工，努力地为了目标而各尽其力；同时也锻炼了自己吃苦耐劳的精神，因为某些任务具有一定的难度，甚至需要加班加点完成，如果轻言放弃就没有现在最终的成果。</p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%94%B5%E5%95%86/" rel="tag"># 电商</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/69c3279c.html" rel="prev" title="Git">
+                  <i class="fa fa-angle-left"></i> Git
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/6ca318ec.html" rel="next" title="Linux 环境下硬盘数据的迁移">
+                  Linux 环境下硬盘数据的迁移 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

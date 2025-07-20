@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="操作 MasterTODO  Slave  Sentinel  获取集群信息  1redis-cli -p 26379 info Sentinel 获取 master 节点地址  1redis-cli -p 26379 SENTINEL get-master-addr-by-name mymaster  客户端如何连接Sentinel集群在 Sentinel 模式下，客户端不是直接连接服务">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis高可用方案Sentinel">
+<meta property="og:url" content="https://tallate.github.io/d368c702.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="操作 MasterTODO  Slave  Sentinel  获取集群信息  1redis-cli -p 26379 info Sentinel 获取 master 节点地址  1redis-cli -p 26379 SENTINEL get-master-addr-by-name mymaster  客户端如何连接Sentinel集群在 Sentinel 模式下，客户端不是直接连接服务">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/Redis/Sentinel.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/Redis/RedisSentinel%E4%BA%8B%E4%BB%B6.jpg">
+<meta property="og:image" content="https://tallate.github.io/imgs/Redis/Sentinel%E7%9A%84%E4%B8%BB%E8%A6%81%E4%BB%BB%E5%8A%A1.jpg">
+<meta property="og:image" content="https://tallate.github.io/imgs/Redis/RedisSentinel%E6%8A%95%E7%A5%A8.jpg">
+<meta property="article:published_time" content="2019-09-22T04:21:48.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.904Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/Redis/Sentinel.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/d368c702.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/d368c702.html","path":"/d368c702.html","title":"Redis高可用方案Sentinel"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Redis高可用方案Sentinel | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%A6%82%E4%BD%95%E8%BF%9E%E6%8E%A5Sentinel%E9%9B%86%E7%BE%A4"><span class="nav-number">2.</span> <span class="nav-text">客户端如何连接Sentinel集群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sentinel-%E6%89%A7%E8%A1%8C%E5%8E%9F%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">Sentinel 执行原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%E7%8A%B6%E6%80%81%E6%8E%A2%E6%B5%8B"><span class="nav-number">3.1.</span> <span class="nav-text">实例状态探测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8E%E4%B8%BB%E8%A7%82%E4%B8%8B%E7%BA%BF%E5%88%B0%E5%AE%A2%E8%A7%82%E4%B8%8B%E7%BA%BF"><span class="nav-number">3.2.</span> <span class="nav-text">从主观下线到客观下线</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB-%E9%80%89%E4%B8%BE-Sentinel-Leader"><span class="nav-number">3.3.</span> <span class="nav-text">故障转移 - 选举 Sentinel Leader</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E6%84%9F%E7%9F%A5%EF%BC%88info%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">状态感知（info）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%83%E8%B7%B3%E6%A3%80%E6%B5%8B%EF%BC%88ping%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">心跳检测（ping）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E8%A7%82%E4%B8%8B%E7%BA%BF%E5%92%8C%E5%AE%A2%E8%A7%82%E4%B8%8B%E7%BA%BF"><span class="nav-number">6.</span> <span class="nav-text">主观下线和客观下线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E8%BF%81%E7%A7%BB%EF%BC%88Master-%E6%8C%82%E6%8E%89%EF%BC%8CSentinel%E9%80%89%E4%B8%BE%E6%96%B0Master%EF%BC%89"><span class="nav-number">7.</span> <span class="nav-text">故障迁移（Master 挂掉，Sentinel选举新Master）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Slave%E9%80%89%E4%B8%BE"><span class="nav-number">7.1.</span> <span class="nav-text">Slave选举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB"><span class="nav-number">7.2.</span> <span class="nav-text">故障转移</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sentinel-%E9%80%89%E4%B8%BE%E7%9A%84%E5%AE%89%E5%85%A8%E6%80%A7"><span class="nav-number">8.</span> <span class="nav-text">Sentinel 选举的安全性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sentinel-%E6%95%85%E9%9A%9C%E8%BF%81%E7%A7%BB%E7%9A%84%E5%AE%9E%E6%97%B6%E6%80%A7"><span class="nav-number">9.</span> <span class="nav-text">Sentinel 故障迁移的实时性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TILT-%E6%A8%A1%E5%BC%8F"><span class="nav-number">10.</span> <span class="nav-text">TILT 模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BUSY-%E7%8A%B6%E6%80%81"><span class="nav-number">11.</span> <span class="nav-text">BUSY 状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%84%91%E8%A3%82"><span class="nav-number">12.</span> <span class="nav-text">脑裂</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QA"><span class="nav-number">13.</span> <span class="nav-text">QA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5%E4%B8%AA%E5%93%A8%E5%85%B5%E7%9A%84%E9%9B%86%E7%BE%A4%EF%BC%8Cquorum%E8%AE%BE%E7%BD%AE%E4%B8%BA2%EF%BC%8C%E5%9C%A8%E8%BF%90%E8%A1%8C%E8%BF%87%E7%A8%8B%E4%B8%AD%EF%BC%8C%E6%9C%893%E4%B8%AA%E5%AE%9E%E4%BE%8B%E9%83%BD%E5%8F%91%E7%94%9F%E4%BA%86%E6%95%85%E9%9A%9C%EF%BC%8C%E8%BF%99%E6%97%B6%E4%B8%BB%E5%BA%93%E4%B9%9F%E5%8F%91%E7%94%9F%E4%BA%86%E6%95%85%E9%9A%9C%EF%BC%8C%E8%BF%98%E8%83%BD%E6%AD%A3%E7%A1%AE%E5%88%A4%E6%96%AD%E4%B8%BB%E5%BA%93%E7%9A%84%E5%AE%A2%E8%A7%82%E4%B8%8B%E7%BA%BF%E5%90%97%EF%BC%9F%E8%BF%98%E8%83%BD%E6%89%A7%E8%A1%8C%E4%B8%BB%E4%BB%8E%E7%9A%84%E8%87%AA%E5%8A%A8%E5%88%87%E6%8D%A2%E5%90%97%EF%BC%9F"><span class="nav-number">13.1.</span> <span class="nav-text">5个哨兵的集群，quorum设置为2，在运行过程中，有3个实例都发生了故障，这时主库也发生了故障，还能正确判断主库的客观下线吗？还能执行主从的自动切换吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%A8%E5%85%B5%E5%AE%9E%E4%BE%8B%E6%98%AF%E4%B8%8D%E6%98%AF%E8%B6%8A%E5%A4%9A%E8%B6%8A%E5%A5%BD%EF%BC%9F"><span class="nav-number">13.2.</span> <span class="nav-text">哨兵实例是不是越多越好？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E5%A4%A7down-after-milliseconds%E5%AF%B9%E5%87%8F%E5%B0%91%E8%AF%AF%E5%88%A4%E6%98%AF%E4%B8%8D%E6%98%AF%E6%9C%89%E5%A5%BD%E5%A4%84%EF%BC%9F"><span class="nav-number">13.3.</span> <span class="nav-text">调大down-after-milliseconds对减少误判是不是有好处？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">14.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/d368c702.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Redis高可用方案Sentinel | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis高可用方案Sentinel
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-22 12:21:48" itemprop="dateCreated datePublished" datetime="2019-09-22T12:21:48+08:00">2019-09-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BC%93%E5%AD%98/" itemprop="url" rel="index"><span itemprop="name">缓存</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+
+
+<h2 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h2><ol>
+<li><p>Master<br>TODO</p>
+</li>
+<li><p>Slave</p>
+</li>
+<li><p>Sentinel</p>
+</li>
+<li><p>获取集群信息</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -p 26379 info Sentinel</span><br></pre></td></tr></table></figure></li>
+<li><p>获取 master 节点地址</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -p 26379 SENTINEL get-master-addr-by-name mymaster</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="客户端如何连接Sentinel集群"><a href="#客户端如何连接Sentinel集群" class="headerlink" title="客户端如何连接Sentinel集群"></a>客户端如何连接Sentinel集群</h2><p><img src="/imgs/Redis/Sentinel.png" alt="Sentinel" title="Sentinel"><br>在 Sentinel 模式下，客户端不是直接连接服务器的，而是先访问 Sentinel 拿到集群信息再尝试连接 Master。当 Master 发生故障时，客户端会重新向 Sentinel 要地址，并自动完成节点切换。</p>
+<ul>
+<li>Master 和 Slave 的配置和之前并无区别；</li>
+<li>Sentinel 相当于对 Master 的代理，Sentinel 可以通过发布订阅功能获取到 Slave 和其他 Sentinel 的信息。<blockquote>
+<p>其实 Sentinel 的内核与其他形式的 Redis 服务器基本一致，只是支持的命令不同、负责的任务也不同。</p>
+</blockquote>
+</li>
+</ul>
+<p>同理，客户端也可以通过pubsub功能来订阅集群中的其他信息，关键事件如下：<br><img src="/imgs/Redis/RedisSentinel%E4%BA%8B%E4%BB%B6.jpg" alt="RedisSentinel事件" title="RedisSentinel事件"></p>
+<h2 id="Sentinel-执行原理"><a href="#Sentinel-执行原理" class="headerlink" title="Sentinel 执行原理"></a>Sentinel 执行原理</h2><p><img src="/imgs/Redis/Sentinel%E7%9A%84%E4%B8%BB%E8%A6%81%E4%BB%BB%E5%8A%A1.jpg" alt="Sentinel的主要任务" title="Sentinel的主要任务"><br>在Sentinel的主事件循环中可以看到它每100毫秒执行的定时任务：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">int serverCron(struct aeEventLoop *eventLoop, long long id, void *clientData) &#123;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    /* Run the Sentinel timer if we are in sentinel mode. */</span><br><span class="line">    // 如果服务器运行在 sentinel 模式下，那么执行 SENTINEL 的主函数</span><br><span class="line">    run_with_period(100) &#123;</span><br><span class="line">        if (server.sentinel_mode) sentinelTimer();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="实例状态探测"><a href="#实例状态探测" class="headerlink" title="实例状态探测"></a>实例状态探测</h3><ul>
+<li>每个 Sentinel 以每秒钟一次的频率向它所知的主服务器、从服务器以及其他 Sentinel 实例发送一个 <code>PING 命令</code>。<br>如果一个实例（instance）距离最后一次有效回复 <code>PING</code> 命令的时间超过 <code>down-after-milliseconds</code> 选项所指定的值， 那么这个实例会被 Sentinel 标记为<strong>主观下线</strong>。 一个有效回复可以是： +PONG 、 -LOADING 或者 -MASTERDOWN。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br></pre></td><td class="code"><pre><span class="line">void sentinelHandleDictOfRedisInstances(dict *instances) &#123;</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    // 遍历多个实例，这些实例可以是多个主服务器、多个从服务器或者多个 sentinel</span><br><span class="line">    di = dictGetIterator(instances);</span><br><span class="line">    while((de = dictNext(di)) != NULL) &#123;</span><br><span class="line"></span><br><span class="line">        // 取出实例对应的实例结构</span><br><span class="line">        sentinelRedisInstance *ri = dictGetVal(de);</span><br><span class="line"></span><br><span class="line">        // 执行调度操作</span><br><span class="line">        sentinelHandleRedisInstance(ri);</span><br><span class="line"></span><br><span class="line">        // 如果被遍历的是主服务器，那么递归地遍历该主服务器的所有从服务器</span><br><span class="line">        // 以及所有 sentinel</span><br><span class="line">        if (ri-&gt;flags &amp; SRI_MASTER) &#123;</span><br><span class="line"></span><br><span class="line">            // 所有从服务器</span><br><span class="line">            sentinelHandleDictOfRedisInstances(ri-&gt;slaves);</span><br><span class="line"></span><br><span class="line">            // 所有 sentinel</span><br><span class="line">            sentinelHandleDictOfRedisInstances(ri-&gt;sentinels);</span><br><span class="line"></span><br><span class="line">            // 对已下线主服务器（ri）的故障迁移已经完成</span><br><span class="line">            // ri 的所有从服务器都已经同步到新主服务器</span><br><span class="line">            if (ri-&gt;failover_state == SENTINEL_FAILOVER_STATE_UPDATE_CONFIG) &#123;</span><br><span class="line">                // 已选出新的主服务器</span><br><span class="line">                switch_to_promoted = ri;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/* Perform scheduled operations for the specified Redis instance. */</span><br><span class="line">// 对给定的实例执行定期操作</span><br><span class="line">void sentinelHandleRedisInstance(sentinelRedisInstance *ri) &#123;</span><br><span class="line"></span><br><span class="line">    /* ========== MONITORING HALF ============ */</span><br><span class="line">    /* ==========     监控操作    =========*/</span><br><span class="line"></span><br><span class="line">    /* Every kind of instance */</span><br><span class="line">    /* 对所有类型实例进行处理 */</span><br><span class="line"></span><br><span class="line">    // 如果有需要的话，创建连向实例的网络连接</span><br><span class="line">    sentinelReconnectInstance(ri);</span><br><span class="line"></span><br><span class="line">    // 根据情况，向实例发送 PING、 INFO 或者 PUBLISH 命令</span><br><span class="line">    sentinelSendPeriodicCommands(ri);</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 根据时间和实例类型等情况，向实例发送命令，比如 INFO 、PING 和 PUBLISH</span><br><span class="line">// 虽然函数的名字包含 Ping ，但命令并不只发送 PING 命令</span><br><span class="line">/* Send periodic PING, INFO, and PUBLISH to the Hello channel to</span><br><span class="line"> * the specified master or slave instance. */</span><br><span class="line">void sentinelSendPeriodicCommands(sentinelRedisInstance *ri) &#123;</span><br><span class="line">    mstime_t now = mstime();</span><br><span class="line">    mstime_t info_period, ping_period;</span><br><span class="line">    int retval;</span><br><span class="line"></span><br><span class="line">    /* Return ASAP if we have already a PING or INFO already pending, or</span><br><span class="line">     * in the case the instance is not properly connected. */</span><br><span class="line">    // 函数不能在网络连接未创建时执行</span><br><span class="line">    if (ri-&gt;flags &amp; SRI_DISCONNECTED) return;</span><br><span class="line"></span><br><span class="line">    /* For INFO, PING, PUBLISH that are not critical commands to send we</span><br><span class="line">     * also have a limit of SENTINEL_MAX_PENDING_COMMANDS. We don&#x27;t</span><br><span class="line">     * want to use a lot of memory just because a link is not working</span><br><span class="line">     * properly (note that anyway there is a redundant protection about this,</span><br><span class="line">     * that is, the link will be disconnected and reconnected if a long</span><br><span class="line">     * timeout condition is detected. */</span><br><span class="line">    // 为了避免 sentinel 在实例处于不正常状态时，发送过多命令</span><br><span class="line">    // sentinel 只在待发送命令的数量未超过 SENTINEL_MAX_PENDING_COMMANDS 常量时</span><br><span class="line">    // 才进行命令发送</span><br><span class="line">    if (ri-&gt;pending_commands &gt;= SENTINEL_MAX_PENDING_COMMANDS) return;</span><br><span class="line"></span><br><span class="line">    /* If this is a slave of a master in O_DOWN condition we start sending</span><br><span class="line">     * it INFO every second, instead of the usual SENTINEL_INFO_PERIOD</span><br><span class="line">     * period. In this state we want to closely monitor slaves in case they</span><br><span class="line">     * are turned into masters by another Sentinel, or by the sysadmin. */</span><br><span class="line">    // 对于从服务器来说， sentinel 默认每 SENTINEL_INFO_PERIOD 秒向它发送一次 INFO 命令</span><br><span class="line">    // 但是，当从服务器的主服务器处于 SDOWN 状态，或者正在执行故障转移时</span><br><span class="line">    // 为了更快速地捕捉从服务器的变动， sentinel 会将发送 INFO 命令的频率该为每秒一次</span><br><span class="line">    if ((ri-&gt;flags &amp; SRI_SLAVE) &amp;&amp;</span><br><span class="line">        (ri-&gt;master-&gt;flags &amp; (SRI_O_DOWN|SRI_FAILOVER_IN_PROGRESS))) &#123;</span><br><span class="line">        info_period = 1000;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        info_period = SENTINEL_INFO_PERIOD;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /* We ping instances every time the last received pong is older than</span><br><span class="line">     * the configured &#x27;down-after-milliseconds&#x27; time, but every second</span><br><span class="line">     * anyway if &#x27;down-after-milliseconds&#x27; is greater than 1 second. */</span><br><span class="line">    ping_period = ri-&gt;down_after_period;</span><br><span class="line">    if (ping_period &gt; SENTINEL_PING_PERIOD) ping_period = SENTINEL_PING_PERIOD;</span><br><span class="line"></span><br><span class="line">    // 实例不是 Sentinel （主服务器或者从服务器）</span><br><span class="line">    // 并且以下条件的其中一个成立：</span><br><span class="line">    // 1）SENTINEL 未收到过这个服务器的 INFO 命令回复</span><br><span class="line">    // 2）距离上一次该实例回复 INFO 命令已经超过 info_period 间隔</span><br><span class="line">    // 那么向实例发送 INFO 命令</span><br><span class="line">    if ((ri-&gt;flags &amp; SRI_SENTINEL) == 0 &amp;&amp;</span><br><span class="line">        (ri-&gt;info_refresh == 0 ||</span><br><span class="line">        (now - ri-&gt;info_refresh) &gt; info_period))</span><br><span class="line">    &#123;</span><br><span class="line">        /* Send INFO to masters and slaves, not sentinels. */</span><br><span class="line">        retval = redisAsyncCommand(ri-&gt;cc,</span><br><span class="line">            sentinelInfoReplyCallback, NULL, &quot;INFO&quot;);</span><br><span class="line">        if (retval == REDIS_OK) ri-&gt;pending_commands++;</span><br><span class="line">    &#125; else if ((now - ri-&gt;last_pong_time) &gt; ping_period) &#123;</span><br><span class="line">        /* Send PING to all the three kinds of instances. */</span><br><span class="line">        sentinelSendPing(ri);</span><br><span class="line">    &#125; else if ((now - ri-&gt;last_pub_time) &gt; SENTINEL_PUBLISH_PERIOD) &#123;</span><br><span class="line">        /* PUBLISH hello messages to all the three kinds of instances. */</span><br><span class="line">        sentinelSendHello(ri);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="从主观下线到客观下线"><a href="#从主观下线到客观下线" class="headerlink" title="从主观下线到客观下线"></a>从主观下线到客观下线</h3><ul>
+<li>如果一个主服务器被标记为<strong>主观下线</strong>， 那么正在监视这个主服务器的所有 Sentinel 要以每秒一次的频率确认主服务器的确进入了主观下线状态。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line">/* Perform scheduled operations for the specified Redis instance. */</span><br><span class="line">// 对给定的实例执行定期操作</span><br><span class="line">void sentinelHandleRedisInstance(sentinelRedisInstance *ri) &#123;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    /* ============== ACTING HALF ============= */</span><br><span class="line">    /* ==============  故障检测   ============= */</span><br><span class="line"></span><br><span class="line">    /* We don&#x27;t proceed with the acting half if we are in TILT mode.</span><br><span class="line">     * TILT happens when we find something odd with the time, like a</span><br><span class="line">     * sudden change in the clock. */</span><br><span class="line">    // 如果 Sentinel 处于 TILT 模式，那么不执行故障检测。</span><br><span class="line">    if (sentinel.tilt) &#123;</span><br><span class="line"></span><br><span class="line">        // 如果 TILI 模式未解除，那么不执行动作</span><br><span class="line">        if (mstime()-sentinel.tilt_start_time &lt; SENTINEL_TILT_PERIOD) return;</span><br><span class="line"></span><br><span class="line">        // 时间已过，退出 TILT 模式</span><br><span class="line">        sentinel.tilt = 0;</span><br><span class="line">        sentinelEvent(REDIS_WARNING,&quot;-tilt&quot;,NULL,&quot;#tilt mode exited&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /* Every kind of instance */</span><br><span class="line">    // 检查给定实例是否进入 SDOWN 状态</span><br><span class="line">    sentinelCheckSubjectivelyDown(ri);</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/* Is this instance down from our point of view? */</span><br><span class="line">// 检查实例是否已下线（从本 Sentinel 的角度来看）</span><br><span class="line">void sentinelCheckSubjectivelyDown(sentinelRedisInstance *ri) &#123;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    /* Update the SDOWN flag. We believe the instance is SDOWN if:</span><br><span class="line">     *</span><br><span class="line">     * 更新 SDOWN 标识。如果以下条件被满足，那么 Sentinel 认为实例已下线：</span><br><span class="line">     *</span><br><span class="line">     * 1) It is not replying.</span><br><span class="line">     *    它没有回应命令</span><br><span class="line">     * 2) We believe it is a master, it reports to be a slave for enough time</span><br><span class="line">     *    to meet the down_after_period, plus enough time to get two times</span><br><span class="line">     *    INFO report from the instance. </span><br><span class="line">     *    Sentinel 认为实例是主服务器，这个服务器向 Sentinel 报告它将成为从服务器，</span><br><span class="line">     *    但在超过给定时限之后，服务器仍然没有完成这一角色转换。</span><br><span class="line">     */</span><br><span class="line">    if (elapsed &gt; ri-&gt;down_after_period ||</span><br><span class="line">        (ri-&gt;flags &amp; SRI_MASTER &amp;&amp;</span><br><span class="line">         ri-&gt;role_reported == SRI_SLAVE &amp;&amp;</span><br><span class="line">         mstime() - ri-&gt;role_reported_time &gt;</span><br><span class="line">          (ri-&gt;down_after_period+SENTINEL_INFO_PERIOD*2)))</span><br><span class="line">    &#123;</span><br><span class="line">        /* Is subjectively down */</span><br><span class="line">        if ((ri-&gt;flags &amp; SRI_S_DOWN) == 0) &#123;</span><br><span class="line">            // 发送事件</span><br><span class="line">            sentinelEvent(REDIS_WARNING,&quot;+sdown&quot;,ri,&quot;%@&quot;);</span><br><span class="line">            // 记录进入 SDOWN 状态的时间</span><br><span class="line">            ri-&gt;s_down_since_time = mstime();</span><br><span class="line">            // 打开 SDOWN 标志</span><br><span class="line">            ri-&gt;flags |= SRI_S_DOWN;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        // 移除（可能有的） SDOWN 状态</span><br><span class="line">        /* Is subjectively up */</span><br><span class="line">        if (ri-&gt;flags &amp; SRI_S_DOWN) &#123;</span><br><span class="line">            // 发送事件</span><br><span class="line">            sentinelEvent(REDIS_WARNING,&quot;-sdown&quot;,ri,&quot;%@&quot;);</span><br><span class="line">            // 移除相关标志</span><br><span class="line">            ri-&gt;flags &amp;= ~(SRI_S_DOWN|SRI_SCRIPT_KILL_SENT);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+如果有足够数量的 Sentinel （至少要达到配置文件指定的数量）在指定的时间范围内同意这一判断， 那么这个主服务器被标记为<strong>客观下线</strong>。<br>这个数量是可以配置的，即<strong>quorum</strong>的数量。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">/* Perform scheduled operations for the specified Redis instance. */</span><br><span class="line">// 对给定的实例执行定期操作</span><br><span class="line">void sentinelHandleRedisInstance(sentinelRedisInstance *ri) &#123;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    /* ============== ACTING HALF ============= */</span><br><span class="line">    /* ==============  故障检测   ============= */</span><br><span class="line">    </span><br><span class="line">    ...这里省略SDOWN检测代码</span><br><span class="line"></span><br><span class="line">    /* Only masters */</span><br><span class="line">    /* 对主服务器进行处理 */</span><br><span class="line">    if (ri-&gt;flags &amp; SRI_MASTER) &#123;</span><br><span class="line"></span><br><span class="line">        // 判断 master 是否进入 ODOWN 状态</span><br><span class="line">        sentinelCheckObjectivelyDown(ri);</span><br><span class="line"></span><br><span class="line">        // 如果主服务器进入了 ODOWN 状态，那么开始一次故障转移操作</span><br><span class="line">        if (sentinelStartFailoverIfNeeded(ri))</span><br><span class="line">            // 强制向其他 Sentinel 发送 SENTINEL is-master-down-by-addr 命令</span><br><span class="line">            // 刷新其他 Sentinel 关于主服务器的状态</span><br><span class="line">            sentinelAskMasterStateToOtherSentinels(ri,SENTINEL_ASK_FORCED);</span><br><span class="line"></span><br><span class="line">        // 执行故障转移</span><br><span class="line">        sentinelFailoverStateMachine(ri);</span><br><span class="line"></span><br><span class="line">        // 如果有需要的话，向其他 Sentinel 发送 SENTINEL is-master-down-by-addr 命令</span><br><span class="line">        // 刷新其他 Sentinel 关于主服务器的状态</span><br><span class="line">        // 这一句是对那些没有进入 if(sentinelStartFailoverIfNeeded(ri)) &#123; /* ... */ &#125;</span><br><span class="line">        // 语句的主服务器使用的</span><br><span class="line">        sentinelAskMasterStateToOtherSentinels(ri,SENTINEL_NO_FLAGS);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>在一般情况下， 每个 Sentinel 会以每 10 秒一次的频率向它已知的所有主服务器和从服务器发送 <code>INFO 命令</code>。 当一个主服务器被 Sentinel 标记为客观下线时， Sentinel 向下线主服务器的所有从服务器发送 INFO 命令的频率会从 10 秒一次改为每秒一次。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">void sentinelSendPeriodicCommands(sentinelRedisInstance *ri) &#123;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    /* If this is a slave of a master in O_DOWN condition we start sending</span><br><span class="line">     * it INFO every second, instead of the usual SENTINEL_INFO_PERIOD</span><br><span class="line">     * period. In this state we want to closely monitor slaves in case they</span><br><span class="line">     * are turned into masters by another Sentinel, or by the sysadmin. */</span><br><span class="line">    // 对于从服务器来说， sentinel 默认每 SENTINEL_INFO_PERIOD 秒向它发送一次 INFO 命令</span><br><span class="line">    // 但是，当从服务器的主服务器处于 SDOWN 状态，或者正在执行故障转移时</span><br><span class="line">    // 为了更快速地捕捉从服务器的变动， sentinel 会将发送 INFO 命令的频率该为每秒一次</span><br><span class="line">    if ((ri-&gt;flags &amp; SRI_SLAVE) &amp;&amp;</span><br><span class="line">        (ri-&gt;master-&gt;flags &amp; (SRI_O_DOWN|SRI_FAILOVER_IN_PROGRESS))) &#123;</span><br><span class="line">        info_period = 1000;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        info_period = SENTINEL_INFO_PERIOD;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    // 实例不是 Sentinel （主服务器或者从服务器）</span><br><span class="line">    // 并且以下条件的其中一个成立：</span><br><span class="line">    // 1）SENTINEL 未收到过这个服务器的 INFO 命令回复</span><br><span class="line">    // 2）距离上一次该实例回复 INFO 命令已经超过 info_period 间隔</span><br><span class="line">    // 那么向实例发送 INFO 命令</span><br><span class="line">    if ((ri-&gt;flags &amp; SRI_SENTINEL) == 0 &amp;&amp;</span><br><span class="line">        (ri-&gt;info_refresh == 0 ||</span><br><span class="line">        (now - ri-&gt;info_refresh) &gt; info_period))</span><br><span class="line">    &#123;</span><br><span class="line">        /* Send INFO to masters and slaves, not sentinels. */</span><br><span class="line">        retval = redisAsyncCommand(ri-&gt;cc,</span><br><span class="line">            sentinelInfoReplyCallback, NULL, &quot;INFO&quot;);</span><br><span class="line">        if (retval == REDIS_OK) ri-&gt;pending_commands++;</span><br><span class="line">    &#125; else if</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+注意上边发请求时使用的回调函数<code>sentinelInfoReplyCallback</code>：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// 处理 INFO 命令的回复</span><br><span class="line">void sentinelInfoReplyCallback(redisAsyncContext *c, void *reply, void *privdata) &#123;</span><br><span class="line">    sentinelRedisInstance *ri = c-&gt;data;</span><br><span class="line">    redisReply *r;</span><br><span class="line"></span><br><span class="line">    if (ri) ri-&gt;pending_commands--;</span><br><span class="line">    if (!reply || !ri) return;</span><br><span class="line">    r = reply;</span><br><span class="line"></span><br><span class="line">    if (r-&gt;type == REDIS_REPLY_STRING) &#123;</span><br><span class="line">        // 解析info命令的响应数据</span><br><span class="line">        sentinelRefreshInstanceInfo(ri,r-&gt;str);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>当没有足够数量的 Sentinel 同意主服务器已经下线，主服务器的客观下线状态就会被移除。<br>当主服务器重新向 Sentinel 的 PING 命令返回有效回复时，主服务器的主观下线状态就会被移除。</li>
+</ul>
+<h3 id="故障转移-选举-Sentinel-Leader"><a href="#故障转移-选举-Sentinel-Leader" class="headerlink" title="故障转移 - 选举 Sentinel Leader"></a>故障转移 - 选举 Sentinel Leader</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">void sentinelHandleRedisInstance(sentinelRedisInstance *ri) &#123;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    /* ============== ACTING HALF ============= */</span><br><span class="line">    /* ==============  故障检测   ============= */</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    /* Only masters */</span><br><span class="line">    /* 对主服务器进行处理 */</span><br><span class="line">    if (ri-&gt;flags &amp; SRI_MASTER) &#123;</span><br><span class="line"></span><br><span class="line">        // 判断 master 是否进入 ODOWN 状态</span><br><span class="line">        sentinelCheckObjectivelyDown(ri);</span><br><span class="line"></span><br><span class="line">        // 如果主服务器进入了 ODOWN 状态，那么开始一次故障转移操作</span><br><span class="line">        if (sentinelStartFailoverIfNeeded(ri))</span><br><span class="line">            // 强制向其他 Sentinel 发送 SENTINEL is-master-down-by-addr 命令</span><br><span class="line">            // 刷新其他 Sentinel 关于主服务器的状态</span><br><span class="line">            sentinelAskMasterStateToOtherSentinels(ri,SENTINEL_ASK_FORCED);</span><br><span class="line"></span><br><span class="line">        // 执行故障转移</span><br><span class="line">        sentinelFailoverStateMachine(ri);</span><br><span class="line"></span><br><span class="line">        // 如果有需要的话，向其他 Sentinel 发送 SENTINEL is-master-down-by-addr 命令</span><br><span class="line">        // 刷新其他 Sentinel 关于主服务器的状态</span><br><span class="line">        // 这一句是对那些没有进入 if(sentinelStartFailoverIfNeeded(ri)) &#123; /* ... */ &#125;</span><br><span class="line">        // 语句的主服务器使用的</span><br><span class="line">        sentinelAskMasterStateToOtherSentinels(ri,SENTINEL_NO_FLAGS);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="状态感知（info）"><a href="#状态感知（info）" class="headerlink" title="状态感知（info）"></a>状态感知（info）</h2><p>Sentinel服务器只需配置Master的地址，其他Slave的信息是通过定时（10秒）向Master发送info命令来获取的，info命令返回的信息中，包含了主从拓扑关系，其中包括每个slave的地址和端口号。有了这些信息后，哨兵就会记住这些节点的拓扑信息，在后续发生故障时，选择合适的slave节点进行故障恢复。<br>哨兵除了向master发送info之外，还会向每个master节点特殊的<code>pubsub</code>中发送master当前的状态信息和哨兵自身的信息，其他哨兵节点通过订阅这个pubsub，就可以拿到每个哨兵发来的信息。这么做的目的主要有2个：</p>
+<ul>
+<li>哨兵节点可以发现其他哨兵的加入，进而方便多个哨兵节点通信，为后续共同协商提供基础</li>
+<li>与其他哨兵节点交换master的状态信息，为后续判断master是否故障提供依据</li>
+</ul>
+<h2 id="心跳检测（ping）"><a href="#心跳检测（ping）" class="headerlink" title="心跳检测（ping）"></a>心跳检测（ping）</h2><p>故障发生时，需要立即启动故障恢复机制，那么Sentinel怎么及时地知道哪些节点发生故障了呢？这主要是通过向所有其他节点发送<code>PING命令</code>来实现的。<br>每个哨兵节点每隔1秒向master、slave、其他哨兵节点发送ping命令，如果对方能在指定时间内响应，说明节点健康存活。如果未在规定时间内（可配置）响应，那么该哨兵节点认为此节点<strong>主观下线</strong>。</p>
+<blockquote>
+<p>至于Sentinel怎么知道其他节点的地址，其实就是通过前面提到的info命令来感知的。</p>
+</blockquote>
+<h2 id="主观下线和客观下线"><a href="#主观下线和客观下线" class="headerlink" title="主观下线和客观下线"></a>主观下线和客观下线</h2><ul>
+<li>主观下线（Subjectively Down， 简称 SDOWN）<br>主观下线指的是单个 Sentinel 实例对服务器做出的下线判断。<br>如果一个服务器没有在 <code>master-down-after-milliseconds</code> 选项所指定的时间内， 对向它发送 <code>PING 命令</code>的 Sentinel 返回一个有效回复（有效回复只有+PONG、-LOADING 错误或 -MASTERDOWN 错误）， 那么 Sentinel 就会将这个服务器标记为主观下线。<blockquote>
+<p>注意是在<code>master-down-after-milliseconds</code>时间内一直返回无效回复。</p>
+</blockquote>
+</li>
+<li>客观下线（Objectively Down， 简称 ODOWN）<br>客观下线指的是多个 Sentinel 实例在对同一个 Master 做出 SDOWN 判断， 并且通过 SENTINEL <code>is-master-down-by-addr</code> 命令互相交流之后，得出的服务器下线判断。 （一个 Sentinel 可以通过向另一个 Sentinel 发送 SENTINEL is-master-down-by-addr 命令来询问对方是否认为给定的服务器已下线。）<br>从主观下线切换到客观下线并不是通过较严格的投票算法，而是采用了<strong>流言协议（gossip protocol）</strong>：只要 Sentinel 在给定时间内从其他 Sentinel 接收到足够数量的 Master 下线通知，那么 Sentinel 就会执行状态的切换；如果之后其他 Sentinel 不再报告 Master 已下线，则客观下线状态就会被移除。<br>只要一个 Sentinel 发现某个 Master 进入客观下线状态，之后就会进入<strong>故障迁移</strong>阶段，选举出一个 Sentinel 对失效的 Master 执行自动故障迁移操作。<blockquote>
+<p>客观下线只适用于 Master，对 Slave 或 Sentinel 则不会达到客观下线状态。</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="故障迁移（Master-挂掉，Sentinel选举新Master）"><a href="#故障迁移（Master-挂掉，Sentinel选举新Master）" class="headerlink" title="故障迁移（Master 挂掉，Sentinel选举新Master）"></a>故障迁移（Master 挂掉，Sentinel选举新Master）</h2><p>单纯的主从架构并不能挽救 Master 挂掉的情况，因此引入了 Sentinel 集群。Sentinel 会不断地检查集群主服务器和从服务器是否运作正常，并在超过 n 个 Sentinel 同意后判断主节点失效（配置<code>sentinel monitor mymaster 127.0.0.1 6379 2</code>表示这个n&#x3D;2），不过要注意，无论设置多少个 Sentinel 同意才能判断一个服务器失效， 一个 Sentinel 都需要获得系统中多数 Sentinel 的支持， 才能发起一次自动故障迁移。</p>
+<ul>
+<li>当一个主服务器不能正常工作时， Sentinel 会开始一次自动故障迁移操作，它会将失效主服务器的其中一个从服务器升级为新的主服务器，并让失效主服务器的其他从服务器改为复制新的主服务器；</li>
+<li>当客户端试图连接失效的主服务器时，集群也会向客户端返回新主服务器的地址，使得集群可以使用新主服务器代替失效服务器。</li>
+</ul>
+<p>故障转移主要分为Sentinel选举和故障转移（Master替换）两个步骤，Sentinel选主流程如下：</p>
+<ul>
+<li>Sentinel发现主服务器已经进入客观下线状态。</li>
+<li>利用<code>Raft leader election</code>算法选举 Sentinel 中的 Leader，对我们的当前 epoch 进行自增， 并尝试在这个epoch中当选，之后，所有 Sentinel 都以更高的 epoch 为准，并主动用更新的 epoch 代替自己的配置。</li>
+<li>如果当选失败， 那么在设定的故障迁移超时时间的两倍之后，重新尝试当选。 如果当选成功， 那么执行Slave的选主。</li>
+</ul>
+<h3 id="Slave选举"><a href="#Slave选举" class="headerlink" title="Slave选举"></a>Slave选举</h3><p>Slave选举的规则如下：</p>
+<ul>
+<li>在失效主服务器属下的从服务器当中， 那些被标记为主观下线、已断线、或者最后一次回复 PING 命令的时间大于五秒钟的从服务器都会被淘汰。</li>
+<li>在失效主服务器属下的从服务器当中， 那些与失效主服务器连接断开的时长超过 down-after 选项指定的时长十倍的从服务器都会被淘汰。</li>
+<li>在经历了以上两轮淘汰之后剩下来的从服务器中， 我们选出复制偏移量（replication offset）最大的那个从服务器作为新的主服务器； 如果复制偏移量不可用， 或者从服务器的复制偏移量相同， 那么带有最小运行 ID 的那个从服务器成为新的主服务器。</li>
+</ul>
+<p>也就是说，多个Slave的优先级按照：slave-priority配置 &gt; 数据完整性 &gt; runid较小者进行选择。</p>
+<p>之后所有Sentinel要进行投票选出一个Leader：<br><img src="/imgs/Redis/RedisSentinel%E6%8A%95%E7%A5%A8.jpg" alt="RedisSentinel投票" title="RedisSentinel投票"></p>
+<p>选出Leader后，Leader需要从现有的Slave中选出</p>
+<h3 id="故障转移"><a href="#故障转移" class="headerlink" title="故障转移"></a>故障转移</h3><p>提升新的Master的流程如下：</p>
+<ul>
+<li>向被选中的从服务器发送 SLAVEOF NO ONE 命令，让它转变为主服务器。</li>
+<li>通过发布与订阅功能， 将更新后的配置传播给所有其他 Sentinel ， 其他 Sentinel 对它们自己的配置进行更新。</li>
+<li>向已下线主服务器的从服务器发送 SLAVEOF 命令， 让它们去复制新的主服务器。</li>
+<li>当所有从服务器都已经开始复制新的主服务器时， 领头 Sentinel 终止这次故障迁移操作。</li>
+</ul>
+<p>客户端感知新master流程如下：<br>哨兵在故障切换完成之后，会向自身节点的指定pubsub中写入一条信息，客户端可以订阅这个pubsub来感知master的变化通知。我们的客户端也可以通过在哨兵节点主动查询当前最新的master，来拿到最新的master地址。<br>另外，哨兵还提供了“钩子”机制，我们也可以在哨兵配置文件中配置一些脚本逻辑，在故障切换完成时，触发“钩子”逻辑，通知客户端发生了切换，让客户端重新在哨兵上获取最新的master地址。<br>一般来说，推荐采用第一种方式进行处理，很多客户端SDK中已经集成好了从哨兵节点获取最新master的方法，我们直接使用即可。</p>
+<h2 id="Sentinel-选举的安全性"><a href="#Sentinel-选举的安全性" class="headerlink" title="Sentinel 选举的安全性"></a>Sentinel 选举的安全性</h2><p>配置安全性：</p>
+<ul>
+<li>每当一个 Redis 实例被重新配置（reconfigured） —— 无论是被设置成主服务器、从服务器、又或者被设置成其他主服务器的从服务器 —— Sentinel 都会向被重新配置的实例发送一个 CONFIG REWRITE 命令， 从而确保这些配置会持久化在硬盘里。完成重新配置之后，从服务器会去复制正确的主服务器。</li>
+<li>Sentinel 的状态会被持久化到 Sentinel 配置文件里，当 Sentinel 接收到新配置或 Leader Sentinel 为 Master 创建一个新配置时，这些配置都会与<code>epoch</code>一起被保存到磁盘；</li>
+</ul>
+<p>故障自动迁移的一致性：</p>
+<ul>
+<li>Raft 算法保证在一个 epoch 里只有一个 Leader Sentinel 产生，减少了脑裂的风险；</li>
+<li>Sentinel 集群总是以更高的 epoch 为准，因为发生<code>网络分区（network partition）</code>时可能会有 Sentinel 包含老的配置，而当这个 Sentinel 服务器接收到其他 Sentinel 的版本更新配置时就会进行更新。</li>
+<li>发生网络分区并且某些 Sentinel 仍在采用老的配置时，如果有客户端连接到这些 Sentinel 上，最终可能就会将请求转发到非 Master 服务器上，造成数据不一致。因此，应该使用 <code>min-slaves-to-write</code> 选项， 让主服务器在连接的从实例少于给定数量时停止执行写操作， 与此同时， 应该在每个运行 Redis 主服务器或从服务器的机器上运行 Redis Sentinel 进程。</li>
+</ul>
+<h2 id="Sentinel-故障迁移的实时性"><a href="#Sentinel-故障迁移的实时性" class="headerlink" title="Sentinel 故障迁移的实时性"></a>Sentinel 故障迁移的实时性</h2><p>故障迁移虽然能提供主从切换来保证挂掉的Master能被其他Slave顶替上来，但是这个顶替过程大概需要多长时间呢？具体又是哪些步骤会比较耗时？</p>
+<ol>
+<li><p>判断Master下线<br>Sentinel会PING Master，如果距离上次PING成功的时间超过了<code>master-down-after-milliseconds</code>时间，则表示主观下线了。<br>将Master标记为SDOWN后，这个Sentinel会通过发事件消息来通知其他Sentinel。</p>
+<blockquote>
+<p>Cluster中是通过gossip协议来通知其他节点的。</p>
+</blockquote>
+</li>
+<li><p>重新选主</p>
+</li>
+<li><p>Slave提升</p>
+</li>
+</ol>
+<p>这个实时性的讨论并不是纯粹的极客行为，因为切换要多长时间是评估我们服务可用性的重要指标，并且提供后续优化的指导方向。</p>
+<h2 id="TILT-模式"><a href="#TILT-模式" class="headerlink" title="TILT 模式"></a>TILT 模式</h2><p>TILT 模式是一种特殊的保护模式，Sentinel 每隔 100ms 会向实例发一次<code>PING</code>命令，并将上一次 PING 成功的时间和当前时间比对，从而知道与该实例有多长时间没有进行任何成功通讯：</p>
+<ul>
+<li>如果两次调用时间之间的差距为负值， 或者非常大（超过 2 秒钟）， 那么 Sentinel 进入 TILT 模式。</li>
+<li>如果 Sentinel 已经进入 TILT 模式， 那么 Sentinel 延迟退出 TILT 模式的时间。<blockquote>
+<p>Sentinel严重依赖计算机的时间功能，一旦计算机的时间功能出现故障， 或者计算机非常忙碌， 又或者进程因为某些原因而被阻塞时， Sentinel 可能也会跟着出现故障。</p>
+</blockquote>
+</li>
+</ul>
+<p>进入 TILT 模式后，Sentinel 仍然会继续监视所有目标，但是：</p>
+<ul>
+<li>它不再执行任何操作，比如故障转移。</li>
+<li>当有实例向这个 Sentinel 发送 SENTINEL <code>is-master-down-by-addr</code> 命令时， Sentinel 返回负值： 因为这个 Sentinel 所进行的下线判断已经不再准确。</li>
+</ul>
+<p>TILT 相当于降级，如果 Sentinel 可以在 TILT 模式下正常维持 30s，那么 Sentinel 会退出 TILT 模式。</p>
+<h2 id="BUSY-状态"><a href="#BUSY-状态" class="headerlink" title="BUSY 状态"></a>BUSY 状态</h2><p>当 Lus 脚本执行时间超过阈值，Redis 会返回<code>BUSY</code>错误，当出现这种情况时， Sentinel 在尝试执行故障转移操作之前， 会先向服务器发送一个 <code>SCRIPT KILL</code> 命令， 如果服务器正在执行的是一个只读脚本的话， 那么这个脚本就会被杀死， 服务器就会回到正常状态。</p>
+<h2 id="脑裂"><a href="#脑裂" class="headerlink" title="脑裂"></a>脑裂</h2><p>虽然Sentinel利用Raft选举不会发生脑裂，但是在一些极端的情况下还是有可能会发生脑裂的，比如：</p>
+<ol>
+<li>原Master不能提供服务了，但是它本身并没有挂掉；</li>
+<li>Sentinel发现连不上Master，于是判定客观下线，并发起主从切换；</li>
+<li>原Master和新Master同时给Client提供服务，发生脑裂。</li>
+</ol>
+<p>这种脑裂并不会影响可用性，但是却破坏了数据的一致性，甚至会导致数据丢失：在Sentinel重连上原Master后，会将其归入到新Master的Slave，这时脑裂期间的数据就会被从新Master上复制过来的数据覆盖掉了，导致数据的丢失。</p>
+<p>脑裂的解决办法主要是以下两个配置参数：</p>
+<ul>
+<li>min-slaves-to-write：这个配置项设置了主库能进行数据同步的最少从库数量；</li>
+<li>min-slaves-max-lag：这个配置项设置了主从库间进行数据复制时，从库给主库发送 ACK 消息的最大延迟（以秒为单位）。</li>
+</ul>
+<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><h3 id="5个哨兵的集群，quorum设置为2，在运行过程中，有3个实例都发生了故障，这时主库也发生了故障，还能正确判断主库的客观下线吗？还能执行主从的自动切换吗？"><a href="#5个哨兵的集群，quorum设置为2，在运行过程中，有3个实例都发生了故障，这时主库也发生了故障，还能正确判断主库的客观下线吗？还能执行主从的自动切换吗？" class="headerlink" title="5个哨兵的集群，quorum设置为2，在运行过程中，有3个实例都发生了故障，这时主库也发生了故障，还能正确判断主库的客观下线吗？还能执行主从的自动切换吗？"></a>5个哨兵的集群，quorum设置为2，在运行过程中，有3个实例都发生了故障，这时主库也发生了故障，还能正确判断主库的客观下线吗？还能执行主从的自动切换吗？</h3><p>判断客户端下线是可以的，因为判断ODOWN的条件是有不少于quorum数量的Sentinel同意即可。<br>不可执行主从切换，因为一个哨兵要执行主从切换，得获得半数以上哨兵的投票同意，也就是3个哨兵。</p>
+<h3 id="哨兵实例是不是越多越好？"><a href="#哨兵实例是不是越多越好？" class="headerlink" title="哨兵实例是不是越多越好？"></a>哨兵实例是不是越多越好？</h3><p>哨兵实例越多，误判率越低，但是判断主库下线和选举Leader时实例要拿到的赞成票也越多，主从切换花费的时间也相对会更多。<br>如果客户端对Redis的响应时间有要求，则很有可能会报警。</p>
+<h3 id="调大down-after-milliseconds对减少误判是不是有好处？"><a href="#调大down-after-milliseconds对减少误判是不是有好处？" class="headerlink" title="调大down-after-milliseconds对减少误判是不是有好处？"></a>调大down-after-milliseconds对减少误判是不是有好处？</h3><p>这个值的作用是：判断距离上次PING成功的时间超过了这个值，就标记实例主观下线。<br>调大的话Sentinel需要更长的时间才能判断集群出问题了，也即影响到Redis的可用性。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="http://redisdoc.com/topic/sentinel.html">Sentinel</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Redis/" rel="tag"># Redis</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/fb6b62e.html" rel="prev" title="Redis高可用方案Cluster">
+                  <i class="fa fa-angle-left"></i> Redis高可用方案Cluster
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/9dda6023.html" rel="next" title="Redis 进程和 IO 模型">
+                  Redis 进程和 IO 模型 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

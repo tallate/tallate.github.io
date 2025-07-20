@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="搭建源码调试环境源码下载地址：unofficial-openjdk&#x2F;openjdk  OpenJDK9 Hotspot Ubuntu 编译和调试mac 环境下搭建：mac 下编译 openjdk1.9 及集成 clion 动态调试  遇到的问题 g++和 gcc 版本不匹配 一些 Warning 被当作错误报错了大部分 Warning 不会影响最终结果，可以关掉：https:&#x2F;&#x2F;b">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM 源码分析">
+<meta property="og:url" content="https://tallate.github.io/e39c963b.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="搭建源码调试环境源码下载地址：unofficial-openjdk&#x2F;openjdk  OpenJDK9 Hotspot Ubuntu 编译和调试mac 环境下搭建：mac 下编译 openjdk1.9 及集成 clion 动态调试  遇到的问题 g++和 gcc 版本不匹配 一些 Warning 被当作错误报错了大部分 Warning 不会影响最终结果，可以关掉：https:&#x2F;&#x2F;b">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-10-05T12:56:12.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.865Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="JVM">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tallate.github.io/e39c963b.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/e39c963b.html","path":"/e39c963b.html","title":"JVM 源码分析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>JVM 源码分析 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%90%AD%E5%BB%BA%E6%BA%90%E7%A0%81%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83"><span class="nav-number">1.</span> <span class="nav-text">搭建源码调试环境</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.</span> <span class="nav-text">遇到的问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%85%E8%AF%BB"><span class="nav-number">1.2.</span> <span class="nav-text">阅读</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91-openjdk"><span class="nav-number">1.3.</span> <span class="nav-text">编译 openjdk</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%BD%8D-Object-%E7%9A%84-native-%E6%96%B9%E6%B3%95"><span class="nav-number">1.4.</span> <span class="nav-text">定位 Object 的 native 方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA-Object-%E7%B1%BB%E6%B7%BB%E5%8A%A0-native-%E6%96%B9%E6%B3%95-nop"><span class="nav-number">1.5.</span> <span class="nav-text">为 Object 类添加 native 方法 nop()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JNI"><span class="nav-number">2.</span> <span class="nav-text">JNI</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90-h%E5%A4%B4%E6%96%87%E4%BB%B6"><span class="nav-number">2.1.</span> <span class="nav-text">生成.h头文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E7%94%A8-native-%E6%96%B9%E6%B3%95%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="nav-number">2.2.</span> <span class="nav-text">调用 native 方法的流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9-Object-%E7%B1%BB%EF%BC%8C%E4%B8%BA%E5%85%B6%E6%B7%BB%E5%8A%A0%E4%B8%80%E4%B8%AA-native-%E6%96%B9%E6%B3%95-nop"><span class="nav-number">2.3.</span> <span class="nav-text">修改 Object 类，为其添加一个 native 方法 nop()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%81%EF%BC%88%E5%86%85%E7%BD%AE%E9%94%81%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">锁（内置锁）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B"><span class="nav-number">4.</span> <span class="nav-text">线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E4%B8%AD%E5%92%8C%E7%BA%BF%E7%A8%8B%E6%93%8D%E4%BD%9C%E7%9B%B8%E5%85%B3%E7%9A%84%E4%B8%80%E4%BA%9B%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">4.1.</span> <span class="nav-text">源码中和线程操作相关的一些数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wait"><span class="nav-number">4.2.</span> <span class="nav-text">wait</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">参考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JNI-1"><span class="nav-number">5.1.</span> <span class="nav-text">JNI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B-1"><span class="nav-number">5.2.</span> <span class="nav-text">线程</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e39c963b.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="JVM 源码分析 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JVM 源码分析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-05 20:56:12" itemprop="dateCreated datePublished" datetime="2019-10-05T20:56:12+08:00">2019-10-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+
+<h2 id="搭建源码调试环境"><a href="#搭建源码调试环境" class="headerlink" title="搭建源码调试环境"></a>搭建源码调试环境</h2><p>源码下载地址：<a target="_blank" rel="noopener" href="https://github.com/unofficial-openjdk/openjdk">unofficial-openjdk&#x2F;openjdk</a></p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000008346240">OpenJDK9 Hotspot Ubuntu 编译和调试</a><br>mac 环境下搭建：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ee7e9176632c">mac 下编译 openjdk1.9 及集成 clion 动态调试</a></li>
+</ol>
+<h3 id="遇到的问题"><a href="#遇到的问题" class="headerlink" title="遇到的问题"></a>遇到的问题</h3><ol>
+<li>g++和 gcc 版本不匹配</li>
+<li>一些 Warning 被当作错误报错了<br>大部分 Warning 不会影响最终结果，可以关掉：<a target="_blank" rel="noopener" href="https://blog.csdn.net/desiyonan/article/details/80802066">https://blog.csdn.net/desiyonan/article/details/80802066</a></li>
+</ol>
+<h3 id="阅读"><a href="#阅读" class="headerlink" title="阅读"></a>阅读</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/54621747">如何找 JDK 中 native 代码的位置？</a></li>
+<li><a target="_blank" rel="noopener" href="http://rednaxelafx.iteye.com/blog/1549577">OpenJDK 源码阅读导航</a></li>
+</ol>
+<h3 id="编译-openjdk"><a href="#编译-openjdk" class="headerlink" title="编译 openjdk"></a>编译 openjdk</h3><ol>
+<li>下载<br>代码的下载见 building 文档，使用一个 Mercurial 工具进行源码控制。</li>
+<li>准备工具<br>找到这种开放源码的软件，第一步当然是查看 README 了，openjdk 的 README 中告知了 building 文档的位置，相当详细。<br>硬件要求<br>操作系统要求<br>编译器要求，需要 gcc 和 clang，他们的区别见<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/20235742">Clang 比 GCC 好在哪里？</a><br>JDK 要求，虽然挺矛盾的，但是一部分模块是用 JDK 写的，所以 Java 编译器也是需要的，一般编译 JDK8 时需要的 JDK 版本是 7 就够了，但是 openjdk 需要 8 才行（不知道为什么），这个 jdk 可以直接使用 apt-get 安装。<br>外部库要求，<br>其他工具，make、bash、autoconf</li>
+<li>configure<br>准备所有配置文件</li>
+<li>make<br>编译源码，默认下只会编译一些必要的部分，如果编译成功可以在 openjdk&#x2F;build 文件夹下找到目标文件，我的成品所在目录是<code>$&#123;openjdk&#125;/build/linux-x86_64-normal-server-release/jdk/bin</code>。</li>
+<li>run test<br>openjdk 使用了一个叫 jtreg 的测试框架，文档有<a target="_blank" rel="noopener" href="http://openjdk.java.net/jtreg/build.html">这里</a>还有<a target="_blank" rel="noopener" href="https://adoptopenjdk.gitbooks.io/adoptopenjdk-getting-started-kit/content/en/intermediate-steps/how_to_use_jtreg_-_java_regression_test_harness.html">这里</a>，我设置了一个愚蠢的环境变量 JAVA18HOME 然后尝试着去<code>make -C make</code>编译它，但是还是提示缺少什么<code>org.testing</code>，可能还有什么依赖库没装，这个框架可能是给 oracle 的内部员工或者外星人用的吧？</li>
+</ol>
+<h3 id="定位-Object-的-native-方法"><a href="#定位-Object-的-native-方法" class="headerlink" title="定位 Object 的 native 方法"></a>定位 Object 的 native 方法</h3><ol>
+<li>搜索“Object”打开 jdk 下的 Object.c 文件<br>看到下面这个方法数组： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">static JNINativeMethod methods[] = &#123;</span><br><span class="line">    &#123;&quot;hashCode&quot;,    &quot;()I&quot;,                    (void *)&amp;JVM_IHashCode&#125;,</span><br><span class="line">    &#123;&quot;wait&quot;,        &quot;(J)V&quot;,                   (void *)&amp;JVM_MonitorWait&#125;,</span><br><span class="line">    &#123;&quot;notify&quot;,      &quot;()V&quot;,                    (void *)&amp;JVM_MonitorNotify&#125;,</span><br><span class="line">    &#123;&quot;notifyAll&quot;,   &quot;()V&quot;,                    (void *)&amp;JVM_MonitorNotifyAll&#125;,</span><br><span class="line">    &#123;&quot;clone&quot;,       &quot;()Ljava/lang/Object;&quot;,   (void *)&amp;JVM_Clone&#125;,</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></li>
+<li>然后搜索“JVM_MonitorWait”打开 hotspot 下的 jvm.cpp 文件<br>里面有下面这条语句： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">JVM_ENTRY(void, JVM_MonitorWait(JNIEnv* env, jobject handle, jlong ms))</span><br><span class="line">  JVMWrapper(&quot;JVM_MonitorWait&quot;);</span><br><span class="line">  Handle obj(THREAD, JNIHandles::resolve_non_null(handle));</span><br><span class="line">  JavaThreadInObjectWaitState jtiows(thread, ms != 0);</span><br><span class="line">  if (JvmtiExport::should_post_monitor_wait()) &#123;</span><br><span class="line">    JvmtiExport::post_monitor_wait((JavaThread *)THREAD, (oop)obj(), ms);</span><br><span class="line"></span><br><span class="line">    // The current thread already owns the monitor and it has not yet</span><br><span class="line">    // been added to the wait queue so the current thread cannot be</span><br><span class="line">    // made the successor. This means that the JVMTI_EVENT_MONITOR_WAIT</span><br><span class="line">    // event handler cannot accidentally consume an unpark() meant for</span><br><span class="line">    // the ParkEvent associated with this ObjectMonitor.</span><br><span class="line">  &#125;</span><br><span class="line">  ObjectSynchronizer::wait(obj, ms, CHECK);</span><br><span class="line">JVM_END</span><br></pre></td></tr></table></figure>
+我们暂时不知道这几个宏到底什么意思，不过核心大概是最后的那个<code>ObjectSynchronizer::wait</code>吧，这个类定义在 C++文件 synchronizer.cpp 中。</li>
+<li>综上所述<br>可以看到如果一个类定义了 native 方法，那么基本可以在 jdk 目录下找到该类的定义（<strong>类所在包结构和其在 openjdk 中的定义的路径有什么关联？？？</strong>），至于其实现，从<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/54621747">知乎</a>上可以找到一段说明，我不知道对错：<blockquote>
+<p>如果间接调用了 hotspot 的实现（jvm 会以动态库的形式被加载，prims 文件夹里定义了 hotspot 与其他模块的接口及其实现），那么从 hotspot&#x2F;src&#x2F;share&#x2F;vm&#x2F;prims&#x2F;jvm.cpp 中可以找到 JVM_Xxx 函数的实现。</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="为-Object-类添加-native-方法-nop"><a href="#为-Object-类添加-native-方法-nop" class="headerlink" title="为 Object 类添加 native 方法 nop()"></a>为 Object 类添加 native 方法 nop()</h3><p>根据<a target="_blank" rel="noopener" href="http://www.infoq.com/cn/articles/Introduction-to-HotSpot">这里</a>的说法，openjdk 有两种方式来定义 native 函数，一种是按一种特别的方式命名函数，这样加载后就可以和 Java 中的 native 方法对上，另一种是使用 registerNatives()的方式，观察 Object.c 文件可以发现，这种方法先定义了一个 JNINativeMethod 类型的静态数组来做 Java 方法和本地函数的对应，然后使用 JNI 方法注册了一个叫 Java_java_lang_Object_registerNatives 的本地方法来实施这种映射。<br>当使用第一种方式在 Object.c 中定义一个特殊命名的 nop()函数时，编译不通过，报错显示<code>Incompatible definition of java.lang.Object</code>，我定义的 nop 函数：<br>    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">JNIEXPORT void JNICALL</span><br><span class="line">Java_java_lang_Object_nop(JNIEnv *env, jobject this)</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>然后下面是我使用第二种方式定义 nop()函数的过程（虽然也不行）：</p>
+<ol>
+<li><p>修改 Object.c<br>methods 数组中添加一行：</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;nop&quot;, &quot;()V&quot;, (void*)&amp;</span><br></pre></td></tr></table></figure>
+<p>这种定义方法参照了<a target="_blank" rel="noopener" href="http://blog.csdn.net/bigapple88/article/details/6756204">这里</a></p>
+</li>
+<li><p>修改 Object.java<br>其所在目录为<code>$&#123;openjdk&#125;/jdk/src/java.base/share/classes/java/lang/Object.java</code>，为其添加一个 nop()方法：</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">*</span><br><span class="line">*/</span><br><span class="line">@HotSpotIntrinsicCandidate</span><br><span class="line">public native void nop();</span><br></pre></td></tr></table></figure>
+<p>为什么要加注释？为什么不能加 final？</p>
+</li>
+<li><p>重编译 make<br>虽然只是添加了一个方法，但是几乎所有包下的都要重新编译了，所以编译过程会稍微有点长。</p>
+</li>
+<li><p>测试<br>使用<code>javap</code>命令反编译可以看到 Object 类中确实已经有了一个 nop()方法：</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javap $&#123;openjdk&#125;/build/linux-x86_64-normal-server-release/jdk/modules/java.base/java/lang/Object.class</span><br></pre></td></tr></table></figure>
+<p><strong>但是实际编译时却报错了，错误大概是Object类不兼容？？？</strong></p>
+</li>
+<li><p>native 方法的实现机制<br>参见 JNI 原理。</p>
+</li>
+</ol>
+<h2 id="JNI"><a href="#JNI" class="headerlink" title="JNI"></a>JNI</h2><h3 id="生成-h头文件"><a href="#生成-h头文件" class="headerlink" title="生成.h头文件"></a>生成.h头文件</h3><p>使用 javah 命令，在项目的 src 目录下运行，其中-d 指定目标目录，-jni 是默认选项，生成 jni 头文件，可以加-classpath 指定 class 路径，但必须是绝对路径</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javah -d ../jni -jni com.tallate.HelloJNI</span><br></pre></td></tr></table></figure>
+<p>接下来编译.c 文件，-c 可以生成目标文件（未链接），-I 可以指定#include 查找的目录，不然 jni 有些头文件找不到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c -I &quot;/usr/lib/jvm/java-8-openjdk-amd64/include&quot; -I &quot;/usr/lib/jvm/java-8-openjdk-amd64/include/linux&quot;  HelloJNI.c </span><br></pre></td></tr></table></figure>
+<p>接下来编译成一个.so 链接库</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc HelloJNI.c -I &quot;/usr/lib/jvm/java-8-openjdk-amd64/include&quot; -I &quot;/usr/lib/jvm/java-8-openjdk-amd64/include/linux&quot; -fPIC -shared -o libhello.so</span><br></pre></td></tr></table></figure>
+<p>接下来可以在Java中加载</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 在linux下动态库必须有前缀lib</span><br><span class="line">System.loadLibrary(&quot;hello&quot;);</span><br></pre></td></tr></table></figure>
+<h3 id="调用-native-方法的流程"><a href="#调用-native-方法的流程" class="headerlink" title="调用 native 方法的流程"></a>调用 native 方法的流程</h3><ol>
+<li>native 方法编译后多一个 ACC_NATIVE 标志</li>
+<li>loadLibrary 方法调用 JVM 的 load 本地方法</li>
+<li>load 方法最终调用系统调用 dlopen 加载动态链接库</li>
+<li>调用本地方法时，实际上调用了 JVM 中加载的函数，栈帧压入本地方法栈中（HotSpot 中本地方法栈&#x3D;虚拟机栈）</li>
+</ol>
+<h3 id="修改-Object-类，为其添加一个-native-方法-nop"><a href="#修改-Object-类，为其添加一个-native-方法-nop" class="headerlink" title="修改 Object 类，为其添加一个 native 方法 nop()"></a>修改 Object 类，为其添加一个 native 方法 nop()</h3><h2 id="锁（内置锁）"><a href="#锁（内置锁）" class="headerlink" title="锁（内置锁）"></a>锁（内置锁）</h2><ol>
+<li>锁的存储结构？</li>
+<li>获取锁的时机？</li>
+<li>释放锁的时机？</li>
+</ol>
+<h2 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h2><p>和 JDK 的线程操作相关的类有 Object 和 Thread，Object 中包括 wait、notify 和 notifyAll，Thread 中包括 yield、sleep、exit、interrupt、join、start，run 的主要任务是执行用户定义的逻辑，还有一些方法已经被 Deprecated，不必再提</p>
+<h3 id="源码中和线程操作相关的一些数据结构"><a href="#源码中和线程操作相关的一些数据结构" class="headerlink" title="源码中和线程操作相关的一些数据结构"></a>源码中和线程操作相关的一些数据结构</h3><ol>
+<li><p>ObjectMonitor<br>对象监视器，定义和声明在 objectMonitor.*中，主要包含</p>
+</li>
+<li><p>ObjectWaiter</p>
+</li>
+<li><p>ObjectSynchronizer</p>
+</li>
+</ol>
+<h3 id="wait"><a href="#wait" class="headerlink" title="wait"></a>wait</h3><p>wait 是 native 方法，实现在 synchronizer.cpp 中，ObjectSynchronizer::wait：</p>
+<ol>
+<li><p>通过<code>ObjectSynchronizer::inflate</code>方法找到 object 中的<code>ObjectMonitor monitor</code></p>
+</li>
+<li><p>调用 monitor.wait<br>wait 方法比较复杂，但是核心过程只有 3 步：</p>
+<ul>
+<li>ObjectMonitor::AddWaiter(..)将新建立的 ObjectWaiter 对象插入_WaitSet 队列的末尾</li>
+<li>ObjectMonitor::exit(..)释放锁</li>
+<li>Self-&gt;_ParkEvent-&gt;park等待</li>
+</ul>
+</li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><h3 id="JNI-1"><a href="#JNI-1" class="headerlink" title="JNI"></a>JNI</h3><ol>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/huachao1001/article/category/2862631">介绍</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/ngvjai/article/details/8520840">生成.so 方法</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/larrylgq/article/details/7515362">修改 java.library.path 方法</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/hackooo/article/details/48395765/">Java JNI 实现原理初探</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.chinaunix.net/uid-22028680-id-3178229.html">Java Native Interface (JNI) 工作原理</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/Anker/p/3746802.html">dlopen</a></li>
+</ol>
+<h3 id="线程-1"><a href="#线程-1" class="headerlink" title="线程"></a>线程</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/23328075">java sleep 和 wait 的区别的疑惑?</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/raintungli/article/details/6532784">java 中的 wait 和 notify 实现的源码分析</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/raintungli/article/details/6553337">JVM Thread stop 的源码分析</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JVM/" rel="tag"># JVM</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/ad5b98b9.html" rel="prev" title="JVM 的结构">
+                  <i class="fa fa-angle-left"></i> JVM 的结构
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/807599f6.html" rel="next" title="JVM 与编译器">
+                  JVM 与编译器 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

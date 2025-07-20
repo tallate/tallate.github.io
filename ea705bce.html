@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="概念 App: App信息 AppNamespace: App下Namespace的元信息 Cluster: 集群信息 Namespace: 集群下的namespace Item: Namespace的配置，每个Item是一个key, value组合 Release: Namespace发布的配置，每个发布包含发布时该Namespace的所有配置 Commit: Namespace下的配置更改">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Apollo 原理总结">
+<meta property="og:url" content="https://tallate.github.io/ea705bce.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="概念 App: App信息 AppNamespace: App下Namespace的元信息 Cluster: 集群信息 Namespace: 集群下的namespace Item: Namespace的配置，每个Item是一个key, value组合 Release: Namespace发布的配置，每个发布包含发布时该Namespace的所有配置 Commit: Namespace下的配置更改">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/Apollo/Apollo%E6%9E%B6%E6%9E%84.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/Apollo/Apollo%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF%E7%9A%84%E5%8F%91%E5%B8%83.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/Apollo/Apollo%E9%85%8D%E7%BD%AE%E5%9C%A8%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%E7%BB%B4%E6%8A%A4.png">
+<meta property="article:published_time" content="2020-10-20T10:14:10.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.887Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="Apollo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/Apollo/Apollo%E6%9E%B6%E6%9E%84.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/ea705bce.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/ea705bce.html","path":"/ea705bce.html","title":"Apollo 原理总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Apollo 原理总结 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Apollo%E6%9E%B6%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">Apollo架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E5%92%8C%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1"><span class="nav-number">3.</span> <span class="nav-text">服务发现和负载均衡</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">4.</span> <span class="nav-text">服务端实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%8E%A8%E9%80%81%E5%A4%A7%E4%BD%93%E6%B5%81%E7%A8%8B"><span class="nav-number">4.1.</span> <span class="nav-text">服务端推送大体流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%91%E9%80%81ReleaseMessage%E7%BB%99Config-Service%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">4.2.</span> <span class="nav-text">发送ReleaseMessage给Config Service的过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Config-Service%E9%80%9A%E7%9F%A5%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">4.3.</span> <span class="nav-text">Config Service通知客户端的过程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">5.</span> <span class="nav-text">客户端实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AFlong-polling"><span class="nav-number">5.1.</span> <span class="nav-text">客户端long-polling</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%AE%9A%E6%97%B6Pull"><span class="nav-number">5.2.</span> <span class="nav-text">客户端定时Pull</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%9C%AC%E5%9C%B0%E5%AF%B9%E9%85%8D%E7%BD%AE%E7%9A%84%E7%BB%B4%E6%8A%A4"><span class="nav-number">5.3.</span> <span class="nav-text">客户端本地对配置的维护</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/ea705bce.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Apollo 原理总结 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Apollo 原理总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-10-20 18:14:10" itemprop="dateCreated datePublished" datetime="2020-10-20T18:14:10+08:00">2020-10-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+<h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><ul>
+<li>App: App信息</li>
+<li>AppNamespace: App下Namespace的元信息</li>
+<li>Cluster: 集群信息</li>
+<li>Namespace: 集群下的namespace</li>
+<li>Item: Namespace的配置，每个Item是一个key, value组合</li>
+<li>Release: Namespace发布的配置，每个发布包含发布时该Namespace的所有配置</li>
+<li>Commit: Namespace下的配置更改记录</li>
+<li>Audit: 审计信息，记录用户在何时使用何种方式操作了哪个实体。</li>
+</ul>
+<h1 id="Apollo架构"><a href="#Apollo架构" class="headerlink" title="Apollo架构"></a>Apollo架构</h1><p><img src="/imgs/Apollo/Apollo%E6%9E%B6%E6%9E%84.png" alt="Apollo架构——图片来自Apollo-github"></p>
+<ul>
+<li>Apollo Client：为应用提供配置查询功能；</li>
+<li>Apollo Config Service：提供配置的读取、推送等功能，服务对象是 Apollo Client；</li>
+<li>Apollo Portal：Apollo管理界面，为开发者提供配置修改功能；</li>
+<li>Apollo Admin Service：提供配置修改、发布等功能，服务对象是Apollo Portal。</li>
+</ul>
+<h1 id="服务发现和负载均衡"><a href="#服务发现和负载均衡" class="headerlink" title="服务发现和负载均衡"></a>服务发现和负载均衡</h1><p>在Apollo中，Config Service和Admin Service都是<strong>多实例</strong>、<strong>无状态</strong>部署的，需要将自己注册到<strong>Eureka</strong>。<br>Eureka负责服务发现，在Eureka之上Apollo又架了一层<strong>Meta Server</strong>用于封装Eureka的服务发现接口：</p>
+<ul>
+<li>Client通过域名访问Meta Server获取Config Service服务列表（IP+Port），而后直接通过IP+Port访问服务，同时在Client侧会做<strong>load balance</strong>、<strong>错误重试</strong>；</li>
+<li>Portal通过域名访问Meta Server获取Admin Service服务列表（IP+Port），而后直接通过IP+Port访问服务，同时在Portal侧会做<strong>load balance</strong>、<strong>错误重试</strong>。</li>
+</ul>
+<p>为什么Apollo使用Eureka而不是别的服务发现组件，比如ZooKeeper？</p>
+<ol>
+<li>提供了完整的服务注册和发现实现，用起来省心；</li>
+<li>项目基础是SpringCloud，已经有应用Eureka的基础；</li>
+</ol>
+<p>Meta Server部署在哪里？<br>Meta Server只是一个逻辑角色，在部署时和Config Service是在一个JVM进程中的，所以IP、端口和Config Service一致</p>
+<h1 id="服务端实现原理"><a href="#服务端实现原理" class="headerlink" title="服务端实现原理"></a>服务端实现原理</h1><p>服务端的主要任务是维护配置信息，以及将配置信息推送到客户端。</p>
+<h2 id="服务端推送大体流程"><a href="#服务端推送大体流程" class="headerlink" title="服务端推送大体流程"></a>服务端推送大体流程</h2><ol>
+<li>用户在Portal操作配置发布</li>
+<li>Portal调用Admin Service的接口操作发布</li>
+<li>Admin Service发布配置后，发送<strong>ReleaseMessage</strong>给各个Config Service</li>
+<li>Config Service收到ReleaseMessage后，<strong>通知对应的客户端</strong></li>
+</ol>
+<h2 id="发送ReleaseMessage给Config-Service的过程"><a href="#发送ReleaseMessage给Config-Service的过程" class="headerlink" title="发送ReleaseMessage给Config Service的过程"></a>发送ReleaseMessage给Config Service的过程</h2><p><img src="/imgs/Apollo/Apollo%E9%85%8D%E7%BD%AE%E4%BF%A1%E6%81%AF%E7%9A%84%E5%8F%91%E5%B8%83.png" alt="Apollo配置信息的发布——图片来自Apollo-github"><br>用户操作配置发布后，Admin Service会往<strong>ReleaseMessage</strong>表插入一条消息记录，然后Config Service<strong>定时轮询</strong>这张表来消费消息。<br>ApolloPortol会调Admin服务发出<strong>消息</strong>，这时，Admin Service作为<strong>Producer</strong>发出消息，各个ConfigService作为<strong>Consumer</strong>消费消息，为了减少对外部的依赖，Apollo发送消息的功能是<strong>通过数据库自己实现的一个简单的消息队列</strong>。</p>
+<ol>
+<li>Admin操作Release：<code>com.ctrip.framework.apollo.portal.controller.ReleaseController#createRelease</code><br>在Admin Service的后台操作界面上可以看到Release操作入口。</li>
+<li>Admin向ReleaseMessage表插入一条消息记录：<code>com.ctrip.framework.apollo.adminservice.controller.ReleaseController#publish</code><br>该消息的内容就是配置发布的AppId+Cluster+Namespace。<br>注意在“发消息”前，先把发布信息存到了Release表中。</li>
+<li>定时扫描消息，<br>扫描消息：<code>com.ctrip.framework.apollo.biz.message.ReleaseMessageScanner</code><br>定时任务逻辑：批量处理，每次扫描500条，每条消息分别触发所有消息监听器（ReleaseMessageListener）。<br>定时任务线程池配置：每100毫秒执行一次，core线程数只有1，但是总线程数为Integer.MAX_INT。</li>
+<li>Config Service通知客户端<br>代码入口：<code>NotificationControllerV2#handleMessage</code><br>注意NotificationControllerV2这个Controller本身也是个消息监听器。<br>Config Service会从消息中获取配置发布的AppId+Cluster+Namespace，然后通知客户端（通知客户端的过程见下面）。</li>
+</ol>
+<h2 id="Config-Service通知客户端的过程"><a href="#Config-Service通知客户端的过程" class="headerlink" title="Config Service通知客户端的过程"></a>Config Service通知客户端的过程</h2><ol>
+<li>客户端发起一个HTTP请求到Config Service<br>入口：&#x2F;notifications&#x2F;v2，对应NotificationControllerV2（注意和上面的消息监听器是同一个类）。</li>
+<li>Config Service将请求挂起<br>通过Spring 的 DeferredResult将请求挂起，默认等待60秒。<br>如果在等待期间有该客户端关注的配置（Namespace）发布，则NotificationControllerV2会调用DeferredResult#setResult传入变化的Namespace信息，同时该请求也会立刻返回。<br>反之，如果60秒内都没有该客户端关注的配置发布，则返回HTTP状态码304给客户端。</li>
+<li>客户端请求最新的Namespace配置<br>如果Config Service返回了配置信息、客户端获取到变化的Namespace信息后，客户端就会立即请求Config Service获取该Namespace的最新配置。</li>
+</ol>
+<h1 id="客户端实现原理"><a href="#客户端实现原理" class="headerlink" title="客户端实现原理"></a>客户端实现原理</h1><p>客户端主要任务是从Config Service获取配置信息（Push和Pull都有），并在本地维护一个配置文件缓存。<br><img src="/imgs/Apollo/Apollo%E9%85%8D%E7%BD%AE%E5%9C%A8%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%E7%BB%B4%E6%8A%A4.png" alt="Apollo配置在客户端的维护——图片来自Apollo-github"></p>
+<h2 id="客户端long-polling"><a href="#客户端long-polling" class="headerlink" title="客户端long-polling"></a>客户端long-polling</h2><p>客户端会和服务端维持一个长连接，以及时接收到配置的变更信息。<br>入口：<code>com.ctrip.framework.apollo.internals.RemoteConfigLongPollService#startLongPolling</code><br>客户端长轮询的是Config Service的配置变更通知接口。当有新通知时就会触发RemoteConfigRepository，立即轮询Config Service的配置读取<code>/configs/&#123;appId&#125;/&#123;clusterName&#125;/&#123;namespace:.+&#125;</code>接口。</p>
+<h2 id="客户端定时Pull"><a href="#客户端定时Pull" class="headerlink" title="客户端定时Pull"></a>客户端定时Pull</h2><p>客户端定时从Config Service拉取应用的配置信息，使用的接口和上面的long-polling一样：<code>/configs/&#123;appId&#125;/&#123;clusterName&#125;/&#123;namespace:.+&#125;</code>。<br>入口：<code>RemoteConfigRepository#scheduleLongPollingRefresh</code><br>这是一个fallback机制，主要目的是防止推送机制失效导致配置不更新。<br>客户端定时拉取会上报本地版本，所以一般情况下，对于定时拉取的操作，服务端都会返回304 - Not Modified。<br>定时频率默认为每5分钟拉取一次，客户端也可以通过在运行时指定System Property: apollo.refreshInterval来覆盖，单位为分钟。</p>
+<h2 id="客户端本地对配置的维护"><a href="#客户端本地对配置的维护" class="headerlink" title="客户端本地对配置的维护"></a>客户端本地对配置的维护</h2><ol>
+<li>客户端从Apollo配置中心服务端获取到应用的最新配置后，会保存在内存中</li>
+<li>客户端会把从服务端获取到的配置在本地文件系统缓存一份<br>在遇到服务不可用，或网络不通的时候，依然能从本地恢复配置</li>
+<li>应用程序可以从Apollo客户端获取最新的配置、订阅配置更新通知</li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/ctripcorp/apollo/wiki/Java%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97">Java客户端使用指南</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/ctripcorp/apollo/wiki/Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E8%AE%BE%E8%AE%A1#31-%E5%92%8Cspring%E9%9B%86%E6%88%90%E7%9A%84%E5%8E%9F%E7%90%86">Apollo配置中心设计</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Apollo/" rel="tag"># Apollo</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/80b748be.html" rel="prev" title="项目总结-bm">
+                  <i class="fa fa-angle-left"></i> 项目总结-bm
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/52fcb70f.html" rel="next" title="Lab_2_Raft">
+                  Lab_2_Raft <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="发号器几乎是最简单的一个中间件了，它旨在生成一个全局唯一ID，用于在业务领域内标识一个对象。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="发号器">
+<meta property="og:url" content="https://tallate.github.io/7731e967.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="发号器几乎是最简单的一个中间件了，它旨在生成一个全局唯一ID，用于在业务领域内标识一个对象。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-09-21T15:51:08.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.892Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="发号器">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tallate.github.io/7731e967.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/7731e967.html","path":"/7731e967.html","title":"发号器"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>发号器 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%91%E5%8F%B7%E5%99%A8%E6%96%B9%E6%A1%88"><span class="nav-number">1.</span> <span class="nav-text">发号器方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">1.1.</span> <span class="nav-text">简单解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Flicker"><span class="nav-number">1.2.</span> <span class="nav-text">Flicker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Twitter-Snowflake"><span class="nav-number">1.3.</span> <span class="nav-text">Twitter - Snowflake</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Instagram"><span class="nav-number">1.4.</span> <span class="nav-text">Instagram</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ShardingJDBC%E4%B8%AD%E7%9A%84%E5%8F%91%E5%8F%B7%E5%99%A8"><span class="nav-number">1.5.</span> <span class="nav-text">ShardingJDBC中的发号器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RocketMQ%E4%B8%AD%E7%9A%84%E6%B6%88%E6%81%AFID%E7%94%9F%E6%88%90"><span class="nav-number">1.6.</span> <span class="nav-text">RocketMQ中的消息ID生成</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/7731e967.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="发号器 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          发号器
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-21 23:51:08" itemprop="dateCreated datePublished" datetime="2019-09-21T23:51:08+08:00">2019-09-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>发号器几乎是最简单的一个中间件了，它旨在生成一个全局唯一ID，用于在业务领域内标识一个对象。</p>
+<span id="more"></span>
+
+<h2 id="发号器方案"><a href="#发号器方案" class="headerlink" title="发号器方案"></a>发号器方案</h2><p>单纯的生成全局 ID 并不是什么难题，但是生成的 ID 通常要满足高并发、分布式等要求：</p>
+<ol>
+<li>全局唯一；</li>
+<li>不要太长，最好 64bit。使用 long 比较好操作，如果是 96bit，那就要各种移位相当的不方便，还有可能有些组件不能支持这么大的 ID；</li>
+<li>独立，业务不需要冠心生成规则；</li>
+<li>安全，至少不能暴露生成规律；</li>
+<li>递增性，比如以时间为序，或者 ID 里包含时间，这样一是可以少一个索引，二是冷热数据容易分离；</li>
+<li>可以控制 ShardingId。比如某一个用户的文章要放在同一个分片内，这样查询效率高，修改也容易。</li>
+<li>不能有单点问题。</li>
+</ol>
+<h3 id="简单解决方案"><a href="#简单解决方案" class="headerlink" title="简单解决方案"></a>简单解决方案</h3><p>UUID、MySQL自增、Redis-incr都是老生常谈了，Redis方案还需要在数据库里多维护一张号段表来增加可用性，这些方案都相对简单，适合在一些小场景中使用，不适合作为一个发号器的实现核心。</p>
+<h3 id="Flicker"><a href="#Flicker" class="headerlink" title="Flicker"></a>Flicker</h3><p>因为 MySQL 本身支持 auto_increment 操作，很自然地，我们会想到借助这个特性来实现这个功能。<br>Flicker 在解决全局 ID 生成方案里就采用了 MySQL 自增长 ID 的机制（auto_increment + replace into + MyISAM）。一个生成 64 位 ID 方案具体就是这样的：</p>
+<ol>
+<li>创建单独的数据库 (eg:ticket)，然后创建一个表： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE Tickets64 (</span><br><span class="line">id bigint(20) unsigned NOT NULL auto_increment,</span><br><span class="line">stub char(1) NOT NULL default &#x27;&#x27;,</span><br><span class="line">PRIMARY KEY (id),</span><br><span class="line">UNIQUE KEY stub (stub)</span><br><span class="line">) ENGINE=MyISAM</span><br></pre></td></tr></table></figure></li>
+<li>当我们插入记录后，执行SELECT * from Tickets64，查询结果就是这样的： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">+-------------------+------+</span><br><span class="line">| id | stub |</span><br><span class="line">+-------------------+------+</span><br><span class="line">| 72157623227190423 | a |</span><br><span class="line">+-------------------+------+</span><br></pre></td></tr></table></figure>
+ 在我们的应用端需要做下面这两个操作，在一个事务会话里提交： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">REPLACE INTO Tickets64 (stub) VALUES (&#x27;a&#x27;);</span><br><span class="line">SELECT LAST_INSERT_ID();</span><br></pre></td></tr></table></figure>
+ 这样我们就能拿到不断增长且不重复的 ID 了。</li>
+<li>我们只是在单台数据库上生成 ID，从高可用角度考虑，接下来就要解决单点故障问题：Flicker 启用了两台数据库服务器来生成 ID，通过区分 auto_increment 的起始值和步长来生成奇偶数的 ID。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">TicketServer1:</span><br><span class="line">auto-increment-increment = 2</span><br><span class="line">auto-increment-offset = 1</span><br><span class="line"></span><br><span class="line">TicketServer2:</span><br><span class="line">auto-increment-increment = 2</span><br><span class="line">auto-increment-offset = 2</span><br></pre></td></tr></table></figure></li>
+<li>在客户端只需要通过轮询方式取 ID。</li>
+</ol>
+<p>优点：充分借助数据库的自增 ID 机制，提供高可靠性，生成的 ID 有序。<br>缺点：占用两个独立的 MySQL 实例，有些浪费资源，成本较高。</p>
+<h3 id="Twitter-Snowflake"><a href="#Twitter-Snowflake" class="headerlink" title="Twitter - Snowflake"></a>Twitter - Snowflake</h3><p>背景：Twitter 在把存储系统从 MySQL 迁移到 Cassandra 的过程中由于 Cassandra 没有顺序 ID 生成机制，于是自己开发了一套全局唯一 ID 生成服务：Snowflake。</p>
+<ul>
+<li>41 位的时间序列（精确到毫秒，41 位的长度可以使用 69 年）10 位的机器标识（10 位的长度最多支持部署 1024 个节点）</li>
+<li>12 位的计数顺序号（12 位的计数顺序号支持每个节点每毫秒产生 4096 个 ID 序号） 最高位是符号位，始终为 0。<br>维度1：时间：用前面 41 bit 来表示时间，精确到毫秒，可以表示69年的数据<br>维度2：机器 ID：用10 bit 来表示，也就是说可以部署 1024 台机器<br>维度3：序列数：用 12 bit 来表示，意味着每台机器，每毫秒最多可以生成 4096个 ID</li>
+</ul>
+<p>优点：高性能，低延迟；独立的应用；按时间有序。充分把信息保存到 ID 里。<br>缺点：需要独立的开发和部署，结构略复杂。</p>
+<blockquote>
+<p>附：官方的代码，参考下</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br></pre></td><td class="code"><pre><span class="line">package com.github.arrayedu;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import org.slf4j.Logger;</span><br><span class="line">import org.slf4j.LoggerFactory;</span><br><span class="line"></span><br><span class="line">import java.util.Random;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Snowflake idworker ,from twitter snowflake project .</span><br><span class="line"> */</span><br><span class="line">public class IdWorker &#123;</span><br><span class="line"></span><br><span class="line">    protected static final Logger LOGGER = LoggerFactory.getLogger(IdWorker.class);</span><br><span class="line">    private long workerId;</span><br><span class="line">    private long datacenterId;</span><br><span class="line">    private long sequence = 0L;</span><br><span class="line"></span><br><span class="line">    private long twepoch = 1451577600000L;</span><br><span class="line"></span><br><span class="line">    private long workerIdBits = 5L;</span><br><span class="line">    private long datacenterIdBits = 5L;</span><br><span class="line">    private long maxWorkerId = ~(-1L &lt;&lt; workerIdBits);</span><br><span class="line">    private long maxDatacenterId = ~(-1L &lt;&lt; datacenterIdBits);</span><br><span class="line">    private long sequenceBits = 12L;</span><br><span class="line"></span><br><span class="line">    private long workerIdShift = sequenceBits;</span><br><span class="line">    private long datacenterIdShift = sequenceBits + workerIdBits;</span><br><span class="line">    private long timestampLeftShift = sequenceBits + workerIdBits + datacenterIdBits;</span><br><span class="line">    private long sequenceMask = ~(-1L &lt;&lt; sequenceBits);</span><br><span class="line"></span><br><span class="line">    private long lastTimestamp = -1L;</span><br><span class="line"></span><br><span class="line">    private Random random = new Random();</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     *</span><br><span class="line">     */</span><br><span class="line">    public IdWorker() &#123;</span><br><span class="line">        this.workerId = -1;</span><br><span class="line">        this.datacenterId = -1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * @param workerId 10 bits workerId，from 0 to 1023</span><br><span class="line">     */</span><br><span class="line">    public IdWorker(long workerId) &#123;</span><br><span class="line">        this((workerId &amp; ~(-1 &lt;&lt; 5)), workerId &gt;&gt; 5);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * @param workerId     5 bits worker id ,from 0 to 31</span><br><span class="line">     * @param datacenterId 5 bits data center id ,from 0 to 31</span><br><span class="line">     */</span><br><span class="line">    public IdWorker(long workerId, long datacenterId) &#123;</span><br><span class="line">        // sanity check for workerId</span><br><span class="line">        if (workerId &gt; maxWorkerId || workerId &lt; 0) &#123;</span><br><span class="line">            throw new IllegalArgumentException(String.format(&quot;worker Id can&#x27;t be greater than %d or less than 0&quot;, maxWorkerId));</span><br><span class="line">        &#125;</span><br><span class="line">        if (datacenterId &gt; maxDatacenterId || datacenterId &lt; 0) &#123;</span><br><span class="line">            throw new IllegalArgumentException(String.format(&quot;datacenter Id can&#x27;t be greater than %d or less than 0&quot;, maxDatacenterId));</span><br><span class="line">        &#125;</span><br><span class="line">        this.workerId = workerId;</span><br><span class="line">        this.datacenterId = datacenterId;</span><br><span class="line">        LOGGER.info(String.format(&quot;worker starting. timestamp left shift %d, datacenter id bits %d, worker id bits %d, sequence bits %d, workerid %d&quot;, timestampLeftShift, datacenterIdBits, workerIdBits, sequenceBits, workerId));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public synchronized long nextId() &#123;</span><br><span class="line">        long timestamp = timeGen();</span><br><span class="line"></span><br><span class="line">        if (timestamp &lt; lastTimestamp) &#123;</span><br><span class="line">            LOGGER.error(String.format(&quot;clock is moving backwards.  Rejecting requests until %d.&quot;, lastTimestamp));</span><br><span class="line">            throw new RuntimeException(String.format(&quot;Clock moved backwards.  Refusing to generate id for %d milliseconds&quot;, lastTimestamp - timestamp));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (lastTimestamp == timestamp) &#123;</span><br><span class="line">            sequence = (sequence + 1) &amp; sequenceMask;</span><br><span class="line">            if (sequence == 0) &#123;</span><br><span class="line">                timestamp = tilNextMillis(lastTimestamp);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">//            sequence = 0L;//this is twitter version</span><br><span class="line">            sequence = random.nextInt(10);// optimize the random number of 0~9 to prevent the id distribution is not balanced</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        lastTimestamp = timestamp;</span><br><span class="line"></span><br><span class="line">        long identity;</span><br><span class="line">        if (datacenterId != -1 &amp;&amp; workerId != -1) &#123;</span><br><span class="line">            identity = (datacenterId &lt;&lt; datacenterIdShift) | (workerId &lt;&lt; workerIdShift);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            //get id from InstanceIdManager</span><br><span class="line">            identity = InstanceIdProxy.getInstanceId();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return ((timestamp - twepoch) &lt;&lt; timestampLeftShift) | identity | sequence;</span><br><span class="line">    &#125;</span><br><span class="line">     /**</span><br><span class="line">     * 保证返回的毫秒数在参数lastTimestamp之后</span><br><span class="line">     */</span><br><span class="line">    private long tilNextMillis(long lastTimestamp) &#123;</span><br><span class="line">        long timestamp = timeGen();</span><br><span class="line">        while (timestamp &lt;= lastTimestamp) &#123;</span><br><span class="line">            timestamp = timeGen();</span><br><span class="line">        &#125;</span><br><span class="line">        return timestamp;</span><br><span class="line">    &#125;</span><br><span class="line">    /**</span><br><span class="line">     * 系统当前毫秒数</span><br><span class="line">     */</span><br><span class="line">    private long timeGen() &#123;</span><br><span class="line">        return System.currentTimeMillis();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Instagram"><a href="#Instagram" class="headerlink" title="Instagram"></a>Instagram</h3><p>Instagram 参考了 Flickr 的方案，再结合 Twitter 的经验，利用 Postgres 数据库的特性，实现了一个更简单可靠的 ID 生成服务。</p>
+<ul>
+<li>使用 41 bit 来存放时间，精确到毫秒，可以使用41年。</li>
+<li>使用 13 bit 来存放逻辑分片 ID。</li>
+<li>使用 10 bit 来存放自增长 ID，意味着每台机器，每毫秒最多可以生成 1024 个 ID</li>
+</ul>
+<p>以 Instagram 举的例子为说明：<br>假定时间是 September 9th, 2011, at 5:00pm，则毫秒数是 1387263000（直接使用系统得到的从 1970 年开始的毫秒数）。</p>
+<ol>
+<li>把时间数据放到 ID 里：<br><code>id = 1387263000 &lt;&lt;(64-41)</code></li>
+<li>分片 ID 放到ID里，假定用户 ID 是 61672，有 1298 个逻辑分片，则分片 ID 是 <code>61672 % 1298-&gt; 666</code>：<br><code>id |= 666 &lt;&lt;(64-41-13)</code></li>
+<li>把自增序列放 ID 里，假定前一个序列是 6000，则新的序列是 6001：<br><code>id |= (6001 % 1024)</code><br>这样就得到了一个全局的分片 ID。</li>
+</ol>
+<p>优势：充分把信息保存到 ID 里。 充分利用数据库自身的机制，程序完全不用额外处理，直接插入到对应的分片的表即可。</p>
+<h3 id="ShardingJDBC中的发号器"><a href="#ShardingJDBC中的发号器" class="headerlink" title="ShardingJDBC中的发号器"></a>ShardingJDBC中的发号器</h3><h3 id="RocketMQ中的消息ID生成"><a href="#RocketMQ中的消息ID生成" class="headerlink" title="RocketMQ中的消息ID生成"></a>RocketMQ中的消息ID生成</h3><p>消息发送前，给消息设置一个唯一ID：<code>MessageClientIDSetter#setUniqID</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public static void setUniqID(final Message msg) &#123;</span><br><span class="line">    if (msg.getProperty(MessageConst.PROPERTY_UNIQ_CLIENT_MESSAGE_ID_KEYIDX) == null) &#123;</span><br><span class="line">        msg.putProperty(MessageConst.PROPERTY_UNIQ_CLIENT_MESSAGE_ID_KEYIDX, createUniqID());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line">public static String createUniqID() &#123;</span><br><span class="line">    StringBuilder sb = new StringBuilder(LEN * 2);</span><br><span class="line">    sb.append(FIX_STRING);</span><br><span class="line">    sb.append(UtilAll.bytes2string(createUniqIDBuffer()));</span><br><span class="line">    return sb.toString();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private static byte[] createUniqIDBuffer() &#123;</span><br><span class="line">    ByteBuffer buffer = ByteBuffer.allocate(4 + 2);</span><br><span class="line">    long current = System.currentTimeMillis();</span><br><span class="line">    if (current &gt;= nextStartTime) &#123;</span><br><span class="line">        setStartTime(current);</span><br><span class="line">    &#125;</span><br><span class="line">    // 4个字节的时间戳</span><br><span class="line">    buffer.putInt((int) (System.currentTimeMillis() - startTime));</span><br><span class="line">    // 2个字节的计数器</span><br><span class="line">    buffer.putShort((short) COUNTER.getAndIncrement());</span><br><span class="line">    return buffer.array();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%8F%91%E5%8F%B7%E5%99%A8/" rel="tag"># 发号器</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/bcd62ed6.html" rel="prev" title="并发和常见并发问题">
+                  <i class="fa fa-angle-left"></i> 并发和常见并发问题
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/fb6b62e.html" rel="next" title="Redis高可用方案Cluster">
+                  Redis高可用方案Cluster <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

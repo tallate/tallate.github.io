@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="sarCollect, report, or save system activity information.根据要统计的信息类型的不同，输出格式也不同。 统计CPU利用率1234# 查看全天sar -p# 每隔1秒统计一次，统计10次sar -u 1 10  CPU统计信息输出格式：  CPUall表示统计信息为所有 CPU 的平均值。 %user显示在用户级别(application)">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux环境运维命令">
+<meta property="og:url" content="https://tallate.github.io/da3bc81f.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="sarCollect, report, or save system activity information.根据要统计的信息类型的不同，输出格式也不同。 统计CPU利用率1234# 查看全天sar -p# 每隔1秒统计一次，统计10次sar -u 1 10  CPU统计信息输出格式：  CPUall表示统计信息为所有 CPU 的平均值。 %user显示在用户级别(application)">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E5%B9%B6%E5%8F%91/Linux%E6%80%A7%E8%83%BD%E8%A7%82%E6%B5%8B%E5%B7%A5%E5%85%B7.png">
+<meta property="article:published_time" content="2019-07-22T14:18:28.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.874Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="命令">
+<meta property="article:tag" content="运维">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/%E5%B9%B6%E5%8F%91/Linux%E6%80%A7%E8%83%BD%E8%A7%82%E6%B5%8B%E5%B7%A5%E5%85%B7.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/da3bc81f.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/da3bc81f.html","path":"/da3bc81f.html","title":"Linux环境运维命令"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Linux环境运维命令 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#sar"><span class="nav-number">1.</span> <span class="nav-text">sar</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%9F%E8%AE%A1CPU%E5%88%A9%E7%94%A8%E7%8E%87"><span class="nav-number">1.1.</span> <span class="nav-text">统计CPU利用率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%88%A9%E7%94%A8%E7%8E%87"><span class="nav-number">1.2.</span> <span class="nav-text">内存利用率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A3%81%E7%9B%98IO"><span class="nav-number">1.3.</span> <span class="nav-text">磁盘IO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E6%B5%81%E9%87%8F"><span class="nav-number">1.4.</span> <span class="nav-text">网络流量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E4%BF%A1%E6%81%AF"><span class="nav-number">2.</span> <span class="nav-text">系统信息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CPU-%E8%BF%9B%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">CPU &amp; 进程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ps"><span class="nav-number">3.1.</span> <span class="nav-text">ps</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pidof"><span class="nav-number">3.2.</span> <span class="nav-text">pidof</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kill"><span class="nav-number">3.3.</span> <span class="nav-text">kill</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#killall"><span class="nav-number">3.4.</span> <span class="nav-text">killall</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#top"><span class="nav-number">3.5.</span> <span class="nav-text">top</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pmap"><span class="nav-number">3.6.</span> <span class="nav-text">pmap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98"><span class="nav-number">4.</span> <span class="nav-text">内存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#proc-meminfo"><span class="nav-number">4.1.</span> <span class="nav-text">&#x2F;proc&#x2F;meminfo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#free"><span class="nav-number">4.2.</span> <span class="nav-text">free</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pmap-1"><span class="nav-number">4.3.</span> <span class="nav-text">pmap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E7%9B%98"><span class="nav-number">5.</span> <span class="nav-text">硬盘</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#df"><span class="nav-number">5.1.</span> <span class="nav-text">df</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#du"><span class="nav-number">5.2.</span> <span class="nav-text">du</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C"><span class="nav-number">6.</span> <span class="nav-text">网络</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ifconfig"><span class="nav-number">6.1.</span> <span class="nav-text">ifconfig</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nc"><span class="nav-number">6.2.</span> <span class="nav-text">nc</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#netstat"><span class="nav-number">6.3.</span> <span class="nav-text">netstat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iostat"><span class="nav-number">6.4.</span> <span class="nav-text">iostat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tcpdump"><span class="nav-number">6.5.</span> <span class="nav-text">tcpdump</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mtr"><span class="nav-number">6.6.</span> <span class="nav-text">mtr</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7"><span class="nav-number">7.</span> <span class="nav-text">监控</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#syslog"><span class="nav-number">7.1.</span> <span class="nav-text">syslog</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dmesg"><span class="nav-number">7.2.</span> <span class="nav-text">dmesg</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#proc-loadavg"><span class="nav-number">7.3.</span> <span class="nav-text">&#x2F;proc&#x2F;loadavg</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#uptime"><span class="nav-number">7.4.</span> <span class="nav-text">uptime</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#vmstat"><span class="nav-number">7.5.</span> <span class="nav-text">vmstat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dmidecode"><span class="nav-number">7.6.</span> <span class="nav-text">dmidecode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">7.7.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/da3bc81f.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Linux环境运维命令 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux环境运维命令
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-07-22 22:18:28" itemprop="dateCreated datePublished" datetime="2019-07-22T22:18:28+08:00">2019-07-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+
+<h2 id="sar"><a href="#sar" class="headerlink" title="sar"></a>sar</h2><p>Collect, report, or save system activity information.<br>根据要统计的信息类型的不同，输出格式也不同。</p>
+<h3 id="统计CPU利用率"><a href="#统计CPU利用率" class="headerlink" title="统计CPU利用率"></a>统计CPU利用率</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 查看全天</span><br><span class="line">sar -p</span><br><span class="line"># 每隔1秒统计一次，统计10次</span><br><span class="line">sar -u 1 10</span><br></pre></td></tr></table></figure>
+
+<p>CPU统计信息输出格式：</p>
+<ul>
+<li>CPU<br>all表示统计信息为所有 CPU 的平均值。</li>
+<li>%user<br>显示在用户级别(application)运行使用 CPU 总时间的百分比。</li>
+<li>%nice<br>显示在用户级别，用于nice操作，所占用 CPU 总时间的百分比。</li>
+<li>%system<br>在核心级别(kernel)运行所使用 CPU 总时间的百分比。</li>
+<li>%iowait<br>显示用于等待I&#x2F;O操作占用 CPU 总时间的百分比。</li>
+<li>%steal<br>管理程序(hypervisor)为另一个虚拟进程提供服务而等待虚拟 CPU 的百分比。</li>
+<li>%idle<br>显示 CPU 空闲时间占用 CPU 总时间的百分比。</li>
+</ul>
+<h3 id="内存利用率"><a href="#内存利用率" class="headerlink" title="内存利用率"></a>内存利用率</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 查看全天</span><br><span class="line">sar -r</span><br><span class="line"># 每隔1秒统计一次，统计10次</span><br><span class="line">sar -r 1 10</span><br></pre></td></tr></table></figure>
+
+<p>内存统计信息输出格式</p>
+<ul>
+<li>kbmemfree<br>这个值和free命令中的free值基本一致，所以它不包括buffer和cache的空间。</li>
+<li>kbmemused<br>这个值和free命令中的used值基本一致，所以它包括buffer和cache的空间。</li>
+<li>%memused<br>这个值是kbmemused和内存总量(不包括swap)的一个百分比。</li>
+<li>kbbuffers和kbcached<br>这两个值就是free命令中的buffer和cache。</li>
+<li>kbcommit<br>保证当前系统所需要的内存，即为了确保不溢出而需要的内存(RAM+swap)。</li>
+<li>%commit<br>这个值是kbcommit与内存总量(包括swap)的一个百分比。</li>
+</ul>
+<h3 id="磁盘IO"><a href="#磁盘IO" class="headerlink" title="磁盘IO"></a>磁盘IO</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 查看全天</span><br><span class="line">sar -d</span><br><span class="line"># 每隔1秒统计一次，统计10次</span><br><span class="line">sar -d 1 10</span><br></pre></td></tr></table></figure>
+
+<p>IO信息输出格式</p>
+<ul>
+<li>await<br>表示平均每次设备I&#x2F;O操作的等待时间（以毫秒为单位）。 </li>
+<li>svctm<br>表示平均每次设备I&#x2F;O操作的服务时间（以毫秒为单位）。</li>
+<li>%util<br>表示一秒中有百分之几的时间用于I&#x2F;O操作。</li>
+</ul>
+<h3 id="网络流量"><a href="#网络流量" class="headerlink" title="网络流量"></a>网络流量</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 查看全天</span><br><span class="line">sar -n DEV</span><br><span class="line"># 每个1秒统计一次，统计10次</span><br><span class="line">sar -n DEV 1 10</span><br></pre></td></tr></table></figure>
+
+<p>流量信息输出格式：</p>
+<ul>
+<li>IFACE<br>就是网络设备的名称。</li>
+<li>rxpck&#x2F;s<br>每秒钟接收到的包数目。</li>
+<li>txpck&#x2F;s<br>每秒钟发送出去的包数目。</li>
+<li>rxkB&#x2F;s<br>每秒钟接收到的字节数。</li>
+<li>txkB&#x2F;s<br>每秒钟发送出去的字节数。</li>
+<li>rxcmp&#x2F;s<br>每秒钟接收到的压缩包数目。</li>
+<li>txcmp&#x2F;s<br>每秒钟发送出去的压缩包数目。</li>
+<li>rxmcst&#x2F;s<br>每秒钟接收到的多播包的包数目。</li>
+</ul>
+<h2 id="系统信息"><a href="#系统信息" class="headerlink" title="系统信息"></a>系统信息</h2><ol>
+<li>操作系统版本<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">head -n 1 /etc/issue</span><br></pre></td></tr></table></figure></li>
+<li>uname（系统信息）<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname -a</span><br></pre></td></tr></table></figure></li>
+<li>hostname（计算机名称）<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname</span><br></pre></td></tr></table></figure></li>
+<li>lspci（PCI 设备信息）<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lspci -tv</span><br></pre></td></tr></table></figure></li>
+<li>lsusb（USB 设备信息）<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsusb -tv</span><br></pre></td></tr></table></figure></li>
+<li>lsmod（系统加载的模块信息）<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lsmod</span><br></pre></td></tr></table></figure></li>
+<li>CPU 信息<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /proc/cpuinfo</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="CPU-进程"><a href="#CPU-进程" class="headerlink" title="CPU &amp; 进程"></a>CPU &amp; 进程</h2><h3 id="ps"><a href="#ps" class="headerlink" title="ps"></a>ps</h3><p>查看进程状态。</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-a</td>
+<td>显示所有的进程（包括其他用户的）</td>
+</tr>
+<tr>
+<td>-u</td>
+<td>用户以及其他详细信息</td>
+</tr>
+<tr>
+<td>-x</td>
+<td>显示没有控制终端的进程</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ps -ef</span><br><span class="line">ps -aux</span><br><span class="line">$ ps -e -o &#x27;pid,comm,args,pcpu,rsz,vsz,stime,user,uid&#x27;</span><br><span class="line"># 其中rsz为实际内存，实现按内存排序，由大到小</span><br><span class="line">$ ps -e -o &#x27;pid,comm,args,pcpu,rsz,vsz,stime,user,uid&#x27; | grep oracle | sort -nrk5</span><br></pre></td></tr></table></figure>
+
+<p>linux 系统中进程最常见的 5 种状态为：</p>
+<ul>
+<li>R(运行):正在运行或在运行队列中等待。</li>
+<li>S(中断):休眠中, 在等待某个条件的形成或接受到信号。</li>
+<li>D(不可中断):收到信号不唤醒和不可运行, 进程必须等待直到有中断发生。</li>
+<li>Z(僵死):进程已终止, 但进程描述符存在, 直到父进程调用 wait()系统调用后释放。</li>
+<li>T(停止):进程收到 SIGSTOP, SIGSTP, SIGTIN, SIGTOU 信号后停止运行。</li>
+</ul>
+<p>当执行”ps aux”命令后通常会看到下面格式的进程状态，表格中只是列举了部分输出值，而且正常的输出值中不包括中文注释部分：</p>
+<table>
+<thead>
+<tr>
+<th>USER</th>
+<th>PID</th>
+<th>%CPU</th>
+<th>%MEM</th>
+<th>VSZ</th>
+<th>RSS</th>
+<th>TTY</th>
+<th>STAT</th>
+<th>START</th>
+<th>TIME</th>
+<th>COMMAND</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>进程的所有者</td>
+<td>进程 ID 号</td>
+<td>运算器占用率</td>
+<td>内存占用率</td>
+<td>虚拟内存使用量(单位是 KB)</td>
+<td>占用的固定内存量(单位是 KB)</td>
+<td>所在终端</td>
+<td>进程状态</td>
+<td>被启动的时间</td>
+<td>实际使用 CPU 的时间</td>
+<td>命令名称与参数</td>
+</tr>
+<tr>
+<td>root</td>
+<td>1</td>
+<td>0.0</td>
+<td>0.4</td>
+<td>53684</td>
+<td>7628</td>
+<td>?</td>
+<td>Ss</td>
+<td>07:22</td>
+<td>0:02</td>
+<td>&#x2F;usr&#x2F;lib&#x2F;systemd&#x2F;systemd</td>
+</tr>
+<tr>
+<td>root</td>
+<td>2</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0</td>
+<td>0</td>
+<td>?</td>
+<td>S</td>
+<td>07:22</td>
+<td>0:00</td>
+<td>[kthreadd]</td>
+</tr>
+<tr>
+<td>root</td>
+<td>3</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0</td>
+<td>0</td>
+<td>?</td>
+<td>S</td>
+<td>07:22</td>
+<td>0:00</td>
+<td>[ksoftirqd&#x2F;0]</td>
+</tr>
+<tr>
+<td>root</td>
+<td>5</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0</td>
+<td>0</td>
+<td>?</td>
+<td>S&lt;</td>
+<td>07:22</td>
+<td>0:00</td>
+<td>[kworker&#x2F;0:0H]</td>
+</tr>
+<tr>
+<td>root</td>
+<td>7</td>
+<td>0.0</td>
+<td>0.0</td>
+<td>0</td>
+<td>0</td>
+<td>?</td>
+<td>S</td>
+<td>07:22</td>
+<td>0:00</td>
+<td>[migration&#x2F;0]</td>
+</tr>
+</tbody></table>
+<h3 id="pidof"><a href="#pidof" class="headerlink" title="pidof"></a>pidof</h3><p>查询某个指定服务的进程 PID 号码值，比如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pidof firefox</span><br></pre></td></tr></table></figure>
+
+<h3 id="kill"><a href="#kill" class="headerlink" title="kill"></a>kill</h3><p>终止某个指定 PID 号码的进程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ kill &lt;PID&gt;</span><br><span class="line"># 杀掉所有进程名里带idea的</span><br><span class="line">$ ps -aux | grep idea | awk &#x27;&#123;print $2&#125;&#x27; | xargs kill</span><br></pre></td></tr></table></figure>
+
+<h3 id="killall"><a href="#killall" class="headerlink" title="killall"></a>killall</h3><p>终止某个指定名称的服务所对应的全部进程，因为一般大型软件的服务程序通常都会有数个进程协同为其提供服务，如果逐个去结束 PID 实在麻烦，所以可以使用 killall 命令来批量结束某个服务程序的全部进程，比如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ killall httpd</span><br></pre></td></tr></table></figure>
+
+<h3 id="top"><a href="#top" class="headerlink" title="top"></a>top</h3><p>top 命令是 Linux 下常用的性能分析工具，能够动态监视进程活动与系统负载等信息，类似于 Windows 的任务管理器<br>可以直接使用 top 命令后，查看%MEM 的内容。可以选择按进程查看或者按用户查看，如想查看 oracle 用户的进程内存使用情况的话可以使用如下的命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ top -u oracle</span><br></pre></td></tr></table></figure>
+<p>示例输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">top - 17:59:11 up 289 days,  5:57, 20 users,  load average: 0.01, 0.02, 0.05</span><br><span class="line">Tasks: 201 total,   2 running, 199 sleeping,   0 stopped,   0 zombie</span><br><span class="line">%Cpu(s):  0.1 us,  0.0 sy,  0.0 ni, 99.9 id,  0.0 wa,  0.0 hi,  0.0 si,  0.0 st</span><br><span class="line">KiB Mem :  8010956 total,   465600 free,   886236 used,  6659120 buff/cache</span><br><span class="line">KiB Swap:  8191996 total,  8170296 free,    21700 used.  6412852 avail Mem</span><br><span class="line"></span><br><span class="line">   PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND</span><br><span class="line">   751 root      20   0  555136   7428   3784 S   0.3  0.1  29:27.31 tuned</span><br><span class="line">  1176 root      20   0   91160   2032   1712 S   0.3  0.0 248:22.80 zabbix_agentd</span><br><span class="line">  2287 root      20   0 1033580 260536   3204 S   0.3  3.3 149:31.25 salt-minion</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<p>前面的五行为系统整体的统计信息，下面我们来逐行的讲解：</p>
+<ul>
+<li>第 1 行:系统时间，运行时间（上例中是 289 天 5 小时 57 分），登录用户数，系统负载（分别为 1 分钟、5 分钟、15 分钟的平均值）。</li>
+<li>第 2 行:进程总数，运行中的，睡眠中的，停止的，僵死的。</li>
+<li>第 3 行:用户态占用时间比例（us user），内核态占用时间比例（sy system），改变过优先级的进程占用时间比例（ni nice），空闲 CPU 时间比例（id idle），等待 IO 时间比例（wa iowait），处理硬中断时间比例（hi hard interrupt），处理软中断时间比例（si soft interrupt），当前系统运行在虚拟机中的时候、被其他虚拟机占用的 CPU 时间比例（st steal）。<br>此行数据为百分比，比如<code>11.2 id</code>意味着有 11.2%的 CPU 资源是空闲的。</li>
+<li>第 4 行:物理内存总量，空闲量，使用量，作为内核缓存的内存量。</li>
+<li>第 5 行:虚拟内存总量，空闲量，使用量，已被提前加载的内存数据。</li>
+</ul>
+<p>后面每行是进程的统计数据，其中：<br>PID：进程的 ID<br>USER：进程所有者<br>PR：进程的优先级别，越小越优先被执行<br>NInice：值<br>VIRT：进程占用的虚拟内存<br>RES：进程占用的物理内存<br>SHR：进程使用的共享内存<br>S：进程的状态。S 表示休眠，R 表示正在运行，Z 表示僵死状态，N 表示该进程优先值为负数<br>%CPU：进程占用 CPU 的使用率<br>%MEM：进程使用的物理内存和总内存的百分比<br>TIME+：该进程启动后占用的总的 CPU 时间，即占用 CPU 使用时间的累加值。<br>COMMAND：进程启动命令名称</p>
+<p>常用的命令：<br>P：按%CPU 使用率排行<br>T：按 MITE+排行<br>M：按%MEM 排行</p>
+<h3 id="pmap"><a href="#pmap" class="headerlink" title="pmap"></a>pmap</h3><p>可以根据进程查看进程相关信息占用的内存情况，(进程号可以通过 ps 查看)如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ pmap -d 14596</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="内存"><a href="#内存" class="headerlink" title="内存"></a>内存</h2><h3 id="proc-meminfo"><a href="#proc-meminfo" class="headerlink" title="&#x2F;proc&#x2F;meminfo"></a>&#x2F;proc&#x2F;meminfo</h3><p>查看内存总量和空闲内存量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ grep MemTotal /proc/meminfo</span><br><span class="line">$ grep MemFree /proc/meminfo</span><br></pre></td></tr></table></figure>
+<h3 id="free"><a href="#free" class="headerlink" title="free"></a>free</h3><p>内存和交换分区容量及使用情况</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ free</span><br><span class="line">             total       used       free     shared    buffers     cached</span><br><span class="line">Mem:       2902976     932640    1970336       9856        928     328196</span><br><span class="line">-/+ buffers/cache:     603516    2299460</span><br><span class="line">Swap:      2097148          0    2097148</span><br><span class="line">$ free -h</span><br><span class="line">             total       used       free     shared    buffers     cached</span><br><span class="line">Mem:          2.8G       910M       1.9G       9.6M       928K       320M</span><br><span class="line">-/+ buffers/cache:       589M       2.2G</span><br><span class="line">Swap:         2.0G         0B       2.0G</span><br></pre></td></tr></table></figure>
+<p>total：总计内存量<br>used：已用量<br>free：可用量<br>shared：进程共享的内存量<br>buffers：磁盘缓存的内存量<br>cached：缓存的内存量</p>
+<h3 id="pmap-1"><a href="#pmap-1" class="headerlink" title="pmap"></a>pmap</h3><p>TODO</p>
+<h2 id="硬盘"><a href="#硬盘" class="headerlink" title="硬盘"></a>硬盘</h2><h3 id="df"><a href="#df" class="headerlink" title="df"></a>df</h3><p>硬盘分区使用情况</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">df</span><br></pre></td></tr></table></figure>
+<h3 id="du"><a href="#du" class="headerlink" title="du"></a>du</h3><p>查看某个目录的大小</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">du -sh &lt;目录&gt;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h2><p>TODO</p>
+<h3 id="ifconfig"><a href="#ifconfig" class="headerlink" title="ifconfig"></a>ifconfig</h3><p>获取网卡配置与网络状态等信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">$ ifconfig</span><br><span class="line"></span><br><span class="line">eno16777728: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500</span><br><span class="line">        ether 00:0c:29:62:f3:d0  txqueuelen 1000  (Ethernet)</span><br><span class="line">        RX packets 0  bytes 0 (0.0 B)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 0  bytes 0 (0.0 B)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br><span class="line"></span><br><span class="line">lo: flags=73&lt;UP,LOOPBACK,RUNNING&gt;  mtu 65536</span><br><span class="line">        inet 127.0.0.1  netmask 255.0.0.0</span><br><span class="line">        inet6 ::1  prefixlen 128  scopeid 0x10&lt;host&gt;</span><br><span class="line">        loop  txqueuelen 0  (Local Loopback)</span><br><span class="line">        RX packets 514  bytes 41612 (40.6 KiB)</span><br><span class="line">        RX errors 0  dropped 0  overruns 0  frame 0</span><br><span class="line">        TX packets 514  bytes 41612 (40.6 KiB)</span><br><span class="line">        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0</span><br></pre></td></tr></table></figure>
+
+<p>注意每段开头的网卡名称、inet 参数后面的 IP 地址、ether 参数后面的物理 mac 地址，以及 RX、TX 的接受与发送数据包的大小</p>
+<h3 id="nc"><a href="#nc" class="headerlink" title="nc"></a>nc</h3><h3 id="netstat"><a href="#netstat" class="headerlink" title="netstat"></a>netstat</h3><h3 id="iostat"><a href="#iostat" class="headerlink" title="iostat"></a>iostat</h3><h3 id="tcpdump"><a href="#tcpdump" class="headerlink" title="tcpdump"></a>tcpdump</h3><h3 id="mtr"><a href="#mtr" class="headerlink" title="mtr"></a>mtr</h3><h2 id="监控"><a href="#监控" class="headerlink" title="监控"></a>监控</h2><p><img src="/imgs/%E5%B9%B6%E5%8F%91/Linux%E6%80%A7%E8%83%BD%E8%A7%82%E6%B5%8B%E5%B7%A5%E5%85%B7.png" alt="Linux性能观测工具" title="Linux性能观测工具"></p>
+<h3 id="syslog"><a href="#syslog" class="headerlink" title="syslog"></a>syslog</h3><p>TODO</p>
+<h3 id="dmesg"><a href="#dmesg" class="headerlink" title="dmesg"></a>dmesg</h3><p>如果发现自己的 java 进程悄无声息的消失了，几乎没有留下任何线索，那么 dmesg 一发，很有可能有你想要的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo dmesg|grep -i kill|less</span><br></pre></td></tr></table></figure>
+<p>去找关键字 oom_killer。找到的结果类似如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[6710782.021013] java invoked oom-killer: gfp_mask=0xd0, order=0, oom_adj=0, oom_scoe_adj=0</span><br><span class="line">[6710782.070639] [&lt;ffffffff81118898&gt;] ? oom_kill_process+0x68/0x140</span><br><span class="line">[6710782.257588] Task in /LXC011175068174 killed as a result of limit of /LXC011175068174</span><br><span class="line">[6710784.698347] Memory cgroup out of memory: Kill process 215701 (java) score 854 or sacrifice child</span><br><span class="line">[6710784.707978] Killed process 215701, UID 679, (java) total-vm:11017300kB, anon-rss:7152432kB, file-rss:1232kB</span><br></pre></td></tr></table></figure>
+<p>以上表明，对应的 java 进程被系统的 OOM Killer 给干掉了，得分为 854.<br>解释一下 OOM killer（Out-Of-Memory killer），该机制会监控机器的内存资源消耗。当机器内存耗尽前，该机制会扫描所有的进程（按照一定规则计算，内存占用，时间等），挑选出得分最高的进程，然后杀死，从而保护机器。<br>dmesg 日志时间转换公式:<br>log 实际时间&#x3D;格林威治 1970-01-01+(当前时间秒数-系统启动至今的秒数+dmesg 打印的 log 时间)秒数：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">date -d &quot;1970-01-01 UTC `echo &quot;$(date +%s)-$(cat /proc/uptime|cut -f 1 -d&#x27; &#x27;)+12288812.926194&quot;|bc ` seconds&quot;</span><br></pre></td></tr></table></figure>
+<p>剩下的，就是看看为什么内存这么大，触发了 OOM-Killer 了。</p>
+<h3 id="proc-loadavg"><a href="#proc-loadavg" class="headerlink" title="&#x2F;proc&#x2F;loadavg"></a>&#x2F;proc&#x2F;loadavg</h3><p>系统负载</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cat /proc/loadavg</span><br></pre></td></tr></table></figure>
+<h3 id="uptime"><a href="#uptime" class="headerlink" title="uptime"></a>uptime</h3><p>包括当前系统时间、系统已运行时间、当前在线用户、平均负载值等。<br>平均负载值指的是最近 1&#x2F;5&#x2F;15 分钟的系统压力情况，负载值越低越好，尽量不要长期超过 1。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ uptime</span><br><span class="line"> 05:43:50 up 16 min,  2 users,  load average: 0.00, 0.07, 0.13</span><br></pre></td></tr></table></figure>
+<p>配合 watch 命令来每秒刷新一次来获得当前系统负载情况：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">watch -n 1 uptime</span><br></pre></td></tr></table></figure>
+
+<h3 id="vmstat"><a href="#vmstat" class="headerlink" title="vmstat"></a>vmstat</h3><p>TODO</p>
+<h3 id="dmidecode"><a href="#dmidecode" class="headerlink" title="dmidecode"></a>dmidecode</h3><p>TODO</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/yangguangqizhi/article/details/46460599">温度 sensors</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI1OTY2MzMxOQ==&mid=2247484815&idx=1&sn=c0a46f3214866ed8eb5dc57aa2c0d3f1&chksm=ea743137dd03b821e455df85b679f4e424562ffb0e91bc2f5d9375ed9dd0995609daf31e8a7e&scene=0&key=b904da80ce1a4b531c6b83f3d10cc8a895a78a74258396b0b242a73af19fb9aa77cfd8cfabc88e7a7c8e9e0e4d78fe9cb7b610d9b508855b47ef0e16722837dce59830bea07c4358092d50e009fbf1ca&ascene=1&uin=MjA2NzI2NzQwOA==&devicetype=Windows+10&version=62060438&lang=en&pass_ticket=8LsQYaL345+99nzLmMavoTGrQ8ZDLhKyzARjq2LyWxzo6RqjVetJ4yoMQFGwcH2f&winzoom=1">Linux 性能检测常用的 10 个基本命令</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/%E5%91%BD%E4%BB%A4/" rel="tag"># 命令</a>
+              <a href="/tags/%E8%BF%90%E7%BB%B4/" rel="tag"># 运维</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/b10d1916.html" rel="prev" title="Linux 环境常用命令">
+                  <i class="fa fa-angle-left"></i> Linux 环境常用命令
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/158d8ca5.html" rel="next" title="sed 使用总结">
+                  sed 使用总结 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

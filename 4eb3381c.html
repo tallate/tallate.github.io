@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="单机环境下的锁单机环境下，资源竞争者都是来自机器内部(进程&#x2F;线程)，那么实现锁的方案只需要借助单机资源就可以了，比如借助磁盘、内存、寄存器来实现。 竞态条件（Race Condition）计算的正确性取决于多个线程的交替执行时序时，就会发生竞态条件。比如：  先检测（查询）后执行。执行依赖于检测的结果，而检测结果依赖于多个线程的执行时序，而多个线程的执行时序通常情况下是不固定不可判断">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式锁">
+<meta property="og:url" content="https://tallate.github.io/4eb3381c.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="单机环境下的锁单机环境下，资源竞争者都是来自机器内部(进程&#x2F;线程)，那么实现锁的方案只需要借助单机资源就可以了，比如借助磁盘、内存、寄存器来实现。 竞态条件（Race Condition）计算的正确性取决于多个线程的交替执行时序时，就会发生竞态条件。比如：  先检测（查询）后执行。执行依赖于检测的结果，而检测结果依赖于多个线程的执行时序，而多个线程的执行时序通常情况下是不固定不可判断">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-06T08:32:14.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.892Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="Lock">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tallate.github.io/4eb3381c.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/4eb3381c.html","path":"/4eb3381c.html","title":"分布式锁"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>分布式锁 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%95%E6%9C%BA%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84%E9%94%81"><span class="nav-number">1.</span> <span class="nav-text">单机环境下的锁</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AB%9E%E6%80%81%E6%9D%A1%E4%BB%B6%EF%BC%88Race-Condition%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">竞态条件（Race Condition）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%81%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">1.2.</span> <span class="nav-text">锁的分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%82%B2%E8%A7%82%E9%94%81"><span class="nav-number">1.3.</span> <span class="nav-text">悲观锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%90%E8%A7%82%E9%94%81"><span class="nav-number">1.4.</span> <span class="nav-text">乐观锁</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">2.</span> <span class="nav-text">分布式锁</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E9%9C%80%E6%B1%82%EF%BC%88%E6%96%B9%E6%B3%95%E9%94%81%EF%BC%8C%E4%BB%A5%E6%96%B9%E6%B3%95%E4%BD%9C%E4%B8%BA%E4%B8%B4%E7%95%8C%E5%8C%BA%EF%BC%8C%E8%B5%84%E6%BA%90%E9%94%81%E6%98%AF%E7%B1%BB%E4%BC%BC%E7%9A%84%EF%BC%89"><span class="nav-number">2.1.</span> <span class="nav-text">实现分布式锁的需求（方法锁，以方法作为临界区，资源锁是类似的）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A1%A8"><span class="nav-number">2.2.</span> <span class="nav-text">基于数据库表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E9%94%81%E8%A1%A8%E5%AE%9E%E7%8E%B0%E6%96%B9%E6%B3%95%E9%94%81"><span class="nav-number">2.2.1.</span> <span class="nav-text">使用锁表实现方法锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%95%B0%E6%8D%AE%E5%BA%93-X-%E9%94%81%EF%BC%88%E6%8E%92%E4%BB%96%E9%94%81%EF%BC%89%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">2.2.2.</span> <span class="nav-text">使用数据库 X 锁（排他锁）实现分布式锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">2.2.3.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E7%BC%93%E5%AD%98"><span class="nav-number">2.3.</span> <span class="nav-text">基于缓存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E-ZooKeeper"><span class="nav-number">2.4.</span> <span class="nav-text">基于 ZooKeeper</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-Curator-%E5%AE%9E%E7%8E%B0%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">2.4.1.</span> <span class="nav-text">使用 Curator 实现分布式锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93-1"><span class="nav-number">2.4.2.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#QA"><span class="nav-number">3.</span> <span class="nav-text">QA</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/4eb3381c.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="分布式锁 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分布式锁
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-06 16:32:14" itemprop="dateCreated datePublished" datetime="2020-07-06T16:32:14+08:00">2020-07-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+<h1 id="单机环境下的锁"><a href="#单机环境下的锁" class="headerlink" title="单机环境下的锁"></a>单机环境下的锁</h1><p>单机环境下，资源竞争者都是来自机器内部(进程&#x2F;线程)，那么实现锁的方案只需要借助单机资源就可以了，比如借助磁盘、内存、寄存器来实现。</p>
+<h2 id="竞态条件（Race-Condition）"><a href="#竞态条件（Race-Condition）" class="headerlink" title="竞态条件（Race Condition）"></a>竞态条件（Race Condition）</h2><p>计算的正确性取决于多个线程的交替执行时序时，就会发生竞态条件。比如：</p>
+<ol>
+<li>先检测（查询）后执行。执行依赖于检测的结果，而检测结果依赖于多个线程的执行时序，而多个线程的执行时序通常情况下是不固定不可判断的，从而导致执行结果出现各种问题。</li>
+<li>延迟初始化（如单例的实例化） <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class ObjFactory &#123;  </span><br><span class="line">    private Obj instance;  </span><br><span class="line"></span><br><span class="line">    public Obj getInstance()&#123;  </span><br><span class="line">        if(instance == null)&#123;  </span><br><span class="line">            instance = new Obj();  </span><br><span class="line">        &#125;  </span><br><span class="line">        return instance;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+如果两个线程同时调用 getInstance()就有可能出现：一个线程 A 创建了一个新对象 instance &#x3D; obj1，立马被另一个线程 B 覆盖 instance &#x3D; obj2，线程 A 返回了 obj1，线程 B 返回 obj2，于是 Obj 就相当于被实例化了两次。</li>
+</ol>
+<h2 id="锁的分类"><a href="#锁的分类" class="headerlink" title="锁的分类"></a>锁的分类</h2><ol>
+<li>悲观锁，前提是，一定会有并发抢占资源，强行独占资源，在整个数据处理过程中将数据处于锁定状态。</li>
+<li>乐观锁，前提是，不会发生并发抢占资源，只有在<strong>执行修改时</strong>检查是否违反数据完整性。<strong>只能防止脏读后数据的提交，不能解决脏读</strong>。</li>
+</ol>
+<h2 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h2><h2 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h2><p>乐观锁一般有以下两种实现方法：</p>
+<ol>
+<li>版本号：使用<strong>版本标识</strong>来确定读到的数据与提交时的数据是否一致。提交后修改版本标识，不一致时可以采取<strong>丢弃</strong>或<strong>再次尝试</strong>的策略。</li>
+<li>CAS：java 中的 compareandswap 即 cas，解决多线程并行情况下使用锁造成性能损耗的一种机制。CAS 操作包含三个操作数，内存位置（V）,预期原值（A）和新值（B）。如果内存位置的值与预期原值相匹配，那么处理器会西东将该位置值更新为新值。否则，处理器不做任何操作。</li>
+</ol>
+<h1 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h1><p>目前几乎很多大型网站及应用都是分布式部署的，分布式场景中的数据一致性问题一直是一个比较重要的话题。分布式的<strong>CAP 理论</strong>告诉我们“任何一个分布式系统都无法同时满足<strong>一致性（Consistency）</strong>、<strong>可用性（Availability）</strong>和<strong>分区容错性（Partition tolerance）</strong>，最多只能同时满足其中两项。”所以，很多系统在设计之初就要对这三者做出取舍。在互联网领域的绝大多数的场景中，都需要牺牲强一致性来换取系统的高可用性，系统往往只需要保证“最终一致性”，只要这个最终时间是在用户可以接受的范围内即可。<br>有的时候，我们需要保证一个方法在同一时间内只能被同一个线程执行。在单机环境中，Java 中其实提供了很多并发处理相关的 API，但是这些 API 在分布式场景中就无能为力了。也就是说单纯的 Java Api 并不能提供分布式锁的能力。<br>对于分布式环境下，资源竞争者生存环境更复杂了，原有依赖单机的方案不再发挥作用，这时候就需要一个大家都认可的协调者出来，帮助解决竞争问题，那这个协调者称之为分布式锁。</p>
+<h2 id="实现分布式锁的需求（方法锁，以方法作为临界区，资源锁是类似的）"><a href="#实现分布式锁的需求（方法锁，以方法作为临界区，资源锁是类似的）" class="headerlink" title="实现分布式锁的需求（方法锁，以方法作为临界区，资源锁是类似的）"></a>实现分布式锁的需求（方法锁，以方法作为临界区，资源锁是类似的）</h2><ol>
+<li>可以保证在分布式部署的应用集群中，同一个方法在同一时间只能被一台机器上的一个线程执行。</li>
+<li>这把锁要是一把可重入锁（单线程可重复获取同一把锁，避免死锁）</li>
+<li>这把锁最好是一把阻塞锁（根据业务需求考虑要不要这条）</li>
+<li>有高可用的获取锁和释放锁功能</li>
+<li>获取锁和释放锁的性能要好</li>
+</ol>
+<h2 id="基于数据库表"><a href="#基于数据库表" class="headerlink" title="基于数据库表"></a>基于数据库表</h2><p>要实现分布式锁，最简单的方式可能就是直接创建一张锁表，然后通过操作该表中的数据来实现了。<br>当我们要锁住某个方法或资源时，我们就在该表中增加一条记录，想要释放锁的时候就删除这条记录。<br>创建这样一张数据库表：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `methodLock` (</span><br><span class="line">  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT &#x27;主键&#x27;,</span><br><span class="line">  `method_name` varchar(64) NOT NULL DEFAULT &#x27;&#x27; COMMENT &#x27;锁定的方法名&#x27;,</span><br><span class="line">  `desc` varchar(1024) NOT NULL DEFAULT &#x27;备注信息&#x27;,</span><br><span class="line">  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT &#x27;保存数据时间，自动生成&#x27;,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  UNIQUE KEY `uidx_method_name` (`method_name `) USING BTREE</span><br><span class="line">) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT=&#x27;锁定中的方法&#x27;;</span><br></pre></td></tr></table></figure>
+<h3 id="使用锁表实现方法锁"><a href="#使用锁表实现方法锁" class="headerlink" title="使用锁表实现方法锁"></a>使用锁表实现方法锁</h3><p>执行 SQL：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into methodLock(method_name,desc) values (‘method_name’,‘desc’)</span><br></pre></td></tr></table></figure>
+<p>因为我们对 method_name 做了唯一性约束，这里如果有多个请求同时提交到数据库的话，数据库会保证只有一个操作可以成功，那么我们就可以认为操作成功的那个线程获得了该方法的锁，可以执行方法体内容。<br>当方法执行完毕之后，想要释放锁的话，需要执行以下 Sql:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete from methodLock where method_name =&#x27;method_name&#x27;</span><br></pre></td></tr></table></figure>
+<p>上面这种简单的实现有以下几个问题：</p>
+<ul>
+<li>这把锁强依赖数据库的可用性，数据库是一个单点，一旦数据库挂掉，会导致业务系统不可用。</li>
+<li>这把锁没有失效时间，一旦解锁操作失败，就会导致锁记录一直在数据库中，其他线程无法再获得到锁。</li>
+<li>这把锁只能是非阻塞的，因为数据的 insert 操作，一旦插入失败就会直接报错。没有获得锁的线程并不会进入排队队列，要想再次获得锁就要再次触发获得锁操作。</li>
+<li>这把锁是非重入的，同一个线程在没有释放锁之前无法再次获得该锁。因为数据库中数据已经存在了。</li>
+</ul>
+<p>当然，我们也可以有其他方式解决上面的问题。</p>
+<ul>
+<li>数据库是单点？搞两个数据库，数据之前双向同步。一旦挂掉快速切换到备库上。</li>
+<li>没有失效时间？只要做一个定时任务，每隔一定时间把数据库中的超时数据清理一遍。</li>
+<li>非阻塞的？搞一个 while 循环，直到 insert 成功再返回成功。</li>
+<li>非重入的？在数据库表中加个字段，记录当前获得锁的机器的主机信息和线程信息，那么下次再获取锁的时候先查询数据库，如果当前机器的主机信息和线程信息在数据库可以查到的话，直接把锁分配给他就可以了。</li>
+</ul>
+<h3 id="使用数据库-X-锁（排他锁）实现分布式锁"><a href="#使用数据库-X-锁（排他锁）实现分布式锁" class="headerlink" title="使用数据库 X 锁（排他锁）实现分布式锁"></a>使用数据库 X 锁（排他锁）实现分布式锁</h3><p>除了可以通过增删操作数据表中的记录以外，其实还可以借助数据中自带的锁来实现分布式的锁。<br>我们还用刚刚创建的那张数据库表。可以通过数据库的排他锁来实现分布式锁。<br>基于 MySQL 的 InnoDB 引擎，可以使用以下方法来实现加锁操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public boolean lock()&#123;</span><br><span class="line">    connection.setAutoCommit(false)</span><br><span class="line">    while(true)&#123;</span><br><span class="line">        try&#123;</span><br><span class="line">            result = select * from methodLock where method_name = xxx for update;</span><br><span class="line">            if(result==null)&#123;</span><br><span class="line">                return true;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;catch(Exception e)&#123;</span><br><span class="line">            log.warn(&quot;加锁失败&quot;, e);</span><br><span class="line">        &#125;</span><br><span class="line">        sleep(1000);</span><br><span class="line">    &#125;</span><br><span class="line">    return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在查询语句后面增加 for update，数据库会在查询过程中给数据库表增加排他锁。当某条记录被加上排他锁之后，其他线程无法再在该行记录上增加排他锁。<br>我们可以认为获得排它锁的线程即可获得分布式锁，当获取到锁之后，可以执行方法的业务逻辑，执行完方法之后，再通过以下方法解锁：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public void unlock()&#123;</span><br><span class="line">    connection.commit();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过 connection.commit()操作来释放锁。<br>这种方法可以有效的解决上面提到的无法释放锁和阻塞锁的问题。</p>
+<ul>
+<li>阻塞锁？ for update 语句会在执行成功后立即返回，在执行失败时一直处于阻塞状态，直到成功。</li>
+<li>锁定之后服务宕机，无法释放？使用这种方式，服务宕机之后数据库会自己把锁释放掉。<br>但是还是无法直接解决数据库单点和可重入问题。</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总结一下使用数据库来实现分布式锁的方式，这两种方式都是依赖数据库的一张表，一种是通过表中的记录的存在情况确定当前是否有锁存在，另外一种是通过数据库的排他锁来实现分布式锁。<br>数据库实现分布式锁的优点：</p>
+<ol>
+<li>直接借助数据库，容易理解。</li>
+</ol>
+<p>数据库实现分布式锁的缺点</p>
+<ol>
+<li>会有各种各样的问题，在解决问题的过程中会使整个方案变得越来越复杂。</li>
+<li>操作数据库需要一定的开销，性能问题需要考虑。</li>
+</ol>
+<h2 id="基于缓存"><a href="#基于缓存" class="headerlink" title="基于缓存"></a>基于缓存</h2><p>使用缓存中间件实现分布式锁的方法我已经在<a href="https://tallate.github.io/d3d5fdbf.html#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81">Redis 客户端</a>中有过分析。</p>
+<h2 id="基于-ZooKeeper"><a href="#基于-ZooKeeper" class="headerlink" title="基于 ZooKeeper"></a>基于 ZooKeeper</h2><p>基于 zookeeper 临时有序节点可以实现的分布式锁。<br>大致思想即为：每个客户端对某个方法加锁时，在 zookeeper 上的与该方法对应的指定节点的目录下，生成一个唯一的<strong>瞬时有序节点</strong>。<br>判断是否获取锁的方式很简单，只需要判断有序节点中序号最小的一个。<br>当释放锁的时候，只需将这个瞬时节点删除即可。同时，其可以避免服务宕机导致的锁无法释放，而产生的死锁问题。<br>来看下 Zookeeper 能不能解决前面提到的问题。</p>
+<ul>
+<li>锁无法释放？使用 Zookeeper 可以有效的解决锁无法释放的问题，因为在创建锁的时候，客户端会在 ZK 中创建一个临时节点，一旦客户端获取到锁之后突然挂掉（Session 连接断开），那么这个临时节点就会自动删除掉。其他客户端就可以再次获得锁。</li>
+<li>非阻塞锁？使用 Zookeeper 可以实现阻塞的锁，客户端可以通过在 ZK 中创建顺序节点，并且在节点上绑定监听器，一旦节点有变化，Zookeeper 会通知客户端，客户端可以检查自己创建的节点是不是当前所有节点中序号最小的，如果是，那么自己就获取到锁，便可以执行业务逻辑了。</li>
+<li>不可重入？使用 Zookeeper 也可以有效的解决不可重入的问题，客户端在创建节点的时候，把当前客户端的主机信息和线程信息直接写入到节点中，下次想要获取锁的时候和当前最小的节点中的数据比对一下就可以了。如果和自己的信息一样，那么自己直接获取到锁，如果不一样就再创建一个临时的顺序节点，参与排队。</li>
+<li>单点问题？使用 Zookeeper 可以有效的解决单点问题，ZK 是集群部署的，只要集群中有半数以上的机器存活，就可以对外提供服务。</li>
+</ul>
+<h3 id="使用-Curator-实现分布式锁"><a href="#使用-Curator-实现分布式锁" class="headerlink" title="使用 Curator 实现分布式锁"></a>使用 Curator 实现分布式锁</h3><p>可以直接使用 zookeeper 第三方库 Curator 客户端，这个客户端中封装了一个可重入的锁服务。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public boolean tryLock(long timeout, TimeUnit unit) throws InterruptedException &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        return interProcessMutex.acquire(timeout, unit);</span><br><span class="line">    &#125; catch (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br><span class="line">public boolean unlock() &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        interProcessMutex.release();</span><br><span class="line">    &#125; catch (Throwable e) &#123;</span><br><span class="line">        log.error(e.getMessage(), e);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        executorService.schedule(new Cleaner(client, path), delayTimeForClean, TimeUnit.MILLISECONDS);</span><br><span class="line">    &#125;</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Curator 提供的 InterProcessMutex 是分布式锁的实现。acquire 方法用户获取锁，release 方法用于释放锁。<br>使用 ZK 实现的分布式锁好像完全符合了本文开头我们对一个分布式锁的所有期望。但是，其实并不是，Zookeeper 实现的分布式锁其实存在一个缺点，那就是性能上可能并没有缓存服务那么高。因为每次在创建锁和释放锁的过程中，都要动态创建、销毁瞬时节点来实现锁功能。ZK 中创建和删除节点只能通过<strong>Leader</strong>服务器来执行，然后将数据同步到所有的 Follower 机器上。</p>
+<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h3><p>使用 Zookeeper 实现分布式锁的优点</p>
+<ol>
+<li>有效的解决单点问题，不可重入问题，非阻塞问题以及锁无法释放的问题。</li>
+<li>实现起来较为简单。</li>
+</ol>
+<p>使用 Zookeeper 实现分布式锁的缺点</p>
+<ol>
+<li>性能上不如使用缓存实现分布式锁。</li>
+<li>需要对 ZK 的原理有所了解。</li>
+</ol>
+<p>分布式锁实现需要根据实际需要来选择，比如红锁是AP的，而ZooKeeper是CP的。</p>
+<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><ol>
+<li>怎么使用 Redis 实现分布式锁？<br>set 命令带上 nx 和 ex 参数。</li>
+<li>怎么使用 zk 实现分布式锁？<br>先建一个代表锁的持久节点，然后每个线程要加锁就在该持久节点下创建临时有序节点，如果当前线程创建的节点是最小的，则说明可以获取到该锁，否则阻塞等待；释放锁就是将这个临时节点删除。</li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/garfieldcgf/p/6380816.html">分布式锁的几种实现方式</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/dennyzhangdd/p/7133653.html#_label0">终极锁实战：单 JVM 锁+分布式锁</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Lock/" rel="tag"># Lock</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/a87bf883.html" rel="prev" title="MySQL6_1其他主题">
+                  <i class="fa fa-angle-left"></i> MySQL6_1其他主题
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/37173fb7.html" rel="next" title="MyBatis 原理">
+                  MyBatis 原理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

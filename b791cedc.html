@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="虚拟化技术将一台服务器虚拟出多个虚拟机来提供服务。虚拟化技术包括计算虚拟化（服务器虚拟化）、存储虚拟化、网络虚拟化等。在实际讲解虚拟化之前，我们需要先解释一下隔离技术，在隔离的基础上我们才能任意粒度、自由地分配资源。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微服务核心技术总结">
+<meta property="og:url" content="https://tallate.github.io/b791cedc.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="虚拟化技术将一台服务器虚拟出多个虚拟机来提供服务。虚拟化技术包括计算虚拟化（服务器虚拟化）、存储虚拟化、网络虚拟化等。在实际讲解虚拟化之前，我们需要先解释一下隔离技术，在隔离的基础上我们才能任意粒度、自由地分配资源。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E5%BE%AE%E6%9C%8D%E5%8A%A1/%E9%9A%94%E7%A6%BB%E5%B1%82%E6%AC%A1.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E5%BE%AE%E6%9C%8D%E5%8A%A1/%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E7%AB%AF%E9%9A%94%E7%A6%BB.png">
+<meta property="article:published_time" content="2019-07-21T12:27:43.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.895Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="虚拟化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/%E5%BE%AE%E6%9C%8D%E5%8A%A1/%E9%9A%94%E7%A6%BB%E5%B1%82%E6%AC%A1.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/b791cedc.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/b791cedc.html","path":"/b791cedc.html","title":"微服务核心技术总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>微服务核心技术总结 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%94%E7%A6%BB%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">隔离的作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%94%E7%A6%BB%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">2.</span> <span class="nav-text">隔离的分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E8%99%9A%E6%8B%9F%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">网络虚拟化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TUN-TAP-Tunnel"><span class="nav-number">3.1.</span> <span class="nav-text">TUN&#x2F;TAP(Tunnel)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VEth%EF%BC%88Virtual-Ethernet%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">VEth（Virtual Ethernet）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%99%9A%E6%8B%9F%E5%8C%96"><span class="nav-number">4.</span> <span class="nav-text">服务器虚拟化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%92%E6%A7%BD%E3%80%81%E5%86%85%E6%A0%B8%E5%92%8C%E5%86%85%E6%A0%B8%E7%BA%BF%E7%A8%8B"><span class="nav-number">4.1.</span> <span class="nav-text">插槽、内核和内核线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Xen%E3%80%81KVM-%E4%B8%8E-LXC"><span class="nav-number">4.2.</span> <span class="nav-text">Xen、KVM 与 LXC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LXC-%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">4.3.</span> <span class="nav-text">LXC 的使用方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B%EF%BC%88%E9%85%8D%E7%BD%AE-python-uliweb-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%89"><span class="nav-number">4.4.</span> <span class="nav-text">使用示例（配置 python uliweb 开发环境）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LXC"><span class="nav-number">5.</span> <span class="nav-text">LXC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">5.1.</span> <span class="nav-text">原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%8C%96%E7%AE%A1%E7%90%86%E5%B9%B3%E5%8F%B0"><span class="nav-number">6.</span> <span class="nav-text">虚拟化管理平台</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E7%AE%A1%E7%90%86%E5%B9%B3%E5%8F%B0"><span class="nav-number">7.</span> <span class="nav-text">容器管理平台</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/b791cedc.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="微服务核心技术总结 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          微服务核心技术总结
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-07-21 20:27:43" itemprop="dateCreated datePublished" datetime="2019-07-21T20:27:43+08:00">2019-07-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>虚拟化技术将一台服务器虚拟出多个虚拟机来提供服务。<br>虚拟化技术包括计算虚拟化（服务器虚拟化）、存储虚拟化、网络虚拟化等。<br>在实际讲解虚拟化之前，我们需要先解释一下隔离技术，在隔离的基础上我们才能任意粒度、自由地分配资源。</p>
+<span id="more"></span>
+
+<h2 id="隔离的作用"><a href="#隔离的作用" class="headerlink" title="隔离的作用"></a>隔离的作用</h2><ul>
+<li>实现更细粒度的资源管理，比如将一个物理 CPU 的计算能力分给多台云主机，再将这台云主机卖给多个人。</li>
+<li>控制故障的影响范围，一个 Tomcat 中可以运行多个 Web 服务器，一台 Web 服务器崩溃并不会令其他服务器一并崩溃。</li>
+</ul>
+<h2 id="隔离的分类"><a href="#隔离的分类" class="headerlink" title="隔离的分类"></a>隔离的分类</h2><p>广义的隔离技术包括如下几类</p>
+<ul>
+<li>硬件：虚拟机，如 KVM、Xen</li>
+<li>操作系统：容器，如 LXC、Docker</li>
+<li>Web 服务器：如 Servlet 容器</li>
+<li>依赖版本：虚拟环境</li>
+<li>运行环境：语言虚拟机，如JVM</li>
+<li>语言：DSL</li>
+</ul>
+<p>前两种隔离是<strong>虚拟化技术</strong>的基础，主要用于物理资源的池化，进而弹性地分配给用户。<br>作为一个例子，下面是一个运行时服务器中各抽象层次所采取的隔离技术的示意图：<br><img src="/imgs/%E5%BE%AE%E6%9C%8D%E5%8A%A1/%E9%9A%94%E7%A6%BB%E5%B1%82%E6%AC%A1.png" alt="隔离层次" title="隔离层次"></p>
+<p>上述隔离技术探讨的是单机环境下的资源分配，在微服务中聚焦的是如何提供更好的服务，因此可以在以下几个方向实施<strong>数据隔离</strong>：</p>
+<ul>
+<li>应用数据隔离<br>多个业务服务器使用不同的数据库服务器，虽然有隔离故障、提高数据安全等好处，但是也引入了分布式事务的问题。</li>
+<li>租户隔离<br>提供统一的云服务，但是对不同的用户分组单独使用一些服务实例来提供服务，这样这些服务实例挂掉了也只会影响对应分组的用户，这样的用户分组称为<strong>租户</strong>。<br>对于单独的一个租户，有独立服务独立数据库、共享服务独立数据库和共享服务共享数据库三种方式，可以根据成本和安全性来考虑选择哪种方案。</li>
+</ul>
+<p>对于业务服务器来说，更重要的是业务层面上的隔离：</p>
+<ul>
+<li>业务层<br>平台与业务，业务与业务。</li>
+<li>Provider，即服务提供者<br>如订单服务和库存服务，使用上面提到的虚拟化来实现隔离，如果；</li>
+<li>Consumer，即服务消费者<br>下游服务调用多个上游服务（upstream）的时候，如果不对上游服务做服务隔离，一个服务出现问题，就会导致下游服务不可用，这种情况下，可选的隔离方案可以是给每个上游服务都准备一个线程池，称为<strong>线程池隔离</strong>：<br><img src="/imgs/%E5%BE%AE%E6%9C%8D%E5%8A%A1/%E6%9C%8D%E5%8A%A1%E6%B6%88%E8%B4%B9%E8%80%85%E7%AB%AF%E9%9A%94%E7%A6%BB.png" alt="服务消费者端隔离" title="服务消费者端隔离"><br>这种情况下，就算其中一个服务不可用导致线程池被迅速占满，下游服务仍可以根据预定义的降级方案来忽略这个服务。<br>另一种可行的隔离方式是<strong>信号量隔离</strong>，常见的框架包括 Hytrix、Sentinel、以及 Resilience4j。</li>
+</ul>
+<h2 id="网络虚拟化"><a href="#网络虚拟化" class="headerlink" title="网络虚拟化"></a>网络虚拟化</h2><p>我们暴露服务时使用的 IP 一般不是业务服务器网卡的真实 IP，而是另外配置的一个虚拟 IP，请求先被打到该 IP，然后由 LVS 等负载均衡技术来找到一个真实 IP。</p>
+<p><strong>虚拟网卡</strong>通过实现一个字符设备来支持物理层，从而使应用层和物理层就通过这个字符设备联系起来，从这个字符设备读出来的就是虚拟网卡发往物理层的字节流，写入字符设备的数据作为字节流被虚拟网卡接收。<br>虚拟网卡可以像网卡一样进行配置，常见的虚拟网卡有<strong>TUN&#x2F;TAP</strong>和<strong>VEth</strong>。<br><strong>虚拟网桥（Bridge）</strong>也是一种虚拟设备，用于将多块网卡（包括虚拟网卡）连接起来。<br>值得注意的是， Linux 中虚拟网桥是通用网络设备抽象的一种，能够绑定 IP 地址。因此在把网卡接入到网桥上后，网卡原来绑定的 IP 会失效，如果还要像原来那样收发数据，需要把该 IP 绑定到网桥上。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 添加网桥br0</span><br><span class="line">ip link add br0 type bridge</span><br><span class="line"># 把网卡接入网桥，在把eth0和eth1接入到br0后，两个网卡就可以进行通信了。</span><br><span class="line">ip link set eth0 master br0</span><br><span class="line">ip link set eth1 master br0</span><br><span class="line"># 为网桥绑定ip</span><br><span class="line">ip addr add xx.xx.xx.xx/xx dev br0</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">docker0: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt; mtu 1500</span><br><span class="line">        inet 172.17.0.1 netmask 255.255.0.0 broadcast 172.17.255.255</span><br><span class="line">        inet6 fe80::42:17ff:fe6b:bb81 prefixlen 64 scopeid 0x20&lt;link&gt;</span><br><span class="line">        ether 02:42:17:6b:bb:81 txqueuelen 0 (Ethernet)</span><br><span class="line">        RX packets 0 bytes 0 (0.0 B)</span><br><span class="line">        RX errors 0 dropped 0 overruns 0 frame 0</span><br><span class="line">        TX packets 151 bytes 16620 (16.6 KB)</span><br><span class="line">        TX errors 0 dropped 0 overruns 0 carrier 0 collisions 0</span><br><span class="line"></span><br><span class="line">veth780318a: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt; mtu 1500</span><br><span class="line">        inet6 fe80::2c08:2dff:fea1:b996 prefixlen 64 scopeid 0x20&lt;link&gt;</span><br><span class="line">        ether 2e:08:2d:a1:b9:96 txqueuelen 0 (Ethernet)</span><br><span class="line">        RX packets 0 bytes 0 (0.0 B)</span><br><span class="line">        RX errors 0 dropped 0 overruns 0 frame 0</span><br><span class="line">        TX packets 227 bytes 24338 (24.3 KB)</span><br><span class="line">        TX errors 0 dropped 0 overruns 0 carrier 0 collisions 0</span><br></pre></td></tr></table></figure>
+<p>由 Docker Daemon 创建的虚拟网卡 docker0 其实就是一个网桥，可以使用 ethtool 查看设备类型。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ ethtool -i docker0</span><br><span class="line"># 输出</span><br><span class="line">driver: bridge</span><br><span class="line">version: 2.3</span><br><span class="line">firmware-version: N/A</span><br><span class="line">expansion-rom-version: </span><br><span class="line">bus-info: N/A</span><br><span class="line">supports-statistics: no</span><br><span class="line">supports-test: no</span><br><span class="line">supports-eeprom-access: no</span><br><span class="line">supports-register-dump: no</span><br><span class="line">supports-priv-flags: no</span><br></pre></td></tr></table></figure>
+<p>根据官方文档，Docker 通过 docker0 网桥在内核层连通了其他的物理或虚拟网卡，从而将所有容器和宿主都放到同一个物理网络下。<br>veth780318a 是一个 VEth 设备，在容器启动后动态创建。每次启动一个容器的时候，Docker 会新建一对 VETH 设备，其中一个插在 docker0 上，另一个插在该容器里，然后从可用的地址段中选择一个空闲的 IP 地址分配给容器的 VEth，使用 docker0 的 IP 作为默认网关，从而实现宿主机和容器的双向数据通讯。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ ethtool -S veth780318a</span><br><span class="line"># 输出</span><br><span class="line">NIC statistics:</span><br><span class="line">     peer_ifindex: 8</span><br><span class="line"></span><br><span class="line">$ ip link</span><br><span class="line"># 输出</span><br><span class="line">9: veth780318a@if8: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue master docker0 state UP mode DEFAULT group default </span><br><span class="line">    link/ether 2e:08:2d:a1:b9:96 brd ff:ff:ff:ff:ff:ff link-netnsid 0</span><br></pre></td></tr></table></figure>
+<p>上边的 veth780318a@if8 的 peer_ifindex 为 9，和其对应的 VEth 设备的 peer_ifindex 为 8。</p>
+<p>接下来可以进入容器查看是否存在对应的 peer_ifindex 为 9 的虚拟网卡（下面的是教程中的执行效果，我并没有执行成功，因为普通的容器镜像里面一般没有安装常用的网络工具）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">root@4c04df175784:/# ip route show</span><br><span class="line">default via 172.17.42.1 dev eth0</span><br><span class="line">172.17.0.0/16 dev eth0 proto kernel scope link src 172.17.0.1</span><br><span class="line"></span><br><span class="line"># 从这里可以看出veth741a889的“伙伴”确实是在容器中，被重命名为eth0作为容器的网卡，并绑定了ip172.17.0.5，网关为网桥的ip172.17.42.1。</span><br><span class="line">root@4c04df175784:/# ifconfig</span><br><span class="line">eth0 Link encap:Ethernet HWaddr 02:42:ac:11:00:05</span><br><span class="line">          inet addr:172.17.0.5 Bcast:0.0.0.0 Mask:255.255.0.0</span><br><span class="line">          inet6 addr: fe80::42:acff:fe11:5/64 Scope:Link</span><br><span class="line">          UP BROADCAST RUNNING MULTICAST MTU:1500 Metric:1</span><br><span class="line">          RX packets:8 errors:0 dropped:0 overruns:0 frame:0</span><br><span class="line">          TX packets:8 errors:0 dropped:0 overruns:0 carrier:0</span><br><span class="line">          collisions:0 txqueuelen:0</span><br><span class="line">          RX bytes:648 (648.0 B) TX bytes:648 (648.0 B)</span><br><span class="line"></span><br><span class="line">root@4c04df175784:/# ethtool -S eth0</span><br><span class="line">NIC statistics:</span><br><span class="line">     peer_ifindex: 24</span><br><span class="line"></span><br><span class="line">root@4c04df175784:/# ethtool -i eth0</span><br><span class="line">driver: veth</span><br><span class="line">version: 1.0</span><br><span class="line">firmware-version:</span><br><span class="line">bus-info:</span><br><span class="line">supports-statistics: yes</span><br><span class="line">supports-test: no</span><br><span class="line">supports-eeprom-access: no</span><br><span class="line">supports-register-dump: no</span><br><span class="line">supports-priv-flags: no</span><br></pre></td></tr></table></figure>
+<h3 id="TUN-TAP-Tunnel"><a href="#TUN-TAP-Tunnel" class="headerlink" title="TUN&#x2F;TAP(Tunnel)"></a>TUN&#x2F;TAP(Tunnel)</h3><p>TUN 工作在 OSI 第三层(network)，实现了 IP 包的转发，相当于路由。<br>TAP 工作在 OSI 第二层(data link)，实现了 Ethernet 帧的转发，相当于网桥。<br>操作系统通过 TUN&#x2F;TAP 设备向绑定该设备的用户空间的程序发送数据，反之，用户空间的程序也可以像操作硬件网络设备那样通过 TUN&#x2F;TAP 设备发送数据，然后 TUN&#x2F;TAP 设备会向操作系统的网络栈 push（或 inject）数据包，从而模拟从外部接受数据的过程。<br>TUN 常用于 VPN，通过使用 TUN，VPN 能够在 IP 包被发出去之前将其进行加密。<br>TAP 常用于虚拟机，为虚拟机提供网卡。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ip tuntap add mode tap # 创建tap</span><br><span class="line">ip tuntap add mode tun # 创建tun</span><br></pre></td></tr></table></figure>
+<h3 id="VEth（Virtual-Ethernet）"><a href="#VEth（Virtual-Ethernet）" class="headerlink" title="VEth（Virtual Ethernet）"></a>VEth（Virtual Ethernet）</h3><p>VEth 是成对出现的，它的作用是反转通讯数据的方向，当数据从网络栈发送到 VEth 的一端时，数据被传送到 VEth 的另外一端流出，然后放回网络栈，相当于把需要接受的数据转换成需要发送的数据，<br>常用于虚拟化中穿透 network namespace，把从一个 network namespace 发出的数据包转发到另一个 namespace。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip link add veth1 type veth peer name veth2 # 创建一对VEth，名为veth1和veth2</span><br></pre></td></tr></table></figure>
+
+<h2 id="服务器虚拟化"><a href="#服务器虚拟化" class="headerlink" title="服务器虚拟化"></a>服务器虚拟化</h2><h3 id="插槽、内核和内核线程"><a href="#插槽、内核和内核线程" class="headerlink" title="插槽、内核和内核线程"></a>插槽、内核和内核线程</h3><p>虚拟机如何分配 CPU 数：<a target="_blank" rel="noopener" href="https://www.it610.com/article/3322954.htm">vSphere 中 CPU 资源如何分配</a></p>
+<h3 id="Xen、KVM-与-LXC"><a href="#Xen、KVM-与-LXC" class="headerlink" title="Xen、KVM 与 LXC"></a>Xen、KVM 与 LXC</h3><p>TODO<br>服务器虚拟化的三种比较常见的技术。<br>Xen：<br>KVM：<br>LXC：</p>
+<h3 id="LXC-的使用方法"><a href="#LXC-的使用方法" class="headerlink" title="LXC 的使用方法"></a>LXC 的使用方法</h3><ol>
+<li>安装<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">apt-get install lxc</span><br><span class="line">lxc-checkconfig # 安装完成后, 用这个命令检查系统是否可以使用 lxc</span><br><span class="line"># 我执行后没有发现missing的情况，如果没有挂载cgroup可能会出现“Cgroup namespace: CONFIG_CGROUP_NSmissing”的错误，可以挂载一个cgroup</span><br><span class="line">mount -t cgroup cgroup /mnt/cgroup</span><br></pre></td></tr></table></figure></li>
+<li>创建容器<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo lxc-create -n test -t debian # # 创建一个 debian 系统</span><br></pre></td></tr></table></figure>
+这样创建的容器默认在 &#x2F;var&#x2F;lib&#x2F;lxc&#x2F;test 中, 为了将容器创建在我们指定的位置, 可以写个简单的配置文件 lxc.conf, 里面只需要一句：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lxc.rootfs = /home/lxc/test</span><br></pre></td></tr></table></figure>
+然后重新创建容器：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo lxc-create -n test -t debian -f /path/to/lxc.conf</span><br></pre></td></tr></table></figure>
+这样, 就把容器创建在了 &#x2F;home&#x2F;lxc&#x2F;test 中了, &#x2F;var&#x2F;lib&#x2F;lxc&#x2F;test 中只有一个 config 文件(这个 config 文件可以作为 lxc-create 命令 -f 参数对应配置文件的参考)</li>
+<li>启动容器<br>启动后就进行入了虚拟机的控制台了. (果然像传说一样, 几秒就启动完成了 ^_^)<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lxc-start -n test</span><br></pre></td></tr></table></figure></li>
+<li>停止容器<br>在主机中输入停止的命令.<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lxc-stop -n test</span><br></pre></td></tr></table></figure></li>
+<li>销毁容器<br>销毁之前, 可以通过 lxc-ls 来查看有几个容器<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">lxc-ls</span><br><span class="line">  test</span><br><span class="line">lxc-destroy -n test</span><br><span class="line">lxc-ls</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="使用示例（配置-python-uliweb-开发环境）"><a href="#使用示例（配置-python-uliweb-开发环境）" class="headerlink" title="使用示例（配置 python uliweb 开发环境）"></a>使用示例（配置 python uliweb 开发环境）</h3><p>尝试在容器配置一次开发环境, 然后通过复制容器, 形成多个虚拟机.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 主机中</span><br><span class="line">root@debian-113:~# uliweb # 主机中没有安装uliweb 软件包</span><br><span class="line">-bash: uliweb: command not found</span><br><span class="line">root@debian-113:~# lxc-start -n test</span><br><span class="line"># 虚拟机登录界面, 输入用户名和密码</span><br><span class="line"># 虚拟机中</span><br><span class="line">root@test:~# apt-get install python</span><br><span class="line">root@test:~# apt-get install python-pip</span><br><span class="line">root@test:~# pip install Uliweb</span><br><span class="line">root@test:~# uliweb --version</span><br><span class="line">Uliweb version is 0.3.1</span><br></pre></td></tr></table></figure>
+<p>主机中设置网桥, 虚拟机用桥接方式上网, 确保每个虚拟机有独立的 IP</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"># 主机中</span><br><span class="line">root@debian-113:~# lxc-stop -n test</span><br><span class="line">root@debian-113:~# apt-cache search bridge-utils</span><br><span class="line">root@debian-113:~# brctl addbr br0</span><br><span class="line"># 配置主机的网桥</span><br><span class="line">root@debian-113:/var/lib/lxc/test# cat /etc/network/interfaces </span><br><span class="line"># This file describes the network interfaces available on your system</span><br><span class="line"># and how to activate them. For more information, see interfaces(5).</span><br><span class="line"></span><br><span class="line"># The loopback network interface</span><br><span class="line">auto lo</span><br><span class="line">#auto eth0</span><br><span class="line">iface lo inet loopback</span><br><span class="line"></span><br><span class="line"># 追加的网桥配置    </span><br><span class="line">auto br0</span><br><span class="line">iface br0 inet static</span><br><span class="line">address 192.168.1.113</span><br><span class="line">netmask 255.255.255.0</span><br><span class="line">gateway 192.168.1.1</span><br><span class="line">   bridge_ports eth0</span><br><span class="line">   bridge_stp on</span><br><span class="line">   bridge_fd 0</span><br><span class="line"></span><br><span class="line">root@debian-113:/var/lib/lxc/test# /etc/init.d/networking restart</span><br></pre></td></tr></table></figure>
+<p>配置容器的网络(也是在主机中修改容器的配置文件)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">root@debian-113:/var/lib/lxc/test# cat /var/lib/lxc/test/config</span><br><span class="line">... ... (很多默认生成的配置)</span><br><span class="line"># network &lt;-- 这个 network 相关的是要追加的</span><br><span class="line">lxc.network.type = veth</span><br><span class="line">lxc.network.flags = up</span><br><span class="line">lxc.network.link = br0</span><br><span class="line">lxc.network.name = eth0</span><br></pre></td></tr></table></figure>
+<p>启动 Linux 容器, 进入虚拟机</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">root@debian-113:/var/lib/lxc/test# lxc-start -n test</span><br><span class="line"># 登录进入虚拟机, 确认虚拟机的IP</span><br><span class="line">root@test:~# cat /etc/network/interfaces &lt;-- 默认是自动获取IP</span><br><span class="line">auto lo</span><br><span class="line">iface lo inet loopback</span><br><span class="line"></span><br><span class="line">auto eth0</span><br><span class="line">iface eth0 inet dhcp</span><br><span class="line">root@test:~# ifconfig &lt;-- 我的机器自动分配的 192.168.1.167</span><br><span class="line"># 创建一个简单的uliweb工程</span><br><span class="line">root@test:~# cd /home/</span><br><span class="line">root@test:/home# mkdir CM-web</span><br><span class="line">root@test:/home# cd CM-web/</span><br><span class="line">root@test:/home/CM-web# uliweb makeproject test</span><br><span class="line">root@test:/home/CM-web# cd test/</span><br><span class="line">root@test:/home/CM-web/test# uliweb makeapp first_app</span><br><span class="line">root@test:/home/CM-web/test# uliweb runserver -h 0.0.0.0</span><br></pre></td></tr></table></figure>
+<p>启动 Web 服务后, 就可以在主机的浏览器中 通过 <a target="_blank" rel="noopener" href="http://192.168.1.167:8000/">http://192.168.1.167:8000/</a> 来访问虚拟机中的 web 服务了.<br>最后, 复制一个新的容器, 也就是再重新生成一个上面的 python uliweb 开发环境</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 在主机中</span><br><span class="line">root@debian-113:~# cd /var/lib/lxc</span><br><span class="line">root@debian-113:/var/lib/lxc# cp -r test test2</span><br><span class="line"># 修改 test2/config 如下</span><br><span class="line">lxc.utsname = test2 &lt;-- 修改名称</span><br><span class="line">xc.rootfs = /home/lxc/test2 &lt;-- 修改 rootfs位置</span><br><span class="line">... ... &lt;-- 其它部分不用修改, 和 test 一样就行</span><br><span class="line">root@debian-113:/var/lib/lxc# cd /home/lxc/</span><br><span class="line">root@debian-113:/home/lxc# cp -r test test2 &lt;-- 重新复制一份 rootfs</span><br><span class="line">root@debian-113:/home/lxc# lxc-start -n test2 &lt;-- 启动 test2 虚拟机, 其中环境和 test一样, IP会不一样, 自动获取的</span><br><span class="line"># 进入 test2 虚拟机中, 可以直接启动之前的 uliweb 测试工程, 也可以从主机中访问其web服务.</span><br></pre></td></tr></table></figure>
+
+<h2 id="LXC"><a href="#LXC" class="headerlink" title="LXC"></a>LXC</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>通过 namespace 进行资源的隔离,Gust1 下的进程与 Guset2 下的进程是独立的，可以看作运行在两台物理机上一样。Contaniner 管理工具就是对 Guest 进行管理的(创建、销毁)。<br>下图是对 LXC 架构的介绍。</p>
+<h2 id="虚拟化管理平台"><a href="#虚拟化管理平台" class="headerlink" title="虚拟化管理平台"></a>虚拟化管理平台</h2><p>虚拟化虽然可以用于自由分配资源，但是在生产环境内如果要一台一台机器安装及配置并不现实，一般来说都会尝试使用一个管理平台来自动化、批量化虚拟机的管理，或者从零开始使用 Libvirt 这样的库来实现自己需要的功能。<br>如 <strong>Libvirt</strong> 库提供了一套用于管理虚拟机和其他虚拟化功能的 Linux API，它支持各种虚拟机监控程序，包括 Xen 和 KVM，以及 QEMU 和用于其他操作系统的一些虚拟产品。</p>
+<h2 id="容器管理平台"><a href="#容器管理平台" class="headerlink" title="容器管理平台"></a>容器管理平台</h2><p>容器管理平台与其他虚拟化平台有所不同，因为和微服务关系密切，所以更关注高可用、弹性扩展等特性，如Docker Swam、Kubernetes。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>隔离<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/ceshi986745/article/details/51787424">猿学~程序员必知的六种隔离技术</a><br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/M1AePRMGWh49mXcN9MyXGw">谈谈怎么做【服务隔离】</a></li>
+<li>网络设备虚拟化<br><a target="_blank" rel="noopener" href="http://blog.sina.com.cn/s/blog_b5e965e80102wos3.html">网络设备设备虚拟化</a><br><a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s/SC_j1cCm-kgOkCPKPjL5SQ">一文搞懂网络虚拟化</a><br><a target="_blank" rel="noopener" href="http://mp.weixin.qq.com/s/2KaHYOxyvZw1B6PhmjN_vw">从 Bridge 到 OVS，探索虚拟交换机</a><br><a target="_blank" rel="noopener" href="https://feisky.gitbooks.io/sdn/linux/virtual-device.html">虚拟网络设备</a><br><a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/linux/1310_xiawc_networkdevice/index.html">Linux 上的基础网络设备详解</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/sld880311/article/details/77840343">Linux-虚拟网络设备-LinuxBridge</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/sld880311/article/details/77854651">Linux-虚拟网络设备-tun&#x2F;tap</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/sld880311/article/details/77650937">Linux-虚拟网络设备-veth pair</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/sld880311/article/details/78021303">Linux-虚拟网络设备-OpenvSwitch(持续更新)</a></li>
+<li>硬件虚拟化<br><a target="_blank" rel="noopener" href="http://www.360doc.com/content/12/0213/14/7982302_186299987.shtml">硬件虚拟化技术浅析</a><br><a target="_blank" rel="noopener" href="http://veck.logdown.com/posts/200566-compare-of-kvm-and-lxc">Compare of Xen, KVM, LXC and Traditional VM</a></li>
+<li>Libvirt<br><a target="_blank" rel="noopener" href="https://libvirt.org/">Libvirt</a></li>
+<li>Xen<br><a target="_blank" rel="noopener" href="https://www.xenproject.org/">Xen</a></li>
+<li>KVM<br><a target="_blank" rel="noopener" href="http://www.linux-kvm.org/page/Main_Page">Kernel Virtual Machine（KVM）</a><br><a target="_blank" rel="noopener" href="http://oenhan.com/kvm-src-1">KVM 源代码分析 1:基本工作原理</a><br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/WzpH653x1hS9_PBVrIJFuw">在 Centos6.5 上部署 kvm 虚拟化技术</a></li>
+<li>LXC<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/xidongyu/p/5767020.html">LXC 的介绍</a><br><a target="_blank" rel="noopener" href="https://linuxcontainers.org/">LinuX Container（LXC）</a><br><a target="_blank" rel="noopener" href="http://www.cnblogs.com/wang_yb/p/3923040.html">Linux 容器的使用</a></li>
+<li>Docker<br><a target="_blank" rel="noopener" href="http://dockone.io/article/2050">使用 NGINX 和 NGINX Plus 进行 Docker Swarm 负载均衡</a><br>DockerSwarm 提供的负载均衡运行于每个节点上（应该是 DockerService 中的某个 Job），提供有限的负载均衡服务（TCP 层负载均衡），因此引入 Nginx 是有道理的。<br>据说 Nginx Plus 可以实现<strong>服务弹性伸缩</strong>的功能，但还没试过。</li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/" rel="tag"># 虚拟化</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/10511d14.html" rel="prev" title="Linux 脚本基础">
+                  <i class="fa fa-angle-left"></i> Linux 脚本基础
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/fe9473bf.html" rel="next" title="微服务中的网络相关组件">
+                  微服务中的网络相关组件 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

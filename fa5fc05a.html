@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="姓名排序题目描述：给定 30,000 个中国人的名字，选用一种线性排序方法有效排序，要求使用内存不超过 1G。想法 1：计数排序，汉字组合显然是无穷多的，无法确定元素的范围，而且可能有重名的情况，所以不能使用；想法 2：使用桶排序，不好确定每个桶的元素范围，一般情况下都是假定元素限制在(0,1]；想法 3：使用基数排序可以一次按名字的第 i 位的排序，如果每个桶的标志为一个汉字，那桶就太多了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="姓名排序">
+<meta property="og:url" content="https://tallate.github.io/fa5fc05a.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="姓名排序题目描述：给定 30,000 个中国人的名字，选用一种线性排序方法有效排序，要求使用内存不超过 1G。想法 1：计数排序，汉字组合显然是无穷多的，无法确定元素的范围，而且可能有重名的情况，所以不能使用；想法 2：使用桶排序，不好确定每个桶的元素范围，一般情况下都是假定元素限制在(0,1]；想法 3：使用基数排序可以一次按名字的第 i 位的排序，如果每个桶的标志为一个汉字，那桶就太多了">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-11-06T15:29:41.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.900Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="排序">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tallate.github.io/fa5fc05a.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/fa5fc05a.html","path":"/fa5fc05a.html","title":"姓名排序"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>姓名排序 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A7%93%E5%90%8D%E6%8E%92%E5%BA%8F"><span class="nav-number">1.</span> <span class="nav-text">姓名排序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%BE%97%E6%B5%8B%E8%AF%95%E7%BB%84"><span class="nav-number">1.1.</span> <span class="nav-text">获得测试组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AC%E7%A0%81"><span class="nav-number">1.2.</span> <span class="nav-text">转码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E5%A7%93%E5%90%8D%E8%BF%9B%E8%A1%8C%E6%8E%92%E5%BA%8F"><span class="nav-number">1.3.</span> <span class="nav-text">对姓名进行排序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%93%E5%B1%95"><span class="nav-number">2.</span> <span class="nav-text">拓展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/fa5fc05a.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="姓名排序 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          姓名排序
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-11-06 23:29:41" itemprop="dateCreated datePublished" datetime="2017-11-06T23:29:41+08:00">2017-11-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+
+<h2 id="姓名排序"><a href="#姓名排序" class="headerlink" title="姓名排序"></a>姓名排序</h2><p>题目描述：给定 30,000 个中国人的名字，选用一种线性排序方法有效排序，要求使用内存不超过 1G。<br>想法 1：计数排序，汉字组合显然是无穷多的，无法确定元素的范围，而且可能有重名的情况，所以不能使用；<br>想法 2：使用桶排序，不好确定每个桶的元素范围，一般情况下都是假定元素限制在(0,1]；<br>想法 3：使用基数排序可以一次按名字的第 i 位的排序，如果每个桶的标志为一个汉字，那桶就太多了，如果每个桶的标志为汉字的首字母，桶够少了，但是每个桶都需要大量时间，既然是汉字，我们完全可以用汉字拼音；  </p>
+<h3 id="获得测试组"><a href="#获得测试组" class="headerlink" title="获得测试组"></a>获得测试组</h3><p>一组有 3w 行，每一行随机 2-10 个 utf-8 中文字符  </p>
+<p>从这里[1]了解到 unicode 字符的基本汉字编码范围为 4E00-9FA5，我的想法是随机生成一个 19968-40869 的 unsigned int 型数，然后编码成 utf-8 字符；  </p>
+<p>utf-8 字符可以由 unicode 字符转换而来，转换算法[2]为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">×××××××× ×××××××× -&gt; 1110×××× 10×××××× 10××××××</span><br><span class="line">1110拼上前4位</span><br><span class="line">10拼上中间6位</span><br><span class="line">10拼上后6位</span><br></pre></td></tr></table></figure>
+<p>输入到文件中</p>
+<p>源码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">﻿#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;time.h&gt;</span><br><span class="line">//中文字为3字节，第一步</span><br><span class="line">void randomname(unsigned char *name)&#123;</span><br><span class="line">    int length = random() % 8 + 2;</span><br><span class="line">    int pos;</span><br><span class="line">    for(pos = 0; pos &lt; length; pos++)&#123;</span><br><span class="line">        unsigned int a = (random() % 20902) + 19968;</span><br><span class="line">	       name[3 * pos] = (a &gt;&gt; 12) + 224;</span><br><span class="line">	       name[3 * pos + 1] = ((a &gt;&gt; 6) % 64) + 128;</span><br><span class="line">	       name[3 * pos + 2] = (a % 64) + 128;</span><br><span class="line">    &#125;</span><br><span class="line">    name[3 * pos] = &#x27;\0&#x27;;</span><br><span class="line">    printf(&quot;%s&quot;, name);</span><br><span class="line">&#125;</span><br><span class="line">void makefile(FILE *f)&#123;</span><br><span class="line">    if(f == NULL)&#123;</span><br><span class="line">        fprintf(stderr, &quot;error1&quot;);</span><br><span class="line">        exit(1);</span><br><span class="line">    &#125;</span><br><span class="line">    unsigned char name[35];</span><br><span class="line">    int count = 30000;</span><br><span class="line">    srand(time(0));</span><br><span class="line">    while(count--)&#123;</span><br><span class="line">        randomname(name);</span><br><span class="line">        if(fprintf(f, &quot;%s%c&quot;, name, &#x27;\r&#x27;) == 0)&#123;</span><br><span class="line">            fprintf(stderr, &quot;error&quot;);</span><br><span class="line">	           break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    fclose(f);</span><br><span class="line">&#125;</span><br><span class="line">int main(void)&#123;</span><br><span class="line">    FILE *f = fopen(&quot;a.txt&quot;, &quot;w&quot;);</span><br><span class="line">    makefile(f);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="转码"><a href="#转码" class="headerlink" title="转码"></a>转码</h3><p>我们希望按照拼音顺序排序，所以得先将 UTF-8 字符转换为 GB2312 编码  </p>
+<p>这里遇到了难题，我打算使用 linux 下的 iconv 进行转码，但是转出来的都是乱码，可能是对转码的工作原理还不明白。  </p>
+<p>刚开始我打算编写 C 语言代码转换 utf-8 -&gt; gb2312，但是失败了，一是因为有些字符在 gb2312 中不存在，报错：  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">C语言中出现 iconv(pattern, pin, &amp;inlen, pout, &amp;outlen) 返回-1</span><br><span class="line">命令行下出现 iconv: 未知 0 处的非法输入序列</span><br></pre></td></tr></table></figure>
+<p>二是我直接输出到了终端，结果出现了乱码：  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">你好 -&gt; ����</span><br></pre></td></tr></table></figure>
+<p>是因为终端默认使用 utf-8，这样就无法显示了。  </p>
+<p>后来使用 GBK，因为 GBK 包括 gb2312，将编码后的字符直接输出到了文件中，这样就能看到编码后的结果了  </p>
+<p>代码：  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;iconv.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">int code_convert(char *from_charset, char *to_charset, char *inbuf, size_t inlen, char *outbuf, size_t outlen)&#123;</span><br><span class="line">    iconv_t pattern;</span><br><span class="line">    char **pin = &amp;inbuf;</span><br><span class="line">    char **pout = &amp;outbuf;</span><br><span class="line">    pattern = iconv_open(to_charset, from_charset);</span><br><span class="line">    if(pattern == 0)&#123;</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    memset(outbuf, 0, outlen);</span><br><span class="line">    if(iconv(pattern, pin, &amp;inlen, pout, &amp;outlen) == -1)&#123;</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    iconv_close(pattern);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line">#define MAXNUM 30000</span><br><span class="line">#define MAXNAME 31</span><br><span class="line">char names_utf8[MAXNUM][MAXNAME];</span><br><span class="line">char names_gb2312[MAXNUM][MAXNAME];</span><br><span class="line">void readFile(char *fileName)&#123;</span><br><span class="line">    FILE *f;</span><br><span class="line">    if((f = fopen(fileName, &quot;r&quot;)) == NULL)&#123;</span><br><span class="line">        fprintf(stderr, &quot;cant open file %s\n&quot;, fileName);</span><br><span class="line">        exit(1);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    int pos;</span><br><span class="line">    for(pos = 0; pos &lt; MAXNUM; pos++)&#123;</span><br><span class="line">        //fgets(names_utf8[pos], MAXNAME, f);fgets会保留行末尾的\r\n</span><br><span class="line">        fscanf(f, &quot;%s&quot;, names_utf8[pos]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">void convert()&#123;</span><br><span class="line">    FILE *f = fopen(&quot;b.txt&quot;, &quot;w&quot;);</span><br><span class="line">    int pos;</span><br><span class="line">    for(pos = 0; pos &lt; MAXNUM; pos++)&#123;</span><br><span class="line">        if(code_convert(&quot;utf-8&quot;, &quot;GBK&quot;, names_utf8[pos], strlen(names_utf8[pos]), names_gb2312[pos], MAXNAME) == -1)&#123;</span><br><span class="line">	           fprintf(stderr, &quot;iconv error&quot;);</span><br><span class="line">	           exit(2);</span><br><span class="line">        &#125;</span><br><span class="line">       fprintf(f, &quot;%s\r\n&quot;, names_gb2312[pos]);</span><br><span class="line">    &#125;</span><br><span class="line">    fclose(f);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这部分代码等价于以下命令：  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo iconv -f utf-8 -t GBK a.txt -o b.txt</span><br></pre></td></tr></table></figure>
+<p>起初认为像 GBK 这样的汉字编码标准会很地道地按拼音顺序来编码，但是还是太天真了，因为有多音字存在等原因，要按拼音编码是不大可能的；  </p>
+<p>最终上网找了一个汉字转拼音的程序[4]，找拼音的大致思路是预先准备好拼音及该拼音的汉字，要找一个汉字的拼音就遍历一遍找，方法比较简单只覆盖了一部分汉字，而且是线性遍历效率不高，还有个缺点就是多音字只能找到第一个；  </p>
+<h3 id="对姓名进行排序"><a href="#对姓名进行排序" class="headerlink" title="对姓名进行排序"></a>对姓名进行排序</h3><p>最后就是使用基数排序了，因为使用 utf-8 编码，所以数组中 27-29 为第 10 个汉字，24-26 为第 9 个汉字，以此类推，姓名有长有短，比如“张三”的后 8 位都不存在，默认放入 0 号桶，其他情况如果能找到该位汉字的拼音，将姓名放到对应的桶中，如果找不到，默认该汉字未编码，放入 0 号桶，这里桶其实代表 a&#x2F;an&#x2F;ang…，最后为了保证排序的稳定性，桶使用了队列实现；  </p>
+<p>代码如下所示：<br>其中<code>pinyin.h</code>是，代码如<a href="/files/%E7%AE%97%E6%B3%95/pinyin.h">这里</a>所示。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;pinyin.h&quot; //汉字-拼音</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#define P2HSIZE (sizeof(p2h) / sizeof(p2h[0]))</span><br><span class="line">int getP2Hpos(char word[])&#123;</span><br><span class="line">    if(word == NULL || word[0] == &#x27;\0&#x27;)&#123; return -1; &#125;</span><br><span class="line">    int pos;</span><br><span class="line">    char *curHzString;</span><br><span class="line">    for(pos = 0; pos &lt; P2HSIZE; pos++)&#123;</span><br><span class="line">        curHzString = p2h[pos].hz;</span><br><span class="line">        if(strstr(curHzString, word))&#123;</span><br><span class="line">            return pos;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return -1;</span><br><span class="line">&#125;</span><br><span class="line">#define MAXNUM 30000 //文件中姓名的数量</span><br><span class="line">#define MAXNAME 31 //姓名最多为10个汉字</span><br><span class="line">char *names_utf8[MAXNUM];</span><br><span class="line">/*******************************************/</span><br><span class="line">void readFile(char *fileName)&#123;</span><br><span class="line">    FILE *f;</span><br><span class="line">    if((f = fopen(fileName, &quot;r&quot;)) == NULL)&#123;</span><br><span class="line">        fprintf(stderr, &quot;cant open file %s\n&quot;, fileName);</span><br><span class="line">        exit(1);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    int pos;</span><br><span class="line">    for(pos = 0; pos &lt; MAXNUM; pos++)&#123;</span><br><span class="line">        names_utf8[pos] = (char*)malloc(MAXNAME * sizeof(char));</span><br><span class="line">        fscanf(f, &quot;%s&quot;, names_utf8[pos]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">void clearNames()&#123;</span><br><span class="line">    int pos;</span><br><span class="line">    for(pos = 0; pos &lt; MAXNUM; pos++)&#123;</span><br><span class="line">        free(names_utf8[pos]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">/****************************************/</span><br><span class="line">typedef struct cell&#123;</span><br><span class="line">    int pos;</span><br><span class="line">    struct cell *next;</span><br><span class="line">&#125;cell;</span><br><span class="line">typedef struct bucket&#123;</span><br><span class="line">    cell *front;</span><br><span class="line">    cell *rear;</span><br><span class="line">&#125;bucket;</span><br><span class="line">int isEmpty(bucket *b)&#123;</span><br><span class="line">    return b-&gt;rear == NULL;</span><br><span class="line">&#125;</span><br><span class="line">cell *makeCell(int pos)&#123;</span><br><span class="line">    cell *c = (cell*)malloc(sizeof(cell));</span><br><span class="line">    if(c == NULL)&#123; fprintf(stderr, &quot;error&quot;); &#125;</span><br><span class="line">    c-&gt;pos = pos, c-&gt;next = NULL;</span><br><span class="line">    return c;</span><br><span class="line">&#125;</span><br><span class="line">bucket *makeBucket()&#123;</span><br><span class="line">    bucket *b = (bucket*)malloc(sizeof(bucket));</span><br><span class="line">    b-&gt;front = b-&gt;rear = NULL;</span><br><span class="line">    return b;</span><br><span class="line">&#125;</span><br><span class="line">int push(bucket *b, int pos)&#123;</span><br><span class="line">    if(b == NULL)&#123;printf(&quot;error&quot;);</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    cell *c = makeCell(pos);</span><br><span class="line">    if(isEmpty(b))&#123;</span><br><span class="line">        b-&gt;rear = b-&gt;front = c;</span><br><span class="line">    &#125;</span><br><span class="line">    else&#123;</span><br><span class="line">        b-&gt;front-&gt;next = c;</span><br><span class="line">        b-&gt;front = c;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line">int pop(bucket *b)&#123;</span><br><span class="line">    if(isEmpty(b))&#123;</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    else&#123;</span><br><span class="line">        cell *rear = b-&gt;rear;</span><br><span class="line">        int pos = rear-&gt;pos;</span><br><span class="line">        b-&gt;rear = rear-&gt;next;</span><br><span class="line">        free(rear);</span><br><span class="line">        return pos;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//桶的数量就是拼音的数量，0号桶用于装找不到拼音的汉字</span><br><span class="line">#define BUCKETSNUM (P2HSIZE + 1)</span><br><span class="line">bucket *buckets[BUCKETSNUM];</span><br><span class="line">char tmp[4];</span><br><span class="line">void pushBuckets(int radix)&#123;//1 &lt;= radix &lt;= 10，表示第几个字</span><br><span class="line">    int pos, bucketId;</span><br><span class="line">    for(pos = 0; pos &lt; MAXNUM; pos++)&#123;//如果改成while(pos++ &lt; MAXNUM)会出现段错误，为什么？？</span><br><span class="line">        strncpy(tmp, names_utf8[pos] + 3 * (radix - 1), 3);</span><br><span class="line">        bucketId = getP2Hpos(tmp) + 1;</span><br><span class="line">        push(buckets[bucketId], pos);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//桶中保存的是对应姓名数组的下标</span><br><span class="line">void popBuckets()&#123;</span><br><span class="line">    char *names_tmp[MAXNUM];</span><br><span class="line">    int npos;</span><br><span class="line">    for(npos = 0; npos &lt; MAXNUM; npos++)&#123;</span><br><span class="line">        names_tmp[npos] = names_utf8[npos];</span><br><span class="line">    &#125;</span><br><span class="line">    npos = 0;</span><br><span class="line">    int bpos;</span><br><span class="line">    for(bpos = 0; bpos &lt; BUCKETSNUM; bpos++)&#123;</span><br><span class="line">        while(!isEmpty(buckets[bpos]))&#123;</span><br><span class="line">            int pos = pop(buckets[bpos]);</span><br><span class="line">            names_utf8[npos++] = names_tmp[pos];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">void initBuckets()&#123;</span><br><span class="line">    int pos;</span><br><span class="line">    for(pos = 0; pos &lt; BUCKETSNUM; pos++)&#123;</span><br><span class="line">        buckets[pos] = makeBucket();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">void clearBuckets()&#123;</span><br><span class="line">    int pos;</span><br><span class="line">    for(pos = 0; pos &lt; BUCKETSNUM; pos++)&#123;</span><br><span class="line">        while(pop(buckets[pos]) != -1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">void radixSort()&#123;</span><br><span class="line">    int radix;</span><br><span class="line">    for(radix = 10; radix &gt;= 1; radix--)&#123;</span><br><span class="line">        pushBuckets(radix);</span><br><span class="line">        popBuckets();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">void writeResult()&#123;</span><br><span class="line">    FILE *f = fopen(&quot;result.dat&quot;, &quot;w&quot;);</span><br><span class="line">    if(f == NULL)&#123; fprintf(stderr, &quot;open file failed&quot;); exit(1);&#125;</span><br><span class="line">    </span><br><span class="line">    int pos;</span><br><span class="line">    for(pos = 0; pos &lt; MAXNUM; pos++)&#123;</span><br><span class="line">        fprintf(f, &quot;%s\r\n&quot;, names_utf8[pos]);</span><br><span class="line">    &#125;</span><br><span class="line">    fclose(f);</span><br><span class="line">&#125;</span><br><span class="line">void func()&#123;</span><br><span class="line">    readFile(&quot;a.txt&quot;);</span><br><span class="line">    initBuckets();</span><br><span class="line">    radixSort();</span><br><span class="line">    writeResult();</span><br><span class="line">    clearNames();</span><br><span class="line">&#125;</span><br><span class="line">int main(void)&#123;</span><br><span class="line">    func();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h2><p>当需要排序的数据量很大，例如 100G 个人按照年龄排序，如何基于外存对这些数据排序？使用 mapreduce 等工具？  </p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="http://www.qqxiuzi.cn/zh/hanzi-unicode-bianma.php">汉字 Unicode 编码范围</a></li>
+<li><a href="www.zhihu.com/question/23374078">Unicode 和 UTF-8 有何区别？</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/jnbbwyth/article/details/6991371">linux 下 iconv()函数的用法</a></li>
+<li><a target="_blank" rel="noopener" href="http://download.csdn.net/detail/lovesoftchina/5654309">Linux C 实现 简单的 汉字转拼音</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.crifan.com/files/doc/docbook/char_encoding/release/html/char_encoding.html">字符编码详解</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/jk110333/article/details/19685127">C&#x2F;C++段错误问题排查和解决方法</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%8E%92%E5%BA%8F/" rel="tag"># 排序</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/e45d6eed.html" rel="prev" title="2017 沈阳马拉松">
+                  <i class="fa fa-angle-left"></i> 2017 沈阳马拉松
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/ea6e9398.html" rel="next" title="内存池介绍">
+                  内存池介绍 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="参考 What is the difference between dependency injection and dependency look up?  背景情况部门开始推一个大项目 NCC，后台几乎沿用原 NC（有近十年历史），将原来 JavaSwing 画的重量前端换成了一种“轻量前端”，其实这种轻量前端一点都不轻量；SQL 完全是自己用字符串拼接起来的；开发模式是前后端分离联调的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NCC 后台简析">
+<meta property="og:url" content="https://tallate.github.io/179723ca.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="参考 What is the difference between dependency injection and dependency look up?  背景情况部门开始推一个大项目 NCC，后台几乎沿用原 NC（有近十年历史），将原来 JavaSwing 画的重量前端换成了一种“轻量前端”，其实这种轻量前端一点都不轻量；SQL 完全是自己用字符串拼接起来的；开发模式是前后端分离联调的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-09-01T16:54:39.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.906Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="yonyou">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tallate.github.io/179723ca.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/179723ca.html","path":"/179723ca.html","title":"NCC 后台简析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>NCC 后台简析 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF%E6%83%85%E5%86%B5"><span class="nav-number">2.</span> <span class="nav-text">背景情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E%E5%A2%9E%E5%88%A0%E6%94%B9%E6%9F%A5%E6%B5%81%E7%A8%8B%E8%AF%B4%E8%B5%B7"><span class="nav-number">3.</span> <span class="nav-text">从增删改查流程说起</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#save"><span class="nav-number">3.1.</span> <span class="nav-text">save</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#delete"><span class="nav-number">3.2.</span> <span class="nav-text">delete</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#query"><span class="nav-number">3.3.</span> <span class="nav-text">query</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#page"><span class="nav-number">3.4.</span> <span class="nav-text">page</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E7%82%B9"><span class="nav-number">4.</span> <span class="nav-text">技术点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%BB%E9%87%8F%E5%89%8D%E7%AB%AF%E3%80%81%E5%88%86%E5%B1%82"><span class="nav-number">4.1.</span> <span class="nav-text">轻量前端、分层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="nav-number">4.2.</span> <span class="nav-text">读写分离</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SOA"><span class="nav-number">4.3.</span> <span class="nav-text">SOA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE"><span class="nav-number">4.4.</span> <span class="nav-text">元数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E6%9D%BF"><span class="nav-number">4.5.</span> <span class="nav-text">模板</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E6%9F%A5%E6%89%BE"><span class="nav-number">4.6.</span> <span class="nav-text">依赖查找</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E9%94%81"><span class="nav-number">4.7.</span> <span class="nav-text">内存锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%92%E4%BB%96%E9%94%81"><span class="nav-number">4.7.1.</span> <span class="nav-text">排他锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E9%94%81"><span class="nav-number">4.7.2.</span> <span class="nav-text">共享锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E9%94%81"><span class="nav-number">4.7.3.</span> <span class="nav-text">动态锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E6%88%B3%E6%A0%A1%E9%AA%8C"><span class="nav-number">4.8.</span> <span class="nav-text">时间戳校验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86"><span class="nav-number">4.9.</span> <span class="nav-text">动态代理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B7%A8%E7%BB%84%E4%BB%B6%E8%B0%83%E7%94%A8"><span class="nav-number">4.10.</span> <span class="nav-text">跨组件调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E5%88%A0%E9%99%A4"><span class="nav-number">4.11.</span> <span class="nav-text">逻辑删除</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Oracle"><span class="nav-number">4.12.</span> <span class="nav-text">Oracle</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/179723ca.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="NCC 后台简析 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          NCC 后台简析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-09-02 00:54:39" itemprop="dateCreated datePublished" datetime="2018-09-02T00:54:39+08:00">2018-09-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/28039232/what-is-the-difference-between-dependency-injection-and-dependency-look-up">What is the difference between dependency injection and dependency look up?</a></li>
+</ol>
+<h2 id="背景情况"><a href="#背景情况" class="headerlink" title="背景情况"></a>背景情况</h2><p>部门开始推一个大项目 NCC，后台几乎沿用原 NC（有近十年历史），将原来 JavaSwing 画的重量前端换成了一种“轻量前端”，其实这种轻量前端一点都不轻量；SQL 完全是自己用字符串拼接起来的；开发模式是前后端分离联调的方式，但是因为后台代码都是部署在一个服务里头的，没有司库云（微服务架构）复杂。</p>
+<!-- more -->
+<h2 id="从增删改查流程说起"><a href="#从增删改查流程说起" class="headerlink" title="从增删改查流程说起"></a>从增删改查流程说起</h2><p>对 Controller、Service 分层的讨论放在后面。</p>
+<h3 id="save"><a href="#save" class="headerlink" title="save"></a>save</h3><p>保存操作有以下特点。</p>
+<ol>
+<li>批量<br>对普通的 CRUD 操作，最大的开销是网络传输，NCC 系统中操作的往往是多个表关联在一起的复杂结构，如果分成多次请求，一方面对用户体验不好，一方面对效率也有所影响。因此 NCC 中的做法是将同类数据放到同一页签，转换为 json 格式的数据，如下所示： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;pageid&quot;:&quot;36650BIS_CARD&quot;,</span><br><span class="line">    &quot;head&quot;:&#123;</span><br><span class="line">        &quot;head&quot;:&#123;</span><br><span class="line">            &quot;areaType&quot;:&quot;form&quot;,</span><br><span class="line">            &quot;rows&quot;:[</span><br><span class="line">                &#123;</span><br><span class="line">                    &quot;values&quot;:&#123;</span><br><span class="line">                        &quot;pk_bondissueregister&quot;:&#123;</span><br><span class="line">                            &quot;display&quot;:null,</span><br><span class="line">                            &quot;value&quot;:null,</span><br><span class="line">                            &quot;scale&quot;:&quot;-1&quot;</span><br><span class="line">                        &#125;</span><br><span class="line">                        ...其他属性</span><br><span class="line">                    &#125;,</span><br><span class="line">                    &quot;status&quot;:&quot;2&quot;</span><br><span class="line">                &#125;</span><br><span class="line">            ],</span><br><span class="line">            &quot;areacode&quot;:&quot;head&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;bodys&quot;:&#123;</span><br><span class="line">        &quot;repaymentplan&quot;:&#123;</span><br><span class="line">            &quot;rows&quot;:[</span><br><span class="line">                &#123;</span><br><span class="line">                    &quot;rowid&quot;:&quot;136270.438b34a6204411a&quot;,</span><br><span class="line">                    &quot;status&quot;:&quot;2&quot;,</span><br><span class="line">                    &quot;values&quot;:&#123;</span><br><span class="line">                        &quot;pk_bondrepaymentplan_b&quot;:&#123;</span><br><span class="line">                            &quot;display&quot;:null,</span><br><span class="line">                            &quot;scale&quot;:null,</span><br><span class="line">                            &quot;value&quot;:&quot;&quot;</span><br><span class="line">                        &#125;</span><br><span class="line">                        ...其他属性</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            ],</span><br><span class="line">            &quot;areaType&quot;:&quot;table&quot;,</span><br><span class="line">            &quot;areacode&quot;:&quot;repaymentplan&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>差异化<br>新增和更新操作皆为调用 save 接口，通过区别传递的数据中是否有 id 来进行区分。另外，更新操作会先从数据库中查询出旧的数据，并和客户端传参进行比较，若完全一致则直接跳过此次更新。</li>
+</ol>
+<h3 id="delete"><a href="#delete" class="headerlink" title="delete"></a>delete</h3><p>执行流程和 save 几乎一样，只是系统中不会真的删除一条数据，而是采用“逻辑删除”的方案。</p>
+<h3 id="query"><a href="#query" class="headerlink" title="query"></a>query</h3><p>查询操作的过滤条件是由前台给出的，我没有经历过重客户端时代 NC 的开发，但是在 Web 应用中也这么做有点奇怪。</p>
+<h3 id="page"><a href="#page" class="headerlink" title="page"></a>page</h3><p>分页查询的思路比较奇怪，是先按前端传递的过滤条件查出所有合适记录的 pk，然后在 Controller 层对这些 pk 进行分页:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// ids指的是查出的所有合适记录的pk</span><br><span class="line">// 本页之后的数据数量</span><br><span class="line">int afterCurPageSize = ids.length - pageInfo.getPageIndex() * pageInfo.getPageSize() + 1;</span><br><span class="line">int targetSize = pageInfo.getPageSize() &lt; afterCurPageSize ? pageInfo.getPageSize() : afterCurPageSize;</span><br><span class="line">String[] targetIds = new String[targetSize];</span><br><span class="line">System.arraycopy(ids, pageInfo.getPageIndex() * pageInfo.getPageSize(),</span><br><span class="line">        targetIds, 0,</span><br><span class="line">        targetSize);</span><br></pre></td></tr></table></figure>
+<p>最后再调用一个批量查询的 Service 接口进行查询。</p>
+<h2 id="技术点"><a href="#技术点" class="headerlink" title="技术点"></a>技术点</h2><h3 id="轻量前端、分层"><a href="#轻量前端、分层" class="headerlink" title="轻量前端、分层"></a>轻量前端、分层</h3><p>轻量前端指的是用 React 开发的浏览器客户端，既然是轻量前端，那么做的事情肯定不会太多了，那么很多工作就必须要转移到后端了，因此在 NCC 中又引入了一个 Action 层，作为 Controller。</p>
+<h3 id="读写分离"><a href="#读写分离" class="headerlink" title="读写分离"></a>读写分离</h3><p>后台 Service 层将读操作和写操作划分到了两个接口内，实际上应用层可以根据读写进行复制，一般来说读操作更频繁，可以多创建几个实例提供服务，并在前头使用负载均衡器进行反向代理。</p>
+<h3 id="SOA"><a href="#SOA" class="headerlink" title="SOA"></a>SOA</h3><p>SOA 是一种架构风格，与微服务的主要区别是 SOA 多了一个 ESB（企业服务总线），在 SOA 中，当一个服务需要调用另一个服务时，它需要先从 ESB 中获取那个服务的调用方法、消息格式等，而微服务可以看作一种轻量化的 SOA，它没有集中的一个 ESB，服务之间通过公开的 RPC 接口来相互调用。<br>实际上 NC 没有 ESB 这玩意。首先需要将 Service 接口及其对应的实现类注册到一个 xml 文件内，服务间调用通过 NCLocator.find(class)实现：如果配置文件中没有设置服务器 URL，则直接本地反射实例化 Service 的实现类；如果配置文件中设置了服务器 URL，则使用 JDK Proxy 做动态代理，将本地方法调用转换为远程调用。</p>
+<h3 id="元数据"><a href="#元数据" class="headerlink" title="元数据"></a>元数据</h3><p>元数据是描述数据的数据，实际开发业务前需要先使用相关工具”画”出元数据，NCC 的开发极大地依赖于元数据的正确性，老的功能节点的元数据若轻易修改，很有可能导致原功能出错。</p>
+<h3 id="模板"><a href="#模板" class="headerlink" title="模板"></a>模板</h3><p>模板是对页面的抽象，平台的有关部门做了一个画模板的工具，由后端人员登录到工作桌面画模板，可以减轻前端开发人员的工作压力（可能是领导觉得前端比较稀缺?）。可以从元数据导出模板，并根据原型图进行适配。<br>随着业务的复杂化，将许多公共组件抽象出来集中管理是必须的，尤其是 NC 这么复杂的庞然大物，其业务拿出两个小时来也没办法讲完 1%，有点夸张，但是事实是这里的需求很多都是从会计等行业转来的，一次给我们讲需求时从 NC 上满屏的标签中挑了部分讲了两小时，大家都是崩溃的…因此 NC 中引入了三大模板的概念，它们分别是：查询模板、打印模板、计算模板，分别对查询 sql、打印、？？？进行了抽象。</p>
+<h3 id="依赖查找"><a href="#依赖查找" class="headerlink" title="依赖查找"></a>依赖查找</h3><p>Spring 的核心原理是 IoC，而 IoC 的主要实现方式是 DI 或依赖查找。DI 我们比较眼熟，主要有”属性注入”、”构造器注入”及”方法注入”。NCC 后台为 NC，已经有 10 来年历史，其中实现了一套依赖查找的模式，如下代码所示。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IXxxService xxxService = ServiceLocator.find(IXxxService.class);</span><br></pre></td></tr></table></figure>
+<p>当然接口和实现类之间不是自动关联在一起的，还需要定义一个 upm 文件来配置他们之间的关联关系。<br>这实际上和比较原始的 Spring 用法有点像，如下代码所示。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XxxBean bean = application.getBean(XxxBean.class);</span><br></pre></td></tr></table></figure>
+<h3 id="内存锁"><a href="#内存锁" class="headerlink" title="内存锁"></a>内存锁</h3><h4 id="排他锁"><a href="#排他锁" class="headerlink" title="排他锁"></a>排他锁</h4><p>就是普通的锁。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">boolean isOK=false;</span><br><span class="line">try&#123;</span><br><span class="line">    isOK = PKLock.getInstance().acquireBatchLock(new String[]&#123; PK &#125;, userid);</span><br><span class="line">    if(!isOK)</span><br><span class="line">        throw new BusinessException(&quot;并发操作&quot;);</span><br><span class="line">    // TODO: 业务逻辑</span><br><span class="line">&#125; finally &#123;</span><br><span class="line">    if(isOK)&#123;</span><br><span class="line">        PKLock.getInstance().releaseBatchLock (new String[]&#123; PK &#125;, userid);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="共享锁"><a href="#共享锁" class="headerlink" title="共享锁"></a>共享锁</h4><p>共享锁适用于读者写者的情景，即某类操作可以并存、而和其他类操作不能的情况。<br>使用方法和排他锁差不多：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PKLock.getInstance().acquireBatchLock(</span><br><span class="line">        new String[]&#123; PK + IPKLockBS.STR_SHARED_LOCK &#125;, userid );</span><br></pre></td></tr></table></figure>
+<p>对同一 PK 来说，共享锁和排他锁是不能共存的。</p>
+<h4 id="动态锁"><a href="#动态锁" class="headerlink" title="动态锁"></a>动态锁</h4><p>动态锁为一种特殊的锁，进行加锁的人员不用自己释放，其调用序列一般为：<br>pklock.acquireLock… pklock.addDynamicLock…<br>如果是远程调用,远程调用结束后系统会自动释放所有的动态锁<br>动态锁其实是对前面两种锁的封装，不过动态锁不需要主动解锁，<strong>中间件会在后台事务结束前进行统一解锁</strong>；并且在同一次中间件事务中，<strong>可以重复申请相同 PK 的锁</strong>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">boolean isOK = PKLock.getInstance().addDynamicLock( PK ); </span><br></pre></td></tr></table></figure>
+<p>动态锁的实现原理是事件机制，动态锁最后会发出一个解锁事件，业务操作执行结束后会触发这个事件。</p>
+<h3 id="时间戳校验"><a href="#时间戳校验" class="headerlink" title="时间戳校验"></a>时间戳校验</h3><p>有了锁机制可以保证并发操作不会破坏数据一致性，但是不能保证用户的操作是对最新版本的数据进行的，因此需要引入时间戳机制。<br>主要通过比较当前对象的<strong>ts 值（时间戳）</strong>与数据库中该对象的 TS 值来判断用户修改的是否为最新版本的数据。在每次对数据进行修改操作时，都需要更新相应数据的时间戳标志 ts，这个一般由系统维护，不需要在业务中特殊处理。</p>
+<h3 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h3><p>上面提到了动态锁机制但是没有具体说解锁的时机，假设所有含写操作的业务操作都需要加锁，难道要把加锁解锁逻辑都写一遍？NC 中为了解决这个问题也实现了一套 AOP 机制，原理是 JDK Proxy，NC 会为所有在配置文件中注册的 Service 创建<strong>动态代理</strong>，在动态代理中可以对锁等公共功能进行操作，从而大大简化业务代码。在这方面来讲，NC 也可以看作 Spring 的弱化版。</p>
+<h3 id="跨组件调用"><a href="#跨组件调用" class="headerlink" title="跨组件调用"></a>跨组件调用</h3><p>NCC 后台是传统的单体式应用，所有模块几乎都放在一个服务里（用户买什么就把什么包含进来），跨模块的组件之间可能存在相互引用的关系，比如 a 需要将某些信息存入 b 中，就需要调用 b 提供的接口，而 b 在某些情况下也需要从 a 中获取某些信息，但 b 所在的 B 模块是一个更通用的组件，它不会为每个下游业务都新增代码。在 NCC 中，面对这种情况一般是由 a 来提供一个回调接口，将这个接口名保存到数据库中，然后告诉 b:”这就是 a 的接口啦”，类似于 RPC，不过将耦合的部分转移到了数据库中。</p>
+<h3 id="逻辑删除"><a href="#逻辑删除" class="headerlink" title="逻辑删除"></a>逻辑删除</h3><p>数据库里的数据不会被直接删除，而是采取逻辑删除的策略，每条数据都有一个额外的<strong>dr（delete remark）</strong>字段用于标识一条数据是否被删除，查询时需要根据这个字段进行过滤。</p>
+<h3 id="Oracle"><a href="#Oracle" class="headerlink" title="Oracle"></a>Oracle</h3><p>采用 Oracle 作为数据库，一是因为客户主要是大企业，安全、稳定有更高要求；二，数据量也确实不大，可能也用不着进行分库分表；三，作为延续了十几年的系统，当时“去 IOE 化”还没有提出，Oracle 仍是数据库领域最好的选择；最后，业务十分复杂，且底层 ORM 代码中存在大量直接使用字符串拼接出来的 SQL，想要完全移植到 MySQL 等数据库是不大现实的。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>以上我对最近工作中涉及到的东西进行了简单总结，嗯…产品底层仍有很多我未知的部分，一些与业务关联较大的代码也不适合拿出来分享，于是暂时告一段落吧。</p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/yonyou/" rel="tag"># yonyou</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/9b8ed85e.html" rel="prev" title="公司大佬关于编码规范的一次分享">
+                  <i class="fa fa-angle-left"></i> 公司大佬关于编码规范的一次分享
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/e500a1f4.html" rel="next" title="基于微服务的资金云系统发债管理子系统总结">
+                  基于微服务的资金云系统发债管理子系统总结 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

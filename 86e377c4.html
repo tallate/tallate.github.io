@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="对ES源码的阅读记录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ES4_1集群原理">
+<meta property="og:url" content="https://tallate.github.io/86e377c4.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="对ES源码的阅读记录。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/ES/ES%E7%9A%84%E8%84%91%E8%A3%82.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/ES/%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/ES/%E6%B0%B4%E5%B9%B3%E6%89%A9%E5%AE%B91.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/ES/%E6%B0%B4%E5%B9%B3%E6%89%A9%E5%AE%B92.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/ES/MySQL%E4%B8%8EES%E5%90%8C%E6%AD%A5%E7%9A%84%E4%B8%80%E7%A7%8D%E6%9E%B6%E6%9E%84.png">
+<meta property="article:published_time" content="2020-12-21T13:14:48.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.861Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="ElasticSearch">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/ES/ES%E7%9A%84%E8%84%91%E8%A3%82.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/86e377c4.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/86e377c4.html","path":"/86e377c4.html","title":"ES4_1集群原理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ES4_1集群原理 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ES%E8%B0%83%E8%AF%95%E7%8E%AF%E5%A2%83%E7%9A%84%E6%90%AD%E5%BB%BA"><span class="nav-number">1.</span> <span class="nav-text">ES调试环境的搭建</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ES%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%8E%9F%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">ES的分布式原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4-Cluster"><span class="nav-number">2.1.</span> <span class="nav-text">集群 - Cluster</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%9B%91%E6%8E%A7"><span class="nav-number">2.1.1.</span> <span class="nav-text">集群监控</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%8A%B6%E6%80%81%E7%9B%91%E6%8E%A7"><span class="nav-number">2.1.2.</span> <span class="nav-text">集群状态监控</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8A%82%E7%82%B9-Node"><span class="nav-number">2.2.</span> <span class="nav-text">节点 - Node</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E8%8A%82%E7%82%B9-Master-eligible-%E5%92%8C-Master-%E5%92%8C-%E9%80%89%E4%B8%BE"><span class="nav-number">2.2.1.</span> <span class="nav-text">主节点 - Master-eligible 和 Master 和 选举</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%8F%E8%B0%83%E8%8A%82%E7%82%B9Coordinating-Node%E5%92%8C%E6%95%B0%E6%8D%AE%E8%8A%82%E7%82%B9Data-Node"><span class="nav-number">2.2.2.</span> <span class="nav-text">协调节点Coordinating Node和数据节点Data Node</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E7%B1%BB%E5%9E%8B%E9%85%8D%E7%BD%AE"><span class="nav-number">2.2.3.</span> <span class="nav-text">节点类型配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%84%91%E8%A3%82%E9%97%AE%E9%A2%98%E5%8F%8A%E8%84%91%E8%A3%82%E9%81%BF%E5%85%8D"><span class="nav-number">2.3.</span> <span class="nav-text">脑裂问题及脑裂避免</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%91%E7%94%9F%E8%84%91%E8%A3%82%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">2.3.1.</span> <span class="nav-text">发生脑裂的原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%84%91%E8%A3%82%E9%81%BF%E5%85%8D"><span class="nav-number">2.3.2.</span> <span class="nav-text">脑裂避免</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB"><span class="nav-number">2.4.</span> <span class="nav-text">故障转移</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E6%9C%BA%E5%A4%9A%E8%8A%82%E7%82%B9"><span class="nav-number">2.4.1.</span> <span class="nav-text">同机多节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E6%9C%BA%E5%99%A8%E5%A4%9A%E8%8A%82%E7%82%B9"><span class="nav-number">2.4.2.</span> <span class="nav-text">不同机器多节点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%E6%9C%BA%E5%88%B6"><span class="nav-number">2.4.3.</span> <span class="nav-text">故障转移机制</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E6%89%A9%E5%AE%B9"><span class="nav-number">3.</span> <span class="nav-text">集群扩容</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ES%E6%89%A9%E5%AE%B9%E9%99%90%E5%88%B6"><span class="nav-number">3.1.</span> <span class="nav-text">ES扩容限制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%8A%82%E7%82%B9"><span class="nav-number">3.2.</span> <span class="nav-text">配置节点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B0%B4%E5%B9%B3%E6%89%A9%E5%AE%B9"><span class="nav-number">3.3.</span> <span class="nav-text">水平扩容</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%BF%81%E7%A7%BB"><span class="nav-number">4.</span> <span class="nav-text">数据迁移</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-%E4%B8%8E-ES-%E5%90%8C%E6%AD%A5"><span class="nav-number">4.1.</span> <span class="nav-text">MySQL 与 ES 同步</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E5%90%8C%E6%AD%A5-MySQL-%E5%92%8C-ES"><span class="nav-number">4.1.1.</span> <span class="nav-text">为什么要同步 MySQL 和 ES</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">4.1.2.</span> <span class="nav-text">注意事项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E7%A7%8D%E6%9E%B6%E6%9E%84%E6%96%B9%E6%A1%88"><span class="nav-number">4.1.3.</span> <span class="nav-text">一种架构方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Kafka"><span class="nav-number">4.1.3.1.</span> <span class="nav-text">Kafka</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Data-Transformation"><span class="nav-number">4.1.3.2.</span> <span class="nav-text">Data Transformation</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ES"><span class="nav-number">4.1.3.3.</span> <span class="nav-text">ES</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ES-%E7%BC%BA%E7%82%B9"><span class="nav-number">4.1.3.4.</span> <span class="nav-text">ES 缺点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8B%E4%B8%80%E6%AD%A5"><span class="nav-number">4.1.3.5.</span> <span class="nav-text">下一步</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ES%E9%9B%86%E7%BE%A4%E7%9A%84%E5%90%AF%E5%8A%A8%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">5.</span> <span class="nav-text">ES集群的启动源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E7%9A%84%E5%90%AF%E5%8A%A8"><span class="nav-number">5.1.</span> <span class="nav-text">节点的启动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#keepalive"><span class="nav-number">5.2.</span> <span class="nav-text">keepalive</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E5%85%B3%E9%97%AD"><span class="nav-number">5.3.</span> <span class="nav-text">节点关闭</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E4%B8%BB%E8%8A%82%E7%82%B9%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">6.</span> <span class="nav-text">选举主节点源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E7%9B%B8%E5%85%B3%E6%A6%82%E5%BF%B5"><span class="nav-number">6.1.</span> <span class="nav-text">选举相关概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">6.2.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E8%8A%82%E7%82%B9%E5%AE%9E%E4%BE%8B%E7%9A%84%E5%88%9B%E5%BB%BA"><span class="nav-number">6.3.</span> <span class="nav-text">本地节点实例的创建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E4%B8%BB%E6%B5%81%E7%A8%8B"><span class="nav-number">6.4.</span> <span class="nav-text">选主流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E4%B8%BE%E4%B8%B4%E6%97%B6-Master"><span class="nav-number">6.5.</span> <span class="nav-text">选举临时 Master</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E-masterCandidates-%E9%80%89%E4%B8%BB"><span class="nav-number">6.6.</span> <span class="nav-text">从 masterCandidates 选主</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8E-activeMasters-%E5%88%97%E8%A1%A8%E4%B8%AD%E9%80%89%E4%B8%BB"><span class="nav-number">6.7.</span> <span class="nav-text">从 activeMasters 列表中选主</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B6%E9%9B%86%E6%8A%95%E7%A5%A8%E8%BF%9B%E8%A1%8C%E7%BB%9F%E8%AE%A1"><span class="nav-number">6.8.</span> <span class="nav-text">收集投票进行统计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A0%E5%85%A5%E9%9B%86%E7%BE%A4"><span class="nav-number">6.9.</span> <span class="nav-text">加入集群</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/86e377c4.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ES4_1集群原理 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ES4_1集群原理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-21 21:14:48" itemprop="dateCreated datePublished" datetime="2020-12-21T21:14:48+08:00">2020-12-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>对ES源码的阅读记录。</p>
+<span id="more"></span>
+
+<h1 id="ES调试环境的搭建"><a href="#ES调试环境的搭建" class="headerlink" title="ES调试环境的搭建"></a>ES调试环境的搭建</h1><p>ES调试环境的初始化见我的另一篇文档：<br><a href="https://tallate.github.io/c395b48b.html#%E8%B0%83%E8%AF%95debug-es">https://tallate.github.io/c395b48b.html#%E8%B0%83%E8%AF%95debug-es</a></p>
+<h1 id="ES的分布式原理"><a href="#ES的分布式原理" class="headerlink" title="ES的分布式原理"></a>ES的分布式原理</h1><h2 id="集群-Cluster"><a href="#集群-Cluster" class="headerlink" title="集群 - Cluster"></a>集群 - Cluster</h2><p>一个集群就是由一个或多个节点组织在一起，它们共同持有全部的数据。<br>一个集群有一个唯一的名字标识 <code>cluster.name</code> ，其节点只能通过指定某个集群的名字，来加入这个集群，默认情况下，ES会自动发现<strong>同一网段</strong>内的节点，自动组成集群，当然也可以手动配置集群内节点的地址（<code>discovery.zen.ping.unicast.hosts</code>）。<br>集群有一个<strong>主节点</strong>，这个主节点是选举产生的，但是需要注意的是ES是一个<strong>去中心化</strong>的集群：</p>
+<ul>
+<li>对内，有一个主节点负责管理集群状态，包括管理分片的状态和副本的状态，以及节点的发现和删除；</li>
+<li>对外，没有主节点，第一个接收请求的节点作为<strong>协调节点</strong>。</li>
+</ul>
+<h3 id="集群监控"><a href="#集群监控" class="headerlink" title="集群监控"></a>集群监控</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 测试环境es集群状态查看</span><br><span class="line">curl http://ip:9219/_cluster/health</span><br></pre></td></tr></table></figure>
+<p>Elasticsearch 的集群监控信息中包含了许多的统计数据，其中最为重要的一项就是 集群健康 ， 它在 status 字段中展示为：</p>
+<ul>
+<li>green：所有的主分片和副本分片都正常运行</li>
+<li>yellow：所有的主分片都正常运行，但不是所有的副本分片都正常运行，比如刚创建时没有被分配到任何节点</li>
+<li>red：有主分片没能正常运行<blockquote>
+<p>比如服务器磁盘容量超过85%时创建了一个新的索引</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="集群状态监控"><a href="#集群状态监控" class="headerlink" title="集群状态监控"></a>集群状态监控</h3><ul>
+<li>集群状态<br><code>http://localhost:9200/_cluster/state</code><br>主要看集群节点信息、其中哪个是主节点。</li>
+<li>集群统计<br><code>http://localhost:9200/_cluster/stats</code><br>集群中有几个节点、多少文档、多少索引等。</li>
+<li>集群任务管理<br><code>http://localhost:9200/_tasks</code></li>
+<li>节点信息<br><code>http://localhost:9200/_nodes</code></li>
+<li>活跃线程信息<br><code>http://localhost:9200/_nodes/hot_threads</code></li>
+</ul>
+<h2 id="节点-Node"><a href="#节点-Node" class="headerlink" title="节点 - Node"></a>节点 - Node</h2><p>一个节点是集群中的一个服务器，即一个 Elasticsearch 实例。<br>作为集群的一部分，它存储数据，参与集群的索引和搜索功能。</p>
+<h3 id="主节点-Master-eligible-和-Master-和-选举"><a href="#主节点-Master-eligible-和-Master-和-选举" class="headerlink" title="主节点 - Master-eligible 和 Master 和 选举"></a>主节点 - Master-eligible 和 Master 和 选举</h3><p>每个节点启动后，默认就是一个Master eligible节点。</p>
+<blockquote>
+<p>可以设置node.master: false禁止，即设置成false后就无法成为主节点了。</p>
+</blockquote>
+<p>Master-eligible节点可以参加选主流程，成为Master节点。</p>
+<ul>
+<li>当第一个节点启动时候，它会将自己选举成Master节点。</li>
+<li>每个节点上都保存了集群状态，但只有Master节点才能修改集群的<strong>状态信息</strong>（为保持一致性因此只有Master节点才能修改）<blockquote>
+<p>集群状态信息包括：所有节点信息、索引及其相关的Mapping和Setting信息、分片的路由信息。</p>
+</blockquote>
+</li>
+</ul>
+<p>Master-eligible选主流程：</p>
+<ul>
+<li>Master-eligible会互相Ping对方，对所有可以成为Master的节点，根据Node Id字典排序，<strong>Node Id</strong>低的会成为被选举的节点；</li>
+<li>如果对某个节点的投票数达到一定的值（可以成为Master节点数n &#x2F; 2 + 1）并且该节点自己也选举自己，则该节点成为Master，否则重新选举一直到满足上述条件。</li>
+<li>其他节点会加入集群，但是不承担Master节点的角色；</li>
+<li>一旦发现被选中的主节点丢失，就会选举出新的Master节点。</li>
+</ul>
+<p>当一个节点被选举成为主节点时，它将负责管理集群范围内的所有变更，例如增加、删除索引，或者增加、删除节点等。<br><strong>主节点并不需要全权负责涉及到文档级别的变更和搜索等操作（这和ES中协调节点的概念有关），所以当集群只拥有一个主节点的情况下，即使流量增加它也不会成为瓶颈。</strong></p>
+<h3 id="协调节点Coordinating-Node和数据节点Data-Node"><a href="#协调节点Coordinating-Node和数据节点Data-Node" class="headerlink" title="协调节点Coordinating Node和数据节点Data Node"></a>协调节点Coordinating Node和数据节点Data Node</h3><p>协调节点并不是物理意义上的一个节点，而是指ES集群中第一个接收请求的节点，这个节点需要负责将请求路由到数据节点执行对应的操作，如果是Search请求，协调节点还需要对结果进行合并排序分页等操作。</p>
+<h3 id="节点类型配置"><a href="#节点类型配置" class="headerlink" title="节点类型配置"></a>节点类型配置</h3><table>
+<thead>
+<tr>
+<th>节点类型</th>
+<th>配置参数</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>master eligible</td>
+<td>node.master</td>
+<td>true</td>
+</tr>
+<tr>
+<td>data</td>
+<td>node.data</td>
+<td>true</td>
+</tr>
+<tr>
+<td>ingest</td>
+<td>node.ingest</td>
+<td>true</td>
+</tr>
+<tr>
+<td>coordinating only</td>
+<td>无</td>
+<td>设置上面三个参数全部为false</td>
+</tr>
+<tr>
+<td>machine learning</td>
+<td>node.ml</td>
+<td>true（需要enable x-pack）</td>
+</tr>
+</tbody></table>
+<h2 id="脑裂问题及脑裂避免"><a href="#脑裂问题及脑裂避免" class="headerlink" title="脑裂问题及脑裂避免"></a>脑裂问题及脑裂避免</h2><p>ES集群是有一个节点作为Master的，它负责集群内的状态同步。<br>如果集群内出现了复数个Master，则说明集群发生了脑裂，进而可能导致集群内分片副本数据的不同步。<br>当出现网路分区时，一个节点（或多个）和其他节点无法连接，这时可能发生脑裂问题。<br><img src="/imgs/ES/ES%E7%9A%84%E8%84%91%E8%A3%82.png" alt="ES的脑裂" title="ES的脑裂"><br>如上图所示，node1和其他节点的网络断开：</p>
+<ul>
+<li>node2和node3会重新选举Master</li>
+<li>node1自己还是作为Master，组成一个集群，同时更新Cluster State</li>
+<li>此时出现了2个Master，维护不同的Cluster State，当网络恢复时，无法选择正确恢复</li>
+</ul>
+<h3 id="发生脑裂的原因"><a href="#发生脑裂的原因" class="headerlink" title="发生脑裂的原因"></a>发生脑裂的原因</h3><ol>
+<li>网络分区<br>因为是在内网通信，出现网络通信问题的可能性较小，可以看下脑裂发生时的内网流量情况；</li>
+<li>负载过大<br>一般Master节点也会作为data节点提供服务，当它处理数据请求的负载较大时，可能会导致该ES实例停止响应，并重新选举Master；<br>较大规模的内存回收操作也能造成ES进程失去响应。</li>
+</ol>
+<h3 id="脑裂避免"><a href="#脑裂避免" class="headerlink" title="脑裂避免"></a>脑裂避免</h3><p>1、将Master和Data节点分离<br>如果Master节点仅仅负责集群状态管理，则发生负载过高的可能性相对会小一些。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">node.master=true</span><br><span class="line">node.data=false</span><br></pre></td></tr></table></figure>
+<p>2、限定一个选举条件，设置quorum（仲裁），只有在Master eligible节点数大于quorum时，才能进行选举<br>大多数节点：quorum &#x3D; (master节点总数 &#x2F; 2) + 1<br>当3个master eligible时，设置discovery.zen.minimum_master_nodes为2，即可避免脑裂</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 探活时间，默认3秒，即Master节点3秒没有应答就认为死掉了</span><br><span class="line"># 增加这个值可以减小误判的可能，但是也会导致Master节点真宕机的情况不能被及时发现</span><br><span class="line">discovery.zen.ping_timeout</span><br><span class="line"># 一个节点需要看到至少有该数量的具有Master节点资格的节点后才能在集群中做操作</span><br><span class="line"># 默认是1</span><br><span class="line">discovery.zen.minimum_master_nodes</span><br></pre></td></tr></table></figure>
+<p>3、从7.0开始，不需要minimum_master_nodes这个配置了<br>7.0开始移除了minimum_master_nodes参数，让Elasticsearch自己选择可以形成仲裁的节点<br>典型的主节点选举现在只需要很短的时间就可以完成，集群的伸缩变得更安全、更容易，并且可能造成丢失数据的系统配置选项更少了。<br>节点更清楚地记录它们的状态，有助于诊断为什么它们不能加入集群或为什么无法选举出主节点。</p>
+<h2 id="故障转移"><a href="#故障转移" class="headerlink" title="故障转移"></a>故障转移</h2><h3 id="同机多节点"><a href="#同机多节点" class="headerlink" title="同机多节点"></a>同机多节点</h3><p>当在同一台机器上启动了第二个节点时，只要它和第一个节点有同样的 cluster.name 配置，它就会自动发现集群并加入到其中。</p>
+<h3 id="不同机器多节点"><a href="#不同机器多节点" class="headerlink" title="不同机器多节点"></a>不同机器多节点</h3><p>在不同机器上启动节点的时候，为了加入到同一集群，你需要配置一个可连接到的单播主机列表，设置其他节点的 ip:port 列表：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">discovery.zen.ping.unicast.hosts: [&quot;host1&quot;, &quot;host2&quot;]</span><br></pre></td></tr></table></figure>
+<h3 id="故障转移机制"><a href="#故障转移机制" class="headerlink" title="故障转移机制"></a>故障转移机制</h3><p><img src="/imgs/ES/%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB.png" alt="故障转移" title="故障转移"><br>所有新近被索引的文档都将会保存在主分片上，然后被并行的复制到对应的副本分片上。这就保证了我们既可以从主分片又可以从副本分片上获得文档，即使主分片不可用了，服务仍然可用。如上图所示。<br>如果集群缺失主节点，集群不能正常工作。所以发生的第一件事情就是选举一个新的主节点。但是需要注意的是<strong>集群必须存在且仅存在一个主节点</strong>，否则会出现<strong>脑裂</strong>现象，因此 Elasticsearch 提供了很多参数来避免这个情况。<br>如果索引缺失主分片，索引也不能正常工作。 如果此时来检查集群的状况，我们看到的状态将会为 red ：不是所有主分片都在正常工作。在其它节点上存在着这两个主分片的完整副本， 所以新的主节点立即将这些分片在 Node 2 和 Node 3 上对应的副本分片<strong>提升</strong>为主分片， 此时集群的状态将会为 yellow ，因为在创建索引时设置了每个主分片需要对应 2 份副本分片：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">number_of_replicas : 2</span><br></pre></td></tr></table></figure>
+<p>重启节点后，集群可以将缺失的副本分片再次进行分配，如果 Node 1 依然拥有着之前的分片，它将尝试去重用它们，同时仅从主分片复制发生了修改的数据文件。</p>
+<h1 id="集群扩容"><a href="#集群扩容" class="headerlink" title="集群扩容"></a>集群扩容</h1><h2 id="ES扩容限制"><a href="#ES扩容限制" class="headerlink" title="ES扩容限制"></a>ES扩容限制</h2><ul>
+<li>ES的replica shard可以扩增，但是primary shard无法动态增加，因此读性能可以随时扩展，但是ES中的写操作是需要转发到primary shard的，这意味着写性能的弹性是有限的；</li>
+<li>shard数量固定的前提下，只能在节点规模上进行扩展，最多一个shard一个节点，每个shard占用一台服务器的所有资源，可用性也会更高，只要每个shard留有一个primary shard即可。</li>
+</ul>
+<h2 id="配置节点"><a href="#配置节点" class="headerlink" title="配置节点"></a>配置节点</h2><p>集群是由一个或者多个拥有相同 <strong>cluster.name</strong> 配置的节点组成， 它们共同承担数据和负载的压力。当有节点加入集群中或者从集群中移除节点时，集群将会<strong>重新平均分布所有的数据</strong>。</p>
+<h2 id="水平扩容"><a href="#水平扩容" class="headerlink" title="水平扩容"></a>水平扩容</h2><p><img src="/imgs/ES/%E6%B0%B4%E5%B9%B3%E6%89%A9%E5%AE%B91.png" alt="水平扩容1" title="水平扩容1"><br>主分片的数目在索引创建时 就已经确定了下来。实际上，这个数目定义了这个索引能够 存储 的最大数据量。但是，<strong>读操作</strong>——搜索和返回数据——可以同时被主分片 或 副本分片所处理，所以当你拥有越多的副本分片时，也将拥有越高的吞吐量。<br>动态调整副本分片数目的命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PUT /blogs/_settings</span><br><span class="line">&#123;</span><br><span class="line">   &quot;number_of_replicas&quot; : 2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/imgs/ES/%E6%B0%B4%E5%B9%B3%E6%89%A9%E5%AE%B92.png" alt="水平扩容2" title="水平扩容2"><br>为了提高性能，要么是为已有的结点分配更多的资源，要么是分配更多的结点并扩展当前集群。但是不能通过为已有的分片分配更多的资源或者为一个结点分配更多的分片来提高性能，因为一个结点内的所有分片共享这个结点（JVM）的资源，最终还是必须增加更多的硬件资源来提升吞吐量。<br>更多的副本分片数提高了数据冗余量：按照上面的节点配置，我们可以在失去 2 个节点的情况下不丢失任何数据（因为每个结点上要么存在一个分片要么存在一个分片的冗余）。</p>
+<p>更多关于扩容的知识需要阅读相关文献，比如：<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/cn/elasticsearch/guide/current/scale.html">扩容设计</a>。</p>
+<h1 id="数据迁移"><a href="#数据迁移" class="headerlink" title="数据迁移"></a>数据迁移</h1><h2 id="MySQL-与-ES-同步"><a href="#MySQL-与-ES-同步" class="headerlink" title="MySQL 与 ES 同步"></a>MySQL 与 ES 同步</h2><h3 id="为什么要同步-MySQL-和-ES"><a href="#为什么要同步-MySQL-和-ES" class="headerlink" title="为什么要同步 MySQL 和 ES"></a>为什么要同步 MySQL 和 ES</h3><p>为了使海量数据能够提供实时快速的查询，mysql 很显然力不从心，于是我们需要利用 es 提供大数据搜索服务，典型的场景就是：产品或者商品搜索。<br>MySQL 的优势：</p>
+<ol>
+<li>关系数据模型<ul>
+<li>比较普遍；</li>
+<li>应用层的对象可以很“干净地”（类似一一对应）映射到数据库表上；</li>
+<li>关联多张表很方便。</li>
+</ul>
+</li>
+<li>易用<ul>
+<li>成熟的产品（如 Amazon RDS）</li>
+<li>大家非常熟悉</li>
+<li>很方便在网上找到支持</li>
+</ul>
+</li>
+</ol>
+<p>MySQL 的问题：</p>
+<ol>
+<li>数据模型问题<ul>
+<li>表增多后可能会变得很复杂；</li>
+<li>schema（MySQL 中与 database 等价，Oracle 中代表当前用户拥有的数据库中对象集合）不灵活，结构在确定后就不容易更改了，如果真要修改也可能需要另数据库停工一段时间；</li>
+</ul>
+</li>
+<li>查询慢<ul>
+<li>关联容易拖慢速度</li>
+<li>表会变得很大</li>
+<li>时间序列化数据（Time series data）操作（比如按时间排序）比较困难，一种解决方案：<a target="_blank" rel="noopener" href="https://docs.timescale.com/v0.9/introduction/time-series-data">TimescaleDB</a></li>
+<li>应用层的后处理（数据查出来后的处理）开销比较大</li>
+</ul>
+</li>
+<li>伸缩问题<ul>
+<li>数据库会变得越来越大</li>
+<li>垂直扩展（扩展现有系统部件，比如增加 CPU&#x2F;RAM&#x2F;disk 到当前节点）需要暂停当前服务</li>
+<li>水平扩展困难（增加节点）</li>
+</ul>
+</li>
+<li>不满足搜索需求</li>
+</ol>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>不要完全从 MySQL 迁移到 Elasticsearch，尽管 Elasticsearch 在搜索、文档分析、日志等方面很优秀。主要出于以下原因：</p>
+<ol>
+<li>ES 是复杂的，会遇到很多技术挑战；<ul>
+<li>将 MySQL 数据库表映射到 ES 的文档；</li>
+<li>在 ES 中处理关联关系比较复杂：MySQL 可以很容易地利用外键来关联多个表，但是 ES 中关联两个 Type（相当于表）很困难；</li>
+<li>处理 update 和 delete 操作时必须手动处理关联类型；</li>
+</ul>
+</li>
+<li>ES<strong>不提供事务支持</strong>；</li>
+<li>update 和 delete 操作比较难处理；</li>
+</ol>
+<p>所以，如果已经存在有一个 MySQL 数据库的情况下，最好：</p>
+<ol>
+<li>将 MySQL 作为主数据存储，ES 作为第二存储，使用 ES 专门应对较苛刻的搜索需求；</li>
+<li>使用 MySQL 处理关联和事务。</li>
+</ol>
+<h3 id="一种架构方案"><a href="#一种架构方案" class="headerlink" title="一种架构方案"></a>一种架构方案</h3><p><img src="/imgs/ES/MySQL%E4%B8%8EES%E5%90%8C%E6%AD%A5%E7%9A%84%E4%B8%80%E7%A7%8D%E6%9E%B6%E6%9E%84.png" alt="MySQL与ES同步的一种架构" title="MySQL与ES同步的一种架构"></p>
+<h4 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h4><ol>
+<li>将数据集合与存储解耦</li>
+<li>增强数据通道 pipeline 的可靠性（Kafka 的一些特性，比如消息队列持久化、重试）</li>
+<li>增强数据通道 pipeline 的可伸缩性（增加 broker、并行的 consumer&#x2F;producer）</li>
+</ol>
+<h4 id="Data-Transformation"><a href="#Data-Transformation" class="headerlink" title="Data Transformation"></a>Data Transformation</h4><ol>
+<li>增加传输规则（校验、enrichment、denormalization、rollup）</li>
+<li>将数据写到 ES 的索引上</li>
+<li>错误处理（网络问题、ES 负载&#x2F;超时问题、映射冲突）</li>
+<li>多个 worker（消息处理者）提高整体吞吐量</li>
+<li>提供实时和异步的 worker</li>
+</ol>
+<h4 id="ES"><a href="#ES" class="headerlink" title="ES"></a>ES</h4><ol>
+<li>基于文档的数据库<ul>
+<li>灵活（mapping 是动态的）</li>
+<li>数据结构丰富（JSON、嵌套对象）</li>
+<li>和现有系统整合容易（REST API）</li>
+</ul>
+</li>
+<li>查询效率高<ul>
+<li>分片可以灵活地在节点间分配</li>
+<li>（没看懂）Rolling indexes for <strong>Time series data</strong> &#x3D;&#x3D; querying only the indexes needed (versus entire MySQL table)</li>
+</ul>
+</li>
+<li>搜索<ul>
+<li>丰富的内置查询</li>
+<li>强大的聚合 &amp; 子聚合</li>
+</ul>
+</li>
+<li>伸缩性<ul>
+<li>对分片和索引的控制</li>
+<li>可以通过增加节点和集群来水平伸缩</li>
+<li>打包旧的数据&#x2F;索引很方便，可以容易地释放系统资源</li>
+</ul>
+</li>
+<li>能适应快速的产品需求迭代</li>
+</ol>
+<h4 id="ES-缺点"><a href="#ES-缺点" class="headerlink" title="ES 缺点"></a>ES 缺点</h4><ol>
+<li>数据更新比较复杂（update by query、upsert、script security issues）</li>
+<li>不是真的 schema-less<br>Elasticsearch 是一个 schema-less 的系统，但并不代表 no shema，而是会尽量根据 JSON 源数据的基础类型猜测你想要的字段类型映射。</li>
+<li>重新索引比较耗时（添加域、映射冲突）</li>
+<li>仍然需要在应用中对索引进行管理（映射、setting、template、naming pattern、data retention、backup&#x2F;restore）</li>
+<li>操作 ES 更花力气（部署、配置、性能优化、监控）</li>
+</ol>
+<h4 id="下一步"><a href="#下一步" class="headerlink" title="下一步"></a>下一步</h4><ol>
+<li>更多索引管理<ul>
+<li>更好地支持索引的不同 type</li>
+<li>增加 API 和工具</li>
+<li>避免<strong>过度分片</strong>，可能引起集群稳定性问题</li>
+</ul>
+</li>
+<li>更多关注 update 操作<ul>
+<li>通过 update by query&#x2F;script 更新域</li>
+<li>更快的重新索引（添加新域、更改旧域映射）</li>
+<li>slow update&#x2F;reindexing can affect other system operations&#x2F;transactions</li>
+<li>Data denormalization vs joins</li>
+</ul>
+</li>
+<li>更完善的生产环境监控</li>
+</ol>
+<h1 id="ES集群的启动源码分析"><a href="#ES集群的启动源码分析" class="headerlink" title="ES集群的启动源码分析"></a>ES集群的启动源码分析</h1><h2 id="节点的启动"><a href="#节点的启动" class="headerlink" title="节点的启动"></a>节点的启动</h2><p>启动节点前期主要是解析各种参数、检查内部环境（Lucene）等，我主要感兴趣的是初始化完毕后对各子模块的加载过程，子模块的start方法基本就是初始化内部数据、创建线程池、启动线程池等操作。</p>
+<ol>
+<li>入口<br>Elasticsearch.main</li>
+<li>初始化<br>Bootstrap.init</li>
+<li>检测外部环境<br>Bootstrap#setup<br>初始化 node 时重写 validateNodeBeforeAcceptingRequests，在其中包含了检查逻辑<br>-&gt; BootstrapChecks.check</li>
+<li>启动各子模块<br>Bootstrap.start<br>调各子模块的start来初始化。</li>
+<li>启动集群<br>nodeConnectionsService.start()</li>
+<li>启动网络监听<br>开始接收客户端的连接请求<br>transportService.start()</li>
+<li>启动发现<br>discovery.start()</li>
+<li>开始加入集群<br>discovery.startInitialJoin()</li>
+</ol>
+<p>节点启动流程大致如上所示，其中重要的几点，这里接下来再展开说说。</p>
+<h2 id="keepalive"><a href="#keepalive" class="headerlink" title="keepalive"></a>keepalive</h2><p>唯一的用户线程，作用是保持进程运行。<br>Bootstrap#keepAliveThread</p>
+<h2 id="节点关闭"><a href="#节点关闭" class="headerlink" title="节点关闭"></a>节点关闭</h2><p>Bootstrap#stop<br>-&gt; IOUtils#close：关闭 node，注意 Node 实现了 Closable<br>-&gt; Node#close</p>
+<h1 id="选举主节点源码分析"><a href="#选举主节点源码分析" class="headerlink" title="选举主节点源码分析"></a>选举主节点源码分析</h1><p>ES选主算法是基于<strong>Bully</strong>算法实现的，Bully算法简单地说就是：</p>
+<ol>
+<li>每个节点都有一个ID；</li>
+<li>每次选出集群内现存最大的ID作为新的Master节点。</li>
+</ol>
+<p>Bully算法存在的问题：</p>
+<ul>
+<li>在ID最大的节点不稳定的场景下会有问题。<br>主要是ID最大的节点挂了又重启，会触发集群重复选择该节点为Master。<br>ES通过推迟选举来解决这个问题，只要当前主节点不挂掉就不重新选主，但是容易产生脑裂（双主），脑裂问题在ES中是通过“法定得票人数过半”来解决的。</li>
+</ul>
+<p>ES选主的实际算法实现叫做<strong>ZenDiscovery</strong>，其流程如下：</p>
+<h2 id="选举相关概念"><a href="#选举相关概念" class="headerlink" title="选举相关概念"></a>选举相关概念</h2><ul>
+<li>选举（Election）</li>
+<li>主从（主：Leader、Coordinator、Master，从：Follower、Slave）</li>
+<li>分布式哈希表（DHT）</li>
+<li>多数派（法定人数、Quorum）</li>
+<li>分区和脑裂：集群中出现双主或多主。</li>
+<li>Bully 算法</li>
+<li>Paxos 算法</li>
+</ul>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><ul>
+<li>node.master：决定当前节点是否具备 Master 资格</li>
+<li>discovery.zen.minimum_master_nodes</li>
+<li>discovery.zen.ignore_non_master_pings</li>
+</ul>
+<h2 id="本地节点实例的创建"><a href="#本地节点实例的创建" class="headerlink" title="本地节点实例的创建"></a>本地节点实例的创建</h2><p>管理节点配置<br>Node#localNodeFactory</p>
+<h2 id="选主流程"><a href="#选主流程" class="headerlink" title="选主流程"></a>选主流程</h2><p>ZenDiscovery 的选主流程如下：</p>
+<ol>
+<li>每个节点计算最小的已知节点 ID，该节点为临时 Master，向该节点发送领导投票；</li>
+<li>如果一个节点收到足够多的票数，并且该节点也为自己投票，那么它将扮演领导者的角色，开始发布集群状态。</li>
+</ol>
+<h2 id="选举临时-Master"><a href="#选举临时-Master" class="headerlink" title="选举临时 Master"></a>选举临时 Master</h2><p>Node#start<br>-&gt; ZenDiscovery#startInitialJoin<br>-&gt; ZenDiscovery#JoinThreadControl#startNewThreadIfNotRunning<br>-&gt; threadPool.generic().execute：使用 generic 线程池执行选主流程<br>-&gt; ZenDiscovery#innerJoinCluster：加入集群<br>-&gt; ZenDiscovery#findMaster：查找当前集群的活跃 Master，或者从候选者中选择新的 Master<br>    -&gt; ZenDiscovery#pingAndWait：ping 一下所有节点（除了本节点），获取 pingResponses<br>    -&gt; 构建<strong>activeMasters</strong>列表，将每个节点所认为的当前 Master 节点加入 activeMasters 列表<br>    -&gt; 构建<strong>masterCandidates</strong>列表，从 pingResponses 列表中去掉不具备 Master 资格的节点<br>    -&gt; 如果 activeMasters 为空，则从 masterCandidates 中选举，否则从 activeMasters 中选择最合适的作为 Master</p>
+<h2 id="从-masterCandidates-选主"><a href="#从-masterCandidates-选主" class="headerlink" title="从 masterCandidates 选主"></a>从 masterCandidates 选主</h2><p>activeMasters 为空一般发生在集群刚启动或大规模重启的情况下。</p>
+<p>ZenDiscovery#findMaster<br>-&gt; ElectMasterService#hasEnoughCandidates：当前候选人数是否达到法定人数，若未达到则直接令选举失败<br>-&gt; ElectMasterService#electMaster：当候选者达到法定人数后，从中选出一个作为 Master，选择前需要先用自定义比较函数进行排序<br>-&gt; MasterCandidate.compare 自定义的排序逻辑</p>
+<p>排序条件：</p>
+<ol>
+<li>版本号大的优先；</li>
+<li>具备 Master 资格的优先；</li>
+<li>节点 ID 小的优先。</li>
+</ol>
+<h2 id="从-activeMasters-列表中选主"><a href="#从-activeMasters-列表中选主" class="headerlink" title="从 activeMasters 列表中选主"></a>从 activeMasters 列表中选主</h2><p>此时列表中存储着集群当前活跃的 Master，从这些已知的 Master 节点中选择一个作为选举结果。</p>
+<p>ZenDiscovery#findMaster<br>-&gt; ElectMasterService#tieBreakActiveMasters：使用自定义比较函数排序后取第一个<br>-&gt; ElectMasterService#compareNodes</p>
+<p>排序条件：</p>
+<ol>
+<li>具备 Master 资格的优先；</li>
+<li>节点 ID 小的优先。</li>
+</ol>
+<h2 id="收集投票进行统计"><a href="#收集投票进行统计" class="headerlink" title="收集投票进行统计"></a>收集投票进行统计</h2><p>ZenDiscovery#handleJoinRequest<br>-&gt; NodeJoinController#handleJoinRequest<br>-&gt; NodeJoinController.ElectionContext#addIncomingJoin 将收到的连接存储到 NodeJoinController.ElectionContext#joinRequestAccumulator 中</p>
+<p>NodeJoinController.ElectionContext#getPendingMasterJoinsCount：节点检查收到的投票是否足够时，就是检查加入它的连接数是否足够，其中会去掉没有 Master 资格节点的投票</p>
+<h2 id="加入集群"><a href="#加入集群" class="headerlink" title="加入集群"></a>加入集群</h2><p>如果按以上逻辑选举出的临时 Master 是本节点：</p>
+<ol>
+<li>等待足够多的具备 Master 资格的节点加入本节点，直到投票达到法定人数，完成选举；</li>
+<li>超时（默认 30 秒且可配置）后还没有满足数量的 join 请求，则选举失败，需要进行新一轮选举；</li>
+<li>成功后发布新的 clusterState。</li>
+</ol>
+<p>ZenDiscovery#innerJoinCluster<br>NodeJoinController#waitToBeElectedAsMaster</p>
+<p>如果按以上逻辑选举出的临时 Master 并非本节点：</p>
+<ol>
+<li>不再接受其他节点的 join 请求；</li>
+<li>向 Master 发送 join 请求，并等待回复。超时时间默认为 1 分钟（可配置），如果遇到异常，则默认重试 3 次（可配置）。</li>
+<li>最终当选的 Master 会先发布集群状态，再确认客户的 join 请求，因此，joinElectedMaster 返回代表收到了 join 请求的确认，并且已经收到了集群状态。本步骤检查收到的集群状态中的 Master 节点如果为空，或者当选的 Master 不是之前选择的节点，则重新选举。</li>
+</ol>
+<p>ZenDiscovery#innerJoinCluster<br>-&gt; ZenDiscovery#joinElectedMaster</p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ElasticSearch/" rel="tag"># ElasticSearch</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/73d751b6.html" rel="prev" title="给博客装上HTTPS">
+                  <i class="fa fa-angle-left"></i> 给博客装上HTTPS
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/1ecb20d1.html" rel="next" title="建立网页索引">
+                  建立网页索引 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

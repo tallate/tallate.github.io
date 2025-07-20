@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="网关 - ZuulFilterZuul 基于 Netty 开发，使用 filters 包含了核心业务逻辑，Filter 是使用 Groovy 写的，主要是为了提供动态编译加载的能力，filters 主要包含了三类：  Inbound Filters execute before routing to the origin and can be used for things like auth">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微服务中的网络相关组件">
+<meta property="og:url" content="https://tallate.github.io/fe9473bf.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="网关 - ZuulFilterZuul 基于 Netty 开发，使用 filters 包含了核心业务逻辑，Filter 是使用 Groovy 写的，主要是为了提供动态编译加载的能力，filters 主要包含了三类：  Inbound Filters execute before routing to the origin and can be used for things like auth">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E5%BE%AE%E6%9C%8D%E5%8A%A1/Zuul%E7%BB%84%E4%BB%B6%E7%BB%93%E6%9E%84.png">
+<meta property="article:published_time" content="2019-07-21T12:27:43.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.893Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="Zuul">
+<meta property="article:tag" content="Ribbon">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/%E5%BE%AE%E6%9C%8D%E5%8A%A1/Zuul%E7%BB%84%E4%BB%B6%E7%BB%93%E6%9E%84.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/fe9473bf.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/fe9473bf.html","path":"/fe9473bf.html","title":"微服务中的网络相关组件"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>微服务中的网络相关组件 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E5%85%B3-Zuul"><span class="nav-number">1.</span> <span class="nav-text">网关 - Zuul</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Filter"><span class="nav-number">1.1.</span> <span class="nav-text">Filter</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Filter%E5%B1%9E%E6%80%A7"><span class="nav-number">1.1.1.</span> <span class="nav-text">Filter属性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%9A%84%E4%B8%80%E4%BA%9B%E4%BE%8B%E5%AD%90"><span class="nav-number">1.1.2.</span> <span class="nav-text">其他的一些例子</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E8%AF%B7%E6%B1%82%E4%BD%93"><span class="nav-number">1.2.</span> <span class="nav-text">缓存请求体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.3.</span> <span class="nav-text">网络协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%8A%9F%E8%83%BD"><span class="nav-number">1.4.</span> <span class="nav-text">其他功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Push-Messaging"><span class="nav-number">1.5.</span> <span class="nav-text">Push Messaging</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1-Ribbon"><span class="nav-number">2.</span> <span class="nav-text">负载均衡 - Ribbon</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-number">2.1.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6%E7%BB%93%E6%9E%84%E5%8F%8A%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.2.</span> <span class="nav-text">组件结构及实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Rule"><span class="nav-number">2.2.1.</span> <span class="nav-text">Rule</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Ping"><span class="nav-number">2.2.2.</span> <span class="nav-text">Ping</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ServerList"><span class="nav-number">2.2.3.</span> <span class="nav-text">ServerList</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ServerListFilter"><span class="nav-number">2.2.4.</span> <span class="nav-text">ServerListFilter</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BA%90%E7%A0%81"><span class="nav-number">2.3.</span> <span class="nav-text">源码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.1.</span> <span class="nav-text">常见实现</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/fe9473bf.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="微服务中的网络相关组件 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          微服务中的网络相关组件
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-07-21 20:27:43" itemprop="dateCreated datePublished" datetime="2019-07-21T20:27:43+08:00">2019-07-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+<h2 id="网关-Zuul"><a href="#网关-Zuul" class="headerlink" title="网关 - Zuul"></a>网关 - Zuul</h2><h3 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h3><p><img src="/imgs/%E5%BE%AE%E6%9C%8D%E5%8A%A1/Zuul%E7%BB%84%E4%BB%B6%E7%BB%93%E6%9E%84.png" alt="Zuul组件结构" title="Zuul组件结构"><br>Zuul 基于 Netty 开发，使用 filters 包含了核心业务逻辑，Filter 是使用 Groovy 写的，主要是为了提供动态编译加载的能力，filters 主要包含了三类：</p>
+<ul>
+<li>Inbound Filters execute before routing to the origin and can be used for things like authentication, dynamic routing, rate limiting, DDoS protection, metrics and decorating the request.</li>
+<li>Endpoint Filters can be used to return static responses, otherwise the built-in <code>ProxyEndpoint</code> filter will route the request to the origin.</li>
+<li>Outbound Filters execute after getting the response from the origin and can be used for metrics, decorating the response to the user or adding custom headers.</li>
+<li>Async<br>Filter 可以被同步执行或异步执行。<br>如果 Filter 没有做太重的工作，可以通过继承<code>HttpInboundSyncFilter</code>或<code>HttpOutboundSyncFilter</code>来实现一种同步 Filter，例子见<a target="_blank" rel="noopener" href="https://github.com/Netflix/zuul">Zuul 源码</a>中的<code>Routes.groovy</code>；<br>反之，如果需要从其他服务、缓存获取数据，或做一些复杂的计算工作，则最好继承<code>HttpInboundFilter</code>或<code>HttpOutboundFilter</code>，例子见<a target="_blank" rel="noopener" href="https://github.com/Netflix/zuul">Zuul 源码</a>中的<code>SampleServiceFilter.groovy</code>。</li>
+</ul>
+<h4 id="Filter属性"><a href="#Filter属性" class="headerlink" title="Filter属性"></a>Filter属性</h4><p>Type: most often defines the stage during the routing flow when the Filter will be applied (although it can be any custom string)<br>Async: define if the filter is sync or async, generally meaning do you need to make an external call or just doing work on-box<br>Execution Order: applied within the Type, defines the order of execution across multiple Filters<br>Criteria: the conditions required in order for the Filter to be executed<br>Action: the action to be executed if the Criteria is met</p>
+<h4 id="其他的一些例子"><a href="#其他的一些例子" class="headerlink" title="其他的一些例子"></a>其他的一些例子</h4><p>这些例子是<a target="_blank" rel="noopener" href="https://github.com/Netflix/zuul">zuul-sample</a>中的代码。</p>
+<ul>
+<li>DebugRequest - look for a query param to add extra debug logging for a request</li>
+<li>Healthcheck - simple static endpoint filter that returns 200, if everything is bootstrapped correctly</li>
+<li>ZuulResponseFilter - add informational headers to provide extra details on routing, request execution, status and error cause</li>
+<li>GZipResponseFilter - can be enabled to gzip outbound responses</li>
+<li>SurgicalDebugFilter - can be enabled to route specific requests to different hosts for debugging</li>
+</ul>
+<h3 id="缓存请求体"><a href="#缓存请求体" class="headerlink" title="缓存请求体"></a>缓存请求体</h3><p>默认情况下 Zuul 不会缓存请求体，因为 Filter 一般用到请求头就够了，但是如果需要在 inbound 中用到请求头或在 outbound 中用到响应头，则需要明确指定 Zuul 缓存，可以重写 Filter 的<code>needsBodyBuffered()</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">boolean needsBodyBuffered(HttpResponseMessage input) &#123;</span><br><span class="line">    return true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="网络协议"><a href="#网络协议" class="headerlink" title="网络协议"></a>网络协议</h3><p>Zuul 支持修改暴露服务时使用的协议，使用方法见 sample 项目中的<code>SampleServerStartup</code>。</p>
+<h3 id="其他功能"><a href="#其他功能" class="headerlink" title="其他功能"></a>其他功能</h3><p><a target="_blank" rel="noopener" href="https://github.com/Netflix/zuul/wiki/Core-Features">Core Features</a></p>
+<h3 id="Push-Messaging"><a href="#Push-Messaging" class="headerlink" title="Push Messaging"></a>Push Messaging</h3><p>Push Messaging 机制可以支持从 Server 端推送消息到 Client 端，支持两种协议：<code>WebSockets</code> 和 <code>Server Sent Events (SSE)</code>。<br><a target="_blank" rel="noopener" href="https://github.com/Netflix/zuul/wiki/Push-Messaging">Push Messaging</a><br>TODO</p>
+<h2 id="负载均衡-Ribbon"><a href="#负载均衡-Ribbon" class="headerlink" title="负载均衡 - Ribbon"></a>负载均衡 - Ribbon</h2><h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><p>原生 API 如何使用见：<a target="_blank" rel="noopener" href="https://github.com/Netflix/ribbon/wiki/Getting-Started">Netflix &#x2F; ribbon - Getting Started</a><br>如果是搭配 Spring Boot，可以参考 Spring Could 文档。</p>
+<h3 id="组件结构及实现"><a href="#组件结构及实现" class="headerlink" title="组件结构及实现"></a>组件结构及实现</h3><h4 id="Rule"><a href="#Rule" class="headerlink" title="Rule"></a>Rule</h4><p>a logic component to determine which server to return from a list</p>
+<ul>
+<li>RoundRobinRule<br>简单的轮询策略</li>
+<li>AvailabilityFilteringRule<br>这个 Rule 会跳过那些疑似“电路跳闸”或并发连接数已经很高的服务器。<br>比如客户端的最后 3 次连接失败，客户端会认为该服务实例已经出现了类似“电路跳闸”的问题而导致无法提供服务，于是在接下来的 30 秒内均保持这种状态，如果之后还是连接失败，这个等待时间会指数增长（1min、2min、4min…）。</li>
+<li>WeightedResponseTimeRule<br>每个 Server 会根据其平均响应时间计算出一个权重，响应时间越长、比重越小，该 Rule 选择 Server 时会根据该权重来计算概率。</li>
+</ul>
+<h4 id="Ping"><a href="#Ping" class="headerlink" title="Ping"></a>Ping</h4><p>a component running in background to ensure liveness of servers</p>
+<h4 id="ServerList"><a href="#ServerList" class="headerlink" title="ServerList"></a>ServerList</h4><p>this can be static or dynamic. If it is dynamic (as used by <code>DynamicServerListLoadBalancer</code>), a background thread will refresh and filter the list at certain interval</p>
+<ul>
+<li>静态的 Server 列表<br>可以在程序里写一个静态列表，将该列表设置到<code>BaseLoadBalancer.setServerList()</code>中。</li>
+<li>ConfigurationBasedServerList<br>默认的 ServerList 实现，可以通过 <code>Archaius ConfigurationManager</code>来设置 Server 列表。</li>
+<li>DiscoveryEnabledNIWSServerList<br>可以通过 Eureka Client 获取服务器列表，服务器集群必须通过 VipAddress 来定义：  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">myClient.ribbon.NIWSServerListClassName=com.netflix.niws.loadbalancer.DiscoveryEnabledNIWSServerList </span><br><span class="line"># the server must register itself with Eureka server with VipAddress &quot;myservice&quot;</span><br><span class="line">myClient.ribbon.DeploymentContextBasedVipAddresses=myservice</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="ServerListFilter"><a href="#ServerListFilter" class="headerlink" title="ServerListFilter"></a>ServerListFilter</h4><p>ServerListFilter 是<code>DynamicServerListLoadBalancer</code>的组件，用于过滤从<code>ServerList</code>返回的服务器列表，现在有两种实现：</p>
+<ul>
+<li>ZoneAffinityServerListFilter<br>过滤掉不在同一个 zone 内的服务器，除非 zone 内没有可用的服务器，这个 Filter 可以通过设置如下属性来启用（假设客户端名为 myclient、客户端的属性空间为 ribbon）：  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">myclient.ribbon.EnableZoneAffinity=true</span><br></pre></td></tr></table></figure></li>
+<li>ServerListSubsetFilter<br>可以保证客户端只能看到<code>ServerList</code>返回的全体服务器的一个固定子集，如果有服务器可用性较弱，则可以定期用新服务器替换老服务器。可以通过设置以下属性启用该Filter：  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">myClient.ribbon.NIWSServerListClassName=com.netflix.niws.loadbalancer.DiscoveryEnabledNIWSServerList </span><br><span class="line"># the server must register itself with Eureka server with VipAddress &quot;myservice&quot;</span><br><span class="line">myClient.ribbon.DeploymentContextBasedVipAddresses=myservice</span><br><span class="line">myClient.ribbon.NIWSServerListFilterClassName=com.netflix.loadbalancer.ServerListSubsetFilter</span><br><span class="line"># only show client 5 servers. default is 20.</span><br><span class="line">myClient.ribbon.ServerListSubsetFilter.size=5</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><p>com.netflix.loadbalancer.DynamicServerListLoadBalancer#updateListOfServers<br>com.netflix.loadbalancer.ServerList#getUpdatedListOfServers<br>com.netflix.niws.loadbalancer.DiscoveryEnabledNIWSServerList#obtainServersViaDiscovery<br>TODO</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><h3 id="常见实现"><a href="#常见实现" class="headerlink" title="常见实现"></a>常见实现</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/Netflix/zuul/blob/master/zuul-sample/src/main/java/com/netflix/zuul/sample/SampleServerStartup.java">Netflix&#x2F;zuul</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Netflix/ribbon">Netflix&#x2F;ribbon</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/Netflix/Turbine">Netflix &#x2F; Turbine</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Zuul/" rel="tag"># Zuul</a>
+              <a href="/tags/Ribbon/" rel="tag"># Ribbon</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/b791cedc.html" rel="prev" title="微服务核心技术总结">
+                  <i class="fa fa-angle-left"></i> 微服务核心技术总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/72161861.html" rel="next" title="Eureka原理分析">
+                  Eureka原理分析 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

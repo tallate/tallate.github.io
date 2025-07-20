@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="和朋友交流的一些开放性设计问题的记录，因为是开放性问题，所以肯定是没有唯一答案的，这里只是记录我们讨论时认为比较好的回答。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="架构设计">
+<meta property="og:url" content="https://tallate.github.io/2582d3b8.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="和朋友交流的一些开放性设计问题的记录，因为是开放性问题，所以肯定是没有唯一答案的，这里只是记录我们讨论时认为比较好的回答。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E6%9E%B6%E6%9E%84/%E6%9C%8B%E5%8F%8B%E5%9C%88.png">
+<meta property="article:published_time" content="2020-09-06T15:12:18.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.908Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="架构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/%E6%9E%B6%E6%9E%84/%E6%9C%8B%E5%8F%8B%E5%9C%88.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/2582d3b8.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/2582d3b8.html","path":"/2582d3b8.html","title":"架构设计"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>架构设计 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1%E7%9A%84%E6%80%9D%E8%B7%AF"><span class="nav-number">1.</span> <span class="nav-text">架构设计的思路</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E6%80%9D%E8%B7%AF-4S%E5%88%86%E6%9E%90%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">分析思路 - 4S分析法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF%E8%AE%BE%E8%AE%A1-%E7%BC%A9%E5%B0%8F%E8%8C%83%E5%9B%B4%E3%80%81%E6%9C%89%E7%9A%84%E6%94%BE%E7%9F%A2"><span class="nav-number">1.2.</span> <span class="nav-text">场景设计 - 缩小范围、有的放矢</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1-%E7%B3%BB%E7%BB%9F%E6%8B%86%E5%88%86%E3%80%81%E5%A4%A7%E4%BA%8B%E5%8C%96%E5%B0%8F"><span class="nav-number">1.3.</span> <span class="nav-text">服务 - 系统拆分、大事化小</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%8B%E5%8F%8B%E5%9C%88"><span class="nav-number">2.</span> <span class="nav-text">朋友圈</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A6%81%E6%B1%82"><span class="nav-number">2.1.</span> <span class="nav-text">要求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A8%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.2.</span> <span class="nav-text">表结构设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E4%BB%A5%E4%BD%BF%E7%94%A8Redis%E5%AE%9E%E7%8E%B0%E5%90%97%EF%BC%9F"><span class="nav-number">2.3.</span> <span class="nav-text">可以使用Redis实现吗？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#at"><span class="nav-number">3.</span> <span class="nav-text">at</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%9F%A5%E8%AF%86%E5%BA%93"><span class="nav-number">4.</span> <span class="nav-text">知识库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%8F%E5%90%8C%E6%96%87%E6%A1%A3"><span class="nav-number">5.</span> <span class="nav-text">协同文档</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E5%AD%98%E5%82%A8"><span class="nav-number">5.1.</span> <span class="nav-text">文档存储</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6%E9%80%9A%E4%BF%A1"><span class="nav-number">5.2.</span> <span class="nav-text">实时通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%BE%91%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3"><span class="nav-number">5.3.</span> <span class="nav-text">编辑冲突解决</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%A9%E7%95%A5%E5%9B%BE"><span class="nav-number">5.4.</span> <span class="nav-text">缩略图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E5%AD%97%E7%BF%BB%E8%AF%91"><span class="nav-number">5.5.</span> <span class="nav-text">文字翻译</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A7%92%E6%9D%80-%E6%8A%A2%E7%BA%A2%E5%8C%85"><span class="nav-number">6.</span> <span class="nav-text">秒杀 - 抢红包</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/2582d3b8.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="架构设计 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          架构设计
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-09-06 23:12:18" itemprop="dateCreated datePublished" datetime="2020-09-06T23:12:18+08:00">2020-09-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>和朋友交流的一些开放性设计问题的记录，因为是开放性问题，所以肯定是没有唯一答案的，这里只是记录我们讨论时认为比较好的回答。</p>
+<span id="more"></span>
+
+
+<h1 id="架构设计的思路"><a href="#架构设计的思路" class="headerlink" title="架构设计的思路"></a>架构设计的思路</h1><h2 id="分析思路-4S分析法"><a href="#分析思路-4S分析法" class="headerlink" title="分析思路 - 4S分析法"></a>分析思路 - 4S分析法</h2><ol>
+<li>Scenario场景 - 系统要设计到什么程度<br>需要设计哪些功能？<br>设计到什么程度？并发用户数、读频率、写频率、QPS</li>
+<li>Service服务<br>系统拆分<br>大服务拆小服务</li>
+<li>Storage存储<br>数据结构、怎么存储</li>
+<li>Scale升级<br>可能遇到的问题及如何解决<br>怎么保证高性能<br>怎么保证高可用</li>
+</ol>
+<h2 id="场景设计-缩小范围、有的放矢"><a href="#场景设计-缩小范围、有的放矢" class="headerlink" title="场景设计 - 缩小范围、有的放矢"></a>场景设计 - 缩小范围、有的放矢</h2><h2 id="服务-系统拆分、大事化小"><a href="#服务-系统拆分、大事化小" class="headerlink" title="服务 - 系统拆分、大事化小"></a>服务 - 系统拆分、大事化小</h2><p>服务拆分的优势：</p>
+<ul>
+<li>各功能模块解耦，保证单一职责；</li>
+<li>系统简单，升级某个服务不影响其他服务；</li>
+<li>扩展性强，可对某个服务进行单独扩容和缩容；</li>
+<li>各个部门协作更清晰；</li>
+<li>故障隔离，某个服务出故障不会影响其他服务的可用性；</li>
+<li>可根据不同服务的特点选择技术架构或语言；</li>
+<li>数据库独立，互不干扰。</li>
+</ul>
+<h1 id="朋友圈"><a href="#朋友圈" class="headerlink" title="朋友圈"></a>朋友圈</h1><p>用户在朋友圈里发言其实有点像发出话题（Topic），别人可以在这个话题下评论、回复评论，但是和普通的帖子系统的区别是，朋友圈中的话题、评论都只能供朋友之间查看。</p>
+<h2 id="要求"><a href="#要求" class="headerlink" title="要求"></a>要求</h2><ol>
+<li>用户关系</li>
+<li>评论的层级关系</li>
+<li>查询<br>如果判断一个用户能看到哪些话题、及其下的评论？<br>如果朋友关系发生了变更（增加、删除）怎么做？</li>
+<li>推送<br>有朋友发出了新话题或评论，这时需要告知用户，上一条“查询”要求根据用户查话题和评论，而“推送”相当于反查：根据话题和评论查应该接收推送的用户。</li>
+</ol>
+<h2 id="表结构设计"><a href="#表结构设计" class="headerlink" title="表结构设计"></a>表结构设计</h2><p><img src="/imgs/%E6%9E%B6%E6%9E%84/%E6%9C%8B%E5%8F%8B%E5%9C%88.png" alt="朋友圈" title="朋友圈"><br>我们看下上面的表结构如何解决问题：</p>
+<ol>
+<li>用户关系<br>用户关系使用一张用户关系表来维护，但要注意的是用户关系是双向的，你是我的朋友、我也是你的朋友，因此创建朋友关系时要同时插入A-&gt;B和B-&gt;A两条记录，这么存还有一个好处是<strong>可以根据userId1进行分表</strong>，当要查询某个人的朋友时只需要过滤表中第一个userId字段即可。</li>
+<li>评论的层级关系<br>评论表中有一个parentId字段，表示一个评论与另一个评论存在父子关系。</li>
+<li>查询<br>查询主要是查某个用户在对应话题下属于他朋友的评论。<br>首先查用户的朋友，查一次用户关系表即可，因为用户关系表根据userId1分表，因此效率不会太差。<br>然后根据朋友userId查评论表，也是一次查询即可得到结果。</li>
+<li>推送<br>与查询功能同理。</li>
+</ol>
+<h2 id="可以使用Redis实现吗？"><a href="#可以使用Redis实现吗？" class="headerlink" title="可以使用Redis实现吗？"></a>可以使用Redis实现吗？</h2><p>和朋友讨论了快1个小时，最后结论是用Redis实现并不合适，至少上边提到的这些需求并不适合使用Redis实现。而且，MySQL效率也并不低，并且就算达到性能上限也可以通过分表来进行优化。</p>
+<h1 id="at"><a href="#at" class="headerlink" title="at"></a>at</h1><p>微信中就提供了at功能。</p>
+<ol>
+<li>发出的消息有@时会在@后面带上目标人物的标识、所处的群；</li>
+<li>在服务端存储@结构时，记录&lt;from, to, group&gt;到@表；</li>
+<li>客户端长轮询的时候，根据to和group查询@表并返回；</li>
+<li>客户端查看完毕后，将已读的@记录传到服务端，记录已读。</li>
+</ol>
+<h1 id="知识库"><a href="#知识库" class="headerlink" title="知识库"></a>知识库</h1><p>以我理解，知识库就是一个WIKI系统，它有不同的命名空间和层次化的目录，每个节点都对应一篇文档。<br>类似产品如Confluence。<br>存储上可以使用一张表来记录文档的结构，表字段包括：&lt;dirId, dirName, parentDirId, parentDirName, docUrl&gt;；</p>
+<ul>
+<li>查询下级目录时，根据当前目录节点的dirId查询parentDirId字段上的索引，将子目录都带出来；</li>
+<li>创建一个目录时，除了往数据库里插入一条目录记录外，还需要在文件系统里创建一个文档，然后记录该文档的docUrl到表里；</li>
+<li>删除一个目录时，级联删除子目录；</li>
+<li>移动目录时，更新其parentDirId字段。</li>
+</ul>
+<h1 id="协同文档"><a href="#协同文档" class="headerlink" title="协同文档"></a>协同文档</h1><h2 id="文档存储"><a href="#文档存储" class="headerlink" title="文档存储"></a>文档存储</h2><h2 id="实时通信"><a href="#实时通信" class="headerlink" title="实时通信"></a>实时通信</h2><p>利用long pull（长连接） 或 WebSocket<br>服务端利用Netty提供服务，并设计自定义协议。</p>
+<h2 id="编辑冲突解决"><a href="#编辑冲突解决" class="headerlink" title="编辑冲突解决"></a>编辑冲突解决</h2><p>编辑锁</p>
+<p>GNU diff-patch</p>
+<p>Myer’s diff-patch</p>
+<p>Operational Transformation</p>
+<p>分布式 Operational Transformation</p>
+<h2 id="缩略图"><a href="#缩略图" class="headerlink" title="缩略图"></a>缩略图</h2><h2 id="文字翻译"><a href="#文字翻译" class="headerlink" title="文字翻译"></a>文字翻译</h2><h1 id="秒杀-抢红包"><a href="#秒杀-抢红包" class="headerlink" title="秒杀 - 抢红包"></a>秒杀 - 抢红包</h1><p>场景：资金池10W，每天2W，持续5天，如果前面4天有抢剩下的加到第5天的资金池里；红包的钱从资金池中拿，每个红包随机0~1元；很多用户（不知道多少，可能几万、几十万）抢，QPS&gt;2W，每个人30个红包，其中10个是有钱的。</p>
+<ul>
+<li><p>怎么存资金池？<br>用redis存资金，红包都是从redis扣，扣减的过程用Lua脚本实现原子性。</p>
+</li>
+<li><p>怎么发红包？</p>
+</li>
+<li><p>资金怎么保证可靠性（高可用）？<br>持久化，MySQL负载能力低不行，可以用Redis的持久化+复制。<br>那Redis挂了怎么办？</p>
+</li>
+<li><p>扣钱怎么保证效率（高性能）？<br>热点key问题怎么解决（资金key就是热点）？<br>注意还要考虑网络的性能。</p>
+</li>
+</ul>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/a62ec0c9.html" rel="prev" title="JVM调优-内存泄露排查">
+                  <i class="fa fa-angle-left"></i> JVM调优-内存泄露排查
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/385c6999.html" rel="next" title="Sentinel原理总结">
+                  Sentinel原理总结 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

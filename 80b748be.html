@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="业务背景 业务逻辑 收益 技术选型服务器几台、QPS多少、存储、缓存、MQ等 架构图 规划 个人角色 &#x2F; 做了什么 技术难点 遇到的问题 复盘 &#x2F; 未来规划">
+<meta property="og:type" content="article">
+<meta property="og:title" content="项目总结-bm">
+<meta property="og:url" content="https://tallate.github.io/80b748be.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="业务背景 业务逻辑 收益 技术选型服务器几台、QPS多少、存储、缓存、MQ等 架构图 规划 个人角色 &#x2F; 做了什么 技术难点 遇到的问题 复盘 &#x2F; 未来规划">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E4%BA%AC%E5%8C%BB%E9%80%9A.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/RocketMQDataSize.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E5%8F%B7%E6%BA%90%E6%8A%93%E5%8F%96.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E6%94%BE%E5%8F%B7%E6%8F%90%E9%86%92.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E6%8C%82%E5%8F%B7.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E5%A4%9A%E6%B8%A0%E9%81%93%E8%AE%A2%E5%8D%95%E5%90%8C%E6%AD%A5%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E5%80%99%E8%A1%A5%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E7%94%B5%E5%AD%90%E7%97%85%E5%8E%86.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E7%BC%B4%E8%B4%B9.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/MIP%E7%BD%91%E5%85%B3%E5%9B%BE.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/express%E7%B3%BB%E7%BB%9F%E8%A1%A8%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E7%89%A9%E6%B5%81%E7%B3%BB%E7%BB%9F%E6%B6%89%E5%8F%8A%E6%A8%A1%E5%9D%97.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E7%89%A9%E6%B5%81%E7%B3%BB%E7%BB%9F%E4%BA%A4%E4%BA%92.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E7%89%A9%E6%B5%81%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E5%85%B1%E4%BA%AB%E8%BD%AE%E6%A4%85.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/pay-center.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E5%A4%A7%E8%87%B4%E6%9E%B6%E6%9E%84.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E6%8E%A2%E6%B4%BB%E5%8E%9F%E7%90%86.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E5%8C%BB%E9%99%A2%E7%BD%91%E5%85%B3%EF%BC%88ha%EF%BC%89.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E8%AE%A2%E5%8D%95%E4%B8%AD%E5%BF%83.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E8%AE%A2%E5%8D%95%E4%B8%AD%E5%BF%83-ER%E5%9B%BE.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E8%AE%A2%E5%8D%95%E4%B8%AD%E5%BF%83%E7%9A%84%E6%9F%A5%E8%AF%A2.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/bm/%E8%AE%A2%E5%8D%95%E4%B8%AD%E5%BF%83%E7%9A%84%E5%86%99%E5%85%A5.png">
+<meta property="article:published_time" content="2020-09-23T14:53:43.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.910Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="bm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/bm/%E4%BA%AC%E5%8C%BB%E9%80%9A.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/80b748be.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/80b748be.html","path":"/80b748be.html","title":"项目总结-bm"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>项目总结-bm | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%AC%E5%8C%BB%E9%80%9A%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">京医通项目介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%90%E6%B5%81"><span class="nav-number">1.1.</span> <span class="nav-text">限流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%82%E7%AD%89"><span class="nav-number">1.2.</span> <span class="nav-text">幂等</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%B9%E7%81%BE"><span class="nav-number">1.3.</span> <span class="nav-text">容灾</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%87%8F%EF%BC%88QPS%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">数据量（QPS）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B%E6%8F%8F%E8%BF%B0"><span class="nav-number">3.</span> <span class="nav-text">流程描述</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%B7%E6%BA%90%E6%8A%93%E5%8F%96"><span class="nav-number">3.1.</span> <span class="nav-text">号源抓取</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%B7%E6%BA%90%E6%8A%93%E5%8F%96-%E6%94%BE%E5%8F%B7%E6%8F%90%E9%86%92"><span class="nav-number">3.2.</span> <span class="nav-text">号源抓取 - 放号提醒</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%81%E5%8F%B7%E7%94%9F%E6%88%90%E8%AE%A2%E5%8D%95"><span class="nav-number">3.3.</span> <span class="nav-text">锁号生成订单</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A2%E5%8D%95%E7%9A%84%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98"><span class="nav-number">3.3.1.</span> <span class="nav-text">订单的多级缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E6%9E%9C%E5%A4%B1%E8%B4%A5%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F"><span class="nav-number">3.3.2.</span> <span class="nav-text">如果失败怎么办？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%BB%E9%97%AE%E8%AF%8A"><span class="nav-number">3.4.</span> <span class="nav-text">轻问诊</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E6%B8%A0%E9%81%93%E8%AE%A2%E5%8D%95%E5%90%8C%E6%AD%A5"><span class="nav-number">3.5.</span> <span class="nav-text">多渠道订单同步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%80%99%E8%A1%A5"><span class="nav-number">3.6.</span> <span class="nav-text">候补</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%B5%E5%AD%90%E7%97%85%E5%8E%86"><span class="nav-number">3.7.</span> <span class="nav-text">电子病历</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%B4%E8%B4%B9"><span class="nav-number">3.8.</span> <span class="nav-text">缴费</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E4%B8%8A%E5%8C%BB%E4%BF%9D%E5%88%86%E8%A7%A3"><span class="nav-number">3.9.</span> <span class="nav-text">线上医保分解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%A9%E6%B5%81%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.10.</span> <span class="nav-text">物流系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E8%BD%AE%E6%A4%85"><span class="nav-number">3.11.</span> <span class="nav-text">共享轮椅</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%AF%E4%BB%98%E4%B8%AD%E5%BF%83"><span class="nav-number">3.12.</span> <span class="nav-text">支付中心</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E5%8F%98%E8%BF%81%E3%80%81%E9%81%87%E5%88%B0%E7%9A%84%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">架构变迁、遇到的问题及解决方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C"><span class="nav-number">4.1.</span> <span class="nav-text">网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A2%E6%B4%BB-HealthCheck"><span class="nav-number">4.2.</span> <span class="nav-text">探活 - HealthCheck</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">4.2.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">4.2.2.</span> <span class="nav-text">解决方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E7%9B%8A"><span class="nav-number">4.2.3.</span> <span class="nav-text">收益</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Sentinel-Cluster"><span class="nav-number">4.3.</span> <span class="nav-text">Sentinel -&gt; Cluster</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF-1"><span class="nav-number">4.3.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%81%E7%A7%BB%E5%8E%9F%E7%90%86"><span class="nav-number">4.3.2.</span> <span class="nav-text">迁移原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%81%E7%A7%BB%E6%B5%81%E7%A8%8B"><span class="nav-number">4.3.3.</span> <span class="nav-text">迁移流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BF%AE%E6%94%B9%E5%8F%8A%E5%A2%9E%E9%87%8F%E5%90%8C%E6%AD%A5"><span class="nav-number">4.3.3.1.</span> <span class="nav-text">客户端修改及增量同步</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E9%87%8F%E5%92%8C%E6%80%A7%E8%83%BD"><span class="nav-number">4.3.4.</span> <span class="nav-text">用量和性能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A9%E5%AE%B9%E6%96%B9%E5%BC%8F"><span class="nav-number">4.3.5.</span> <span class="nav-text">扩容方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98"><span class="nav-number">4.3.6.</span> <span class="nav-text">多级缓存</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QMQ-RocketMQ"><span class="nav-number">4.4.</span> <span class="nav-text">QMQ -&gt; RocketMQ</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%83%8C%E6%99%AF-2"><span class="nav-number">4.4.1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E6%BB%91%E8%BF%81%E7%A7%BB%E6%AD%A5%E9%AA%A4"><span class="nav-number">4.4.2.</span> <span class="nav-text">平滑迁移步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RocketMQ%E6%9E%B6%E6%9E%84"><span class="nav-number">4.4.3.</span> <span class="nav-text">RocketMQ架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RocketMQ%E5%AE%A2%E6%88%B7%E7%AB%AF%E6%8E%A5%E5%85%A5"><span class="nav-number">4.4.4.</span> <span class="nav-text">RocketMQ客户端接入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E9%87%8F"><span class="nav-number">4.4.5.</span> <span class="nav-text">用量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E6%BB%91%E8%BF%81%E7%A7%BB"><span class="nav-number">4.4.6.</span> <span class="nav-text">平滑迁移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A9%E5%AE%B9%E6%96%B9%E5%BC%8F-1"><span class="nav-number">4.4.7.</span> <span class="nav-text">扩容方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E7%94%A8%E6%B3%95"><span class="nav-number">4.4.8.</span> <span class="nav-text">示例用法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8C%BB%E9%99%A2%E7%BD%91%E5%85%B3%EF%BC%88ha-hospital-adaptor%EF%BC%89"><span class="nav-number">4.5.</span> <span class="nav-text">医院网关（ha &#x2F; hospital-adaptor）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%9A%E5%8A%A1%E8%83%8C%E6%99%AF"><span class="nav-number">4.5.1.</span> <span class="nav-text">业务背景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QConfig-Apollo"><span class="nav-number">4.6.</span> <span class="nav-text">QConfig -&gt; Apollo</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%A8%A1%E6%9D%BF%E5%BC%95%E6%93%8E%E5%AE%9E%E7%8E%B0%E9%97%AE%E5%8D%B7%E5%8A%9F%E8%83%BD"><span class="nav-number">4.7.</span> <span class="nav-text">使用模板引擎实现问卷功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A2%E5%8D%95%E4%B8%AD%E5%BF%83%E7%9A%84%E5%8F%98%E8%BF%81"><span class="nav-number">4.8.</span> <span class="nav-text">订单中心的变迁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%9F%A5%E8%AF%A2%E7%BC%93%E5%AD%98%E7%9A%84%E5%90%8C%E6%97%B6%E8%BF%98%E8%A6%81%E6%9F%A5%E4%B8%80%E6%AC%A1%E5%BA%93%EF%BC%9F"><span class="nav-number">4.8.1.</span> <span class="nav-text">为什么查询缓存的同时还要查一次库？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99order-main%E5%92%8Corder-detail%E8%BF%99%E4%B8%A4%E4%B8%AA%E6%93%8D%E4%BD%9C%E5%B9%B6%E4%B8%8D%E6%98%AF%E5%8E%9F%E5%AD%90%E7%9A%84%E6%93%8D%E4%BD%9C%EF%BC%8C%E4%BC%9A%E4%B8%8D%E4%BC%9A%E5%8F%91%E7%94%9F%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">4.8.2.</span> <span class="nav-text">写order_main和order_detail这两个操作并不是原子的操作，会不会发生并发问题？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A2%E5%8D%95%E7%8A%B6%E6%80%81%E6%9C%BA"><span class="nav-number">4.8.3.</span> <span class="nav-text">订单状态机</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ES%E7%B4%A2%E5%BC%95"><span class="nav-number">4.8.4.</span> <span class="nav-text">ES索引</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA"><span class="nav-number">4.9.</span> <span class="nav-text">链路追踪</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SpringMVC%E9%A1%B9%E7%9B%AE%E6%94%B9%E9%80%A0%E4%B8%BASpringBoot"><span class="nav-number">4.10.</span> <span class="nav-text">SpringMVC项目改造为SpringBoot</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B6%E7%9B%8A-1"><span class="nav-number">4.10.1.</span> <span class="nav-text">收益</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ServerManager-DNS"><span class="nav-number">4.10.2.</span> <span class="nav-text">ServerManager -&gt; DNS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SpringBoot"><span class="nav-number">4.10.3.</span> <span class="nav-text">SpringBoot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Dubbo"><span class="nav-number">4.10.4.</span> <span class="nav-text">Dubbo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MyBatis"><span class="nav-number">4.10.5.</span> <span class="nav-text">MyBatis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Config-Apollo"><span class="nav-number">4.10.6.</span> <span class="nav-text">Config -&gt; Apollo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E9%85%8D%E7%BD%AE"><span class="nav-number">4.10.7.</span> <span class="nav-text">其他配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%87%E5%88%B0%E4%BA%86%E4%BB%80%E4%B9%88%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">4.11.</span> <span class="nav-text">遇到了什么问题？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QA"><span class="nav-number">4.12.</span> <span class="nav-text">QA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E6%B2%A1%E6%9C%89%E4%BD%BF%E7%94%A8MQ%E5%AE%9E%E7%8E%B0%E8%BF%87%E5%89%8A%E5%B3%B0%EF%BC%9F"><span class="nav-number">4.12.1.</span> <span class="nav-text">有没有使用MQ实现过削峰？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%89%E6%B2%A1%E6%9C%89%E4%BC%98%E5%8C%96%E8%BF%87SQL%EF%BC%9F"><span class="nav-number">4.12.2.</span> <span class="nav-text">有没有优化过SQL？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ha%E7%BD%91%E5%85%B3%E6%80%8E%E4%B9%88%E6%A3%80%E6%9F%A5%E7%9A%84%E8%B6%85%E6%97%B6%E3%80%81%E9%98%9F%E5%88%97%E6%BA%A2%E5%87%BA%EF%BC%8C%E6%80%8E%E4%B9%88%E7%9C%8B%E5%93%AA%E4%BA%9B%E6%8E%A5%E5%8F%A3%E5%87%BA%E9%94%99%E4%BA%86%EF%BC%8C%E6%80%8E%E4%B9%88%E6%8A%A5%E8%AD%A6"><span class="nav-number">4.12.3.</span> <span class="nav-text">ha网关怎么检查的超时、队列溢出，怎么看哪些接口出错了，怎么报警</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%98%AFRedis%E8%80%8C%E4%B8%8D%E6%98%AFMemcache"><span class="nav-number">4.12.4.</span> <span class="nav-text">为什么是Redis而不是Memcache</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8RocketMQ%E8%80%8C%E4%B8%8D%E6%98%AFQMQ%E6%88%96Kafka"><span class="nav-number">4.12.5.</span> <span class="nav-text">为什么用RocketMQ而不是QMQ或Kafka</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8ES%E8%80%8C%E4%B8%8D%E6%98%AF%EF%BC%88%E5%8F%AA%E7%94%A8%EF%BC%89MySQL"><span class="nav-number">4.12.6.</span> <span class="nav-text">为什么用ES而不是（只用）MySQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Redis%E6%9C%9F%E9%97%B4%E6%9C%89%E6%B2%A1%E6%9C%89%E9%81%87%E5%88%B0%E4%BB%80%E4%B9%88%E5%9D%91%EF%BC%9F"><span class="nav-number">4.12.7.</span> <span class="nav-text">使用Redis期间有没有遇到什么坑？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8RocketMQ%E6%9C%9F%E9%97%B4%E6%9C%89%E6%B2%A1%E6%9C%89%E9%81%87%E5%88%B0%E4%BB%80%E4%B9%88%E5%9D%91%EF%BC%9F"><span class="nav-number">4.12.8.</span> <span class="nav-text">使用RocketMQ期间有没有遇到什么坑？</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">5.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B3%E6%BB%91%E8%BF%81%E7%A7%BB%E7%9A%84%E7%90%86%E8%AE%BA%E5%8E%9F%E7%90%86"><span class="nav-number">5.1.</span> <span class="nav-text">平滑迁移的理论原理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/80b748be.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="项目总结-bm | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          项目总结-bm
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-09-23 22:53:43" itemprop="dateCreated datePublished" datetime="2020-09-23T22:53:43+08:00">2020-09-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><ol>
+<li>业务背景</li>
+<li>业务逻辑</li>
+<li>收益</li>
+<li>技术选型<br>服务器几台、QPS多少、存储、缓存、MQ等</li>
+<li>架构图</li>
+<li>规划</li>
+<li>个人角色 &#x2F; 做了什么</li>
+<li>技术难点</li>
+<li>遇到的问题</li>
+<li>复盘 &#x2F; 未来规划</li>
+</ol>
+<span id="more"></span>
+
+<h1 id="京医通项目介绍"><a href="#京医通项目介绍" class="headerlink" title="京医通项目介绍"></a>京医通项目介绍</h1><p>患者通过微信公众号、APP、自助机等多渠道多平台的客户端，透过防火墙和安全中心访问京医通线上服务，包括：预约挂号、京医通卡管理、在线缴费、充值等服务。<br><img src="/imgs/bm/%E4%BA%AC%E5%8C%BB%E9%80%9A.png" alt="京医通" title="京医通"></p>
+<h2 id="限流"><a href="#限流" class="headerlink" title="限流"></a>限流</h2><p>与外部系统的交互需要限流以保护接口：</p>
+<ul>
+<li>HIS -&gt; benmu：使用Guava的RateLimiter实现；</li>
+<li>benmu -&gt; HIS：Semaphore+ScheduledThreadPoolExecutor。</li>
+</ul>
+<h2 id="幂等"><a href="#幂等" class="headerlink" title="幂等"></a>幂等</h2><p>消息会重试，因此Consumer总是要考虑到幂等：</p>
+<ul>
+<li>如果和订单相关，可以根据订单的状态来判断，比如有一个订单通知功能需要在状态A时触发，发送完后将订单状态改为B，如果此时订单状态已经是B了，就可以直接跳过这个操作了。</li>
+<li>上一种情况其实存在漏洞，因为查状态-&gt;发通知这两个操作并不是原子的，很多时候要实现严格幂等的话还需要用到Redis，其实幂等在实现上和加锁一样，这里加锁的过期时间和业务相关，比如要确保一个操作1小时内只能执行1次，则这个过期时间就可以设置为1小时。</li>
+</ul>
+<h2 id="容灾"><a href="#容灾" class="headerlink" title="容灾"></a>容灾</h2><p>分为业务接口层面和系统层面的容灾，先说业务接口层面的容灾。</p>
+<ul>
+<li>如果是号源这样的非实时接口，我们允许短时间内不可用，只要之后能正常访问即可，代价是这段时间内用户查看到的数据不是最新的。</li>
+<li>如果是锁号这样的实时接口，因为我们的业务场景不允许超买超卖，因此这个接口没法做异步化，出错了就是出错了，报警后需要人工进行排查，很多时候需要反馈给HIS进行修复。</li>
+<li>如果是支付成功通知这样的异步执行接口，则可以通过重试来提高执行成功的概率，如果重试都失败了，则会调用逆向的回滚接口（比如锁号接口的逆向就是退号接口）。</li>
+</ul>
+<p>系统层面：</p>
+<ul>
+<li>如果是进程本身出问题了，比如内存占用超标、CPU打满等情况，可以通过zabbix来判断（运维管理）；</li>
+<li>如果是JVM内的问题，比如FULLGC了、中间件客户端连不上服务器了等情况，可以通过一个探活服务来检测；</li>
+<li>如果是业务相关的问题，一般是error日志，我们可以统计ELK日志然后发报警。</li>
+</ul>
+<h1 id="数据量（QPS）"><a href="#数据量（QPS）" class="headerlink" title="数据量（QPS）"></a>数据量（QPS）</h1><ul>
+<li>业务服务器最高的是单机2000qps，30tps（只考虑下单请求），8台机器。</li>
+<li>RocketMQ的并发量可以通过RocketMQ-console来查看，最高的Topic一天是190W条消息，消息总量一天会有千万的量级，不过平均到每秒也就只有100的量级。<br>RocketMQ消息量可以在RocketMQ-console上看到：<br><img src="/imgs/bm/RocketMQDataSize.png" alt="RocketMQDataSize" title="RocketMQDataSize"></li>
+<li>Redis的QPS在低峰期大约在500，高峰期，注意Cluster是有3台Master来提供服务的，且不同业务的集群多少有点差异。<br>Redis的QPS可以通过记录两次info命令中的total_commands_processed属性再做差得到。</li>
+<li>MySQL，像订单中心低峰期的QPS是30左右，不同库的QPS会有差别，但是差得不会太多。<br>MySQL的QPS可以通过比较两次执行<code>show global  status like &#39;Queries%&#39;;</code>命令的结果来得到。</li>
+</ul>
+<h1 id="流程描述"><a href="#流程描述" class="headerlink" title="流程描述"></a>流程描述</h1><h2 id="号源抓取"><a href="#号源抓取" class="headerlink" title="号源抓取"></a>号源抓取</h2><p><img src="/imgs/bm/%E5%8F%B7%E6%BA%90%E6%8A%93%E5%8F%96.png" alt="号源抓取" title="号源抓取"><br>号源相当于是商城系统里的库存，维护号源同样会面临库存维护的诸多问题，比如多级缓存。<br>号源可以看作医院内医生某个时间段内能坐诊（意思是医生在医院等固定地点给人看病）的人次，这个概念其实完全可以和商城系统中的商品库存作类比，事实上我们代码里就是这么抽象的：将号源称为Product，数量称为Inventory。<br>我们这边的号源维护逻辑是由His维护号源的数据库，而我们这边则主要维护号源的缓存，并提供多级缓存，供用户查询时使用，并在库存发生变更的时刻及时更新。到此为止似乎业务逻辑还是比较简单的，实际上这块业务逻辑的复杂性主要来自于对<strong>多级缓存</strong>的存储结构和<strong>号源拉取规则</strong>设计。</p>
+<p>product（号源本地缓存、过滤等功能）实例7台，accessor（号源抓取规则）3台，单机的号源查询QPS约上百，并不多。<br>使用Redis存储号源缓存，3主3从。<br>RocketMQ发送消息，2主4从。<br>MySQL存号源快照。</p>
+<p>号源有Redis缓存和本地缓存，缓存的结构简单地说都是<code>&lt;医院-科室, 日期,  库存信息&gt;</code>，当然其实有其他缓存，只是用途不同，比如用于统计某个号源的查询次数时以回源时，只用记下次数。<br>号源缓存并不能和数据库中的数据保持实时一致，而是尽量保证即使一时不一致，过一段时间后也能最终保持一致，即<strong>最终一致性</strong>。</p>
+<ol>
+<li>写入时触发主动缓存刷新；</li>
+<li>读取一定次数后回源并更新缓存。</li>
+</ol>
+<p>缓存更新最常见的策略是“先更新数据库，后失效缓存”，但是这种策略最大的问题是缓存实时性不高，缓存失效失败后缓存中就还是旧的值，而且每次失效后，查询缓存都会发生一次MISS。<br>反观号源缓存维护策略，更新缓存采取的是“先更新数据库，后更新缓存”的策略，这种策略存在的问题是：</p>
+<ol>
+<li>存在缓存更新失败的情况，对此我们的解决方式是在<strong>抓取失败后重试</strong>；<br>但是如果长时间缓存更新失败，缓存数据就会一直都是老的了，对此，我们的解决方案是<strong>查询也会触发抓取号源</strong>，只不过查询请求太多，不可能每次查询都抓取一次号源，因此对抓取规则进行限制，规则如下：<ul>
+<li>如果号源缓存为空，表示之前没拉过，则直接触发拉取；</li>
+<li>如果当前时间在配置的放号时间内（一般是下午3点），则每秒拉一次；</li>
+<li>如果是热门科室（根据科室的访问次数统计分数排名得到）且当前库存量低于10，则每5秒拉一次；</li>
+<li>不是热门科室但是库存量也低于10，则每10秒拉一次；</li>
+<li>其他情况下，每30秒拉一次。<blockquote>
+<p>即使我们尽力保证缓存的一致性，但是一定时间的不一致是无法避免的，主要是号源缓存并不要求严格的一致性，而是只需要最终一致性，即使一时失败，也可以通过后续的刷新来保持一致，因此问题不大。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li>存在一个问题，事务A和B同时更新一条数据，事务A先更新了数据库，但是后来的事务B却先更新了缓存，那么缓存中存的就是旧值了，我们的主要通过对更新号源、更新缓存这个流程进行<strong>加分布式锁</strong>实现的。</li>
+<li>以前，我们这边的缓存是Redis单机Master的，通过Sentinel集群实现高可用，效率有问题，因此除了Redis缓存，号源更前端还有一个<strong>本地缓存</strong>，本地缓存每3秒回源（查Redis），后来Redis集群转为了Cluster模式，所以效率问题已经大大缓解了。本地缓存还有一个优点是<strong>减少了网络的交互</strong>，不过缺点是<strong>耗费了更多的应用内存</strong>。</li>
+</ol>
+<h2 id="号源抓取-放号提醒"><a href="#号源抓取-放号提醒" class="headerlink" title="号源抓取 - 放号提醒"></a>号源抓取 - 放号提醒</h2><p><img src="/imgs/bm/%E6%94%BE%E5%8F%B7%E6%8F%90%E9%86%92.png" alt="放号提醒" title="放号提醒"><br>比对缓存中的老号源信息和新拉取的号源信息。<br>并不是每次拉取号源都是放号，实际上放号提醒QPS比拉取号源QPS低一个数量级。</p>
+<h2 id="锁号生成订单"><a href="#锁号生成订单" class="headerlink" title="锁号生成订单"></a>锁号生成订单</h2><p><img src="/imgs/bm/%E6%8C%82%E5%8F%B7.png" alt="挂号" title="挂号"></p>
+<ol>
+<li>从HIS抓取号源时，经过医院网关系统ha，具备并发控制、限流、验签等功能；</li>
+<li>从HIS抓取号源后，保存到号源缓存；</li>
+<li>订单存储成功后，维护订单缓存，并异步刷新ES以提供多维度查询；</li>
+<li>订单支付时，提交支付表单，跳转到支付页进行支付，支付完后回调通知业务，进行订单状态的转换。</li>
+</ol>
+<h3 id="订单的多级缓存"><a href="#订单的多级缓存" class="headerlink" title="订单的多级缓存"></a>订单的多级缓存</h3><p>见《订单中心》。</p>
+<h3 id="如果失败怎么办？"><a href="#如果失败怎么办？" class="headerlink" title="如果失败怎么办？"></a>如果失败怎么办？</h3><p>挂号操作的任务是扣减库存然后生成订单，显然，这两个操作并不是原子的，如果扣减库存成功，然后生成订单失败，那么库存不就浪费了吗？<br>实际上号源也是有状态的，刚开始，号源被占用一个后，仍然处于PREPARE状态，这个号只是被暂时占用了，被实际占用还要等到用户支付后，如果30分钟内用户不支付，那么这个库存会被自动释放掉。</p>
+<h2 id="轻问诊"><a href="#轻问诊" class="headerlink" title="轻问诊"></a>轻问诊</h2><p>主要就是答题，使用到了规则引擎，见：<a href="https://tallate.github.io/6ce879b3.html">《规则引擎》</a></p>
+<h2 id="多渠道订单同步"><a href="#多渠道订单同步" class="headerlink" title="多渠道订单同步"></a>多渠道订单同步</h2><p><img src="/imgs/bm/%E5%A4%9A%E6%B8%A0%E9%81%93%E8%AE%A2%E5%8D%95%E5%90%8C%E6%AD%A5%E6%B5%81%E7%A8%8B.png" alt="多渠道订单同步流程" title="多渠道订单同步流程"></p>
+<h2 id="候补"><a href="#候补" class="headerlink" title="候补"></a>候补</h2><p><img src="/imgs/bm/%E5%80%99%E8%A1%A5%E6%B5%81%E7%A8%8B.png" alt="候补流程" title="候补流程"></p>
+<h2 id="电子病历"><a href="#电子病历" class="headerlink" title="电子病历"></a>电子病历</h2><p><img src="/imgs/bm/%E7%94%B5%E5%AD%90%E7%97%85%E5%8E%86.png" alt="电子病历" title="电子病历"></p>
+<h2 id="缴费"><a href="#缴费" class="headerlink" title="缴费"></a>缴费</h2><p><img src="/imgs/bm/%E7%BC%B4%E8%B4%B9.png" alt="缴费" title="缴费"></p>
+<p>重复拉订单问题<br>拉取缴费单后会先存储到一张中间表，然后在用户自己准备支付时生成订单，这时有可能重复生成订单，所以实际上是会加分布式锁的，而且用户有可能在操作自助机的同时，在微信端操作，这时，由于加锁维度问题，有可能产生重复生成订单的问题。<br>刚开始：加锁是对缴费单的就诊号、处方组加锁，而且会尽可能拼上用户的就诊卡等。<br>后来：仅仅对就诊号、处方组加锁，虽然处理方式挺粗暴，但是确实解决问题了。</p>
+<h2 id="线上医保分解"><a href="#线上医保分解" class="headerlink" title="线上医保分解"></a>线上医保分解</h2><p>线上缴费和线下缴费的主体流程并没有太大的差异，主要区别在于：线上医保分解是后端调自助机的医保分解组件（首信提供）来执行医保分解、医保提交等操作。<br>这里的主要难点在于：</p>
+<ol>
+<li>自助机是不支持并发的，因此，我们需要对并发进行限制；<br><img src="/imgs/bm/MIP%E7%BD%91%E5%85%B3%E5%9B%BE.png" alt="MIP网关图" title="MIP网关图"></li>
+<li>医保分解和提交需要是在一个事务内执行，因此我们需要实现分布式事务。<br>但是退一步，因为医保分解是可以重复分解的，因此就算医保分解失败多次，重试也不影响一致性，所以最终也就没有实现分布式事务了。</li>
+</ol>
+<h2 id="物流系统"><a href="#物流系统" class="headerlink" title="物流系统"></a>物流系统</h2><p>物流系统的主要目的是提供和邮政等物流平台的交互，医院HIS本身已经接入物流平台的情况下，我们还会和HIS交互。<br><img src="/imgs/bm/express%E7%B3%BB%E7%BB%9F%E8%A1%A8%E7%BB%93%E6%9E%84.png" alt="express系统表结构" title="express系统表结构"><br><img src="/imgs/bm/%E7%89%A9%E6%B5%81%E7%B3%BB%E7%BB%9F%E6%B6%89%E5%8F%8A%E6%A8%A1%E5%9D%97.png" alt="物流系统涉及模块" title="物流系统涉及模块"><br><img src="/imgs/bm/%E7%89%A9%E6%B5%81%E7%B3%BB%E7%BB%9F%E4%BA%A4%E4%BA%92.png" alt="物流系统交互" title="物流系统交互"><br><img src="/imgs/bm/%E7%89%A9%E6%B5%81%E5%AE%9E%E7%8E%B0%E6%B5%81%E7%A8%8B.png" alt="物流实现流程" title="物流实现流程"></p>
+<h2 id="共享轮椅"><a href="#共享轮椅" class="headerlink" title="共享轮椅"></a>共享轮椅</h2><p><img src="/imgs/bm/%E5%85%B1%E4%BA%AB%E8%BD%AE%E6%A4%85.png" alt="共享轮椅" title="共享轮椅"><br>共享轮椅项目我曾经维护过一阵，但是后来组织结构变更，项目就交给其他小组维护了。<br>对共享轮椅印象比较深的一点是后端服务器通过Netty与锁平台交互，ChannelHandler主要是：</p>
+<ul>
+<li><code>IdleStateHandler</code><br>空闲检测</li>
+<li><code>DelimiterBasedFrameDecoder</code><br>半包&#x2F;粘包拆分器</li>
+<li>一个自定义的数据包解析器<br>格式如下：<br><img src="/imgs/bm/%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F.png" alt="数据格式" title="数据格式"><br>在以上数据结构中，比较重要的是命令ID和数据长度，凭这两个字段可以取到完整的命令信息，协议版本主要用于平滑升级，网关mac可以标识请求来自哪个基站，CRC校验码暂时没有使用。</li>
+</ul>
+<h2 id="支付中心"><a href="#支付中心" class="headerlink" title="支付中心"></a>支付中心</h2><p><img src="/imgs/bm/pay-center.png" alt="pay-center" title="pay-center"></p>
+<h1 id="架构变迁、遇到的问题及解决方法"><a href="#架构变迁、遇到的问题及解决方法" class="headerlink" title="架构变迁、遇到的问题及解决方法"></a>架构变迁、遇到的问题及解决方法</h1><h2 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h2><p><img src="/imgs/bm/%E5%A4%A7%E8%87%B4%E6%9E%B6%E6%9E%84.png" alt="大致架构" title="大致架构"></p>
+<ul>
+<li>内部服务器 -&gt; 外部系统<br>业务服务器 IP -&gt; Nginx -&gt; 防火墙 -&gt; 外部系统(Client)</li>
+<li>外部系统 -&gt; 内部服务器<br>外部系统(Client) -&gt; 防火墙 -&gt; HA vip（负载均衡 keepalived + HAProxy） -&gt; Nginx -&gt; 业务服务器 IP</li>
+</ul>
+<h2 id="探活-HealthCheck"><a href="#探活-HealthCheck" class="headerlink" title="探活 - HealthCheck"></a>探活 - HealthCheck</h2><p>这并不是特别复杂的功能，稍微介绍下算了。</p>
+<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>之前公司内采用Redis哨兵集群，不稳定，偶尔抖动进入TILT，当时的lettuce客户端就连不上了。</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>短期定时调各个实例的Redis客户端，看看是否连通；长期将Redis哨兵集群迁移到Redis Cluster集群（下面细说）。</p>
+<p><img src="/imgs/bm/%E6%8E%A2%E6%B4%BB%E5%8E%9F%E7%90%86.png" alt="探活原理" title="探活原理"></p>
+<p>从应用服务器的探活接口获取到应用健康信息后，Task服务器会执行一个报警汇总和发送过程，报警发送规则：</p>
+<ol>
+<li>每10秒扫描所有服务器一次，判断是UP还是DOWN：<br>如果是UP，将异常服务信息从缓存（Redis）清除，因为服务已经恢复正常，所以没有必要再发送异常通知了；<br>如果是DOWN，将异常服务器信息保存到缓存（Redis），key为<code>&lt;serverName, serverAddr&gt;</code>，value需要保存内容包括<code>&lt;errorCount, startTime, endTime, alarmInfo&gt;</code>；<br>注意添加与清除操作存在并发竞争，因此通过分布式锁来同步，同步粒度是一个服务；</li>
+<li>定时任务判断各服务器健康状况，对每个服务器，如果距离最开始汇报时间已经超过3分钟，且汇报次数超过10次，则执行报警；</li>
+<li>发送报警实际上是调用了腾讯云的发送短信接口。<br>当然也不是每次都会发送，比如超过最大发送次数、超过最长发送时间，都会限制不再发送；而且，也并不是每次执行步骤2的定时任务就要发送，还需要进行一个限流，原理其实就是Guava里的<strong>RateLimiter</strong>。</li>
+</ol>
+<h3 id="收益"><a href="#收益" class="headerlink" title="收益"></a>收益</h3><p>接入后至今已经有多次准确检测到服务器宕机的案例，较为灵敏，且是通过短信发送报警，组内成员基本均能及时响应，可以成功探测到：</p>
+<ol>
+<li>Redis服务器不可用的情况；</li>
+<li>FullGC导致的服务不可用情况；</li>
+<li>Redis客户端连不上服务器的情况（比如网络出问题）。</li>
+</ol>
+<h2 id="Sentinel-Cluster"><a href="#Sentinel-Cluster" class="headerlink" title="Sentinel -&gt; Cluster"></a>Sentinel -&gt; Cluster</h2><h3 id="背景-1"><a href="#背景-1" class="headerlink" title="背景"></a>背景</h3><p>为什么要从Sentinel升级到Cluster？除了上面提到的Sentinel的诸多缺点外，我们还遇到了：</p>
+<ol>
+<li>长久以来(至少为期一年)有个历史问题没有解决，在很偶然随机的情况下，redis哨兵集群不稳定抖动自行恢复之后，业务方客户端重连不上调用抛异常；</li>
+<li>Redis服务器版本低，不稳定的因素有很多，比如AOF的io堵塞问题，高版本都有修复和一系列bug fix 及性能优化改进；</li>
+</ol>
+<p>比如某一次，很多医院频繁出现挂号、缴费系统繁忙的报错：</p>
+<ol>
+<li>问题反馈时（报警+用户反馈），检查Redis服务器本身没有问题，连服务器调info命令返回内容都是正常的；</li>
+<li>为了及时恢复，将涉及的服务器先重启了，发现确实服务恢复了；</li>
+<li>发现服务日志中出现：<br><code>RedisException: Master is currently unknown: ...</code></li>
+</ol>
+<p>故障review发现：Redis服务端因为网络抖动发生了主观下线，很快自动恢复了，但是客户端并没有恢复，主要是因为lettuce客户端版本相对比较老。<br>为此，我们所做的：</p>
+<ol>
+<li>探活，针对客户端无法恢复的情况，探活检查服务器挂掉的情况，实时通知开发；<br>探活实现了对Redis客户端及服务器可用性的检查，之后发现还可以检查长时间的FULLGC，这是运维的zabbix无法实现的。</li>
+<li>sentinel存在单点问题，而且容量已经不大够了且扩容困难，于是重建一套Redis Cluster；</li>
+<li>服务端从Sentinel迁移到Cluster，客户端也需要同时进行迁移，迁移过程中需要双写双读；<br>数据库的迁移（扩容）实际上一般也会采取双写双读，注意不能采取监听binlog的方式，因为监听binlog是异步的，数据的写入并不实时。<blockquote>
+<p>数据库检查迁移的过程检测可以看阿里的愚公。</p>
+</blockquote>
+</li>
+<li>新客户端采用Redisson，对分布式锁提供了更好的支持，刚开始我们这边采用的分布式锁是<code>setnx+ex</code>，后来采用<code>set nx ex</code>，之后引入Redisson后转为RedLock，提高了可靠性；</li>
+</ol>
+<h3 id="迁移原理"><a href="#迁移原理" class="headerlink" title="迁移原理"></a>迁移原理</h3><p>存储中间件的迁移一般包括存量迁移和增量迁移这两个步骤，在Redis中，可以：</p>
+<ul>
+<li>存量迁移：可参考我的另一篇博文《<a href="https://tallate.github.io/fb6b62e.html#%E6%89%A9%E5%AE%B9-%E7%BC%A9%E5%AE%B9">Redis高可用方案Cluster</a>》。<br>存量迁移的主要问题是迁移过程中的请求应该被重定向到数据当时所在的节点上，对于这点Redis中是通过服务端的重定向来实现的，Master会记录一个槽在迁出节点上还是在迁入节点上，请求会被重定向到槽当前所在的节点上；</li>
+<li>增量迁移：在线迁移过程中，新数据会源源不断地被添加到Redis集群中，对这些数据，一般的处理方法是同时写入新节点和老节点，可以参考下面的迁移流程；</li>
+</ul>
+<p>在<a target="_blank" rel="noopener" href="https://leriou.github.io/2020-01-11-data-migration/">双读和双写的数据库迁移方案</a>中也提到了我所提的方案，我们采用的正是不停机的渐进式双读方案，而不是带存量迁移的双写双读方案。</p>
+<h3 id="迁移流程"><a href="#迁移流程" class="headerlink" title="迁移流程"></a>迁移流程</h3><h4 id="客户端修改及增量同步"><a href="#客户端修改及增量同步" class="headerlink" title="客户端修改及增量同步"></a>客户端修改及增量同步</h4><p>原Redis Sentinel集群是1主2从3哨兵，使用lettuce作为客户端。<br>新Redis Cluster集群是3主6从，使用Redisson作为客户端。<br>集群不同，客户端的连接方式也有所不同，客户端启动及创建连接方式：</p>
+<ol>
+<li>客户端启动时，会从配置中心读取分配给当前服务的Redis集群地址，然后创建Redisson对象；</li>
+<li>因为是3主6从的Cluster架构，因此客户端会先找到Master，之后的读写请求都是针对Master进行的；</li>
+</ol>
+<p>迁移过程访问Redis的代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line">public void set(String bizName,String key,String value)&#123;</span><br><span class="line">    //新开关初始值为true</span><br><span class="line">    if(newRedissonFlag)&#123;</span><br><span class="line">        //为防止新redisson瞬间网络抖动带来的新老redis数据不一致添加重试功能，重试功能只需在写时重试</span><br><span class="line">        for (int i = 0; i &lt;3 ; i++) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                //操作新的redisson需要用try..catch 包起来</span><br><span class="line">                RBucket&lt;String&gt; bucket = redissonClient.getBucket(this.entireKeyPrefix + bizName + keySeparator + key);</span><br><span class="line">                bucket.set(value);</span><br><span class="line">                LOGGER.info(&quot;走新的redisson,方法:set -&gt; key:&quot;+key+&quot;,value:&quot;+value+&quot;,重试次数:&quot;+i);</span><br><span class="line">                break;</span><br><span class="line">            &#125; catch (Exception e) &#123;</span><br><span class="line">                LOGGER.error(&quot;走新的redisson异常,方法:set -&gt; key:&quot;+key+&quot;,value:&quot;+value+&quot;,重试次数:&quot;+i,e);</span><br><span class="line">                try &#123;</span><br><span class="line">                    Thread.sleep(5);</span><br><span class="line">                &#125; catch (Exception ex) &#123;</span><br><span class="line">                    LOGGER.error(&quot;redisson set() 重试sleep异常&quot;,ex);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    //老开关初始值为true，在新老功能并行至老的redis中key的最大过期时间后方可关闭</span><br><span class="line">    if(oldRedisFlag)&#123;</span><br><span class="line">        sChairRedisCache.set(key, value);</span><br><span class="line">        LOGGER.info(&quot;走老的redis,方法:set -&gt; key:&quot;+key+&quot;,value:&quot;+value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public String get(String bizName,String key)&#123;</span><br><span class="line">    String obj = null;</span><br><span class="line">    String objNew=null;</span><br><span class="line">    String objOld=null;</span><br><span class="line"></span><br><span class="line">    // 新Redis开关，打开的情况下查下新Redis</span><br><span class="line">    if(newRedissonFlag)&#123;</span><br><span class="line">        RBucket&lt;String&gt; bucket = redissonClient.getBucket(entireKeyPrefix + bizName + keySeparator + key);</span><br><span class="line">        objNew = bucket.get();</span><br><span class="line">        obj = objNew;</span><br><span class="line">        LOGGER.info(&quot;走新的redisson,方法:get -&gt; key:&quot;+entireKeyPrefix + bizName + keySeparator + key+&quot;,objNew:&quot;+objNew);</span><br><span class="line">    &#125;</span><br><span class="line">    //老开关初始值为true，在新老功能并行至老的redis中key的最大过期时间后方可关闭</span><br><span class="line">    if(oldRedisFlag)&#123;</span><br><span class="line">        objOld = sChairRedisCache.get(key);</span><br><span class="line">        LOGGER.info(&quot;走老的redis,方法:get -&gt;key:&quot;+key+&quot;,objOld:&quot;+objOld);</span><br><span class="line">        obj = objOld;</span><br><span class="line">        if (StringUtils.isBlank(objNew) &amp;&amp; StringUtils.isNotBlank(objOld))&#123;</span><br><span class="line">            if(newRedissonFlag)&#123;</span><br><span class="line">                //为防止新redisson瞬间网络抖动带来的新老redis数据不一致添加重试功能，重试功能只需在写时重试</span><br><span class="line">                for (int i = 0; i &lt;3 ; i++) &#123;</span><br><span class="line">                    try &#123;</span><br><span class="line">                        //操作新的redisson需要用try..catch 包起来</span><br><span class="line">                        RBucket&lt;String&gt; bucket = redissonClient.getBucket(entireKeyPrefix + bizName + keySeparator + key);</span><br><span class="line">                        bucket.set(obj);</span><br><span class="line">                        LOGGER.info(&quot;走新查询未命中老的重新set的redisson,方法:get -&gt; key:&quot;+entireKeyPrefix + bizName + keySeparator + key+&quot;,value:&quot;+obj+&quot;,重试次数:&quot;+i);</span><br><span class="line">                        break;</span><br><span class="line">                    &#125; catch (Exception e) &#123;</span><br><span class="line">                        LOGGER.error(&quot;走新查询未命中老的重新set的redisson异常,方法:get -&gt; key:&quot;+entireKeyPrefix + bizName + keySeparator + key+&quot;,value:&quot;+obj+&quot;,重试次数:&quot;+i,e);</span><br><span class="line">                        try &#123;</span><br><span class="line">                            Thread.sleep(5);</span><br><span class="line">                        &#125; catch (Exception ex) &#123;</span><br><span class="line">                            LOGGER.error(&quot;redisson set 重试sleep异常&quot;,ex);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return obj;</span><br><span class="line">&#125;</span><br><span class="line">public void delKey(String bizName,String key)&#123;</span><br><span class="line">    //新开关初始值为true</span><br><span class="line">    if(newRedissonFlag)&#123;</span><br><span class="line">        //为防止新redisson瞬间网络抖动带来的新老redis数据不一致添加重试功能，重试功能只需在写时重试</span><br><span class="line">        try &#123;</span><br><span class="line">            //操作新的redisson需要用try..catch 包起来</span><br><span class="line">            RBucket&lt;String&gt; bucket = redissonClient.getBucket(entireKeyPrefix + bizName + keySeparator + key);</span><br><span class="line">            bucket.delete();</span><br><span class="line">            LOGGER.info(&quot;走新的redisson,方法:delkey -&gt; key:&quot;+entireKeyPrefix + bizName + keySeparator + key);</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            LOGGER.error(&quot;走新的redisson异常,方法:delkey 删除key:&quot;+entireKeyPrefix + bizName + keySeparator + key,e);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    //老开关初始值为true，在新老功能并行至老的redis中key的最大过期时间后方可关闭</span><br><span class="line">    if(oldRedisFlag)&#123;</span><br><span class="line">        sChairRedisCache.del(key);</span><br><span class="line">        LOGGER.info(&quot;走老的redis,删除key:&quot;+key);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>刚开始，老Redis集群和新Redis集群是同时工作的，对Redis的访问也是同时访问新老Redis集群。<br>如上代码所示，在迁移过程中新老开关都是打开的（新老Redis开关可以统称<strong>双写开关</strong>），这时get以老Redis中的值为准，可能新Redis中没有值，所以最后还把老Redis中的值设置到了新Redis中。<br>set会先设置新Redis，然后再设置老Redis，del同理。</li>
+<li>有全量同步吗？<br>实际上我们没有做全量同步，因为没必要：<br>如基础数据这样的服务，它本身所有的数据都是定时全量加载的，到时候全刷新一遍新Redis就可以了。<br>其他服务不能保证会不会存在一些存量数据（指不会通过任何手段重新set的），可以参考上边的get的逻辑：新Redis不存在而老Redis存在的情况下，会把这些kv直接塞给新Redis，这样实际上就避开了需要全量同步的情况。</li>
+<li>之后，观察业务是否稳定，然后关闭老Redis的开关<br>什么时候关闭？同步完成的时候，即双写开关打开前老Redis里的数据已经全部转移到了新Redis里，更具体地说，等老Redis中最老的数据的过期时间到了后，并且get时会将老Redis中的数据转移到新Redis里并<strong>打日志</strong>，如果这样的日志不打了，就说明转移完毕了。<br>正如上边代码逻辑所示，关闭老Redis开关后，所有对Redis的操作都不走老Redis了。<br>我们会先切换比较边缘的业务，最后再切换核心业务，保证Redis迁移不影响业务。</li>
+</ol>
+<h3 id="用量和性能"><a href="#用量和性能" class="headerlink" title="用量和性能"></a>用量和性能</h3><p>单机服务器内存总量是125.56G，平均用量是1.27G，而峰值用量是4.63G，基本上资源是过剩的。<br>压测命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ab -n2000000 -c 5000  http://localhost:9001/testRedisson</span><br></pre></td></tr></table></figure>
+<p>经过压测，单个4c8g的qps的都在8000左右，单个8c16g的qps在16000左右。</p>
+<h3 id="扩容方式"><a href="#扩容方式" class="headerlink" title="扩容方式"></a>扩容方式</h3><p>暂时没有遇到需要扩容的场景，但是如果遇到了，可以参考一下我记录的扩容原理：<a href="https://tallate.github.io/fb6b62e.html#%E6%89%A9%E5%AE%B9-%E7%BC%A9%E5%AE%B9">Redis高可用方案Cluster - 扩容-缩容</a></p>
+<h3 id="多级缓存"><a href="#多级缓存" class="headerlink" title="多级缓存"></a>多级缓存</h3><p>打个比方，我们现在有这样一个场景：需要存储10亿个value，每个value占用100k，怎么设计缓存存储？<br>如果直接有多存多少，那么服务器肯定是不够用的，假设一台Redis占用1G（当然实际一台并不会这么小），那么题中所述的数量至少要100W台（当然还要考虑key占用的内存大小），这肯定是不能接受的，所以一般会采用多级缓存来存储，上层缓存服务器快，分配的空间少，下层服务器负责持久化存储，分配的空间大。</p>
+<h2 id="QMQ-RocketMQ"><a href="#QMQ-RocketMQ" class="headerlink" title="QMQ -&gt; RocketMQ"></a>QMQ -&gt; RocketMQ</h2><h3 id="背景-2"><a href="#背景-2" class="headerlink" title="背景"></a>背景</h3><p>qmq大体流程是这样的：生产者在本地写数据库记录，调用qmq的服务端的dubbo接口，qmq的dubbo接口里是将消息存到数据库，写入redis，根据订阅qmq消息情况，从qmq的服务端发起dubbo接口调用，去调用consumer提供的dubbo接口。</p>
+<p>刚开始公司内所有老项目都是使用的QMQ，后来转到了RocketMQ，具体原因如下：</p>
+<ol>
+<li>qmq基于redis和mysql的存储，系统复杂性太高，稳定性风险较大。<br>相较起来，RocketMQ是基于文件系统的，不需要维护数据库的索引，而且是顺序读的，CommitLog文件达到一定大小就会生成一个新文件，所以效率更高更稳定。<blockquote>
+<p>出现过qmq连不上Redis，消息没被删掉，导致Redis内存几乎被打满的情况。当时排查出是qmq中的Redis客户端连不上服务器导致的，所以后来做了探活功能，并计划迁移到RocketMQ。</p>
+</blockquote>
+</li>
+<li>qmq的存储瓶颈主要在于mysql调用，消息堆积能力远不及rocketmq，而且数据量增大后已经出现热点库表问题。</li>
+<li>为了弥补消息堆积能力的不足，qmq的做法是起一个task服务定时清理redis和mysql里的历史消息，热消息即时删除导致task服务压力较大而且职责重大，历史消息需要转送往backup服务进行额外存储，不仅又增加了task服务的工作负担，而且新增加的backup服务也占用了额外的资源，尤其是其中包括hdfs的大数据组的存储资源。</li>
+<li>内部设计有缺陷，主要是 “推模式” 的弊端<br>完全依靠中间件去主动推送消息给到消费者，完全忽视了业务方消费者的多样性情况和每个消费者项目各自的特殊性，比如断网、掉线、处理能力有限或者业务复杂容易处理超时的情况，都一视同仁的设置超时时间和失败重试机制，导致业务方如果处理时间较长，中间件等不及也抛出超时异常并强行杀掉连接启动失败重试，即使业务方过了一段时间这个消息是消费处理成功的也没用了，中间件会一直失败重试直到达到重试次数上限值，不仅大大增加了失败重试的工作量，抛出了大量超时异常，而且一直重试也占用了中间件服务的大量资源导致中间件吞吐能力下降。</li>
+</ol>
+<p>之前有一次QMQ出现问题：</p>
+<ol>
+<li>消息消费出现问题，我们这边订单的通知HIS支付成功这一部出现了问题，好多订单没有及时通知，导致自动退掉；</li>
+<li>DBA发现Redis暴涨，原来占用不到1G，花了一早上暴涨到超过3G，过了1小时的过期时间key才因为过期而自动被清除；</li>
+<li>怀疑半夜Redis发生抖动导致QMQ连接Redis出问题，因此重启QMQ，服务恢复；</li>
+<li>发现QMQ的task服务在Redis发生抖动后就没有再进行消息的清除了，相当于业务一直在往Redis里塞消息却不把历史消息删掉，导致Redis被打满，Redis打满后QMQ即不可用、不再执行消息的推送（QMQ是“推模式”），所以业务也消费不到消息了。</li>
+</ol>
+<p>相比之下，rocketmq架构简单，只依赖本地文件系统读写，系统相对更加稳定，吞吐和消息堆积能力更高。利用commitlog的数据文件进行本地文件存储，每个不同的topic下都有多个队列可以增加吞吐量，通过设置消息队列的offset，记录业务方消费者的下一次消费起始位置，而不是中间件主动重复推送和失败再推送，完全交由业务方消费者自己控制消费节奏，即使下线了不工作了等到重新上线又自己控制重新开始消费，这样不仅提高了业务方消费者的自主控制灵活性，也降低了中间件的工作负担，提高了整个系统的效率和消息处理能力。</p>
+<h3 id="平滑迁移步骤"><a href="#平滑迁移步骤" class="headerlink" title="平滑迁移步骤"></a>平滑迁移步骤</h3><p>按Topic逐步迁移：</p>
+<ol>
+<li>搭建RocketMQ集群；</li>
+<li>在使用qmq消息集群的系统里，选定一个topic，在新的rocketmq创建对应的topic；</li>
+<li>找到该topic的所有消费者group，保持这些group的消费逻辑不变，增加RocketMQ对应消费者group的处理逻辑，与qmq的保持一致；</li>
+<li>用基于RocketMQ的生产者替换原来基于qmq的生产者；<br>此时对消费者来说既有来自qmq的消息正在消费中，又有来自RocketMQ的新消息。</li>
+<li>等qmq消费不到数据时，把qmq消费者从代码逻辑中删除，这样就完成了一个Topic的平滑迁移。</li>
+</ol>
+<p>为什么不直接将消息迁移到RocketMQ以实现迁移？</p>
+<ol>
+<li>QMQ数据结构和RocketMQ差异比较大；</li>
+<li>QMQ消息会存储到数据库中，且消费完毕后会被删除；</li>
+<li>业务中不同的使用场景，包括延迟消费等等场景相对复杂。</li>
+</ol>
+<h3 id="RocketMQ架构"><a href="#RocketMQ架构" class="headerlink" title="RocketMQ架构"></a>RocketMQ架构</h3><p>公司内RocketMQ采用两主四从的集群架构，集群模式是DLedger。</p>
+<h3 id="RocketMQ客户端接入"><a href="#RocketMQ客户端接入" class="headerlink" title="RocketMQ客户端接入"></a>RocketMQ客户端接入</h3><p>我们定义一个类似下面这样的客户端Consumer注解：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">@Target(&#123;ElementType.TYPE&#125;)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@Documented</span><br><span class="line">@Component</span><br><span class="line">public @interface RMQConsumer &#123;</span><br><span class="line">    String consumerGroup();</span><br><span class="line"></span><br><span class="line">    String topic();</span><br><span class="line"></span><br><span class="line">    String messageMode() default &quot;CLUSTERING&quot;;</span><br><span class="line"></span><br><span class="line">    String tag() default &quot;*&quot;;</span><br><span class="line"></span><br><span class="line">    String consumeFromWherec() default &quot;CONSUME_FROM_LAST_OFFSET&quot;;</span><br><span class="line"></span><br><span class="line">    int consumeThreadMax() default 20;</span><br><span class="line"></span><br><span class="line">    int consumeThreadMin() default 20;</span><br><span class="line"></span><br><span class="line">    int pullThresholdForQueue() default 1000;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同时，会在应用启动期间把这个注解标记的类注册为消费者：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">RMQConsumerRegisterContainer</span><br></pre></td></tr></table></figure>
+
+<h3 id="用量"><a href="#用量" class="headerlink" title="用量"></a>用量</h3><p>最高的是抓取号源消息，达到百万级的数量，其他如订单更新、发送推送之类的消息也达到了近百万。<br>总消息量约10亿的量级。</p>
+<h3 id="平滑迁移"><a href="#平滑迁移" class="headerlink" title="平滑迁移"></a>平滑迁移</h3><p>从原来QMQ集群迁移到新RocketMQ集群，可以按如下流程进行：</p>
+<ol>
+<li>增加RocketMQ消费者，逻辑和原来QMQ消费者一致；</li>
+<li>在RocketMQ上创建对应的Topic；</li>
+<li>增加RocketMQ生产者，新发布的服务器均生产RocketMQ消息，也就是说会有一段时间RocketMQ和QMQ的Broker、Consumer都会同时接收消息；</li>
+<li>最终QMQ会把历史消息消费完，这时可以将原来QMQ的代码删掉。</li>
+</ol>
+<h3 id="扩容方式-1"><a href="#扩容方式-1" class="headerlink" title="扩容方式"></a>扩容方式</h3><p>暂时没有遇到需要扩容的场景，但是如果遇到了，可以参考一下我记录的RocketMQ原理：<a href="https://tallate.github.io/e095c2f.html">RocketMQ 原理总结</a></p>
+<h3 id="示例用法"><a href="#示例用法" class="headerlink" title="示例用法"></a>示例用法</h3><p>发消息前diff老订单和新订单的字段，把新增、更新和删除的字段放到消息体里，消费者监听这种消息，然后根据配置执行一个监听器。</p>
+<h2 id="医院网关（ha-hospital-adaptor）"><a href="#医院网关（ha-hospital-adaptor）" class="headerlink" title="医院网关（ha &#x2F; hospital-adaptor）"></a>医院网关（ha &#x2F; hospital-adaptor）</h2><p><img src="/imgs/bm/%E5%8C%BB%E9%99%A2%E7%BD%91%E5%85%B3%EF%BC%88ha%EF%BC%89.png" alt="医院网关（ha）" title="医院网关（ha）"></p>
+<h3 id="业务背景"><a href="#业务背景" class="headerlink" title="业务背景"></a>业务背景</h3><p>医院网关负责所有和医院HIS系统的交互，包括之前提到过的抓取号源、挂号下单、通知支付成功等接口。<br>HIS系统有一个非常鲜明的特征是：效率非常差。一般我们指的高并发是单机QPS至少也要上千，但是对于HIS系统来说，可能上百就不大行了，这样的情况常见于下午3点的放号时间，这是一个比较小的秒杀场景，到3点整时几乎所有医院未来第8天的号都会放出来，用户经常会为寥寥十来个号抢破了头，甚至有的抢不到的还会投诉。<br>对我们来说，虽然我们不能保证你一定能抢到号，但是我们需要保证抢号过程中HIS不要崩溃，因此限流的规则也是比较严格的：</p>
+<ol>
+<li>非公平：每个请求（新用户请求或刚从队列里被唤醒的）进来时都会先尝试获取一遍<strong>信号量</strong>；</li>
+<li>排队：按等待时间排序，</li>
+</ol>
+<h2 id="QConfig-Apollo"><a href="#QConfig-Apollo" class="headerlink" title="QConfig -&gt; Apollo"></a>QConfig -&gt; Apollo</h2><ul>
+<li>使用的注解改一下；</li>
+<li>把配置手动粘到Apollo。</li>
+</ul>
+<h2 id="使用模板引擎实现问卷功能"><a href="#使用模板引擎实现问卷功能" class="headerlink" title="使用模板引擎实现问卷功能"></a>使用模板引擎实现问卷功能</h2><p>背景：今年做的新功能，需要知道用户是否有患病的风险，所以做了个线上的问诊功能。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">1.您的孩子本次就诊的症状中是否有发热（体温≧37.2℃）？</span><br><span class="line">    □有   □无</span><br><span class="line">2.您的孩子本次就诊的症状中是否有咳嗽、流涕、咽痛？</span><br><span class="line">    □有   □无</span><br><span class="line">3.发病前14天内孩子或父母及其他看护人是否有武汉市及周边地区，或其他有病例报告社区的旅行史或居住史？</span><br><span class="line">    □有   □无</span><br><span class="line">4.发病前14天内孩子或父母及其他看护人是否与新型冠状病毒感染者（核酸检测阳性者）有接触史？</span><br><span class="line">    □有   □无</span><br><span class="line">5.发病前14天内孩子或父母及其他看护人是否曾接触过来自武汉市及周边地区，或来自有病例报告社区的发热或有呼吸道症状的患者？</span><br><span class="line">    □是    □否</span><br><span class="line">6.周围是否有2人及2人以上同时或先后出现发热或/和呼吸道症状？</span><br><span class="line">    □有   □否</span><br><span class="line">·“1”和“2”中只要有一项答“有”的患者，如果同时有“3”、“4”、“5”、“6”中的任意一项，直接挂“感染门诊（一级科室）”下的“感染门诊（二级科室）” </span><br><span class="line">·“1”和“2”中只要有一项答“有”的患者，如果“3”、“4”、“5”、“6”均答“无”的患者，挂“内科综合门诊”下任意二级科室的号，或“呼吸内科门诊（一级科室）”下的“呼吸内科门诊（二级科室）”任意号别的号</span><br><span class="line">·“1”和“2”中均答“无”的患者，如果“3”、“4”、“5”、“6”均答“无”的患者，正常挂号。</span><br><span class="line">·“1”和“2”中均答“无”的患者，如果“3”、“4”、“5”、“6”任意一项答“有”的患者，提示患者 “非急诊居家隔离14天，如果是急诊，建议到医院挂号就诊”并微信限制挂号。</span><br></pre></td></tr></table></figure>
+
+<p>刚开始思路就是做一个计算器，把表达式转成后缀表达式来计算结果。<br>后来发现用框架实现更直接，对比当时考虑的几种方式：</p>
+<p>* </p>
+<h2 id="订单中心的变迁"><a href="#订单中心的变迁" class="headerlink" title="订单中心的变迁"></a>订单中心的变迁</h2><p><img src="/imgs/bm/%E8%AE%A2%E5%8D%95%E4%B8%AD%E5%BF%83.png" alt="订单中心" title="订单中心"><br><img src="/imgs/bm/%E8%AE%A2%E5%8D%95%E4%B8%AD%E5%BF%83-ER%E5%9B%BE.png" alt="订单中心-ER图" title="订单中心-ER图"><br><img src="/imgs/bm/%E8%AE%A2%E5%8D%95%E4%B8%AD%E5%BF%83%E7%9A%84%E6%9F%A5%E8%AF%A2.png" alt="订单中心的查询" title="订单中心的查询"><br><img src="/imgs/bm/%E8%AE%A2%E5%8D%95%E4%B8%AD%E5%BF%83%E7%9A%84%E5%86%99%E5%85%A5.png" alt="订单中心的写入" title="订单中心的写入"></p>
+<h3 id="为什么查询缓存的同时还要查一次库？"><a href="#为什么查询缓存的同时还要查一次库？" class="headerlink" title="为什么查询缓存的同时还要查一次库？"></a>为什么查询缓存的同时还要查一次库？</h3><p>上面的流程图中可以看到，为了确定缓存中的数据是最新版本的，还查了一次数据库中的order_main表中的版本号。<br>直观来看，似乎查缓存的同时还查一次数据库，缓存的地位就变得非常尴尬了。实际上这个表只存版本号，用订单号来查索引的话，查询速度是非常快的，使用缓存而不是直接查数据库，原因其实是：数据库中的订单结构比较复杂，如果每次都查出整个订单进行反序列化，比较低效，因此加入了缓存。</p>
+<h3 id="写order-main和order-detail这两个操作并不是原子的操作，会不会发生并发问题？"><a href="#写order-main和order-detail这两个操作并不是原子的操作，会不会发生并发问题？" class="headerlink" title="写order_main和order_detail这两个操作并不是原子的操作，会不会发生并发问题？"></a>写order_main和order_detail这两个操作并不是原子的操作，会不会发生并发问题？</h3><p>不会，原来设计中在更新order_detail时也会校验version：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">update $&#123;table&#125;</span><br><span class="line">&lt;set&gt;</span><br><span class="line">    data = #&#123;detail.data&#125; ,</span><br><span class="line">    version = #&#123;detail.version&#125;</span><br><span class="line">&lt;/set&gt;</span><br><span class="line">where id = #&#123;detail.id&#125; and order_id = #&#123;detail.orderId&#125; and section = #&#123;detail.section&#125; and version &amp;lt;= #&#123;oldVersion&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="订单状态机"><a href="#订单状态机" class="headerlink" title="订单状态机"></a>订单状态机</h3><p>好多功能都需要监听订单状态，比如订单支付成功后要其他系统，如果直接写到原来的支付代码里，一方面耦合严重，以后不好维护，另一方面要实现重试、限流等功能并不简单，所以何不将这部分功能打包一下呢？<br>对于发送方，需要发送一个包含特定前缀的消息，一般这种消息会被包装成事件，在订单被修改时发送；也可以设计成订单修改时总会发送一个固定前缀的消息，而提供状态机功能的服务就主动监听这种消息就行了。<br>发送的内容不能单单是订单号，因为我们的状态机需要实现比对新老订单哪些字段发生了变更，因此，发送的消息中还需要包含所有发生变更的字段，大致逻辑如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">// this为新节点，other为老订单，flatten将订单字段打平，这样更方便一个一个字段地比较</span><br><span class="line">Map&lt;Path, ValueNode&gt; t = this.flatten();</span><br><span class="line">Map&lt;Path, ValueNode&gt; o = other.flatten();</span><br><span class="line">// diffs保存所有发生了变更的字段</span><br><span class="line">List&lt;DiffValue&gt; diffs = Lists.newLinkedList();</span><br><span class="line"></span><br><span class="line">for (Entry&lt;Path, ValueNode&gt; entry : t.entrySet()) &#123;</span><br><span class="line">    Path path = entry.getKey();</span><br><span class="line">    ValueNode tNode = entry.getValue();</span><br><span class="line">    ValueNode oNode = o.remove(path);</span><br><span class="line">    if (!tNode.equals(oNode)) &#123;</span><br><span class="line">        // 如果新节点和原节点不一致，是更新的字段</span><br><span class="line">        if (oNode != null) &#123;</span><br><span class="line">            addDiff(diffs, DiffValue.DiffType.CHANGE, path, oNode, tNode);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">        // 新节点是新增的字段</span><br><span class="line">            addDiff(diffs, DiffValue.DiffType.ADD, path, null, this.find(path.getPath()).get(0));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">// 老订单有而新订单里没有的字段其实就是已经被删除的字段</span><br><span class="line">for (Entry&lt;Path, ValueNode&gt; entry : o.entrySet()) &#123;</span><br><span class="line">    addDiff(diffs, DiffValue.DiffType.DELETE, entry.getKey(), other.find(entry.getKey().getPath()).get(0), null);</span><br><span class="line">&#125;</span><br><span class="line">return diffs;</span><br></pre></td></tr></table></figure>
+
+<p>对于接收方，需要扫描注解注册监听哪些字段的变更，然后注册一个消费者来监听消息并尝试触发用户自定义的回调。</p>
+<ol>
+<li>配置注解后，扫描指定的注解，该注解中需要指定监听哪些字段的变更事件<br>注解扫描器：<code>ActorScanner</code><br>注解：<code>@MActor(retry_step = 1, retry_maxCount = ConfirmOrderUtils.RETRY_MAX_COUNT)</code><br><code>@MDiff(section = &quot;main-order&quot;, path = &quot;orderPayInfo.payStatus&quot;, newValue = &quot;PAY_SUCCESS&quot;)</code></li>
+<li>启动后设置事件监听器<br>监听指定的订单变更事件</li>
+<li>事件处理逻辑<br>基本上就是遍历事件里的每个字段变更，判断是否与某个注解中指定的字段变更一致。</li>
+</ol>
+<p>如何实现幂等？<br>消费成功后，将messageId保存到Redis。<br>消费前需要检查Redis里是否已经保存了该messageId。<br>幂等是有状态的，消费失败意味着可以重试；消费成功意味着下次再来相同messageId的消费可以忽略掉；如果是消费中，可以考虑阻塞等待，但更多时候是直接抛出异常然后等消息队列重试它。</p>
+<h3 id="ES索引"><a href="#ES索引" class="headerlink" title="ES索引"></a>ES索引</h3><p>订单中心除了将数据保存到数据库和缓存外，还会异步地将数据索引到ES，供多维度的查询。</p>
+<p>数据量：<br>总共60G的内存，其中20G分给JVM，40G分给LUA。</p>
+<h2 id="链路追踪"><a href="#链路追踪" class="headerlink" title="链路追踪"></a>链路追踪</h2><p>问到ThreadLocal的时候可以带出来。<br>如果问到有没有应用，说下消息队列迁移时，给RocketMQ接入TraceId。<br>链路追踪用ThreadLocal存TraceId，需要注意一个线程调起另一个线程时TraceId的传播：</p>
+<ul>
+<li>线程池<br>构造Runnable时传进去。</li>
+<li>HTTP<br>放到请求头<br><code>HttpTraceUtils</code></li>
+<li>Dubbo<br>写个Filter，通过SPI生效，将TraceId放到请求的attachments里。<br><code>QTraceFilter</code></li>
+<li>MQ<br>放到消息体里</li>
+</ul>
+<h2 id="SpringMVC项目改造为SpringBoot"><a href="#SpringMVC项目改造为SpringBoot" class="headerlink" title="SpringMVC项目改造为SpringBoot"></a>SpringMVC项目改造为SpringBoot</h2><p>SpringMVC项目改造为SpringBoot项目。</p>
+<h3 id="收益-1"><a href="#收益-1" class="headerlink" title="收益"></a>收益</h3><ol>
+<li>统一项目结构，为后续接入其他SpringCloud项目提供方便；</li>
+<li>内存结构占用得更少了，</li>
+</ol>
+<h3 id="ServerManager-DNS"><a href="#ServerManager-DNS" class="headerlink" title="ServerManager -&gt; DNS"></a>ServerManager -&gt; DNS</h3><p>ServerManager依赖DNS，导致应用服务并不是无状态的，所以难以实现自由的弹性伸缩，加机器比较复杂，要运维配置一大堆东西。</p>
+<h3 id="SpringBoot"><a href="#SpringBoot" class="headerlink" title="SpringBoot"></a>SpringBoot</h3><p>SpringBoot使用一个parent统一指定各包的版本，benmu老项目里已经有一个parent包了，因此改为新建一个boot-parent，在里面声明boot版本：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;artifactId&gt;boot-parent&lt;/artifactId&gt;</span><br><span class="line"></span><br><span class="line">&lt;dependencyManagement&gt;</span><br><span class="line">    &lt;dependencies&gt;</span><br><span class="line">        &lt;!--声明boot版本--&gt;</span><br><span class="line">        &lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;spring-boot-dependencies&lt;/artifactId&gt;</span><br><span class="line">            &lt;version&gt;2.2.6.RELEASE&lt;/version&gt;</span><br><span class="line">            &lt;type&gt;pom&lt;/type&gt;</span><br><span class="line">            &lt;scope&gt;import&lt;/scope&gt;</span><br><span class="line">        &lt;/dependency&gt;</span><br><span class="line">    &lt;/dependencies&gt;</span><br><span class="line">&lt;/dependencyManagement&gt;</span><br></pre></td></tr></table></figure>
+<p>扫描包的位置，改到注解里</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">@SpringBootApplication(scanBasePackages = &#123;</span><br><span class="line">        &quot;com.benmu.platform.robin&quot;,</span><br><span class="line">        &quot;com.benmu.root.bom.bundles.spring&quot;,</span><br><span class="line">        &quot;com.benmu.common.redis&quot;&#125;)</span><br></pre></td></tr></table></figure>
+<h3 id="Dubbo"><a href="#Dubbo" class="headerlink" title="Dubbo"></a>Dubbo</h3><p>registries、protocol配到application.yaml里，reference写到Config类里。</p>
+<h3 id="MyBatis"><a href="#MyBatis" class="headerlink" title="MyBatis"></a>MyBatis</h3><p>原来定义在mybatis-config.xml中的typeHandler，现在需要用注解的方式定义。<br>比如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;typeHandlers&gt;</span><br><span class="line">    &lt;!-- 把对象转成json存入数据库 --&gt;</span><br><span class="line">    &lt;typeHandler handler=&quot;package.JsonTypeHandler&quot;</span><br><span class="line">      javaType=&quot;package.BaseData&quot;/&gt;</span><br></pre></td></tr></table></figure>
+<p>改成：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">@MappedJdbcTypes(JdbcType.VARCHAR)</span><br><span class="line">@MappedTypes(value = BaseData.class)</span><br><span class="line">public class BaseDataTypeHandler extends JsonTypeHandler&lt;BaseData&gt; &#123;</span><br><span class="line">    public BaseDataTypeHandler(Class&lt;BaseData&gt; clazz) &#123;</span><br><span class="line">        super(clazz);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后在配置文件中定义typeHandler所处的包：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mybatis:</span><br><span class="line">    # 需要把类型传到JsonTypeHandler的构造里，JsonTypeHandler没有默认构造，因此这里不能直接配</span><br><span class="line">    type-handlers-package: package</span><br></pre></td></tr></table></figure>
+<h3 id="Config-Apollo"><a href="#Config-Apollo" class="headerlink" title="Config -&gt; Apollo"></a>Config -&gt; Apollo</h3><p>1、在application-xxx.yaml中增加apollo配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">app:</span><br><span class="line">  id: robin</span><br><span class="line">apollo:</span><br><span class="line">  meta: http://apollo.test.bmsre.com:18080</span><br><span class="line">  cluster: beta</span><br><span class="line">  #  meta: #meta.url#</span><br><span class="line">  bootstrap:</span><br><span class="line">    enabled: true</span><br><span class="line">    eagerLoad:</span><br><span class="line">      enabled: true</span><br><span class="line">    namespaces: rocketmq,qmq,profile,json</span><br></pre></td></tr></table></figure>
+<p>2、配置注解<br>之前用的注解根本不是@Value，可以手动改掉，也可以给原注解设置别名（假设原注解名是MValue）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@Target(&#123;ElementType.FIELD&#125;)</span><br><span class="line">@Retention(RetentionPolicy.RUNTIME)</span><br><span class="line">@Documented</span><br><span class="line">@Value(value = &quot;&quot;)</span><br><span class="line">public @interface MValue &#123;</span><br><span class="line"> </span><br><span class="line">    @AliasFor(annotation = Value.class, attribute = &quot;value&quot;)</span><br><span class="line">    String value();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样配置的含义是：@MValue被看作一种@Value，其value是@Value的value属性的别名。<br>接下来，把对应QConfig中的配置文件拷贝到Apollo，创建一个同名的Namespace，就可以使用了。</p>
+<p>另附：</p>
+<ol>
+<li>Apollo接入Spring的原理：<a target="_blank" rel="noopener" href="https://github.com/ctripcorp/apollo/wiki/Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E8%AE%BE%E8%AE%A1#31-%E5%92%8Cspring%E9%9B%86%E6%88%90%E7%9A%84%E5%8E%9F%E7%90%86">https://github.com/ctripcorp/apollo/wiki/Apollo%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83%E8%AE%BE%E8%AE%A1#31-%E5%92%8Cspring%E9%9B%86%E6%88%90%E7%9A%84%E5%8E%9F%E7%90%86</a></li>
+<li>Apollo配置的更新和读取<br>见：<a href="https://tallate.github.io/ea705bce.html">https://tallate.github.io/ea705bce.html</a></li>
+</ol>
+<h3 id="其他配置"><a href="#其他配置" class="headerlink" title="其他配置"></a>其他配置</h3><p>将SpringMVC的xml配置改成代码里的Config配置，各种中间件的客户端啊、Filter之类的，要改的东西还是蛮多的。</p>
+<h2 id="遇到了什么问题？"><a href="#遇到了什么问题？" class="headerlink" title="遇到了什么问题？"></a>遇到了什么问题？</h2><ol>
+<li>应用服务GC时间超长<br>半夜报警<br>用pinpoint观察发现GC时间特别长</li>
+<li>发现swap影响了GC时长<br>观察gc日志时间长<br>free看到空闲内存少、swap被占用<br>sar查看有swap交换<br>swap原理<br>隐患：速度慢、Linux会把进程杀了</li>
+<li>解决办法<br>怎么查到对象占用内存多的（dump内存），修改后怎么样了</li>
+</ol>
+<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><h3 id="有没有使用MQ实现过削峰？"><a href="#有没有使用MQ实现过削峰？" class="headerlink" title="有没有使用MQ实现过削峰？"></a>有没有使用MQ实现过削峰？</h3><p>MQ的3大功能：异步、解耦、削峰。<br>这个问题回答时容易把异步和削峰搞混，要知道削峰属于异步处理，但是异步并不都是削峰。<br>一般情况下我们要异步处理的主要目的是某个复合操作包含了好多耗时的接口调用，我们可以让这些耗时的操作被同时处理，甚至如果一些操作不重要的话也可以放到mq中处理。<br>我接触的削峰场景其实并发量并不高，只是三方接口承载量比较低，导致高峰期我们的业务也被拖垮了，所以把这些会调用失败的接口放到MQ中延迟处理。</p>
+<h3 id="有没有优化过SQL？"><a href="#有没有优化过SQL？" class="headerlink" title="有没有优化过SQL？"></a>有没有优化过SQL？</h3><p>有一个印象比较深刻的SQL：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">select</span><br><span class="line">  id,</span><br><span class="line">  card_no as cardno,</span><br><span class="line">  card_type as cardtype</span><br><span class="line">from</span><br><span class="line">  mts_order_booking.hot_cancel</span><br><span class="line">where</span><br><span class="line">id &gt;= (</span><br><span class="line">  select id</span><br><span class="line">  from mts_order_booking.hot_cancel</span><br><span class="line">  where to_days(create_date) = to_days(now())</span><br><span class="line">  limit 1</span><br><span class="line">)</span><br><span class="line">and to_days(create_date) = to_days(now())</span><br><span class="line">limit 1000;</span><br></pre></td></tr></table></figure>
+<p>explain结果如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">id  select_type table   partitions  type    possible_keys   key key_len ref rows    filtered    Extra</span><br><span class="line">1	PRIMARY	hot_cancel	-	range	PRIMARY	PRIMARY	8	-	66390	100	Using where</span><br><span class="line">2	SUBQUERY	hot_cancel	-	ALL	-	-	-	-	4764239	100	Using where</span><br></pre></td></tr></table></figure>
+<p>第二行是子查询，目的是找出今天的第一条记录，但是create_date并没有加索引，因此：type&#x3D;ALL表示全表查询，possible_keys中是空的表示没有命中任何索引，rows是通过抽样统计出来的命中行数，并不准确，实际上该表有4510596行而不是4764239，最后一个Using where是额外信息，表示用where条件执行了全表查询。<br>第一行是外部查询，目的是查当天的所有记录，type&#x3D;range表示范围查询，possible_keys和key都指明了这次查询使用的是主键，key_len&#x3D;8表示这次使用的索引（主键）的物理长度。</p>
+<p>显然问题主要出在子查询中，子查询是全表扫描，子查询扫描完毕后外部查询又以id为范围查了一次，这次是可以命中id主键的，优化方法就是给create_date加索引，子查询实际上也是冗余的，完全可以去掉。</p>
+<h3 id="ha网关怎么检查的超时、队列溢出，怎么看哪些接口出错了，怎么报警"><a href="#ha网关怎么检查的超时、队列溢出，怎么看哪些接口出错了，怎么报警" class="headerlink" title="ha网关怎么检查的超时、队列溢出，怎么看哪些接口出错了，怎么报警"></a>ha网关怎么检查的超时、队列溢出，怎么看哪些接口出错了，怎么报警</h3><p>超时的话是在每次重试时叠加的执行时间，然后在执行前查看是否达到了阈值，再报警；<br>队列溢出是通过一个AtomicLong实现的，和Semaphore同时操作，累加的是&lt;hos_code, interface&gt;，达到阈值后发报警。<br>报警通过falcon实现，发到微信里的。</p>
+<h3 id="为什么是Redis而不是Memcache"><a href="#为什么是Redis而不是Memcache" class="headerlink" title="为什么是Redis而不是Memcache"></a>为什么是Redis而不是Memcache</h3><p>Memcache和Redis功能上是重复的，维护两套缓存系统会带来维护成本，Memcache在性能上相对Redis高一些，但是不支持复杂的数据结构、不支持持久化，虽然有高可用方案，但是是基于内存的，服务器挂掉数据就没了。<br>顺便主动介绍下Redis中的数据结构，和持久化、高可用方案。</p>
+<p>另外，对于获取号源这样的功能，还提供本地缓存。</p>
+<h3 id="为什么用RocketMQ而不是QMQ或Kafka"><a href="#为什么用RocketMQ而不是QMQ或Kafka" class="headerlink" title="为什么用RocketMQ而不是QMQ或Kafka"></a>为什么用RocketMQ而不是QMQ或Kafka</h3><p>看上面对迁移的介绍。</p>
+<ol>
+<li>对RocketMQ更熟悉</li>
+<li>Kafka批量发，对于小量数据发送效率可能还没有RocketMQ高</li>
+</ol>
+<h3 id="为什么用ES而不是（只用）MySQL"><a href="#为什么用ES而不是（只用）MySQL" class="headerlink" title="为什么用ES而不是（只用）MySQL"></a>为什么用ES而不是（只用）MySQL</h3><p>首先需要强调的是，并不是所有订单都会建立ES索引，ES索引专门用于一些需要多维度查询的订单场景。<br>比如挂号前有很多限制规则，比如某个专家号在一周内一个用户只能挂出去3个号这种。<br>这样的规则是有很多的，如果要完全用MySQL的索引来实现，需要创建很多索引，且很多索引的长度都很长，会给MySQL带来比较大的负担。</p>
+<h3 id="使用Redis期间有没有遇到什么坑？"><a href="#使用Redis期间有没有遇到什么坑？" class="headerlink" title="使用Redis期间有没有遇到什么坑？"></a>使用Redis期间有没有遇到什么坑？</h3><h3 id="使用RocketMQ期间有没有遇到什么坑？"><a href="#使用RocketMQ期间有没有遇到什么坑？" class="headerlink" title="使用RocketMQ期间有没有遇到什么坑？"></a>使用RocketMQ期间有没有遇到什么坑？</h3><h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><h2 id="平滑迁移的理论原理"><a href="#平滑迁移的理论原理" class="headerlink" title="平滑迁移的理论原理"></a>平滑迁移的理论原理</h2><p>迁移分类：</p>
+<ul>
+<li>停机迁移</li>
+<li>平滑迁移</li>
+</ul>
+<p>平滑迁移的原则：从一个存储中间件转移到另一个存储中间件，期间不影响线上服务；</p>
+<p>平滑迁移的常用方案：</p>
+<ul>
+<li>双写</li>
+<li>迁移历史数据<br>这一步可能不是必须的，比如Redis对历史数据没有那么大的需求，只要双写的时候判断大部分数据都已经写入到了新Redis中即可。</li>
+<li>切读</li>
+<li>下双写</li>
+</ul>
+<p>迁移后的比对：</p>
+<ul>
+<li>全量比对</li>
+<li>抽样比对</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/bonj2011/article/details/81842588">库存系统设计</a></li>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzUxOTc4NjEyMw==&mid=2247494740&idx=2&sn=a65616f74cc28b65642cac7e10f94a23&chksm=f9f6f7b0ce817ea60ef1758d1ab364a0313e8538dbb7c484c9abf5ee943a6c3e363d5ee32fde&xtrack=1&scene=90&subscene=93&sessionid=1603082511&clicktime=1603082518&enterid=1603082518&ascene=56&devicetype=android-29&version=27001351&nettype=cmnet&abtest_cookie=AAACAA==&lang=zh_CN&exportkey=A3kezWOvK0nmNF22gC+dnJ0=&pass_ticket=Iu8tssRxUTo/EOoQqbr3DDEA1jlkkPWpFpGx20bUbiKmwUgKMSfXOAlbrPEXElM/&wx_header=0">如何设计订单系统？</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/bm/" rel="tag"># bm</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/385c6999.html" rel="prev" title="Sentinel原理总结">
+                  <i class="fa fa-angle-left"></i> Sentinel原理总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/ea705bce.html" rel="next" title="Apollo 原理总结">
+                  Apollo 原理总结 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

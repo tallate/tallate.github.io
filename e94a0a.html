@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="环境准备搭建环境12docker run --name myredis -d -p6379:6379 redisdocker exec -it myredis redis-cli 使用12345678910111213141516171819202122# exists 查看某个key是否存在exists aaSET 创建一个key；GET 获取一个key的值；DEL ***一个key；TY">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis 应用">
+<meta property="og:url" content="https://tallate.github.io/e94a0a.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="环境准备搭建环境12docker run --name myredis -d -p6379:6379 redisdocker exec -it myredis redis-cli 使用12345678910111213141516171819202122# exists 查看某个key是否存在exists aaSET 创建一个key；GET 获取一个key的值；DEL ***一个key；TY">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/Redis/Redis-%E5%AD%97%E5%85%B8.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/Redis/Redis-%E9%AB%98%E4%BD%8D%E9%80%92%E5%A2%9E%E9%81%8D%E5%8E%86.png">
+<meta property="article:published_time" content="2019-09-25T05:21:48.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.902Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/Redis/Redis-%E5%AD%97%E5%85%B8.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/e94a0a.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/e94a0a.html","path":"/e94a0a.html","title":"Redis 应用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Redis 应用 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="nav-number">1.</span> <span class="nav-text">环境准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%90%AD%E5%BB%BA%E7%8E%AF%E5%A2%83"><span class="nav-number">1.1.</span> <span class="nav-text">搭建环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8"><span class="nav-number">1.2.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B9%E9%87%8F%E9%A2%84%E4%BC%B0"><span class="nav-number">1.3.</span> <span class="nav-text">容量预估</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Redis-Cluster"><span class="nav-number">2.</span> <span class="nav-text">使用Redis Cluster</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%90%AD%E5%BB%BARedis-Cluster%E9%9B%86%E7%BE%A4"><span class="nav-number">2.1.</span> <span class="nav-text">搭建Redis Cluster集群</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#info-%E5%91%BD%E4%BB%A4%E4%B8%AD%E6%B6%89%E5%8F%8A%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2%E7%9A%84%E9%83%A8%E5%88%86"><span class="nav-number">2.2.</span> <span class="nav-text">info 命令中涉及集群部署的部分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cluster-info-%E5%91%BD%E4%BB%A4"><span class="nav-number">2.3.</span> <span class="nav-text">cluster info 命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cluster-nodes"><span class="nav-number">2.4.</span> <span class="nav-text">cluster nodes</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%BB%93%E6%9E%9C%E9%A2%84%E6%9C%9F"><span class="nav-number">2.5.</span> <span class="nav-text">测试结果预期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95-%E5%8E%8B%E6%B5%8B"><span class="nav-number">2.6.</span> <span class="nav-text">测试 - 压测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95-%E5%AE%95%E6%9C%BA1%E5%8F%B0Master"><span class="nav-number">2.7.</span> <span class="nav-text">测试 - 宕机1台Master</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95-%E5%AE%95%E6%9C%BA2%E5%8F%B0Master"><span class="nav-number">2.8.</span> <span class="nav-text">测试 - 宕机2台Master</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">3.</span> <span class="nav-text">分布式锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%B6%E6%97%B6%E9%98%9F%E5%88%97"><span class="nav-number">4.</span> <span class="nav-text">延时队列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="nav-number">4.1.</span> <span class="nav-text">异步消息队列</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97"><span class="nav-number">5.</span> <span class="nav-text">阻塞队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%8D%E5%9B%BE"><span class="nav-number">6.</span> <span class="nav-text">位图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF"><span class="nav-number">6.1.</span> <span class="nav-text">场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-1"><span class="nav-number">6.2.</span> <span class="nav-text">使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HyperLogLog"><span class="nav-number">7.</span> <span class="nav-text">HyperLogLog</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-2"><span class="nav-number">7.1.</span> <span class="nav-text">使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%83%E9%9A%86%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="nav-number">8.</span> <span class="nav-text">布隆过滤器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-3"><span class="nav-number">8.1.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">8.2.</span> <span class="nav-text">原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GeoHash"><span class="nav-number">9.</span> <span class="nav-text">GeoHash</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E7%A7%8D%E7%AE%80%E5%8D%95%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">9.1.</span> <span class="nav-text">一种简单的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GeoHash-1"><span class="nav-number">9.2.</span> <span class="nav-text">GeoHash</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Scan"><span class="nav-number">10.</span> <span class="nav-text">Scan</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-4"><span class="nav-number">10.1.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E7%90%86-1"><span class="nav-number">10.2.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7-key-%E9%97%AE%E9%A2%98"><span class="nav-number">10.3.</span> <span class="nav-text">大 key 问题</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e94a0a.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Redis 应用 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis 应用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-25 13:21:48" itemprop="dateCreated datePublished" datetime="2019-09-25T13:21:48+08:00">2019-09-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BC%93%E5%AD%98/" itemprop="url" rel="index"><span itemprop="name">缓存</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+
+<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><h3 id="搭建环境"><a href="#搭建环境" class="headerlink" title="搭建环境"></a>搭建环境</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run --name myredis -d -p6379:6379 redis</span><br><span class="line">docker exec -it myredis redis-cli</span><br></pre></td></tr></table></figure>
+<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"># exists 查看某个key是否存在</span><br><span class="line">exists aa</span><br><span class="line">SET 创建一个key；</span><br><span class="line">GET 获取一个key的值；</span><br><span class="line">DEL ***一个key；</span><br><span class="line">TYPE 获取一个key的类型；</span><br><span class="line">EXISTS 判断一个key是否存在，0：存在，1，不存在；</span><br><span class="line"># KEYS 获取给定模糊匹配的key，但要谨慎使用，因为线上的key一般非常多</span><br><span class="line">keys *</span><br><span class="line">keys a?</span><br><span class="line">EXPIRE 设置一个key过期的秒数；</span><br><span class="line">PERSTST ***一个key过期的秒数；</span><br><span class="line">PEXPIRE 设置一个key过期的毫秒数；</span><br><span class="line">RENAME 将一个key重命名；</span><br><span class="line">RENAMENX 将一个key重命名，且新的key必须是不存在的可以；</span><br><span class="line">TTL 获取key的有效时间，以秒为单位，-1表示永不过期，-2表示已过期、已转移</span><br><span class="line"># dbsize 查看当前库中key数量</span><br><span class="line">dbsize</span><br><span class="line"># flushdb 清除数据库（内存）</span><br><span class="line">flushdb</span><br><span class="line"># move 移动key到另一个库</span><br><span class="line">move aa 2</span><br></pre></td></tr></table></figure>
+<h3 id="容量预估"><a href="#容量预估" class="headerlink" title="容量预估"></a>容量预估</h3><p>在实际部署前一般都会先对所需容量进行一个评估，这样可以尽量避免在上线后容量不够还要扩容、或者容量过大造成浪费。<br>官方提供了一个<a target="_blank" rel="noopener" href="http://www.redis.cn/redis_memory/">容量预估工具</a>，一些博客比如<a target="_blank" rel="noopener" href="https://gameinstitute.qq.com/community/detail/114987">Redis 容量评估模型</a>贴近 Redis 底层数据结构给出了容量的评估分析，可以作为一个参考，但是业务架构一直在变，实际的容量监控还是必须的，我们下面还会谈到这方面的工具。</p>
+<h2 id="使用Redis-Cluster"><a href="#使用Redis-Cluster" class="headerlink" title="使用Redis Cluster"></a>使用Redis Cluster</h2><h3 id="搭建Redis-Cluster集群"><a href="#搭建Redis-Cluster集群" class="headerlink" title="搭建Redis Cluster集群"></a>搭建Redis Cluster集群</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42815754/article/details/82912130">redis集群搭建</a></p>
+<p>1、安装<br>到官网找到：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget http://download.redis.io/releases/redis-4.0.8.tar.gz</span><br><span class="line">make &amp;&amp; make install # 默认安装目录为/usr/local/bin</span><br></pre></td></tr></table></figure>
+<p>ruby</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install ruby</span><br><span class="line">yum install rubygems</span><br></pre></td></tr></table></figure>
+<p>还有gem文件在<a target="_blank" rel="noopener" href="https://rubygems.org/gems/redis/versions/4.0.1">此处下载</a>，安装：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gem install /usr/local/redis-3.0.0.gem</span><br></pre></td></tr></table></figure>
+<p>2、创建 redis 节点<br>在一个目录（比如编译目录）下创建 redis_cluster 目录，再在这个目录下创建 7001、7002、7003、7004、7005、7006 的子目录，拷贝配置文件 redis.conf 到各个这些子目录中，并编辑以下内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">port 7001 //端口7001,7002,7003        </span><br><span class="line">bind 本机ip //默认ip为127.0.0.1 需要改为其他节点机器可访问的ip 否则创建集群时无法访问对应的端口，无法创建集群</span><br><span class="line">daemonize yes //redis后台运行</span><br><span class="line">pidfile /var/run/redis_7001.pid //pidfile文件对应7001,7002,7003</span><br><span class="line">logfile /tmp/redis_7001.log // 日志文件</span><br><span class="line">cluster-enabled yes //开启集群 把注释#去掉</span><br><span class="line">cluster-config-file nodes_7001.conf //集群的配置 配置文件首次启动自动生成 7001,7002,7003</span><br><span class="line">cluster-node-timeout 15000 //请求超时 默认15秒，可自行设置</span><br><span class="line">appendonly yes //aof日志开启 有需要就开启，它会每次写操作都记录一条日志</span><br></pre></td></tr></table></figure>
+<p>3、创建集群<br>先安装 ruby，因为 redis 的集群协调程序是用 ruby 写的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install ruby ruby-devel rubygems rpm-build</span><br></pre></td></tr></table></figure>
+<p>再安装gem，在编译目录下执行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gem install redis</span><br></pre></td></tr></table></figure>
+<p>运行每个redis实例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-server redis.conf</span><br></pre></td></tr></table></figure>
+<p>复制编译目录下的src目录中的redis-trib.rb到&#x2F;usr&#x2F;local&#x2F;bin，然后运行<br>在编译目录的src子目录下执行，其中host为各redis节点的绑定ip（如果绑定的ip是0.0.0.0则必须指定为对外开放的ip，否则会默认绑定127.0.0.1，在slot重定向时会报错），设置每个主分片有一个副本分片</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./redis-trib.rb create --replicas 1 host1:port1 host2:port2 ...</span><br></pre></td></tr></table></figure>
+<p>4、测试<br>为了连到集群上，需要在 redis-cli 请求后加上-c 参数，比如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -h 192.168.31.245 -c -p 7002</span><br></pre></td></tr></table></figure>
+<p>在普通set和get时，redis会自动计算出目标地址。<br>5、Java客户端连接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">public class RedissonTest &#123;</span><br><span class="line"></span><br><span class="line">    private static final Random random = new Random();</span><br><span class="line"></span><br><span class="line">    static int succeed = 0;</span><br><span class="line"></span><br><span class="line">    static int failed = 0;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws InterruptedException &#123;</span><br><span class="line">        Config config = new Config();</span><br><span class="line">        config.useClusterServers()</span><br><span class="line">                .setScanInterval(2000)</span><br><span class="line">                .addNodeAddress(&quot;redis://127.0.0.1:7001&quot;, &quot;redis://127.0.0.1:7002&quot;, &quot;127.0.0.1:7003&quot;)</span><br><span class="line">                .addNodeAddress(&quot;redis://127.0.0.1:7004&quot;, &quot;redis://127.0.0.1:7005&quot;, &quot;127.0.0.1:7006&quot;);</span><br><span class="line">        RedissonClient redissonClient = Redisson.create(config);</span><br><span class="line">        while (true) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                RBucket&lt;Object&gt; bucket = redissonClient.getBucket(Integer.toString(random.nextInt()));</span><br><span class="line">                bucket.get();</span><br><span class="line">                succeed++;</span><br><span class="line">                log.info(&quot;调用成功, 当前 succeed:&#123;&#125;, failed:&#123;&#125;&quot;, succeed, failed);</span><br><span class="line">            &#125; catch (Exception e) &#123;</span><br><span class="line">                failed++;</span><br><span class="line">                log.info(&quot;调用失败, 当前 succeed:&#123;&#125;, failed:&#123;&#125;&quot;, succeed, failed, e.getMessage());</span><br><span class="line">            &#125;</span><br><span class="line">            Thread.sleep(500);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="info-命令中涉及集群部署的部分"><a href="#info-命令中涉及集群部署的部分" class="headerlink" title="info 命令中涉及集群部署的部分"></a>info 命令中涉及集群部署的部分</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># Replication</span><br><span class="line"># 当前副本角色，如果实例不是任何节点的从节点，则该值是“master”，如果实例从某个节点同步数据，则是“slave”</span><br><span class="line">role:master</span><br><span class="line"># 已连接的从节点数</span><br><span class="line">connected_slaves:2</span><br><span class="line"># 每个从节点的信息，包括ID、地址、端口号、状态</span><br><span class="line">slave0:ip=10.32.140.18,port=6222,state=online,offset=1745391794554,lag=0</span><br><span class="line">slave1:ip=10.32.140.15,port=6212,state=online,offset=1745391807778,lag=0</span><br><span class="line">master_replid:6a64bcbbcae91324e72e24745392275e2f1382ea</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:1745391878919</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:16777216</span><br><span class="line">repl_backlog_first_byte_offset:1745375101704</span><br><span class="line">repl_backlog_histlen:16777216</span><br></pre></td></tr></table></figure>
+
+<h3 id="cluster-info-命令"><a href="#cluster-info-命令" class="headerlink" title="cluster info 命令"></a>cluster info 命令</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">10.32.140.15:6212&gt; cluster info</span><br><span class="line"># ok状态表示集群可以正常接受查询请求。fail 状态表示，至少有一个哈希槽没有被绑定（说明有哈希槽没有被绑定到任意一个节点），或者在错误的状态（节点可以提供服务但是带有FAIL 标记），或者该节点无法联系到多数master节点。</span><br><span class="line">cluster_state:ok</span><br><span class="line"># 已分配到集群节点的哈希槽数量（不是没有被绑定的数量）。16384个哈希槽全部被分配到集群节点是集群正常运行的必要条件.</span><br><span class="line">cluster_slots_assigned:16384</span><br><span class="line"># 哈希槽状态不是FAIL 和 PFAIL 的数量</span><br><span class="line">cluster_slots_ok:16384</span><br><span class="line"># 哈希槽状态是 PFAIL的数量。只要哈希槽状态没有被升级到FAIL状态，这些哈希槽仍然可以被正常处理。PFAIL状态表示我们当前不能和节点进行交互，但这种状态只是临时的错误状态</span><br><span class="line">cluster_slots_pfail:0</span><br><span class="line"># 哈希槽状态是FAIL的数量。如果值不是0，那么集群节点将无法提供查询服务，除非cluster-require-full-coverage被设置为no</span><br><span class="line">cluster_slots_fail:0</span><br><span class="line"># 集群中节点数量，包括处于握手状态还没有成为集群正式成员的节点</span><br><span class="line">cluster_known_nodes:9</span><br><span class="line"># 至少包含一个哈希槽且能够提供服务的master节点数量</span><br><span class="line">cluster_size:3</span><br><span class="line"># 集群本地Current Epoch变量的值。这个值在节点故障转移过程时有用，它总是递增和唯一的</span><br><span class="line">cluster_current_epoch:3</span><br><span class="line"># 当前正在使用的节点的Config Epoch值. 这个是关联在本节点的版本值</span><br><span class="line">cluster_my_epoch:2</span><br><span class="line">cluster_stats_messages_ping_sent:27870482</span><br><span class="line">cluster_stats_messages_pong_sent:27072640</span><br><span class="line">cluster_stats_messages_meet_sent:4</span><br><span class="line">cluster_stats_messages_sent:54943126</span><br><span class="line">cluster_stats_messages_ping_received:27072636</span><br><span class="line">cluster_stats_messages_pong_received:27865273</span><br><span class="line">cluster_stats_messages_meet_received:4</span><br><span class="line">cluster_stats_messages_fail_received:4</span><br><span class="line">cluster_stats_messages_publish_received:7514286</span><br><span class="line">cluster_stats_messages_received:62452203</span><br></pre></td></tr></table></figure>
+
+<h3 id="cluster-nodes"><a href="#cluster-nodes" class="headerlink" title="cluster nodes"></a>cluster nodes</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 节点ID，IP地址：端口号，标识，上一次发送 ping 包的时间，上一次收到 pong 包的时间，连接状态，节点使用的哈希槽</span><br><span class="line">127.0.0.1:7001&gt; cluster nodes</span><br><span class="line">fcdcafe5482daa80d0a382f675e8caced2d6ce63 127.0.0.1:7001@17001 myself,slave b2d0be87492d75bce14d3e50f687ce8a7872ef73 0 1603765953000 7 connected</span><br><span class="line">75d6d1e3d4d64eb6fb85d1ac7d883ecef4ac5e7e 127.0.0.1:7002@17002 master - 0 1603765955026 2 connected 5461-10922</span><br><span class="line">b2d0be87492d75bce14d3e50f687ce8a7872ef73 127.0.0.1:7004@17004 master - 0 1603765952012 7 connected 0-5460</span><br><span class="line">8bf573a595a3955293e37f2e34e20c4cfb469060 127.0.0.1:7003@17003 master - 0 1603765954021 3 connected 10923-16383</span><br><span class="line">5d599dea56108003633cd27d13abf87a9ef07d52 127.0.0.1:7005@17005 slave 75d6d1e3d4d64eb6fb85d1ac7d883ecef4ac5e7e 0 1603765953000 2 connected</span><br><span class="line">68e6ddbf689bc6d51ebfadd24064fc6cc8204210 127.0.0.1:7006@17006 slave 8bf573a595a3955293e37f2e34e20c4cfb469060 0 1603765954000 3 connected</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试结果预期"><a href="#测试结果预期" class="headerlink" title="测试结果预期"></a>测试结果预期</h3><p>测试一些Cluster宕机的情况，预期会有以下结论：</p>
+<ol>
+<li>关闭任意一主，会导致部分写操作失败，是由于从节点不能执行写操作，在Slave升级为Master期间会有少量的失败。</li>
+<li>关闭从节点对于整个集群没有影响。</li>
+<li>如果半数以上 Master 处于关闭状态那么整个集群处于不可用状态。<br>原因：Redis Cluster的选举需要有Master参与，如果多半的Master都挂掉了，也就不能再支持选举新Master了。</li>
+<li>关闭任意一对主从节点会导致部分（大约为整个集群的1&#x2F;3）失败。<br>Master宕机了，且没有替补的Slave，则分配给这个Master的slot就不可用了。</li>
+</ol>
+<h3 id="测试-压测"><a href="#测试-压测" class="headerlink" title="测试 - 压测"></a>测试 - 压测</h3><h3 id="测试-宕机1台Master"><a href="#测试-宕机1台Master" class="headerlink" title="测试 - 宕机1台Master"></a>测试 - 宕机1台Master</h3><p>下面的命令将7001干掉后测试集群的主从迁移情况。<br>刚开始集群7001、7002、7003是Master：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:7001&gt; cluster nodes</span><br><span class="line">5d599dea56108003633cd27d13abf87a9ef07d52 127.0.0.1:7005@17005 slave 75d6d1e3d4d64eb6fb85d1ac7d883ecef4ac5e7e 0 1603615592617 2 connected</span><br><span class="line">fcdcafe5482daa80d0a382f675e8caced2d6ce63 127.0.0.1:7001@17001 myself,master - 0 1603615591000 1 connected 0-5460</span><br><span class="line">b2d0be87492d75bce14d3e50f687ce8a7872ef73 127.0.0.1:7004@17004 slave fcdcafe5482daa80d0a382f675e8caced2d6ce63 0 1603615591614 1 connected</span><br><span class="line">8bf573a595a3955293e37f2e34e20c4cfb469060 127.0.0.1:7003@17003 master - 0 1603615591000 3 connected 10923-16383</span><br><span class="line">75d6d1e3d4d64eb6fb85d1ac7d883ecef4ac5e7e 127.0.0.1:7002@17002 master - 0 1603615592000 2 connected 5461-10922</span><br><span class="line">68e6ddbf689bc6d51ebfadd24064fc6cc8204210 127.0.0.1:7006@17006 slave 8bf573a595a3955293e37f2e34e20c4cfb469060 0 1603615593620 3 connected</span><br></pre></td></tr></table></figure>
+<p>将7001 kill掉后，请求7001服务器的请求都会失败，大约20秒后请求恢复，且观察日志可以发现，原来7001的Slave-7004现在替补上来成为了Master：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">18:29:28.186 [main] INFO  c.t.l.r.RedissonTest - 调用成功, 当前 succeed:15, failed:0</span><br><span class="line">18:29:33.475 [main] INFO  c.t.l.r.RedissonTest - 调用失败, 当前 succeed:15, failed:1</span><br><span class="line">18:29:38.750 [main] INFO  c.t.l.r.RedissonTest - 调用失败, 当前 succeed:15, failed:2</span><br><span class="line">18:29:39.253 [main] INFO  c.t.l.r.RedissonTest - 调用成功, 当前 succeed:16, failed:2</span><br><span class="line">18:29:39.756 [main] INFO  c.t.l.r.RedissonTest - 调用成功, 当前 succeed:17, failed:2</span><br><span class="line">18:29:40.259 [main] INFO  c.t.l.r.RedissonTest - 调用成功, 当前 succeed:18, failed:2</span><br><span class="line">18:29:40.763 [main] INFO  c.t.l.r.RedissonTest - 调用成功, 当前 succeed:19, failed:2</span><br><span class="line">18:29:45.271 [redisson-netty-2-4] INFO  o.r.c.MasterSlaveEntry - master 127.0.0.1/127.0.0.1:7004 used as slave</span><br><span class="line">18:29:45.274 [redisson-netty-2-14] INFO  o.r.c.p.PubSubConnectionPool - 1 connections initialized for 127.0.0.1/127.0.0.1:7004</span><br><span class="line">18:29:45.280 [redisson-netty-2-4] WARN  o.r.c.ClusterConnectionManager - slave: redis://127.0.0.1:7001 has down for slot ranges: [[0-5460]]</span><br><span class="line">18:29:45.285 [redisson-netty-2-28] INFO  o.r.c.p.SlaveConnectionPool - 24 connections initialized for 127.0.0.1/127.0.0.1:7004</span><br></pre></td></tr></table></figure>
+<p>之后重启7001后，发现7001重新加入到了集群中：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">18:34:18.539 [redisson-netty-2-29] INFO  o.r.c.p.PubSubConnectionPool - 1 connections initialized for 127.0.0.1/127.0.0.1:7001</span><br><span class="line">18:34:18.542 [redisson-netty-2-4] INFO  o.r.c.MasterSlaveEntry - master 127.0.0.1/127.0.0.1:7004 excluded from slaves</span><br><span class="line">18:34:18.542 [redisson-netty-2-4] INFO  o.r.c.ClusterConnectionManager - slave: redis://127.0.0.1:7001 has up for slot ranges: [[0-5460]]</span><br><span class="line">18:34:18.544 [redisson-netty-2-6] INFO  o.r.c.p.SlaveConnectionPool - 24 connections initialized for 127.0.0.1/127.0.0.1:7001</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试-宕机2台Master"><a href="#测试-宕机2台Master" class="headerlink" title="测试 - 宕机2台Master"></a>测试 - 宕机2台Master</h3><p>把两台Master干掉后，两个Master均进入fail状态，这时集群也会进入fail状态，选举不会成功。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">localhost:7001&gt; cluster nodes</span><br><span class="line">fcdcafe5482daa80d0a382f675e8caced2d6ce63 127.0.0.1:7001@17001 myself,slave b2d0be87492d75bce14d3e50f687ce8a7872ef73 0 1603622378000 7 connected</span><br><span class="line">75d6d1e3d4d64eb6fb85d1ac7d883ecef4ac5e7e 127.0.0.1:7002@17002 master - 0 1603622381510 2 connected 5461-10922</span><br><span class="line">b2d0be87492d75bce14d3e50f687ce8a7872ef73 127.0.0.1:7004@17004 master - 0 1603622379504 7 connected 0-5460</span><br><span class="line">8bf573a595a3955293e37f2e34e20c4cfb469060 127.0.0.1:7003@17003 master - 0 1603622380507 3 connected 10923-16383</span><br><span class="line">5d599dea56108003633cd27d13abf87a9ef07d52 127.0.0.1:7005@17005 slave 75d6d1e3d4d64eb6fb85d1ac7d883ecef4ac5e7e 0 1603622378498 2 connected</span><br><span class="line">68e6ddbf689bc6d51ebfadd24064fc6cc8204210 127.0.0.1:7006@17006 slave 8bf573a595a3955293e37f2e34e20c4cfb469060 0 1603622380000 3 connected</span><br></pre></td></tr></table></figure>
+<p>集群fail后，客户端之后的请求也都失败了。</p>
+<h2 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">set key value ex nx</span><br><span class="line">do sth...</span><br><span class="line">del key</span><br></pre></td></tr></table></figure>
+<ol>
+<li>为什么要加过期时间？<br>怕中间遇到异常退出，del 没有执行，导致陷入死锁。<br>set 命令现在支持加 ex 和 nx 参数，既保证原子性，又支持加过期时间。</li>
+<li>过早过期释放别人的锁<br>业务执行时间过长，锁过期了，可能导致其他线程先获取到了锁，这样当前线程 del 的时候相当于将别人的锁释放掉了。<br>可以给 value 设置一个随机数，释放前检查一下，这是个“读后写”的过程，为了保证其原子性，一般会使用 Lua 脚本来实现（类似 Redisson 中的实现）。<br>Redisson 中的解决方案是加一个“看门狗”，定时刷新过期时间。</li>
+<li>重入性<br>为了实现可重入性，一般是在客户端使用 ThreadLocal 存储当前持有锁的计数。<br>在 Redisson 中，可重入锁是通过在 Lua 脚本中对客户端线程 ID 进行计数来实现的。</li>
+</ol>
+<h2 id="延时队列"><a href="#延时队列" class="headerlink" title="延时队列"></a>延时队列</h2><h3 id="异步消息队列"><a href="#异步消息队列" class="headerlink" title="异步消息队列"></a>异步消息队列</h3><p>可以使用 list 数据结构来实现异步消息队列，使用 rpush&#x2F;lpush 操作入队列，使用 lpop 和 rpop 来出队列。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">rpush notify-queue a b</span><br><span class="line">llen notify-queue</span><br><span class="line">lpop notify-queue</span><br><span class="line">llen notify-queue</span><br><span class="line">lpop notify-queue</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<ol>
+<li>如果队列空了怎么办？<br>客户端通过轮询队列 pop 获取消息处理，如果队列空了，那么就会陷入 pop 的死循环。<br>一般的解决办法是<code>sleep</code>，每次 pop 后可以暂停个 1 秒。<br>但是<code>sleep</code>同样会带来延迟增大的问题，因此，更好的解决办法是<code>blpop / brpop</code>，即阻塞读： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 等待一秒若还没有数据则直接返回</span><br><span class="line">blpop notify-queue 1</span><br></pre></td></tr></table></figure></li>
+<li>空闲连接<br>如果线程一直阻塞，则 Redis 的客户端连接将成为闲置连接，闲置过久，服务器一般会主动断开连接，减少闲置资源占用。这个时候 blpop&#x2F;brpop 会抛出异常来，这时要<strong>注意对异常的捕获和重试</strong>。</li>
+<li>锁冲突处理<br>加锁失败一般有 3 种处理方式：<ul>
+<li>直接抛出异常，由用户稍后重试；<br> 适合由用户直接发起的请求，比如商城下单，下单失败后由用户决定是否重新请求。</li>
+<li>sleep<br> sleep 会阻塞消息处理线程，会导致后续消息处理出现延迟，不适合高并发（锁冲突频繁）或队列消息较多的情况，并且，如果是由于死锁导致的加锁不成功，sleep 将导致线程一直处于阻塞状态、后续的消息永远得不到处理。</li>
+<li>延时队列<br> 将当前冲突的请求扔到另一个队列延后处理以避开冲突，适合异步消息处理的场景。</li>
+</ul>
+</li>
+</ol>
+<p>下面的实现例子来自《Redis 深度历险》：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line">public class RedisDelayingQueue&lt;T&gt; &#123;</span><br><span class="line"></span><br><span class="line">  static class TaskItem&lt;T&gt; &#123;</span><br><span class="line">    public String id;</span><br><span class="line">    public T msg;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // fastjson 序列化对象中存在 generic 类型时，需要使用 TypeReference</span><br><span class="line">  private Type TaskType = new TypeReference&lt;TaskItem&lt;T&gt;&gt;() &#123;</span><br><span class="line">  &#125;.getType();</span><br><span class="line"></span><br><span class="line">  private Jedis jedis;</span><br><span class="line">  private String queueKey;</span><br><span class="line"></span><br><span class="line">  public RedisDelayingQueue(Jedis jedis, String queueKey) &#123;</span><br><span class="line">    this.jedis = jedis;</span><br><span class="line">    this.queueKey = queueKey;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  public void delay(T msg) &#123;</span><br><span class="line">    TaskItem&lt;T&gt; task = new TaskItem&lt;T&gt;();</span><br><span class="line">    task.id = UUID.randomUUID().toString();</span><br><span class="line">    task.msg = msg;</span><br><span class="line">    String s = JSON.toJSONString(task);</span><br><span class="line">    // key是当前时间</span><br><span class="line">    jedis.zadd(queueKey, System.currentTimeMillis() + 5000, s); // 塞入延时队列 ,5s 后再试</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  public void loop() &#123;</span><br><span class="line">    while (!Thread.interrupted()) &#123;</span><br><span class="line">      // 取时间范围是0到当前时间内的一条记录</span><br><span class="line">      // 第3个参数0表示不记分数，</span><br><span class="line">      Set&lt;String&gt; values = jedis.zrangeByScore(queueKey, 0, System.currentTimeMillis(), 0, 1);</span><br><span class="line">      if (values.isEmpty()) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">          // 暂停一会，避免浪费CPU</span><br><span class="line">          Thread.sleep(500);</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">          break;</span><br><span class="line">        &#125;</span><br><span class="line">        continue;</span><br><span class="line">      &#125;</span><br><span class="line">      String s = values.iterator().next();</span><br><span class="line">      // 说明抢到了</span><br><span class="line">      if (jedis.zrem(queueKey, s) &gt; 0) &#123;</span><br><span class="line">        TaskItem&lt;T&gt; task = JSON.parseObject(s, TaskType);</span><br><span class="line">        this.handleMsg(task.msg);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  public void handleMsg(T msg) &#123;</span><br><span class="line">    System.out.println(msg);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  public static void main(String[] args) &#123;</span><br><span class="line">    Jedis jedis = new Jedis();</span><br><span class="line">    RedisDelayingQueue&lt;String&gt; queue = new RedisDelayingQueue&lt;&gt;(jedis, &quot;q-demo&quot;);</span><br><span class="line">    Thread producer = new Thread() &#123;</span><br><span class="line"></span><br><span class="line">      public void run() &#123;</span><br><span class="line">        for (int i = 0; i &lt; 10; i++) &#123;</span><br><span class="line">          queue.delay(&quot;codehole&quot; + i);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">    &#125;;</span><br><span class="line">    Thread consumer = new Thread() &#123;</span><br><span class="line"></span><br><span class="line">      public void run() &#123;</span><br><span class="line">        queue.loop();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">    &#125;;</span><br><span class="line">    producer.start();</span><br><span class="line">    consumer.start();</span><br><span class="line">    try &#123;</span><br><span class="line">      producer.join();</span><br><span class="line">      Thread.sleep(6000);</span><br><span class="line">      consumer.interrupt();</span><br><span class="line">      consumer.join();</span><br><span class="line">    &#125; catch (InterruptedException e) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一些优化点：</p>
+<ol>
+<li>注意<code>zrangeByScore</code>和<code>zrem</code>不是一个原子操作，可能会有多个线程争抢同一个 key，这可以通过 lua 脚本来优化。</li>
+<li>使用 Redis 作为消息队列并不能保证 100%的可靠性，因为 rem 执行后如果客户端崩溃了消息就丢失了，或者 Redis 崩溃了消息也有可能丢失（这个可以通过主备来避免）。</li>
+</ol>
+<h2 id="阻塞队列"><a href="#阻塞队列" class="headerlink" title="阻塞队列"></a>阻塞队列</h2><p>使用Redis实现队列可以利用lpop&#x2F;rpush或rpop&#x2F;lpush，但是这两组命令在遇到队列为空或满时还是会直接返回，如果要实现阻塞队列的阻塞等待能力，可以：<br>1、使用lua脚本轮询<br>lua脚本中先检测队列是否为空&#x2F;满，在不空&#x2F;不满的情况下才执行后续的操作。<br>如果为空&#x2F;满，则客户端先等待一会再执行一次该lua脚本。<br>缺点是会有很多空轮询。<br>2、使用blpop命令<br>在list结构尚不存在元素的情况下，blpop命令会先将客户端挂起，等待：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">void blockForKeys(redisClient *c, robj **keys, int numkeys, mstime_t timeout, robj *target) &#123;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    // 关联阻塞客户端和键的相关信息</span><br><span class="line">    for (j = 0; j &lt; numkeys; j++) &#123;</span><br><span class="line"></span><br><span class="line">        /* If the key already exists in the dict ignore it. */</span><br><span class="line">        // c-&gt;bpop.keys 是一个集合（值为 NULL 的字典）</span><br><span class="line">        // 它记录所有造成客户端阻塞的键</span><br><span class="line">        // 以下语句在键不存在于集合的时候，将它添加到集合</span><br><span class="line">        if (dictAdd(c-&gt;bpop.keys,keys[j],NULL) != DICT_OK) continue;</span><br><span class="line"></span><br><span class="line">        incrRefCount(keys[j]);</span><br><span class="line"></span><br><span class="line">        /* And in the other &quot;side&quot;, to map keys -&gt; clients */</span><br><span class="line">        // c-&gt;db-&gt;blocking_keys 字典的键为造成客户端阻塞的键</span><br><span class="line">        // 而值则是一个链表，链表中包含了所有被阻塞的客户端</span><br><span class="line">        // 以下程序将阻塞键和被阻塞客户端关联起来</span><br><span class="line">        de = dictFind(c-&gt;db-&gt;blocking_keys,keys[j]);</span><br><span class="line">        if (de == NULL) &#123;</span><br><span class="line">            // 链表不存在，新创建一个，并将它关联到字典中</span><br><span class="line">            int retval;</span><br><span class="line"></span><br><span class="line">            /* For every key we take a list of clients blocked for it */</span><br><span class="line">            l = listCreate();</span><br><span class="line">            retval = dictAdd(c-&gt;db-&gt;blocking_keys,keys[j],l);</span><br><span class="line">            incrRefCount(keys[j]);</span><br><span class="line">            redisAssertWithInfo(c,keys[j],retval == DICT_OK);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            l = dictGetVal(de);</span><br><span class="line">        &#125;</span><br><span class="line">        // 将客户端填接到被阻塞客户端的链表中</span><br><span class="line">        listAddNodeTail(l,c);</span><br><span class="line">    &#125;</span><br><span class="line">    blockClient(c,REDIS_BLOCKED_LIST);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>执行指令结束后，处理解除了阻塞的键。<br><code>redis.c</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">int processCommand(redisClient *c) &#123;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    /* Exec the command */</span><br><span class="line">    if (c-&gt;flags &amp; REDIS_MULTI &amp;&amp;</span><br><span class="line">        c-&gt;cmd-&gt;proc != execCommand &amp;&amp; c-&gt;cmd-&gt;proc != discardCommand &amp;&amp;</span><br><span class="line">        c-&gt;cmd-&gt;proc != multiCommand &amp;&amp; c-&gt;cmd-&gt;proc != watchCommand)</span><br><span class="line">    &#123;</span><br><span class="line">        // 在事务上下文中</span><br><span class="line">        // 除 EXEC 、 DISCARD 、 MULTI 和 WATCH 命令之外</span><br><span class="line">        // 其他所有命令都会被入队到事务队列中</span><br><span class="line">        queueMultiCommand(c);</span><br><span class="line">        addReply(c,shared.queued);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        // 执行命令</span><br><span class="line">        call(c,REDIS_CALL_FULL);</span><br><span class="line"></span><br><span class="line">        c-&gt;woff = server.master_repl_offset;</span><br><span class="line">        // 处理那些解除了阻塞的键</span><br><span class="line">        if (listLength(server.ready_keys))</span><br><span class="line">            handleClientsBlockedOnLists();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return REDIS_OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到，执行命令的末尾需要处理解除了阻塞的键，遍历这些键然后唤醒等待的客户端。<br><code>t_list.c</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line">/* 这个函数会在 Redis 每次执行完单个命令、事务块或 Lua 脚本之后调用。</span><br><span class="line"> *</span><br><span class="line"> * 对所有被阻塞在某个客户端的 key 来说，只要这个 key 被执行了某种 PUSH 操作</span><br><span class="line"> * 那么这个 key 就会被放到 serve.ready_keys 去。</span><br><span class="line"> * </span><br><span class="line"> * 这个函数会遍历整个 serve.ready_keys 链表，</span><br><span class="line"> * 并将里面的 key 的元素弹出给被阻塞客户端，</span><br><span class="line"> * 从而解除客户端的阻塞状态。</span><br><span class="line"> *</span><br><span class="line"> * 函数会一次又一次地进行迭代，</span><br><span class="line"> * 因此它在执行 BRPOPLPUSH 命令的情况下也可以正常获取到正确的新被阻塞客户端。</span><br><span class="line"> */</span><br><span class="line">void handleClientsBlockedOnLists(void) &#123;</span><br><span class="line"></span><br><span class="line">    // 遍历整个 ready_keys 链表</span><br><span class="line">    while(listLength(server.ready_keys) != 0) &#123;</span><br><span class="line">        list *l;</span><br><span class="line"></span><br><span class="line">        /* Point server.ready_keys to a fresh list and save the current one</span><br><span class="line">         * locally. This way as we run the old list we are free to call</span><br><span class="line">         * signalListAsReady() that may push new elements in server.ready_keys</span><br><span class="line">         * when handling clients blocked into BRPOPLPUSH. */</span><br><span class="line">        // 备份旧的 ready_keys ，再给服务器端赋值一个新的</span><br><span class="line">        l = server.ready_keys;</span><br><span class="line">        server.ready_keys = listCreate();</span><br><span class="line"></span><br><span class="line">        while(listLength(l) != 0) &#123;</span><br><span class="line"></span><br><span class="line">            // 取出 ready_keys 中的首个链表节点</span><br><span class="line">            listNode *ln = listFirst(l);</span><br><span class="line"></span><br><span class="line">            // 指向 readyList 结构</span><br><span class="line">            readyList *rl = ln-&gt;value;</span><br><span class="line"></span><br><span class="line">            /* First of all remove this key from db-&gt;ready_keys so that</span><br><span class="line">             * we can safely call signalListAsReady() against this key. */</span><br><span class="line">            // 从 ready_keys 中移除就绪的 key</span><br><span class="line">            dictDelete(rl-&gt;db-&gt;ready_keys,rl-&gt;key);</span><br><span class="line"></span><br><span class="line">            /* If the key exists and it&#x27;s a list, serve blocked clients</span><br><span class="line">             * with data. */</span><br><span class="line">            // 获取键对象，这个对象应该是非空的，并且是列表</span><br><span class="line">            robj *o = lookupKeyWrite(rl-&gt;db,rl-&gt;key);</span><br><span class="line">            if (o != NULL &amp;&amp; o-&gt;type == REDIS_LIST) &#123;</span><br><span class="line">                dictEntry *de;</span><br><span class="line"></span><br><span class="line">                /* We serve clients in the same order they blocked for</span><br><span class="line">                 * this key, from the first blocked to the last. */</span><br><span class="line">                // 取出所有被这个 key 阻塞的客户端</span><br><span class="line">                de = dictFind(rl-&gt;db-&gt;blocking_keys,rl-&gt;key);</span><br><span class="line">                if (de) &#123;</span><br><span class="line">                    list *clients = dictGetVal(de);</span><br><span class="line">                    int numclients = listLength(clients);</span><br><span class="line"></span><br><span class="line">                    while(numclients--) &#123;</span><br><span class="line">                        // 取出客户端</span><br><span class="line">                        listNode *clientnode = listFirst(clients);</span><br><span class="line">                        redisClient *receiver = clientnode-&gt;value;</span><br><span class="line"></span><br><span class="line">                        // 设置弹出的目标对象（只在 BRPOPLPUSH 时使用）</span><br><span class="line">                        robj *dstkey = receiver-&gt;bpop.target;</span><br><span class="line"></span><br><span class="line">                        // 从列表中弹出元素</span><br><span class="line">                        // 弹出的位置取决于是执行 BLPOP 还是 BRPOP 或者 BRPOPLPUSH</span><br><span class="line">                        int where = (receiver-&gt;lastcmd &amp;&amp;</span><br><span class="line">                                     receiver-&gt;lastcmd-&gt;proc == blpopCommand) ?</span><br><span class="line">                                    REDIS_HEAD : REDIS_TAIL;</span><br><span class="line">                        robj *value = listTypePop(o,where);</span><br><span class="line"></span><br><span class="line">                        // 还有元素可弹出（非 NULL）</span><br><span class="line">                        if (value) &#123;</span><br><span class="line">                            /* Protect receiver-&gt;bpop.target, that will be</span><br><span class="line">                             * freed by the next unblockClient()</span><br><span class="line">                             * call. */</span><br><span class="line">                            if (dstkey) incrRefCount(dstkey);</span><br><span class="line"></span><br><span class="line">                            // 取消客户端的阻塞状态</span><br><span class="line">                            unblockClient(receiver);</span><br><span class="line"></span><br><span class="line">                            // 将值 value 推入到造成客户端 receiver 阻塞的 key 上</span><br><span class="line">                            if (serveClientBlockedOnList(receiver,</span><br><span class="line">                                rl-&gt;key,dstkey,rl-&gt;db,value,</span><br><span class="line">                                where) == REDIS_ERR)</span><br><span class="line">                            &#123;</span><br><span class="line">                                /* If we failed serving the client we need</span><br><span class="line">                                 * to also undo the POP operation. */</span><br><span class="line">                                    listTypePush(o,value,where);</span><br><span class="line">                            &#125;</span><br><span class="line"></span><br><span class="line">                            if (dstkey) decrRefCount(dstkey);</span><br><span class="line">                            decrRefCount(value);</span><br><span class="line">                        &#125; else &#123;</span><br><span class="line">                            // 如果执行到这里，表示还有至少一个客户端被键所阻塞</span><br><span class="line">                            // 这些客户端要等待对键的下次 PUSH</span><br><span class="line">                            break;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                // 如果列表元素已经为空，那么从数据库中将它删除</span><br><span class="line">                if (listTypeLength(o) == 0) dbDelete(rl-&gt;db,rl-&gt;key);</span><br><span class="line">                /* We don&#x27;t call signalModifiedKey() as it was already called</span><br><span class="line">                 * when an element was pushed on the list. */</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            /* Free this item. */</span><br><span class="line">            decrRefCount(rl-&gt;key);</span><br><span class="line">            zfree(rl);</span><br><span class="line">            listDelNode(l,ln);</span><br><span class="line">        &#125;</span><br><span class="line">        listRelease(l); /* We have the new list on place at this point. */</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="位图"><a href="#位图" class="headerlink" title="位图"></a>位图</h2><h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3><p>位图数据结构与 java 中的 Set 类似，占用空间小，但是并不能防止冲突，适合数据离散性比较大且对数据准确性不高的场景。</p>
+<ol>
+<li>统计月活<br>统计月活的时候我们需要对 userId 进行去重，每个用户就可以定位到这个位图上的一个确定的位置上，0 表示不活跃，1 表示活跃，遍历一次就可以知道月活用户数有多少。</li>
+</ol>
+<h3 id="使用-1"><a href="#使用-1" class="headerlink" title="使用"></a>使用</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">set s a</span><br><span class="line">getbit s 2</span><br><span class="line">setbit s 6 1</span><br><span class="line">get s</span><br></pre></td></tr></table></figure>
+<p>注意下标并不是从低位到高位递增的，而是反过来的，a 的 ASCII 码值是<code>01100001</code>，<code>setbit s 6 1</code>设置第 7 位为 1 后值就变成了 c。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 指定范围内1的个数</span><br><span class="line">bitcount s 0 7</span><br><span class="line">// 第一个1的位置</span><br><span class="line">bitpos s 1</span><br><span class="line">// 下标0到7范围内第一个1的位置</span><br><span class="line">bitpos s 1 0 7</span><br></pre></td></tr></table></figure>
+<p>比如用位数组记录用户登录的日期，bitcount 可以用于统计用户一共签到了多少天，bitpos 可以用于查找用户从哪一天开始第一次签到。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 从第一个位（0）开始取4个位，结果是无符号数（u）</span><br><span class="line">bitfield s get u4 0</span><br><span class="line">// 从第三个位（2）开始取3个位，结果是有符号数（i）</span><br><span class="line">bitfield s get i3 2</span><br><span class="line">// 一次性执行多个子命令</span><br><span class="line">bitfield s get u4 0 get u3 2 get i4 0 get i3 2</span><br></pre></td></tr></table></figure>
+<p>如果 s 的值是 c，二进制值是<code>0110 0011</code>，取前 4 位结果是 6（0110）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// +1，结果为0，因为溢出了</span><br><span class="line">bitfield s incrby u2 1 1</span><br><span class="line">// 不执行，返回nil</span><br><span class="line">bitfield s overflow fail incrby u2 1 1</span><br><span class="line">// 结果为3</span><br><span class="line">bitfield s overflow sat incrby u2 1 1</span><br></pre></td></tr></table></figure>
+<p>位的增加操作有 3 种策略：</p>
+<ol>
+<li>默认的 wrap：</li>
+<li>fail：失败报错不执行</li>
+<li>sat：饱和截断，如果有溢出就停留在最大最小值。</li>
+</ol>
+<h2 id="HyperLogLog"><a href="#HyperLogLog" class="headerlink" title="HyperLogLog"></a>HyperLogLog</h2><p>HyperLogLog 主要用于大数据量的计数，比如访问频繁的页面需要统计 UV（一天内访问的用户数），不同于 PV，UV 需要去重。<br>HyperLogLog 只能粗略统计，理论上会有不到 1%的误差。</p>
+<h3 id="使用-2"><a href="#使用-2" class="headerlink" title="使用"></a>使用</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">pfadd s user1</span><br><span class="line">pfcount s</span><br><span class="line">pfadd s user1</span><br><span class="line">pfadd s user2</span><br><span class="line">// 结果仍然为2</span><br><span class="line">pfcount s</span><br><span class="line">// 将两个计数器累加</span><br><span class="line">pfmerge s b</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="布隆过滤器"><a href="#布隆过滤器" class="headerlink" title="布隆过滤器"></a>布隆过滤器</h2><p>HyperLogLog 可以用于计数，但是不能用于判断一个值是否存在于该结构里，这时最好使用布隆过滤器（Bloom Filter）：</p>
+<ol>
+<li>去重；</li>
+<li>支持 contains 判断；</li>
+<li>节省空间；</li>
+<li>不精确，存在误判的可能（当布隆过滤器说某个值存在时，这个值可能不存在，当它说不存在时，那就肯定不存在，这个问题是由 hash 函数的冲突引起的）；</li>
+<li>不支持计数。</li>
+</ol>
+<h3 id="使用-3"><a href="#使用-3" class="headerlink" title="使用"></a>使用</h3><p>插入值并且判断该值是否存在于 bf 对象内：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bf.add s user1</span><br><span class="line">bf.add s user2</span><br><span class="line">bf.madd s user3 user4</span><br><span class="line">bf.exists s user1</span><br><span class="line">bf.mexists s user1 user5</span><br></pre></td></tr></table></figure>
+<p>第一次 bf.add 会创建一个默认参数的布隆过滤器，也可以显式创建：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 创建一个名为key的布隆过滤器，错误率0.1，预计放入的元素数量为10</span><br><span class="line">bf.reserve key 0.1 10</span><br></pre></td></tr></table></figure>
+<ul>
+<li>错误率越低，需要的空间越大，默认值为 0.01<br>对于不需要非常精确的场合，错误率设置得稍大一点也无伤大雅。</li>
+<li>当实际数量超出预计放入数量时，误判率会上升，默认值为 100<br>该值设置得过大，会浪费存储空间，估计得过小，就会影响准确率，最理想的情况下是略大于实际元素数量。</li>
+</ul>
+<p>当实际元素数超出初始化大小时，应该对布隆过滤器进行重建，重新分配一个 size 更大的过滤器，再将所有的历史元素批量 add 进去（比如如果布隆过滤器保存的是 userId，那么就需要把历史 userId 重新保存到一个新的布隆过滤器中）。</p>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>布隆过滤器本身是一个大型的位数组和几个不同的无偏 hash 函数。</p>
+<blockquote>
+<p>无偏指的是该 hash 函数能把值分布得比较均匀。</p>
+</blockquote>
+<ul>
+<li>add：使用这些 hash 函数计算 hash(key)%length(bit_arr)，每个 hash 函数都可以得到一个位置，将这些位置置为 1；</li>
+<li>exists：同样用这些 hash 函数计算位置，如果有一个不为 1 说明 key 不存在，如果都为 1 也不一定说明 key 一定存在，因为这些位置可能会被其他 key 设置到。</li>
+</ul>
+<h2 id="GeoHash"><a href="#GeoHash" class="headerlink" title="GeoHash"></a>GeoHash</h2><h3 id="一种简单的方法"><a href="#一种简单的方法" class="headerlink" title="一种简单的方法"></a>一种简单的方法</h3><p>找一个节点附近的所有节点，可以近似看做以该节点为中心的一个矩形范围内有哪些节点，可以用类似下面的 SQL 来查询：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select id from positions where x0-r &lt; x &lt; x0+r and y0-r &lt; y &lt; y0+r</span><br></pre></td></tr></table></figure>
+<p>对 x 和 y 字段加索引后该 SQL 的性能也不会太差。</p>
+<h3 id="GeoHash-1"><a href="#GeoHash-1" class="headerlink" title="GeoHash"></a>GeoHash</h3><p>GeoHash 的基本思想是“降维”，将二维坐标映射到直线上的一个点，要寻找二维平面上的“附近的人”就相当于在直线上找相邻的点。<br>GeoHash 本质是一个 zset（带 score 的 set），底层结构是 skiplist：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">geoadd company 116.489033 40.007669 meituan</span><br><span class="line">geoadd company 116.562108 39.787602 jd 116.334255 40.027400 xiaomi</span><br><span class="line">// geoadd指令添加一个节点，因为geo存储结构上使用的是zset，因此可以使用zset相关的指令来操作，比如可以使用zrem指令来删除</span><br><span class="line">zrem company jd</span><br><span class="line">geoadd company 116.562108 39.787602 jd</span><br><span class="line">// 计算两个节点之间的距离</span><br><span class="line">geodist company meituan jd</span><br><span class="line">// 单位km</span><br><span class="line">geodist company meituan jd km</span><br><span class="line">// 获取节点位置</span><br><span class="line">geopos company meituan jd</span><br><span class="line">// 获取元素的hash值</span><br><span class="line">geohash company meituan</span><br><span class="line">// 查询指定元素附近的其他元素</span><br><span class="line">// 范围20公里内最多3个元素按距离正序排列，</span><br><span class="line">georadiusbymember company meituan 20 km count 3 asc</span><br></pre></td></tr></table></figure>
+
+<p>GeoHash 算法的执行流程如下：</p>
+<ol>
+<li>将坐标编码为一个 52 位整数，这个整数也可以还原为原坐标；</li>
+<li>zset 的 value 是元素的 key（即上面的 meituan、jd 等），score 是 GeoHash 的 52 位整数值，通过 zset 的 score 排序即可得到坐标附近的其它元素。</li>
+</ol>
+<p>其中主要问题是坐标是如何编码的，编码后为什么可以通过比较大小来判断是否相邻？<br>GeoHash 算法的原理是按经纬度区间对半分来进行编码，比如，维度的区间是<code>(-90, 90)</code>，如果坐标的维度值大于 0，则记 1，否则记 0，进一步的，如果坐标维度大于 45，则记 1，否则记 0，以此类推，对于<code>39.918118</code>来说，最后的编码值就是<code>10111000110001011011</code>。</p>
+<blockquote>
+<p>一般实现中还会进行 BASE64 编码，本质是一样的，只是编码后占用的空间更小了。</p>
+</blockquote>
+<h2 id="Scan"><a href="#Scan" class="headerlink" title="Scan"></a>Scan</h2><p>扫描大量 key 找到目标 key 的需求有两种实现方法：</p>
+<ol>
+<li>keys 命令<br>不支持分页，一次性吐出所有满足条件的 key，如果数据量过大、耗时过长，可能导致服务端卡顿。<blockquote>
+<p>因为 Redis 是单线程模型。</p>
+</blockquote>
+</li>
+<li>scan<br>和 keys 命令一样提供模式匹配，但它是通过游标扫描的，每次只扫描指定数量的数据，并将其中匹配的结果返回。</li>
+</ol>
+<h3 id="使用-4"><a href="#使用-4" class="headerlink" title="使用"></a>使用</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># 从cursor=0开始，匹配&quot;key99*&quot;，共扫描1000条</span><br><span class="line">scan 0 match key99* count 1000</span><br><span class="line">1) &quot;11928&quot;</span><br><span class="line">2)  1) &quot;key9956&quot;</span><br><span class="line">    2) &quot;key9993&quot;</span><br><span class="line">    3) &quot;key9911&quot;</span><br><span class="line">    4) &quot;key996&quot;</span><br><span class="line">    5) &quot;key9933&quot;</span><br><span class="line">    6) &quot;key9962&quot;</span><br><span class="line">    7) &quot;key991&quot;</span><br><span class="line">    8) &quot;key9981&quot;</span><br><span class="line">    9) &quot;key9990&quot;</span><br><span class="line">   10) &quot;key9946&quot;</span><br><span class="line">   11) &quot;key9971&quot;</span><br><span class="line">   12) &quot;key99&quot;</span><br><span class="line">   13) &quot;key9951&quot;</span><br></pre></td></tr></table></figure>
+<p>返回值中，第一个”11928”是结果中最后一条的 cursor，下一次遍历时可以使用该值作为初始 cursor。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scan 11928 match key99* count 10</span><br><span class="line">1) &quot;3480&quot;</span><br><span class="line">2) (empty list or set)</span><br></pre></td></tr></table></figure>
+<p>结果为空集合并不意味着遍历结束了，只有 cursor&#x3D;0 才是遍历结束的标识。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">scan 11928 match key99* count 10000</span><br><span class="line">1) &quot;0&quot;</span><br><span class="line">2)  1) &quot;key9952&quot;</span><br><span class="line">    2) &quot;key9961&quot;</span><br><span class="line">    3) &quot;key9988&quot;</span><br><span class="line">    4) &quot;key9931&quot;</span><br><span class="line">    5) &quot;key9998&quot;</span><br><span class="line">    ...忽略更多的</span><br></pre></td></tr></table></figure>
+<h3 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h3><p>Redis 中所有 key 都存储在一个非常大的字典中，这个字典的结构和 Java 的 HashMap 类似：<br><img src="/imgs/Redis/Redis-%E5%AD%97%E5%85%B8.png" alt="Redis-字典" title="Redis-字典"></p>
+<ol>
+<li>一维数组大小为 2^n（n &gt;&#x3D; 0），扩容一次大小翻倍，保存的是所有 key 的下标，或者称为槽（slot）；</li>
+<li>二维链表保存的是所有的 key，不同 key 是有可能被 hash 到同一个槽上的，这时这个槽里所有元素都会被模式匹配过滤后一次性返回。</li>
+</ol>
+<p>scan 的遍历并不是从 0 开始递增，而是通过二进制高位进位加法来遍历，比如遍历顺序：</p>
+<ol>
+<li>0000 -&gt; 0</li>
+<li>1000 -&gt; 8</li>
+<li>0100 -&gt; 4</li>
+<li>1100 -&gt; 12</li>
+<li>以此类推</li>
+</ol>
+<p><img src="/imgs/Redis/Redis-%E9%AB%98%E4%BD%8D%E9%80%92%E5%A2%9E%E9%81%8D%E5%8E%86.png" alt="Redis-高位递增遍历" title="Redis-高位递增遍历"><br>这种遍历方式的好处是可以避免扩容缩容后相同元素被反复遍历到。<br>因为槽数组的长度总是 2 的 n 次方，因此取模运算等价于位与操作，比如原来数组长度为 8，15（1111）会被 hash 到 7 号槽，而扩容后数组长度变成 16，增加了一个高位的 1，15（1111）会被 hash 到 15 号槽。<br>因此从低到高的遍历方式可能会导致重复遍历，而从高到低的方式则可以避免。</p>
+<p>Redis 的 rehash 是渐进式的，在 rehash 的过程中，操作需要同时访问新旧的两个数组结构，如果旧的找不到就需要再到新的下面去找，scan 同理。</p>
+<h3 id="大-key-问题"><a href="#大-key-问题" class="headerlink" title="大 key 问题"></a>大 key 问题</h3><p>大 key 会导致数据迁移和扩容时需要分配更大的一块内存空间，导致卡顿，删除时，同样需要一次性回收大 key，卡顿会再一次产生。<br>为了定位大 key，可以使用 redis-cli 的扫描功能</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -h 127.0.0.1 -p 7001 –-bigkeys</span><br><span class="line"># 如果担心这个指令会大幅抬升 Redis 的 ops 导致线上报警，还可以增加一个休眠参数</span><br><span class="line"># 每隔100条scan指令就会休眠0.1s</span><br><span class="line">redis-cli -h 127.0.0.1 -p 7001 –-bigkeys -i 0.1</span><br></pre></td></tr></table></figure>
+
+
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Redis/" rel="tag"># Redis</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/3a140985.html" rel="prev" title="并发和同步策略">
+                  <i class="fa fa-angle-left"></i> 并发和同步策略
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/6ead94ff.html" rel="next" title="JVM 与执行引擎">
+                  JVM 与执行引擎 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

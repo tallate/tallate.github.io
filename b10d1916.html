@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Linux 命令尤其多，没办法一下子全部搞明白，下面来不及看的部分我就用 TODO 标出了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 环境常用命令">
+<meta property="og:url" content="https://tallate.github.io/b10d1916.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="Linux 命令尤其多，没办法一下子全部搞明白，下面来不及看的部分我就用 TODO 标出了。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-21T14:18:28.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.874Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="命令">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tallate.github.io/b10d1916.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/b10d1916.html","path":"/b10d1916.html","title":"Linux 环境常用命令"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Linux 环境常用命令 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BE%93%E5%87%BA"><span class="nav-number">1.</span> <span class="nav-text">输出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#echo"><span class="nav-number">1.1.</span> <span class="nav-text">echo</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#date"><span class="nav-number">1.2.</span> <span class="nav-text">date</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96"><span class="nav-number">2.</span> <span class="nav-text">读取</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#pwd"><span class="nav-number">2.1.</span> <span class="nav-text">pwd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cd"><span class="nav-number">2.2.</span> <span class="nav-text">cd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ls"><span class="nav-number">2.3.</span> <span class="nav-text">ls</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cat-%E9%80%89%E9%A1%B9-%E6%96%87%E4%BB%B6"><span class="nav-number">2.4.</span> <span class="nav-text">cat [选项] [文件]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#more-%E9%80%89%E9%A1%B9-%E6%96%87%E4%BB%B6"><span class="nav-number">2.5.</span> <span class="nav-text">more [选项] 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#head-%E9%80%89%E9%A1%B9-%E6%96%87%E4%BB%B6"><span class="nav-number">2.6.</span> <span class="nav-text">head [选项] [文件]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tail-%E9%80%89%E9%A1%B9-%E6%96%87%E4%BB%B6"><span class="nav-number">2.7.</span> <span class="nav-text">tail [选项] [文件]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#wc-%E5%8F%82%E6%95%B0-%E6%96%87%E6%9C%AC"><span class="nav-number">2.8.</span> <span class="nav-text">wc [参数] 文本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#stat-%E6%96%87%E4%BB%B6"><span class="nav-number">2.9.</span> <span class="nav-text">stat 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#diff"><span class="nav-number">2.10.</span> <span class="nav-text">diff</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#grep-%E9%80%89%E9%A1%B9-%E6%96%87%E4%BB%B6"><span class="nav-number">2.11.</span> <span class="nav-text">grep [选项] [文件]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#find-%E6%9F%A5%E6%89%BE%E8%B7%AF%E5%BE%84-%E5%AF%BB%E6%89%BE%E6%9D%A1%E4%BB%B6-%E6%93%8D%E4%BD%9C"><span class="nav-number">2.12.</span> <span class="nav-text">find [查找路径] 寻找条件 操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sort"><span class="nav-number">2.13.</span> <span class="nav-text">sort</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6-%E6%96%87%E4%BB%B6%E5%A4%B9"><span class="nav-number">3.</span> <span class="nav-text">修改文件 &#x2F; 文件夹</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mkdir-option-dir"><span class="nav-number">3.1.</span> <span class="nav-text">mkdir [option] dir</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tr-%E5%8E%9F%E5%A7%8B%E5%AD%97%E7%AC%A6-%E7%9B%AE%E6%A0%87%E5%AD%97%E7%AC%A6"><span class="nav-number">3.2.</span> <span class="nav-text">tr [原始字符] [目标字符]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#touch"><span class="nav-number">3.3.</span> <span class="nav-text">touch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cp-option-source-target"><span class="nav-number">3.4.</span> <span class="nav-text">cp [option] source target</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mv-option-source-dir-file"><span class="nav-number">3.5.</span> <span class="nav-text">mv [option] source [dir|file]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rm-option-file"><span class="nav-number">3.6.</span> <span class="nav-text">rm [option] file</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dd-operand"><span class="nav-number">3.7.</span> <span class="nav-text">dd [operand]</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%93%E5%8C%85%E5%8E%8B%E7%BC%A9"><span class="nav-number">4.</span> <span class="nav-text">打包压缩</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#tar"><span class="nav-number">4.1.</span> <span class="nav-text">tar</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%BC%96%E7%A0%81"><span class="nav-number">5.</span> <span class="nav-text">文件编码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#locale"><span class="nav-number">5.1.</span> <span class="nav-text">locale</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#enca"><span class="nav-number">5.2.</span> <span class="nav-text">enca</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#iconv"><span class="nav-number">5.3.</span> <span class="nav-text">iconv</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E5%92%8C%E7%BB%84"><span class="nav-number">6.</span> <span class="nav-text">用户和组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CMOS"><span class="nav-number">6.1.</span> <span class="nav-text">CMOS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#useradd%E3%80%81adduser-%E5%92%8C-passwd"><span class="nav-number">6.2.</span> <span class="nav-text">useradd、adduser 和 passwd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#addgroup-%E5%92%8C-groupadd"><span class="nav-number">6.3.</span> <span class="nav-text">addgroup 和 groupadd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#w%E3%80%81who-%E5%92%8C-whoami"><span class="nav-number">6.4.</span> <span class="nav-text">w、who 和 whoami</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#id"><span class="nav-number">6.5.</span> <span class="nav-text">id</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#last"><span class="nav-number">6.6.</span> <span class="nav-text">last</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#history"><span class="nav-number">6.7.</span> <span class="nav-text">history</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E6%9D%83%E9%99%90"><span class="nav-number">6.8.</span> <span class="nav-text">修改权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#su-%E5%92%8C-sudo"><span class="nav-number">6.9.</span> <span class="nav-text">su 和 sudo</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#su-%E5%92%8C-sudo-%E5%8C%BA%E5%88%AB"><span class="nav-number">6.9.1.</span> <span class="nav-text">su 和 sudo 区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sudo-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-number">6.9.2.</span> <span class="nav-text">sudo 实现原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5%E5%85%B6%E4%BB%96%E7%94%A8%E6%88%B7%E8%BA%AB%E4%BB%BD%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4"><span class="nav-number">6.9.3.</span> <span class="nav-text">以其他用户身份执行命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%86%85%E7%BD%AE%E5%91%BD%E4%BB%A4%E8%A1%8C%E4%B8%BA"><span class="nav-number">6.9.4.</span> <span class="nav-text">使用内置命令行为</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A5-sudo-%E7%94%A8%E6%88%B7%E6%89%A7%E8%A1%8C%E5%8E%86%E5%8F%B2%E5%91%BD%E4%BB%A4"><span class="nav-number">6.9.5.</span> <span class="nav-text">以 sudo 用户执行历史命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8-vim-%E9%87%8C%E4%BD%BF%E7%94%A8-sudo-%E5%91%BD%E4%BB%A4"><span class="nav-number">6.9.6.</span> <span class="nav-text">在 vim 里使用 sudo 命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-sudo-%E6%89%A7%E8%A1%8C%E5%A4%9A%E4%B8%AA%E5%91%BD%E4%BB%A4"><span class="nav-number">6.9.7.</span> <span class="nav-text">使用 sudo 执行多个命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%A0%E5%AF%86%E7%A0%81%E8%BF%90%E8%A1%8C-sudo-%E5%91%BD%E4%BB%A4"><span class="nav-number">6.9.8.</span> <span class="nav-text">无密码运行 sudo 命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.10.</span> <span class="nav-text">参考</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/b10d1916.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Linux 环境常用命令 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux 环境常用命令
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-07-21 22:18:28" itemprop="dateCreated datePublished" datetime="2019-07-21T22:18:28+08:00">2019-07-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><blockquote>
+<p>Linux 命令尤其多，没办法一下子全部搞明白，下面来不及看的部分我就用 TODO 标出了。</p>
+</blockquote>
+<span id="more"></span>
+
+
+<h2 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h2><h3 id="echo"><a href="#echo" class="headerlink" title="echo"></a>echo</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ echo asd</span><br><span class="line">$ echo $SHELL</span><br></pre></td></tr></table></figure>
+<h3 id="date"><a href="#date" class="headerlink" title="date"></a>date</h3><p>date 使用+开头指定格式来输出系统时间，常见格式如下：</p>
+<ul>
+<li>| -<br>参数 | 作用<br>%t | 跳格<code>[TAB键]</code><br>%H | 小时(00-23)<br>%I | 小时(01-12)<br>%M | 分钟(00-59)<br>%S | 秒（00-60）<br>%X | 相当于%H:%M:%S<br>%Z | 显示时区<br>%p | 显示本地 AM 或 PM<br>%A | 星期几 (Sunday-Saturday)<br>%a | 星期几 (Sun-Sat)<br>%B | 完整月份 (January-December)<br>%b | 缩写月份 (Jan-Dec)<br>%d | 日(01-31)<br>%j | 一年中的第几天(001-366)<br>%m | 月份(01-12)<br>%Y | 完整的年份</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ date</span><br><span class="line">$ date &quot;+%Y-%m-%d %H:%M:%S&quot;</span><br><span class="line">$ date &quot;+%j&quot; #查看今天是一年中的第几天</span><br><span class="line">$ date -s &quot;20160901 8:30:00&quot; #设置当前的系统时间</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="读取"><a href="#读取" class="headerlink" title="读取"></a>读取</h2><h3 id="pwd"><a href="#pwd" class="headerlink" title="pwd"></a>pwd</h3><p>显示当前所处的工作目录</p>
+<h3 id="cd"><a href="#cd" class="headerlink" title="cd"></a>cd</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 切换工作路径</span><br><span class="line">cd /tmp</span><br><span class="line"># 返回到上一次的目录</span><br><span class="line">cd -</span><br><span class="line"># 快速返回到用户自己的目录</span><br><span class="line">cd ~</span><br></pre></td></tr></table></figure>
+<h3 id="ls"><a href="#ls" class="headerlink" title="ls"></a>ls</h3><p>显示目录中的文件信息<br>-a 参数可以看到全部文件<br>-l 参数可以看到文件的属性、大小等信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls -al</span><br></pre></td></tr></table></figure>
+<p>-d 查看目录本身的信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ls -ld /etc</span><br></pre></td></tr></table></figure>
+<h3 id="cat-选项-文件"><a href="#cat-选项-文件" class="headerlink" title="cat [选项] [文件]"></a>cat [选项] [文件]</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 显示行号</span><br><span class="line">cat -n test.txt</span><br></pre></td></tr></table></figure>
+<h3 id="more-选项-文件"><a href="#more-选项-文件" class="headerlink" title="more [选项] 文件"></a>more [选项] 文件</h3><h3 id="head-选项-文件"><a href="#head-选项-文件" class="headerlink" title="head [选项] [文件]"></a>head [选项] [文件]</h3><p>head 命令用于查看纯文本文档的前 N 行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">head -n 10 test.txt</span><br></pre></td></tr></table></figure>
+<h3 id="tail-选项-文件"><a href="#tail-选项-文件" class="headerlink" title="tail [选项] [文件]"></a>tail [选项] [文件]</h3><p>查看纯文本文档的后 N 行或持续刷新内容</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 查最后300行，持续监听</span><br><span class="line">tail -300f Xxx.log</span><br></pre></td></tr></table></figure>
+<h3 id="wc-参数-文本"><a href="#wc-参数-文本" class="headerlink" title="wc [参数] 文本"></a>wc [参数] 文本</h3><p>统计指定文本的行数、字数、字节数</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-l</td>
+<td>只显示行数</td>
+</tr>
+<tr>
+<td>-w</td>
+<td>只显示单词数</td>
+</tr>
+<tr>
+<td>-c</td>
+<td>只显示字节数</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 统计系统中有多少个用户</span><br><span class="line">$ wc -l /etc/passwd</span><br></pre></td></tr></table></figure>
+<h3 id="stat-文件"><a href="#stat-文件" class="headerlink" title="stat 文件"></a>stat 文件</h3><p>查看文件的具体存储信息和时间等信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">stat test.txt</span><br></pre></td></tr></table></figure>
+<h3 id="diff"><a href="#diff" class="headerlink" title="diff"></a>diff</h3><p>比较多个文本文件的差异</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 仅判断两个文件是否一致，不判断哪些地方不一样</span><br><span class="line">diff --brief a.txt b.txt</span><br><span class="line"># 判断不同，且输出不同的行号</span><br><span class="line">diff -c a.txt b.txt</span><br></pre></td></tr></table></figure>
+<h3 id="grep-选项-文件"><a href="#grep-选项-文件" class="headerlink" title="grep [选项] [文件]"></a>grep [选项] [文件]</h3><p>对文本内容进行正则匹配<br>-n：显示搜索到的信息的行号<br>-v：反选信息（即没有包含关键词的所有信息行）</p>
+<p>Linux 系统中的&#x2F;etc&#x2F;passwd 文件是保存着所有用户信息的文件，而一旦用户的登陆终端被设置成“&#x2F;sbin&#x2F;nologin”则不再允许登陆系统，因此我们可以通过使用 grep 命令来匹配出当前系统中所有不允许登陆系统的用户信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ grep /sbin/nologin /etc/passwd</span><br><span class="line"></span><br><span class="line">bin:x:1:1:bin:/bin:/sbin/nologin</span><br><span class="line">daemon:x:2:2:daemon:/sbin:/sbin/nologin</span><br><span class="line">adm:x:3:4:adm:/var/adm:/sbin/nologin</span><br><span class="line">lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin</span><br><span class="line">mail:x:8:12:mail:/var/spool/mail:/sbin/nologin</span><br><span class="line">operator:x:11:0:operator:/root:/sbin/nologin</span><br><span class="line">......省略</span><br></pre></td></tr></table></figure>
+<p>使用正则表达式匹配</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat file | grep &#x27;str1\|str2&#x27;</span><br></pre></td></tr></table></figure>
+<p>使用 grep 高效地查日志：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">grep key request.log</span><br><span class="line"># 查找多个文件</span><br><span class="line">grep key request.log catalina.out</span><br><span class="line"># 目录下查找所有符合关键字的文件</span><br><span class="line">grep key /home/UserName -r -n</span><br><span class="line"># 指定文件后缀</span><br><span class="line">grep key /home/UserName -r -n --include *.&#123;vm,java&#125;</span><br><span class="line"># 反匹配</span><br><span class="line">grep key /home/UserName -r -n --exclude *.&#123;vm,java&#125;</span><br><span class="line"># 上匹配</span><br><span class="line">grep key request.log -A 3 </span><br><span class="line"># 下匹配</span><br><span class="line">grep key request.log -B 3</span><br><span class="line"># 上下匹配</span><br><span class="line">grep key request.log -C 3</span><br></pre></td></tr></table></figure>
+
+<h3 id="find-查找路径-寻找条件-操作"><a href="#find-查找路径-寻找条件-操作" class="headerlink" title="find [查找路径] 寻找条件 操作"></a>find [查找路径] 寻找条件 操作</h3><p>查找文件<br>根据不同的文件特性来做为匹配项（如文件名、大小、修改时间、权限等）</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-name</td>
+<td>匹配名称</td>
+</tr>
+<tr>
+<td>-perm</td>
+<td>匹配权限（mode 为完全匹配，-mode 为包含即可）</td>
+</tr>
+<tr>
+<td>-user</td>
+<td>匹配所有者</td>
+</tr>
+<tr>
+<td>-group</td>
+<td>匹配所有组</td>
+</tr>
+<tr>
+<td>-mtime -n +n</td>
+<td>匹配修改内容的时间（-n 指 n 天以内，+n 指 n 天以前）</td>
+</tr>
+<tr>
+<td>-atime -n +n</td>
+<td>匹配访问文件的时间-n 指 n 天以内，+n 指 n 天以前</td>
+</tr>
+<tr>
+<td>-ctime -n +n</td>
+<td>匹配修改权限的时间-n 指 n 天以内，+n 指 n 天以前</td>
+</tr>
+<tr>
+<td>-nouser</td>
+<td>匹配无所有者的文件</td>
+</tr>
+<tr>
+<td>-nogroup</td>
+<td>匹配无所有组的文件</td>
+</tr>
+<tr>
+<td>-newer f1 !f2</td>
+<td>匹配比文件 f1 新却比 f2 旧的文件</td>
+</tr>
+<tr>
+<td>–type b&#x2F;d&#x2F;c&#x2F;p&#x2F;l&#x2F;f</td>
+<td>匹配文件类型（块设备、目录、字符设备、管道、链接文件、文件文件）</td>
+</tr>
+<tr>
+<td>-size</td>
+<td>匹配文件的大小（+50k 查找超过 50k 的文件,而-50k 则代表查找小于 50k 的文件）</td>
+</tr>
+<tr>
+<td>-prune</td>
+<td>忽略某个目录</td>
+</tr>
+<tr>
+<td>-exec {} ;</td>
+<td>后面可接对搜索到结果进一步处理的命令（下面会有演示）</td>
+</tr>
+</tbody></table>
+<p>linux 系统中的配置文件根据 FHS 协议会被保存到&#x2F;etc 目录，以下获得该目录中所有 host 开头的文件（-print 表达式加不加都没事）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find /etc -name &quot;host*&quot; -print</span><br></pre></td></tr></table></figure>
+<p>在整个系统中搜索所以权限中包括 SUID 权限的文件（使用-4000）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find / -perm -4000 -print</span><br></pre></td></tr></table></figure>
+<p>在整个的文件系统中找出所有归属于 tallate 用户的文件并复制到.&#x2F;findresults 目录</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ find / -user tallate -exec cp -arf &#123;&#125; findresults/ \;</span><br></pre></td></tr></table></figure>
+<p>其中{}代表 find 命令搜索处的逐个文件，并且命令的结尾必须是;</p>
+<p>其他的一些例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">sudo -u admin find /home/admin /tmp /usr -name \*.log(多个目录去找)</span><br><span class="line">find . -iname \*.txt(大小写都匹配)</span><br><span class="line">find . -type d(当前目录下的所有子目录)</span><br><span class="line">find /usr -type l(当前目录下所有的符号链接)</span><br><span class="line">find /usr -type l -name &quot;z*&quot; -ls(符号链接的详细信息 eg:inode,目录)</span><br><span class="line">find /home/admin -size +250000k(超过250000k的文件，当然+改成-就是小于了)</span><br><span class="line">find /home/admin f -perm 777 -exec ls -l &#123;&#125; \; (按照权限查询文件)</span><br><span class="line">find /home/admin -atime -1 1天内访问过的文件</span><br><span class="line">find /home/admin -ctime -1 1天内状态改变过的文件</span><br><span class="line">find /home/admin -mtime -1 1天内修改过的文件</span><br><span class="line">find /home/admin -amin -1 1分钟内访问过的文件</span><br><span class="line">find /home/admin -cmin -1 1分钟内状态改变过的文件</span><br><span class="line">find /home/admin -mmin -1 1分钟内修改过的文件</span><br></pre></td></tr></table></figure>
+
+<h3 id="sort"><a href="#sort" class="headerlink" title="sort"></a>sort</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sort -t $&#x27;\t&#x27; -k 3 -u filename</span><br></pre></td></tr></table></figure>
+
+<p>常用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-t 指定分隔符为‘\t’ </span><br><span class="line">-k 指定第三列 </span><br><span class="line">-u 去重</span><br></pre></td></tr></table></figure>
+
+<p>其他一些选项</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">-r 降序排列 </span><br><span class="line">-o 把排序结果输出到源文件</span><br><span class="line">sort默认是把结果输出到标准输出，所以需要用重定向才能将结果写入文件，形如 </span><br><span class="line">sort filename&gt;newfile </span><br><span class="line">如果将结果输出到原文件，用重定向相当于清空</span><br><span class="line">-n 当作数字来比较</span><br><span class="line">你有没有遇到过10比2小的情况。我反正遇到过。出现这种情况是由于排序程序将这些数字按字符来排序了，排序程序会先比较1和2，显然1小，所以就将10放在2前面喽。这也是sort的一贯作风。 </span><br><span class="line">我们如果想改变这种现状，就要使用-n选项，来告诉sort，“要以数值来排序”！</span><br><span class="line">-f 会将小写字母都转换为大写字母来进行比较，亦即忽略大小写</span><br><span class="line">-c 会检查文件是否已排好序，如果乱序，则输出第一个乱序的行的相关信息，最后返回1</span><br><span class="line">-C 会检查文件是否已排好序，如果乱序，不输出内容，仅返回1</span><br><span class="line">-M 会以月份来排序，比如JAN小于FEB等等</span><br><span class="line">-b 会忽略每一行前面的所有空白部分，从第一个可见字符开始比较。</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="修改文件-文件夹"><a href="#修改文件-文件夹" class="headerlink" title="修改文件 &#x2F; 文件夹"></a>修改文件 &#x2F; 文件夹</h2><h3 id="mkdir-option-dir"><a href="#mkdir-option-dir" class="headerlink" title="mkdir [option] dir"></a>mkdir [option] dir</h3><p>创建空白的文件夹</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">创建单个目录</span><br><span class="line">`mkdir` a</span><br><span class="line">使用-p参数创建嵌套的文件目录</span><br><span class="line">`mkdir` -p a/b/c</span><br></pre></td></tr></table></figure>
+
+<h3 id="tr-原始字符-目标字符"><a href="#tr-原始字符-目标字符" class="headerlink" title="tr [原始字符] [目标字符]"></a>tr [原始字符] [目标字符]</h3><p>替换文本文件中的字符</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 全部替换为答谢字母</span><br><span class="line">$ cat test.txt | tr [a-z] [A-Z]</span><br></pre></td></tr></table></figure>
+
+<h3 id="touch"><a href="#touch" class="headerlink" title="touch"></a>touch</h3><p>创建空白文件，或者设置文件的各种时间（修改、更改、读取）</p>
+<ul>
+<li>更改时间(mtime):内容修改时间（不包括权限的）</li>
+<li>更改权限(ctime):更改权限与属性的时间</li>
+<li>读取时间(atime):读取文件内容的时间</li>
+</ul>
+<p>创建空白文件很简单：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">touch test.log</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-a</td>
+<td>仅修改“访问时间”（atime）</td>
+</tr>
+<tr>
+<td>-m</td>
+<td>仅修改“更改时间”（mtime）</td>
+</tr>
+<tr>
+<td>-d</td>
+<td>同时修改 atime 与 mtime</td>
+</tr>
+</tbody></table>
+<p>我们可以在修改一个文件前先查看下文件的修改时间，然后再通过 touch 命令将修改后的文件时间设置伪装成自己没有动过的一样，很多黑客就会这么做呢：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ ls -l test.log </span><br><span class="line">-rwxrwxrwx 1 root root 5 9月  24 13:33 test.log</span><br><span class="line">$ echo &quot;there are sth new&quot; &gt;&gt; test.log</span><br><span class="line">$ ls -l test.log </span><br><span class="line">-rwxrwxrwx 1 root root 23 9月  24 13:34 test.log</span><br><span class="line">$ sudo  touch -d &quot;2016-09-24 13:33&quot; test.log </span><br><span class="line">$ ls -l test.log </span><br><span class="line">-rwxrwxrwx 1 root root 23 9月  24 13:33 test.log</span><br></pre></td></tr></table></figure>
+
+<h3 id="cp-option-source-target"><a href="#cp-option-source-target" class="headerlink" title="cp [option] source target"></a>cp [option] source target</h3><p>复制文件或目录</p>
+<ol>
+<li>如果目标文件是个目录，则会将源文件复制到 该目录中；</li>
+<li>如果目标文件也是个普通文件，则会提示是否要覆盖它；</li>
+<li>最后是第三种的情况了，如果目标文件是不存在的，则会将源文件修改成目标文件 的名称，类似于是重命名的操作。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-p</td>
+<td>保留原始文件的属性</td>
+</tr>
+<tr>
+<td>-d</td>
+<td>若对象为”链接文件”，则保留该”链接文件”的属性</td>
+</tr>
+<tr>
+<td>-r</td>
+<td>递归持续复制（用于目录）</td>
+</tr>
+<tr>
+<td>-i</td>
+<td>若目标文件存在则询问是否覆盖</td>
+</tr>
+<tr>
+<td>-a</td>
+<td>相当于-pdr（p,d,r 为上述的参数）</td>
+</tr>
+</tbody></table>
+<p>首先创建一个名为 install.log 的文件，然后将其复制出来一份名为 x.log 的备份文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ touch install.log</span><br><span class="line">$ cp install.log x.log</span><br><span class="line">$ ls</span><br><span class="line">install.log x.log</span><br></pre></td></tr></table></figure>
+
+<h3 id="mv-option-source-dir-file"><a href="#mv-option-source-dir-file" class="headerlink" title="mv [option] source [dir|file]"></a>mv [option] source [dir|file]</h3><p>移动文件（剪切）或改名</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ mv x.log linux.log</span><br></pre></td></tr></table></figure>
+
+<h3 id="rm-option-file"><a href="#rm-option-file" class="headerlink" title="rm [option] file"></a>rm [option] file</h3><p>删除文件或目录</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-f</td>
+<td>强制删除，忽略询问是否要执行删除</td>
+</tr>
+<tr>
+<td>-r</td>
+<td>删除目录并递归删除其内容</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[root@linuxprobe ~]# ls</span><br><span class="line">install.log linux.log</span><br><span class="line">[root@linuxprobe ~]# rm install.log</span><br><span class="line">rm: remove regular empty file ‘install.log’? y</span><br><span class="line">[root@linuxprobe ~]# rm -rf linux.log</span><br><span class="line">[root@linuxprobe ~]# ls</span><br><span class="line">[root@linuxprobe ~]#</span><br></pre></td></tr></table></figure>
+
+<h3 id="dd-operand"><a href="#dd-operand" class="headerlink" title="dd [operand]"></a>dd [operand]</h3><p>指定大小的拷贝的文件或指定转换文件。<br>它能够让用户指定<strong>数据块</strong>的大小和个数来复制一个文件的内容，当然如果您愿意的话还可以在复制过程中转换其中的数据。</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>if</td>
+<td>输入的文件名称。</td>
+</tr>
+<tr>
+<td>of</td>
+<td>输出的文件名称。</td>
+</tr>
+<tr>
+<td>bs</td>
+<td>设置每个“块”的大小。</td>
+</tr>
+<tr>
+<td>count</td>
+<td>设置要拷贝“块”的个数。</td>
+</tr>
+</tbody></table>
+<p>Linux 系统中有一个叫做<code>/dev/zero</code>的设备文件，它不会占用您的系统存储空间，但里面却可以保存有无穷无尽的数据，一般用来搭配 dd 命令来生成出来一个指定大小的文件是再好不过的了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ dd if=/dev/zero of=560_file count=1 bs=560M</span><br><span class="line">记录了1+0 的读入</span><br><span class="line">记录了1+0 的写出</span><br><span class="line">587202560 bytes (587 MB, 560 MiB) copied, 1.68985 s, 347 MB/s</span><br></pre></td></tr></table></figure>
+<p>dd 命令也绝对不仅限于复制文件这么简单，如果您想把一个光盘设备只做成 iso 格式的镜像文件，在 Windows 系统中一定免不了要用到第三方的很多软件才可以，但我们可以直接使用这个 dd 命令来复制并压制光盘设备变成一个可立即使用的 iso 镜像哦：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ dd if=/dev/cdrom of=RHEL-server-7.0-x86_64-LinuxProbe.Com.iso</span><br><span class="line">7311360+0 records in</span><br><span class="line">7311360+0 records out</span><br><span class="line">3743416320 bytes (3.7 GB) copied, 370.758 s, 10.1 MB/s</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="打包压缩"><a href="#打包压缩" class="headerlink" title="打包压缩"></a>打包压缩</h2><h3 id="tar"><a href="#tar" class="headerlink" title="tar"></a>tar</h3><p>对文件打包压缩或解压<br>linux 下常用压缩包格式为.tar 或.tar.gz 或.tar.bz2，tar 命令的参数很多：</p>
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-c</td>
+<td>创建压缩文件</td>
+</tr>
+<tr>
+<td>-x</td>
+<td>解压文件</td>
+</tr>
+<tr>
+<td>-z</td>
+<td>指定使用 Gzip 格式来压缩解压文件</td>
+</tr>
+<tr>
+<td>-j</td>
+<td>指定使用 bzip2 参数来压缩解压文件</td>
+</tr>
+<tr>
+<td>-v</td>
+<td>不断显示压缩解压的过程</td>
+</tr>
+<tr>
+<td>-C</td>
+<td>指定要解压到哪个指定的目录</td>
+</tr>
+<tr>
+<td>-f</td>
+<td>该参数必须放到参数的最后一位，代表要压缩或解压的软件包名称</td>
+</tr>
+</tbody></table>
+<p>比如可以使用“tar -czvf 目标压缩包名.tar.gz 要打包目录”将指定文件打包，同样解压使用“tar -xzvf 压缩包名.tar.gz”</p>
+<p>对&#x2F;etc 目录内文件通过 gzip 格式进行打包压缩，并命名为 etc.tar.gz：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">$ tar czvf etc.tar.gz /etc</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>将刚打包的压缩包文件指定解压到&#x2F;home&#x2F;tallate 目录中：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">$ tar xzvf etc.tar.gz -C /home/tallate</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="文件编码"><a href="#文件编码" class="headerlink" title="文件编码"></a>文件编码</h2><h3 id="locale"><a href="#locale" class="headerlink" title="locale"></a>locale</h3><ul>
+<li>查看系统默认编码<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">locale</span><br></pre></td></tr></table></figure></li>
+<li>查看系统支持的所有语言<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">locale -a</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h3 id="enca"><a href="#enca" class="headerlink" title="enca"></a>enca</h3><p>TODO</p>
+<h3 id="iconv"><a href="#iconv" class="headerlink" title="iconv"></a>iconv</h3><p>TODO</p>
+<h2 id="用户和组"><a href="#用户和组" class="headerlink" title="用户和组"></a>用户和组</h2><h3 id="CMOS"><a href="#CMOS" class="headerlink" title="CMOS"></a>CMOS</h3><p>为 bios 设置的密码会被保存在 CMOS 芯片中，对 CMOS 放电相当于对 BIOS 进行了出厂设置。</p>
+<h3 id="useradd、adduser-和-passwd"><a href="#useradd、adduser-和-passwd" class="headerlink" title="useradd、adduser 和 passwd"></a>useradd、adduser 和 passwd</h3><p>adduser 是交互式的，useradd 更适合在已经确定用户属性的情况下使用，或者是批量创建</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">adduser username # 终端会提示输入密码等信息</span><br><span class="line">useradd -u 544 -d /home/username -g users -m username # 创建一个用户username，属于组users，主目录为/home/username且如果不存在就自动创建，用户ID=544</span><br><span class="line">passwd username # 修改用户密码</span><br></pre></td></tr></table></figure>
+<h3 id="addgroup-和-groupadd"><a href="#addgroup-和-groupadd" class="headerlink" title="addgroup 和 groupadd"></a>addgroup 和 groupadd</h3><p>TODO</p>
+<h3 id="w、who-和-whoami"><a href="#w、who-和-whoami" class="headerlink" title="w、who 和 whoami"></a>w、who 和 whoami</h3><p><strong>w</strong>命令用于显示已经登录系统的用户的名称，以及他们正在做的事。该命令所使用的信息来源于&#x2F;var&#x2F;run&#x2F;utmp 文件。<br>用户名称<br>用户的机器名称或 tty 号<br>远程主机地址<br>用户登录系统的时间<br>空闲时间（作用不大）<br>附加到 tty（终端）的进程所用的时间（JCPU 时间）<br>当前进程所用时间（PCPU 时间）<br>用户当前正在使用的命令</p>
+<p><strong>who</strong>命令查看当前登入主机的用户终端信息<br>用户名 tty 号 时间日期 主机地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ who</span><br><span class="line">tallate  :0           2016-09-23 05:27 (:0)</span><br><span class="line">tallate  pts/0        2016-09-23 05:28 (:0)</span><br><span class="line">tallate  pts/1        2016-09-23 05:45 (:0)</span><br></pre></td></tr></table></figure>
+
+<p><strong>whoami</strong>命令用于显示登入的用户名。</p>
+<h3 id="id"><a href="#id" class="headerlink" title="id"></a>id</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id &lt;用户名&gt; # 查看指定用户信息</span><br></pre></td></tr></table></figure>
+
+<h3 id="last"><a href="#last" class="headerlink" title="last"></a>last</h3><p>下面使用 last 命令看到的本机登陆信息，其实仅仅是调取了过往保存到系统中的日志文件罢了，篡改里面的文字其实也很简单，因此对于做“黑客”入侵行为审计时其实并不牢靠，只能仅供我们参考而已</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">last # 查看用户登录日志</span><br><span class="line">tallate  pts/1        :0               Fri Sep 23 05:45   still logged in   </span><br><span class="line">tallate  pts/0        :0               Fri Sep 23 05:28   still logged in   </span><br><span class="line">tallate  :0           :0               Fri Sep 23 05:27   still logged in   </span><br><span class="line">(unknown :0           :0               Fri Sep 23 05:27 - 05:27  (00:00)    </span><br><span class="line">reboot   system boot  3.10.0-123.el7.x Fri Sep 23 05:27 - 05:51  (00:24)    </span><br><span class="line">tallate  pts/0        :0               Fri Aug 26 05:33 - 06:48  (01:14)    </span><br><span class="line">tallate  :0           :0               Fri Aug 26 05:30 - 06:48  (01:18)    </span><br><span class="line">(unknown :0           :0               Fri Aug 26 05:28 - 05:30  (00:01)    </span><br><span class="line">reboot   system boot  3.10.0-123.el7.x Fri Aug 26 05:28 - 06:48  (01:19)    </span><br><span class="line">tallate  pts/0        :0               Thu Aug 25 07:30 - 07:50  (00:19)    </span><br><span class="line">tallate  :0           :0               Thu Aug 25 06:52 - 07:50  (00:58)    </span><br><span class="line">(unknown :0           :0               Thu Aug 25 06:46 - 06:52  (00:06)    </span><br><span class="line">reboot   system boot  3.10.0-123.el7.x Thu Aug 25 06:39 - 07:50  (01:11)    </span><br><span class="line">wtmp begins Thu Aug 25 06:39:08 2016</span><br></pre></td></tr></table></figure>
+
+<h3 id="history"><a href="#history" class="headerlink" title="history"></a>history</h3><p>显示历史执行过的命令<br>history 命令默认会保存 1000 条执行过的命令，若要修改可直接编辑&#x2F;etc&#x2F;profile 文件的 HISTSIZE 值。它能显示出当前用户在本地计算机中执行过的所有命令记录，您可以使用-c 参数来清空里面的历史数据，还可以使用“!编码数字”的方式来重复执行某一次的命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">$ history</span><br><span class="line">    1  cd /etc/</span><br><span class="line">    2  cd yum.repos.d/</span><br><span class="line">    3  la</span><br><span class="line">    4  ls</span><br><span class="line">    5  yum</span><br><span class="line">    6  rpm</span><br><span class="line">    7  yum repolist all</span><br><span class="line">    8  yum update</span><br><span class="line">    9  sudo yum repolist all</span><br><span class="line">   10  sudo yum update</span><br><span class="line">   11  cat /etc/systemd/system/nfs.target.wants/nfs-lock.service </span><br><span class="line">   12  cd /etc/</span><br><span class="line">   13  cd /lib</span><br><span class="line">   14  cd systemd/</span><br><span class="line">   15  cd system</span><br><span class="line">   16  ls</span><br><span class="line">   17  vim </span><br><span class="line">   18  sudo vim multi-user.target</span><br><span class="line">   19  man ln</span><br><span class="line">   20  free</span><br><span class="line">   21  free -h</span><br><span class="line">   22  who</span><br><span class="line">   23  last</span><br><span class="line">   24  history</span><br></pre></td></tr></table></figure>
+<p>可以使用<code>!&lt;命令序号&gt;</code>的格式来选择命令执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ !22</span><br><span class="line">who</span><br><span class="line">tallate  :0           2016-09-23 05:27 (:0)</span><br><span class="line">tallate  pts/0        2016-09-23 05:28 (:0)</span><br><span class="line">tallate  pts/1        2016-09-23 05:45 (:0)</span><br></pre></td></tr></table></figure>
+<p>历史命令将保存到用户目录中的**.bash_history**文件中，可以使用下面命令清空历史命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">history -c</span><br></pre></td></tr></table></figure>
+
+<h3 id="修改权限"><a href="#修改权限" class="headerlink" title="修改权限"></a>修改权限</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo passwd # 修改密码</span><br><span class="line">su - # 转换当前登录用户（接用户名，-代表root）</span><br><span class="line">ls -al # 查看文件权限</span><br><span class="line">chown -R mysql:mysql mysql # 修改文件拥有者，使得mysql群组的mysql用户能够存取mysql文件</span><br><span class="line">chmod mode file # 修改访问权限</span><br></pre></td></tr></table></figure>
+
+<h3 id="su-和-sudo"><a href="#su-和-sudo" class="headerlink" title="su 和 sudo"></a>su 和 sudo</h3><p>在 GNU&#x2F;Linux 中，有两种方式可以用提升的权限来运行命令：</p>
+<ul>
+<li>使用 su 命令</li>
+<li>使用 sudo 命令</li>
+</ul>
+<h4 id="su-和-sudo-区别"><a href="#su-和-sudo-区别" class="headerlink" title="su 和 sudo 区别"></a>su 和 sudo 区别</h4><p><code>su</code>（<strong>s</strong>witch <strong>u</strong>ser）是切换用户身份的命令，第一次切换时需要设置系统的密码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">su # 只是切换了root身份，但Shell环境仍然是普通用户的Shell，环境变量仍是原来的</span><br><span class="line">su - # 连用户和Shell环境一起切换成root身份</span><br><span class="line">su - user_name # 以此类推，切换到其他用户也应该使用 su - 命令而不是 su</span><br></pre></td></tr></table></figure>
+
+<p>使用 su 命令我们可以切换到 root 用户并且执行命令，但是这种方法存在一些缺点：</p>
+<ul>
+<li>我们需要与他人共享 root 的密码。</li>
+<li>因为 root 用户为超级用户，我们不能授予受控的访问权限。</li>
+<li>我们无法审查用户在做什么。</li>
+</ul>
+<p><code>sudo</code> 表示 “<strong>s</strong>uper<strong>u</strong>ser <strong>do</strong>”。 它允许已验证的用户以其他用户的身份来运行命令。其他用户可以是普通用户或者超级用户。然而，大部分时候我们用它来以提升的权限来运行命令。<br>sudo 命令与安全策略配合使用，默认安全策略是 sudoers，可以通过文件 &#x2F;etc&#x2F;sudoers 来配置。其安全策略具有高度可拓展性。人们可以开发和分发他们自己的安全策略作为插件。<br>可见，sudo 相对 su 来说有以下优点：</p>
+<ul>
+<li>我们不需要妥协来分享 root 用户的密码。普通用户使用他们自己的密码就可以用提升的权限来执行命令。</li>
+<li>我们可以控制 sudo 用户的访问，这意味着我们可以限制用户只执行某些命令。</li>
+<li>除此之外，sudo 用户的所有活动都会被记录下来，因此我们可以随时审查进行了哪些操作。在基于 Debian 的 GNU&#x2F;Linux 中，所有活动都记录在 <code>/var/log/auth.log</code> 文件中。</li>
+</ul>
+<h4 id="sudo-实现原理"><a href="#sudo-实现原理" class="headerlink" title="sudo 实现原理"></a>sudo 实现原理</h4><p>sudo 是一个特殊的用户组，在这个组内的用户可以一定程度上地使用 root 权限，但为用户分配 sudo 权限的过程比较特殊，需要使用<code>visudo</code>命令，在打开的 sudoers 文件末尾加上：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">username ALL=(ALL) ALL</span><br><span class="line">username ALL = NOPASSWD: ALL</span><br><span class="line"># 限制用户只执行某些命令</span><br><span class="line">username ALL=(ALL) NOPASSWD: /bin/echo /bin/ls</span><br></pre></td></tr></table></figure>
+<p>上述命令中：</p>
+<ul>
+<li>username 表示用户名</li>
+<li>第一个 ALL 指示允许从任何终端、机器访问 sudo</li>
+<li>第二个 (ALL) 指示 sudo 命令被允许以任何用户身份执行</li>
+<li>第三个 ALL 表示所有命令都可以作为 root 执行</li>
+</ul>
+<h4 id="以其他用户身份执行命令"><a href="#以其他用户身份执行命令" class="headerlink" title="以其他用户身份执行命令"></a>以其他用户身份执行命令</h4><p>要用提升的权限执行命令，只需要在命令前加上 sudo，除此之外，我们可以使用 sudo 以另一个用户身份执行命令。例如，在下面的命令中，用户 username 以用户 devesh 的身份执行命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo -u devesh whoami</span><br></pre></td></tr></table></figure>
+<h4 id="使用内置命令行为"><a href="#使用内置命令行为" class="headerlink" title="使用内置命令行为"></a>使用内置命令行为</h4><p>sudo 的一个限制是 —— 它无法使用 Shell 的内置命令。例如， history 记录是内置命令，如果你试图用 sudo 执行这个命令，那么会提示如下的未找到命令的错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo history</span><br><span class="line">sudo: history: command not found</span><br></pre></td></tr></table></figure>
+<p>为了克服上述问题，我们可以访问 root shell，并在那里执行任何命令，包括 Shell 的内置命令。<br>要访问 root shell, 执行下面的命令:<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo bash</span><br></pre></td></tr></table></figure><br>执行完这个命令后——您将观察到提示符变为井号（<code>#</code>）。</p>
+<h4 id="以-sudo-用户执行历史命令"><a href="#以-sudo-用户执行历史命令" class="headerlink" title="以 sudo 用户执行历史命令"></a>以 sudo 用户执行历史命令</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo !4</span><br></pre></td></tr></table></figure>
+<h4 id="在-vim-里使用-sudo-命令"><a href="#在-vim-里使用-sudo-命令" class="headerlink" title="在 vim 里使用 sudo 命令"></a>在 vim 里使用 sudo 命令</h4><p>很多时候，我们编辑系统的配置文件时，在保存时才意识到我们需要 root 访问权限来执行此操作。因为这个可能让我们丢失我们对文件的改动。没有必要惊慌，我们可以在 Vim 中使用下面的命令来解决这种情况：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:w !sudo tee %</span><br></pre></td></tr></table></figure>
+<p>上述命令中：</p>
+<ul>
+<li>冒号 (:) 表明我们处于 Vim 的退出模式</li>
+<li>感叹号 (!) 表明我们正在运行 shell 命令</li>
+<li>sudo 和 tee 都是 shell 命令</li>
+<li>百分号 (%) 表明从当前行开始的所有行</li>
+</ul>
+<h4 id="使用-sudo-执行多个命令"><a href="#使用-sudo-执行多个命令" class="headerlink" title="使用 sudo 执行多个命令"></a>使用 sudo 执行多个命令</h4><p>至今我们用 sudo 只执行了单个命令，但我们可以用它执行多个命令。只需要用分号 (;) 隔开命令，如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo -- bash -c &#x27;pwd; hostname; whoami&#x27;</span><br></pre></td></tr></table></figure>
+<p>上述命令中<br>双连字符 (–) 停止命令行切换<br>bash 表示要用于执行命令的 shell 名称<br>-c 选项后面跟着要执行的命令</p>
+<h4 id="无密码运行-sudo-命令"><a href="#无密码运行-sudo-命令" class="headerlink" title="无密码运行 sudo 命令"></a>无密码运行 sudo 命令</h4><p>当第一次执行 <code>sudo</code> 命令时，它会提示输入密码，默认情形下密码被缓存 15 分钟。但是，我们可以避免这个操作，并使用 <code>NOPASSWD</code> 关键字禁用密码认证，同样适用 visudo 命令来设置，如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username ALL=(ALL) NOPASSWD: ALL</span><br></pre></td></tr></table></figure>
+
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><ol>
+<li><a target="_blank" rel="noopener" href="http://rk700.github.io/2016/10/26/linux-capabilities/">Linux 的 capabilities 机制</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/%E5%91%BD%E4%BB%A4/" rel="tag"># 命令</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/72161861.html" rel="prev" title="Eureka原理分析">
+                  <i class="fa fa-angle-left"></i> Eureka原理分析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/da3bc81f.html" rel="next" title="Linux环境运维命令">
+                  Linux环境运维命令 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

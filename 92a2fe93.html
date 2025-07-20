@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="开个头，之后慢慢补。 背景6.824MapReduce 介绍">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Lab_1_MapReduce">
+<meta property="og:url" content="https://tallate.github.io/92a2fe93.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="开个头，之后慢慢补。 背景6.824MapReduce 介绍">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/6.824/1/lab1_part1_1.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/6.824/1/lab1_part1_2.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/6.824/1/lab1_part1_3.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/6.824/1/lab1_result.png">
+<meta property="article:published_time" content="2020-08-23T07:26:49.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.849Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="MapReduce">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/6.824/1/lab1_part1_1.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/92a2fe93.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/92a2fe93.html","path":"/92a2fe93.html","title":"Lab_1_MapReduce"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Lab_1_MapReduce | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Part-I"><span class="nav-number">2.</span> <span class="nav-text">Part I</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Part-II"><span class="nav-number">3.</span> <span class="nav-text">Part II</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Part-III"><span class="nav-number">4.</span> <span class="nav-text">Part III</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Part-IV-Handling-worker-failures"><span class="nav-number">5.</span> <span class="nav-text">Part IV: Handling worker failures</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Part-V-Inverted-index-generation"><span class="nav-number">6.</span> <span class="nav-text">Part V: Inverted index generation</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Result"><span class="nav-number">7.</span> <span class="nav-text">Result</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/92a2fe93.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Lab_1_MapReduce | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Lab_1_MapReduce
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-23 15:26:49" itemprop="dateCreated datePublished" datetime="2020-08-23T15:26:49+08:00">2020-08-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/6-824/" itemprop="url" rel="index"><span itemprop="name">6.824</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>开个头，之后慢慢补。</p>
+<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p><a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.824/">6.824</a><br><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/MapReduce">MapReduce 介绍</a></p>
+<span id="more"></span>
+
+<h1 id="Part-I"><a href="#Part-I" class="headerlink" title="Part I"></a>Part I</h1><p>完成 mapreduce 的 Sequential 版本，主要是 doMap 和 doReduce 函数，它们分别在 common_map.go 和 common_reduce.go 中定义。<br>程序从 test_test.go 进入，先产生 input 文件，根据参数调用测试函数；<br>调用 master.go 的 Sequential 函数，Sequential 函数顺序地执行 nMap 个 mapTask，一个输入文件一个 mapper，每个 mapper 将产生的数据随机放入 nReduce 个文件中，然后顺序执行 nReduce 个 reduceTask，每个 reducer 读取分配给它的数据文件，排序数据再调用 reduce 函数。<br>排序因为目标数据是数字字符串，所以策略是先转换成数字再做比较：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">k1, _ := strconv.Atoi(kv1.Key);k2, _ := strconv.Atoi(kv2.Key);return k1 &lt; k2;</span><br></pre></td></tr></table></figure>
+
+<p>例子 1 1 个 mapper1 个 reducer<br>mapper 将数据输入到中间文件中，后 reducer 读出来</p>
+<p>例子 2 5 个 mapper3 个 reducer<br>1.Makeinput 函数产生 5 个 input 文件，分别包括 0 - 19999、20000 - 39999、40000 - 59999、60000 - 79999、80000 - 99999；<br><img src="/imgs/6.824/1/lab1_part1_1.png" alt="lab1_part1_1" title="lab1_part1_1"><br>2.mapper0 处理文件 0，将 0 - 19999 随机分散到 3 个文件中，文件名显示该 mapper 号和其指定的 reduce 号，其他 mapper 同理；<br><img src="/imgs/6.824/1/lab1_part1_2.png" alt="lab1_part1_2" title="lab1_part1_2"><br>3.reducer0 处理分配给它的数据文件，即 0-0、1-0、2-0、3-0、4-0，分别包括 0 - 19999、20000 - 39999、40000 - 59999、60000 - 79999、80000 - 99999 的数据，reducer 读取这些数据然后整合成一个 res 文件，其他 reducer 同理；<br><img src="/imgs/6.824/1/lab1_part1_3.png" alt="lab1_part1_3" title="lab1_part1_3"></p>
+<p>结果</p>
+<h1 id="Part-II"><a href="#Part-II" class="headerlink" title="Part II"></a>Part II</h1><p>问题，reduce 函数需要统计 key 相同的项，所以 doReduce 函数在排序后，需要将相邻的 key 相同的项组织成一个[]string。修改后的 reduce 部分：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">l := len(kvs);values := []string&#123;kvs[0].Value&#125;;for i := 1; i &lt; l; i++&#123;if kvs[i].Key == kvs[i - 1].Key&#123;    values = append(values, kvs[i].Value);&#125; else&#123;    enc.Encode(KeyValue&#123;kvs[i - 1].Key, reduceF(kvs[i - 1].Key, values)&#125;);    values = nil;    values = append(values, kvs[i].Value);&#125;&#125;enc.Encode(KeyValue&#123;kvs[l - 1].Key, reduceF(kvs[l - 1].Key, values)&#125;);</span><br></pre></td></tr></table></figure>
+<p>上题排序函数因为是给数字字符串排序所以采取的策略是”先转换成数字再比较数字大小排序”，而本题需要给 word 排序，也即按字母序排序：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">return strings.Compare(kv1.Key, kv2.Key) &lt; 0;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="Part-III"><a href="#Part-III" class="headerlink" title="Part III"></a>Part III</h1><p>part II 的 distributed 版本，使用 golang 的 RPC 和 channel 模拟现实环境。<br>master 和 worker 通过 RPC 交互，master.go 中的 run()调用 schedule.go 中的 schedule()来分派任务给 worker，schedule()先 doMap 然后 doReduce 最后调用 master_splitmerge.go 中的 merge()来将中间文件组织成最终结果。<br>根据需要 schedule 需要等待 worker 来才能执行 task，那么这些 worker 从哪里来？<br>首先看本题的测试函数 TestBasic，它调用了 worker.go 中的 RunWorker()来生成 worker<br>RunWorker()内部 new 一个 wk 并初始化后，调用了 wk.register(MasterAddress)，这个方法使用 RPC 方式调用 Master.Register 向 master 传这个 wk 的 name 以告知该 wk 空闲准备接受 task，同时 wk.register(MasterAddress)函数在 rpc server 注册了 wk，wk.name 就是其地址，这样 schedule 可以使用 RPC 来远程调用 wc.DoTask()；（但是有个问题，官方文档说不可注册同类型的多个对象，但是这里注册的多个 worker 都是相同的类型，为什么？）<br>run 函数内部先调用 schedule(map)进行 map 处理，本题有 100 个文件，也就是说有 100 个 task，而 worker 只有 2 个（这里的 worker 和 mapper 不是一回事），每个 task 都需要等待空闲的 worker，在处理完毕后即释放 worker；</p>
+<h1 id="Part-IV-Handling-worker-failures"><a href="#Part-IV-Handling-worker-failures" class="headerlink" title="Part IV: Handling worker failures"></a>Part IV: Handling worker failures</h1><p>处理 worker 发生的错误。通过检测 RPC 是否超时可以判断 worker 是否出现错误，当 master 通过 RPC 分配给 worker 的任务失败，这个任务需要重新分配给其他 worker。<br>超时错误发生在 RPC 调用，本程序的 RPC 调用由 common_rpc.go 中的 call()函数负责，若发生超时它将返回 false。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line">// schedule starts and waits for all tasks in the given phase (Map or Reduce).</span><br><span class="line">func (mr *Master) schedule(phase jobPhase) &#123;</span><br><span class="line">    var ntasks int</span><br><span class="line">    var nios int // number of inputs (for reduce) or outputs (for map)</span><br><span class="line">    switch phase &#123;</span><br><span class="line">    case mapPhase:</span><br><span class="line">        ntasks = len(mr.files)</span><br><span class="line">        nios = mr.nReduce</span><br><span class="line">    case reducePhase:</span><br><span class="line">        ntasks = mr.nReduce</span><br><span class="line">        nios = len(mr.files)</span><br><span class="line">    &#125;</span><br><span class="line">​</span><br><span class="line">    fmt.Printf(&quot;Schedule: %v %v tasks (%d I/Os)\n&quot;, ntasks, phase, nios)</span><br><span class="line">​</span><br><span class="line">    // All ntasks tasks have to be scheduled on workers, and only once all of</span><br><span class="line">    // them have been completed successfully should the function return.</span><br><span class="line">    // Remember that workers may fail, and that any given worker may finish</span><br><span class="line">    // multiple tasks.</span><br><span class="line">    //</span><br><span class="line">    // TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO TODO</span><br><span class="line">    //</span><br><span class="line">​</span><br><span class="line">    /*</span><br><span class="line">        schedule只需要将输入文件名mr.files[task]和任务task告诉worker，worker知道应该从哪个文件输入哪个文件输出</span><br><span class="line">​</span><br><span class="line">        worker上线后调用Master.Register并通过mr.registerChannel来传递新worker的信息，schedule需要读取这个channel</span><br><span class="line">        master通过调用Worker.DoTask(DoTaskArgs)来通知worker新任务，Master结构体保存了当前运行job的信息，但是它不知道Map和Reduce函数的内部情况，那是worker自己的事</span><br><span class="line">        worker处理结束后需要重新调用mr.registerChannel &lt;- args.Worker，表示这个worker重新空闲</span><br><span class="line">    */</span><br><span class="line">    /*</span><br><span class="line">    for task := 0; task &lt; ntasks; task++&#123;</span><br><span class="line">        worker := &lt;-mr.registerChannel;</span><br><span class="line">        args := DoTaskArgs&#123;mr.jobName, mr.files[task], phase, task, nios&#125;;</span><br><span class="line">        ok := call(worker, &quot;Worker.DoTask&quot;, args, new(struct&#123;&#125;))</span><br><span class="line">        if ok == false &#123;</span><br><span class="line">            fmt.Printf(&quot;DoTask: RPC %s register error\n&quot;, worker);</span><br><span class="line">        &#125;</span><br><span class="line">        mr.registerChannel &lt;- worker;</span><br><span class="line">    &#125;</span><br><span class="line">    */</span><br><span class="line">    sem := make(chan int);</span><br><span class="line">    var deal func(int) = func(task int) &#123;</span><br><span class="line">        worker := &lt;-mr.registerChannel;</span><br><span class="line">        args := DoTaskArgs&#123;mr.jobName, mr.files[task], phase, task, nios&#125;;</span><br><span class="line">        // 通知worker工作</span><br><span class="line">        okDo := call(worker, &quot;Worker.DoTask&quot;, args, new(struct&#123;&#125;));</span><br><span class="line">        if okDo == false &#123;</span><br><span class="line">            fmt.Printf(&quot;DoTask: RPC %s register error\n&quot;, worker);</span><br><span class="line">            // 重新调用一次</span><br><span class="line">            deal(task);</span><br><span class="line">        &#125;</span><br><span class="line">        // 通知master有新worker空闲了</span><br><span class="line">        argsmr := RegisterArgs&#123;worker&#125;;</span><br><span class="line">        okRg := call(mr.address, &quot;Master.Register&quot;, argsmr, new(struct&#123;&#125;));</span><br><span class="line">        if okRg == false &#123;</span><br><span class="line">            fmt.Printf(&quot;Register: RPC %s register error&quot;, worker);</span><br><span class="line">        &#125;</span><br><span class="line">        // 不能使用下面这行！！！</span><br><span class="line">        // mr.registerChannel &lt;- worker;</span><br><span class="line">        if okDo == true &#123;</span><br><span class="line">            sem &lt;- 1;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    for task := 0; task &lt; ntasks; task++ &#123;</span><br><span class="line">        go deal(task);</span><br><span class="line">    &#125;</span><br><span class="line">    for i := 0; i &lt; ntasks - 1; i++ &#123;</span><br><span class="line">        &lt;-sem;</span><br><span class="line">    &#125;</span><br><span class="line">    fmt.Printf(&quot;Schedule: %v phase done\n&quot;, phase)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在发生错误时重新调用 deal 来寻找另一个 worker 来解决这个 task，这个 task 解决掉后才 sem &lt;- 1。</p>
+<h1 id="Part-V-Inverted-index-generation"><a href="#Part-V-Inverted-index-generation" class="headerlink" title="Part V: Inverted index generation"></a>Part V: Inverted index generation</h1><p>实验 2 使用 mapreduce 来统计文件中各单词的出现次数，这是个经典的例子但是基本没有实际价值，接下来实验 5 要使用 mapreduce 实现一个倒排索引；<br>倒排索引广泛应用于文献查找领域，基本需要实现输入一个 key 返回这个 key 的出处，所以不仅要统计单词的出现次数，还要记录单词的出现位置（文件名）；</p>
+<h1 id="Result"><a href="#Result" class="headerlink" title="Result"></a>Result</h1><p><img src="/imgs/6.824/1/lab1_result.png" alt="lab1_result" title="lab1_result"></p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MapReduce/" rel="tag"># MapReduce</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/d1a34b57.html" rel="prev" title="Lab_1_Booting_a_PC">
+                  <i class="fa fa-angle-left"></i> Lab_1_Booting_a_PC
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/a62ec0c9.html" rel="next" title="JVM调优-内存泄露排查">
+                  JVM调优-内存泄露排查 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

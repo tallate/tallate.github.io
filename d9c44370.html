@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="幂等性描述一项操作被执行多次后，不会改变第一次执行产生的副作用。练手项目，解决项目中的幂等性检查要求，代码地址:point_right: Github - TIdempotent。   BlockingChecker、NonblockingChecker ；  加入 MySQL 作为 KeyStore （JdbcKeyStore）；  加入 Redis 作为 KeyStore （RedisKeyS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="服务治理——幂等">
+<meta property="og:url" content="https://tallate.github.io/d9c44370.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="幂等性描述一项操作被执行多次后，不会改变第一次执行产生的副作用。练手项目，解决项目中的幂等性检查要求，代码地址:point_right: Github - TIdempotent。   BlockingChecker、NonblockingChecker ；  加入 MySQL 作为 KeyStore （JdbcKeyStore）；  加入 Redis 作为 KeyStore （RedisKeyS">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E5%B9%82%E7%AD%89/%E5%B9%82%E7%AD%89%E6%A3%80%E6%9F%A5%E5%92%8C%E6%8E%A5%E5%8F%A3%E9%87%8D%E8%AF%95%E4%B9%8B%E9%97%B4%E7%9A%84%E5%86%B2%E7%AA%81.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E5%B9%82%E7%AD%89/sidp-%E7%8A%B6%E6%80%81%E6%89%AD%E8%BD%AC.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E5%B9%82%E7%AD%89/sidp-BlockingIdpChecker%E4%B8%8ETracing%E7%BB%84%E4%BB%B6%E9%85%8D%E5%90%88.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E5%B9%82%E7%AD%89/%E4%BA%8B%E5%8A%A1MVCC%E4%B8%8D%E8%83%BD%E9%81%BF%E5%85%8D%E5%B9%BB%E8%AF%BB.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E5%B9%82%E7%AD%89/%E4%BA%8B%E5%8A%A1MVCC%E4%B8%8D%E8%83%BD%E9%81%BF%E5%85%8D%E4%B8%A2%E5%A4%B1%E6%9B%B4%E6%96%B0%E9%97%AE%E9%A2%98.png">
+<meta property="article:published_time" content="2019-01-22T14:58:29.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.893Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="幂等">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E5%B9%82%E7%AD%89/%E5%B9%82%E7%AD%89%E6%A3%80%E6%9F%A5%E5%92%8C%E6%8E%A5%E5%8F%A3%E9%87%8D%E8%AF%95%E4%B9%8B%E9%97%B4%E7%9A%84%E5%86%B2%E7%AA%81.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/d9c44370.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/d9c44370.html","path":"/d9c44370.html","title":"服务治理——幂等"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>服务治理——幂等 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E3%80%87%E3%80%81%E5%88%9D%E8%A1%B7"><span class="nav-number">1.</span> <span class="nav-text">〇、初衷</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%BD%BF%E7%94%A8%E6%97%B6%E6%9C%BA"><span class="nav-number">2.</span> <span class="nav-text">一、使用时机</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1-API"><span class="nav-number">2.1.</span> <span class="nav-text">服务 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP-%E5%8D%8F%E8%AE%AE%E7%9A%84%E5%B9%82%E7%AD%89%E6%80%A7"><span class="nav-number">2.2.</span> <span class="nav-text">HTTP 协议的幂等性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WEB-API"><span class="nav-number">2.3.</span> <span class="nav-text">WEB API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">2.4.</span> <span class="nav-text">写数据库</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E8%AE%BE%E8%AE%A1%E6%80%9D%E8%B7%AF"><span class="nav-number">3.</span> <span class="nav-text">二、设计思路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%A0%87%E8%AF%86%E4%B8%80%E6%AC%A1%E8%AF%B7%E6%B1%82"><span class="nav-number">3.1.</span> <span class="nav-text">如何标识一次请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3%E6%89%A7%E8%A1%8C%E7%8A%B6%E6%80%81"><span class="nav-number">3.2.</span> <span class="nav-text">接口执行状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98-%E5%8E%8B%E7%BC%A9"><span class="nav-number">3.3.</span> <span class="nav-text">结果缓存+压缩</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">3.4.</span> <span class="nav-text">SQL 数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KV-%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%88RedisKeyStore%EF%BC%89"><span class="nav-number">3.5.</span> <span class="nav-text">KV 数据库（RedisKeyStore）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E6%9E%9C%E5%AD%98%E5%82%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%AE%95%E6%9C%BA%E9%87%8D%E5%90%AF%EF%BC%9F%E6%95%B0%E6%8D%AE%E6%BC%82%E7%A7%BB"><span class="nav-number">3.6.</span> <span class="nav-text">如果存储服务器宕机重启？数据漂移</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E8%80%A6%E5%90%88"><span class="nav-number">4.</span> <span class="nav-text">三、耦合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-AOP"><span class="nav-number">4.1.</span> <span class="nav-text">Spring AOP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%A7%8D-IdpKey-%E7%94%9F%E6%88%90%E6%96%B9%E5%BC%8F"><span class="nav-number">4.2.</span> <span class="nav-text">多种 IdpKey 生成方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%A7%8D-IdpKey-%E4%BF%9D%E5%AD%98%E6%96%B9%E5%BC%8F"><span class="nav-number">4.3.</span> <span class="nav-text">多种 IdpKey 保存方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8E-Tracing-%E7%BB%84%E4%BB%B6%E5%A6%82%E4%BD%95%E9%85%8D%E5%90%88"><span class="nav-number">4.4.</span> <span class="nav-text">与 Tracing 组件如何配合</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6"><span class="nav-number">5.</span> <span class="nav-text">四、并发控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E8%A1%8C%E9%94%81-version%EF%BC%88SQLKeyStore%EF%BC%89"><span class="nav-number">5.1.</span> <span class="nav-text">为什么使用行锁+version（SQLKeyStore）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%94%E7%A6%BB%E6%80%A7%E5%8F%8A%E5%8F%AF%E8%83%BD%E5%AF%BC%E8%87%B4%E7%9A%84%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98"><span class="nav-number">5.2.</span> <span class="nav-text">隔离性及可能导致的安全问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E6%B5%8B%E8%AF%95"><span class="nav-number">6.</span> <span class="nav-text">五、测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E6%B5%8B%E8%AF%95%EF%BC%88%E5%B9%B6%E5%8F%91%EF%BC%89"><span class="nav-number">6.1.</span> <span class="nav-text">功能测试（并发）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/d9c44370.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="服务治理——幂等 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          服务治理——幂等
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-01-22 22:58:29" itemprop="dateCreated datePublished" datetime="2019-01-22T22:58:29+08:00">2019-01-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>幂等性描述一项操作被执行多次后，不会改变第一次执行产生的副作用。<br>练手项目，解决项目中的幂等性检查要求，代码地址:point_right: <a target="_blank" rel="noopener" href="http://www.github.com/tallate/TIdempotent">Github - TIdempotent</a>。</p>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> BlockingChecker、NonblockingChecker ；</li>
+<li><input checked="" disabled="" type="checkbox"> 加入 MySQL 作为 KeyStore （JdbcKeyStore）；</li>
+<li><input checked="" disabled="" type="checkbox"> 加入 Redis 作为 KeyStore （RedisKeyStore）；</li>
+<li><input checked="" disabled="" type="checkbox"> 只存储正确的返回结果，返回值压缩 + 缓存；</li>
+<li><input checked="" disabled="" type="checkbox"> 加入 Spring 便于整合进业务系统；</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="〇、初衷"><a href="#〇、初衷" class="headerlink" title="〇、初衷"></a>〇、初衷</h2><p>幂等性检查在非幂等的远程调用中几乎是必须的，而且这样的场景很多，一般我们都是直接在业务代码里写上，但很多时候容易用错中间件，或者是没有考虑到一些极端条件、在代码中埋下隐患。<br>在抛砖之前，我们先来分析一下幂等功能的大概实现模式：</p>
+<ol>
+<li>每次请求都在中心化的数据库上保存这次请求的 id；<blockquote>
+<p>如何标识一次请求？</p>
+</blockquote>
+</li>
+<li>因为存储容量限制，我们不会放任数据堆积到数据库中，而是设置一个时间戳，每隔一段时间清理掉老的数据；<blockquote>
+<p>如果数据库支持的话，可以直接设置数据的过期时间。</p>
+</blockquote>
+</li>
+<li>之后就可以根据数据库中是否有这个 id 来判断是否已经执行了这个调用。</li>
+</ol>
+<p>这种实现比较简单，有时候和接口重试的初衷是冲突的。一般情况下我们实现幂等检查时，会将对应&lt;业务+数据 id&gt;拼接起来存到缓存中间件中，我们姑且称之为 IdpKey，后续请求会查到该 IdpKey，发现已经被调用过了，就直接返回之前执行过的结果。但是这种思路存在漏洞，如下图所示：<br><img src="/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E5%B9%82%E7%AD%89/%E5%B9%82%E7%AD%89%E6%A3%80%E6%9F%A5%E5%92%8C%E6%8E%A5%E5%8F%A3%E9%87%8D%E8%AF%95%E4%B9%8B%E9%97%B4%E7%9A%84%E5%86%B2%E7%AA%81.png" alt="幂等检查和接口重试之间的冲突" title="幂等检查和接口重试之间的冲突"><br>IdpKey 是只有在幂等检查结束后才会被保存下来的，如果下游服务还没执行完毕，触发上游 RPC 的超时重试机制，就会重新再发一次请求，这时如果上一次请求，仍然没有执行完毕，就会导致请求被执行了两次。<br>这里的漏洞是：进入下游 API 入口处的幂等检查逻辑，会经过查 IdpKey -&gt; 保存 IdpKey -&gt; 设置超时时间这个过程，可能会因为网络抖动而花费特别长的时间。如果超时是因此而导致的，幂等性检查就起不到作用了。<br>解决的办法是保证幂等检查的<strong>原子性</strong>，并且还需要注意存储的<strong>隔离性</strong>，这在一般的存储设计中是必须要考虑的。</p>
+<blockquote>
+<p>在这里吐槽一下我公司的实现，采用的是<code>setnx + expire</code>的方式，如果<code>setnx</code>后、<code>expire</code>前出错了，之后对该接口的重试也会直接被拦截了，也就是说幂等检查组件影响了正常的业务执行流程。</p>
+</blockquote>
+<h2 id="一、使用时机"><a href="#一、使用时机" class="headerlink" title="一、使用时机"></a>一、使用时机</h2><h3 id="服务-API"><a href="#服务-API" class="headerlink" title="服务 API"></a>服务 API</h3><p>接口幂等性是在设计 RPC 时必然被提到的话题，因为远程调用为了减少突发性的网络抖动影响、尽可能提高一次请求成功的几率，会在失败后重试几次，但是服务消费者此时其实并不知道服务提供者是真得没接收到请求、或者只是响应在中间走丢了、亦或者是别的什么情况，所以服务框架普遍会在服务提供者处设置幂等性检查。一般情况下有以下几种策略：</p>
+<ol>
+<li>和业务逻辑耦合，比如是涉及订单的业务，订单会有状态，下单后状态会相应的改变，所以我们只需要在业务处理开始的地方检查一下状态就可以起到幂等性检查的目的；</li>
+<li>提取幂等性检查的逻辑作为框架的一部分，使用注解等方式来为目标接口添加幂等检查功能，可以有效减少冗余代码，不过执行效率会低一些；</li>
+</ol>
+<h3 id="HTTP-协议的幂等性"><a href="#HTTP-协议的幂等性" class="headerlink" title="HTTP 协议的幂等性"></a>HTTP 协议的幂等性</h3><p>根据协议规定，PUT 等方法天生具有幂等性的语义，因为 PUT 会覆盖数据而不是在原来数据的基础上增加，发一次和发多次请求某一资源应该会产生相同的副作用。<br>道理我们都懂，但是要在幂等检查中特别关注并忽略掉这些情况又不大适合，因为根据我看的大部分代码的感受而言，大家基本上不会特别严格地遵守 REST 协议（或者说风格？）：每个接口都讨论一遍怎么套用各 HTTP 方法来解释太影响效率，所以大不了读的就用 GET，写的就用 POST，以及链接中随意使用动词、返回状态码等。因此我认为不特地地根据 HTTP 方法进行过滤也没有关系。</p>
+<h3 id="WEB-API"><a href="#WEB-API" class="headerlink" title="WEB API"></a>WEB API</h3><p>API 有时候也会考虑“幂等性”，但这严格来说不属于我们这里讨论的范畴，我们主要关注 RPC 中重试的幂等性，这里只是稍微提一下。比如在确认下单的时候用户多点了几下（还包括刷单、 DDoS 攻击等），后台就会收到同一用户在很短的时间内发来的多个相同请求，除了在网关层限流，往往后台还会对用户的请求频率进行限制，比如使用从请求上下文里得到的用户登录 token（唯一标识一个用户）和订单 ID （唯一标识一个业务）拼接一个 IdempotentKey （以下简称 IdpKey ），保存到缓存中间件并设置过期时间：</p>
+<div><div class="fold_hider"><div class="close hider_title">代码</div></div><div class="fold">
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// 判断用户是否刚下过单</span><br><span class="line">private boolean justOrdered(String orderId) &#123;</span><br><span class="line">  String idempotentKey = UserContext.getUserId() + orderId;</span><br><span class="line">  // setIfAbsent接口封装了Redis的setnx命令，当key不存在时设置成功并返回true，否则返回false</span><br><span class="line">  if(redisClient.setIfAbsent(idempotentKey, &quot;true&quot;)) &#123;</span><br><span class="line">    // 设置key的过期时间</span><br><span class="line">    redisClient.expire(idempotentKey, 3, TimeUnit.SECONDS);</span><br><span class="line">    return false;</span><br><span class="line">  &#125; else &#123;</span><br><span class="line">    return true;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</div></div>
+<blockquote>
+<p>这段代码有问题，因为 setIfAbsent 和 expire 是分成两次请求的、并不是原子的，如果在 expire 出错，就会导致缓存项成为“死数据”，解决办法是利用 set 命令就够了，set 命令有很多参数，其中就包括设置原子性和设置过期时间的。</p>
+</blockquote>
+<h3 id="写数据库"><a href="#写数据库" class="headerlink" title="写数据库"></a>写数据库</h3><p>产生幂等问题的根源是数据库写操作执行了多次，所以一种最简单的实现方法是为表加唯一索引，并使用<code>on duplicate key update</code>语句来保证幂等性，假设<code>user</code>表中的<code>name</code>字段加了索引：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">insert into user (</span><br><span class="line">  name,</span><br><span class="line">  pwd</span><br><span class="line">) values (</span><br><span class="line">  &#x27;Mike&#x27;,</span><br><span class="line">  &#x27;123456&#x27;</span><br><span class="line">)</span><br><span class="line">on duplicate key update</span><br><span class="line">pwd = #&#123;pwd&#125;;</span><br></pre></td></tr></table></figure>
+<p>当然，如果表中没有这种唯一索引，这种方法就不好使了。</p>
+<h2 id="二、设计思路"><a href="#二、设计思路" class="headerlink" title="二、设计思路"></a>二、设计思路</h2><h3 id="如何标识一次请求"><a href="#如何标识一次请求" class="headerlink" title="如何标识一次请求"></a>如何标识一次请求</h3><p>IdpKey 需要能唯一标识一个请求，服务 Producer 在重试时，需要将这个标识符带上，这样就可以在服务 Consumer 的调用上下文找到这个标识符，从而唯一确定一个请求。<br>实行服务链路追踪功能的组件一般称为 Tracing 组件，Tracing 组件中有两个基本工作单元 TraceId 和 SpanId，我们先来讨论一下一种开源实现——Spring Cloud Sleuth 能否满足我们的需求：</p>
+<ul>
+<li>TraceId 唯一标识一条请求链路，主要用来追踪链路执行情况；</li>
+<li>SpanId 表示一个基本的工作单元，比如一次消息发送、Http 请求，当然也可以简单理解成一次远程调用。<strong>重试时会将刚开始生成的 SpanId 重发几次</strong>，所以 SpanId 是合适的。<blockquote>
+<p>如何传其实还是由具体实现说了算，我看到的另一种实现是：对于基于消息的 RPC，这个 SpanId 会加到 Message 内，对于基于 HTTP 的 RPC，这个 SpanId 会加到请求头部。不管是哪种方式，每个 request 对象只会生成一次，然后重试时使用该 request 重发几次。</p>
+</blockquote>
+</li>
+</ul>
+<p>还有一个合理但是略丑的方式是在请求参数中强行添加上一个<code>InvocationId</code>，但是这样代价就太高了。</p>
+<blockquote>
+<p>注意事项：<br>Consumer 接口不应该是递归的，递归会使得一个 IdpKey 被不必要地重复检查、导致链路意外中断。</p>
+</blockquote>
+<p>IdpKey 的存储非常灵活，可以将其保存到全局的并发安全容器内，也可以选择其他的存储中间件，如果有较强的一致性需求，最好使用 MySQL 等数据库中间件，并将 idp 数据库和业务数据库建到同一个服务器上，这样它们才能受到同一个事务管理。</p>
+<p>远程调用的发生是非常频繁的，随着服务器的运行， KeyStore 中保存的 IdpKey 也会占用非常可观的内存或磁盘空间（根据具体实现而定），所以需要定时地去清理不用的数据。一般请求的重试过程不会持续太久，频繁的全表扫描也会一定程度上拖慢服务器的性能，所以 10 分钟清理一次我认为是比较合理的。一般 NoSQL 数据库都会提供为保存的 key 设置过期时间的功能，而 SQL 数据库（如 MySQL ）则需要在服务器里另起一个线程来执行清除操作。</p>
+<p>实际上，只要具备链路追踪功能的框架都可以作为替代，比如<code>Spring Sleuth</code>、<code>Zipkin</code>、<code>SkyWalking</code>。</p>
+<h3 id="接口执行状态"><a href="#接口执行状态" class="headerlink" title="接口执行状态"></a>接口执行状态</h3><p><img src="/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E5%B9%82%E7%AD%89/sidp-%E7%8A%B6%E6%80%81%E6%89%AD%E8%BD%AC.png" alt="sidp-状态扭转" title="sidp-状态扭转"></p>
+<ol>
+<li>BlockingIdpChecker 主要用于异步调用，这种场景下希望请求能够尽可能成功。</li>
+<li>NonblockingIdpChecker 可以用于同步调用的场景下，调用者重试意味着放弃了之前发送的请求，没有必要在上个请求仍处于 EXECUTING 状态下时阻塞等待其执行完毕。</li>
+</ol>
+<p>生成 IdpKey 或持久化 IdpKey 时可能发生异常，一般这两个过程是比较稳定的，万一出现问题，会影响实际业务的执行，它们的可用性需要采取其他措施来保证（一般是集群化）。<br><code>BlockingIdpChecker</code> 中在发现存在其他线程正在执行该 IdpKey 对应的请求时，会阻塞，每隔 50ms、100ms、200ms 轮询数据库，使用这几个值的原因是我在实际中发现大部分接口在正常情况下都能在 50ms 内处理完毕（要么执行成功要么抛出异常），部分比较重量级的接口基本也能在 200ms 内执行完毕。如果在这段时间内没有处理完毕，其实继续等待下去意义也不大了。<br>详细描述待定…</p>
+<h3 id="结果缓存-压缩"><a href="#结果缓存-压缩" class="headerlink" title="结果缓存+压缩"></a>结果缓存+压缩</h3><p>幂等性的定义中描述操作的多次执行只会产生一次副作用，这意味着每一次都可以得到相同的结果，为了在后续执行中可以返回第一次成功时产生的返回值，我们需要对结果进行缓存。<br>与缓存系统的交互一般通过 TCP 连接来传输，在代码中，我使用 Json 来序列化数据，保证数据的可读性，然后用 GZIP 算法来进行压缩，提升传输效率。</p>
+<h3 id="SQL-数据库"><a href="#SQL-数据库" class="headerlink" title="SQL 数据库"></a>SQL 数据库</h3><p>当使用数据库来持久化 IdpKey 时——以 MySQL 为例——需要创建一个 idpkey 表来保存 IdpKey ，建表语句如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">create table if not exists idpkey</span><br><span class="line">(</span><br><span class="line">  `id`           varchar(36) not null,</span><br><span class="line">  `key_state`    char(12)    not null default &#x27;&#x27;,</span><br><span class="line">  `created_time` timestamp   not null default now(),</span><br><span class="line">  `content`      blob        null,</span><br><span class="line">  primary key (`id`)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+<p>该表非常简单，但是还是多说两句为什么要这么建，特别是索引的考虑。</p>
+<ol>
+<li>id 为什么是 varchar(36)类型？<br>36 是 UUID 的长度，一般不会有比这个更长的了，但是不确定会不会使用别的计算方式，</li>
+<li>为什么 key_state 使用 char 而不是 varchar？<br>因为该字段值长度稳定，不能很好发挥变长字符串的威力，而且更新频率高，当字段值变长时，可能需要存储引擎做额外的工作（比如分裂页等），总而言之，varchar 更适合存字段值长度变化大、更新频率小的。</li>
+<li>为什么 key_state 字段没加索引？<br>状态的取值只有固定的几个，没必要加索引，一方面字段选择性小（只取几个值），数据库无法有效过滤行，另一方面在 key_state 索引中查出大量行后数据库还需要回到聚集索引中“反查”到其他字段值，反查得过于频繁可能需要置入过多的磁盘块。</li>
+<li>为什么 created_time 不加索引？<br>created_time 标识一条数据的创建时间，清理的时候会执行一个范围过滤的删除，其中的大部分数据都会被直接删除掉，如果加了索引，虽然匹配速度会稍微快一点，但是数据量大（接近一半）又导致回表和重建索引的过程非常耗时，甚至还不如全表扫描，这可以通过建测试表来验证。</li>
+<li>为什么 content（结果缓存）是 blob 类型的？<br>因为结果被压缩成了，保存的不是原文而是字节数组。</li>
+</ol>
+<h3 id="KV-数据库（RedisKeyStore）"><a href="#KV-数据库（RedisKeyStore）" class="headerlink" title="KV 数据库（RedisKeyStore）"></a>KV 数据库（RedisKeyStore）</h3><p>代码里使用 Redis 作为数据库实现了一种 idpKey 的存储策略，Lua 脚本的语法并不难，难的是如何以 Redis 环境为基础进行调试，具体逻辑见 <code>RedisKeyStore</code>。这里来分析一下为什么要用 Lua 实现？</p>
+<ul>
+<li>Redis 自带的命令很多，但还是不能覆盖所有的使用场景，比如我在代码里需要实现“putIfAbsent + expire + 返回覆盖前的值”的<strong>复杂逻辑</strong>就没有原生命令支持。</li>
+<li>Redis 提供的 Lua 机制可以保证<strong>隔离性</strong>，因为 Redis 本身是<strong>单线程模型</strong>，天然保证了串行化执行，即间接实现了串行化隔离级别，而不管是 Lua 脚本还是事务，都是通过批量执行任务来保证这种隔离性的。<blockquote>
+<p>Sentinel 集群可以保证只有一个 master 能执行写命令，因为 Sentinel 服务器本身不支持任何写命令，而 slave 又被设置为了只读。<br>Cluster 集群会将 key hash 到某个分片上，同样也能避免了竞争。</p>
+</blockquote>
+</li>
+<li>但 Lua 本身<strong>不能保证原子性</strong>，Redis 也没有<code>undo log</code>这一说，如果执行到一半出现宕机（Crash）或者数据漂移也可能会出现数据不一致的问题。因此，如果 Lua 脚本中执行的是<code>set+expire</code>，则有必要在启动的时候进行一个清理动作：删除服务器上旧的 IdpKey。<blockquote>
+<p>一般不会使用<code>set+expire</code>实现加缓存、加锁等操作，而是使用一条带缓存时间的 set 命令。</p>
+</blockquote>
+</li>
+<li>虽然 Lua 不能满足原子性，但是它<strong>最小化了网络的影响</strong>，它将所有需要调用的命令和逻辑打包传到服务器上执行，而且只需要上传一次，之后可以通过 SHA 值来指定服务器上的一个脚本。<blockquote>
+<p>Redis 内置 Lua 脚本的调试方法：<a target="_blank" rel="noopener" href="https://redis.io/topics/ldb">Redis Lua scripts debugger</a><br>其实除了 Lua 脚本，还可以通过<strong>watch</strong>机制（类似 ZooKeeper 中的 Watcher）实现乐观锁来取代，优点是简单、不需要维护 lua 代码，但缺点是需要轮询、效率更低。<br>或者通过 Redis 的事务机制来实现，Redis 会将一个事务范围内的所有命令打包发到服务器上，直到 exec 才会批量执行，具有和 lua 脚本类似的特性，但是上传多条命令有一定时间损耗，需要权衡使用。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="如果存储服务器宕机重启？数据漂移"><a href="#如果存储服务器宕机重启？数据漂移" class="headerlink" title="如果存储服务器宕机重启？数据漂移"></a>如果存储服务器宕机重启？数据漂移</h3><p>可用性是分布式系统的主要关注点之一（CAP），当</p>
+<ul>
+<li><strong>重启</strong>，像 MySQL 这种传统关系型数据库，底层使用文件存储，搭建主从集群后，基本不需要担心数据丢失，而 Redis 这样的内存数据库，待定…。<blockquote>
+<p>也不能完全相信操作系统，因为为了效率，数据会被先保存到高速缓存，并以某种频率同步到磁盘上，数据会先被保存到高速缓存，这提高了写效率，也隐含了数据丢失的隐患。</p>
+</blockquote>
+</li>
+<li><strong>分库分表</strong>的时候需要先将原表按某种策略拆到多个表，再按需要拆到多个库中，这个过程就叫数据漂移，待定…。</li>
+</ul>
+<p>退一步讲，重启和漂移只会在很少的情况下发生，如果只遵循最基本的<code>BASE</code>，让大部分请求可用，万一不小心碰到了一些请求重试了也不可用的情况，用户也只需刷新一下即可。</p>
+<h2 id="三、耦合"><a href="#三、耦合" class="headerlink" title="三、耦合"></a>三、耦合</h2><h3 id="Spring-AOP"><a href="#Spring-AOP" class="headerlink" title="Spring AOP"></a>Spring AOP</h3><p>幂等性检查的场景比较多，属于比较典型的横切关注点，适合采用 AOP 的方式进行简化。</p>
+<h3 id="多种-IdpKey-生成方式"><a href="#多种-IdpKey-生成方式" class="headerlink" title="多种 IdpKey 生成方式"></a>多种 IdpKey 生成方式</h3><p>正如之前提到的，IdpKey 的 ID 属性可以用 Tracing 组件的 SpanId 来代替，是因为一般链路追踪组件中， 在每次重试时附带的 SpanId 都是同一个，当然是否合适还是要看具体的实现。</p>
+<h3 id="多种-IdpKey-保存方式"><a href="#多种-IdpKey-保存方式" class="headerlink" title="多种 IdpKey 保存方式"></a>多种 IdpKey 保存方式</h3><p>KeyStore 中定义了几个我认为必须原子化的操作（putIfAbsent、putIfAbsentOrInStates），如果能在持久化层实现这些操作的原子性当然最好，这样就不用额外添加分布式锁了。<br>我提供了两种实现：</p>
+<ol>
+<li>SQLKeyStore 中主要通过数据库的行锁来实现。</li>
+<li>RedisKeyStore 中主要通过 Redis 的 Lua 扩展来实现。</li>
+</ol>
+<h3 id="与-Tracing-组件如何配合"><a href="#与-Tracing-组件如何配合" class="headerlink" title="与 Tracing 组件如何配合"></a>与 Tracing 组件如何配合</h3><p><img src="/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E5%B9%82%E7%AD%89/sidp-BlockingIdpChecker%E4%B8%8ETracing%E7%BB%84%E4%BB%B6%E9%85%8D%E5%90%88.png" alt="与Tracing组件配合后的交互流程" title="BlockingIdpChecker与Tracing组件配合"><br>以代码中的幂等检查器 BlockingIdpChecker 为例，上图是与 Tracing 组件配置后 BlockingIdpChecker 的大概工作方式。<br>详细描述待定…</p>
+<h2 id="四、并发控制"><a href="#四、并发控制" class="headerlink" title="四、并发控制"></a>四、并发控制</h2><h3 id="为什么使用行锁-version（SQLKeyStore）"><a href="#为什么使用行锁-version（SQLKeyStore）" class="headerlink" title="为什么使用行锁+version（SQLKeyStore）"></a>为什么使用行锁+version（SQLKeyStore）</h3><p>在 SQLKeyStore 中实现一些复合操作时，为什么不使用乐观锁，而是用行锁+version 的方式？<br>具体的伪代码如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">start transaction;</span><br><span class="line">select id, key_state, version from idpkey where id = #&#123;id&#125; or key_state in (#&#123;state1&#125;, #&#123;state2&#125;, ...) for update; -- 锁数据</span><br><span class="line">...</span><br><span class="line">insert into idpkey (id, key_state) values(?, ?) on duplicate key update key_state = ?; -- 更新锁住的数据</span><br><span class="line">commit;</span><br></pre></td></tr></table></figure>
+<p>如果是乐观锁则：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select ..., version from idpkey where id = #&#123;id&#125;;</span><br><span class="line">...</span><br><span class="line">update idpkey set id = #&#123;id&#125; and key_state in (#&#123;state1&#125;, #&#123;state2&#125;, ...);</span><br></pre></td></tr></table></figure>
+<p>这里 key_state 其实起着类似乐观锁的作用，因为只有在某些状态下才能更新成功，但是会有点问题：</p>
+<ul>
+<li>idpKey 有三类状态：pass（由具体规则而定）, blocking（相当于 EXECUTING）, reject（由具体规则而定，但是都会包含 SUCCESS），当为 pass 状态时是可以更新的，但是更新失败时可能是 blocking 或 reject 的，必须要把更新时数据库里的值返回回来判断，所以要使用行锁来同步其他线程，实现一种类似 swap 的原子操作；</li>
+</ul>
+<p>看 SQLKeyStore 中一些复合操作（如 putIfAbsent）返回值为什么要加上更新的数量？先看以下四种可能情况：</p>
+<ol>
+<li>数据库中不存在该 idpKey，则插入数据，数据库中 idpKey 状态为 EXECUTING，返回数据状态为 EXECUTING，此时程序应该继续执行；</li>
+<li>数据库中存在该 idpKey，且状态属于 pass，则更新成功，数据库中 idpKey 状态为 EXECUTING，返回数据状态为 EXECUTING，此时程序应该继续执行；</li>
+<li>数据库中存在该 idpKey，且状态属于 blocking，则更新失败，返回数据状态为 EXECUTING，此时程序应该被阻塞</li>
+<li>数据库中存在该 idpKey，且状态属于 reject，则更新失败，返回数据状态属于 reject 集合，则该次调用应该被放弃。</li>
+</ol>
+<p>其中，情况 2 和 3 可以使用成复杂状态机系统设计功更新数量来区分，因此在返回值中加上了这个更新数量。</p>
+<h3 id="隔离性及可能导致的安全问题"><a href="#隔离性及可能导致的安全问题" class="headerlink" title="隔离性及可能导致的安全问题"></a>隔离性及可能导致的安全问题</h3><p>基于数据库的幂等性检查需要查询数据库，第一反应是可以并入业务本身的事务、利用现成的事务管理器来执行数据库操作，如果是 Spring，可以通过传入一个 TransactionManager 实现，代码量不会很大。但是最终没有采用，下面讨论这么做的动机。</p>
+<blockquote>
+<p>其实也实现了一个 TransactionManager 的版本，叫 TxKeyStore。</p>
+</blockquote>
+<p>一方面的问题来自事务的原子性：事务要么执行完，要么失败回滚，但是这种回滚会将接口调用状态的扭转变得更加复杂，难于管理。<br>还有一方面的问题来自隔离性，隔离性是在设计数据库时必然会提到的话题，从最简单的读未提交到最严格的串行化，隔离性描述了事务之间互相影响的程度，其中，读未提交没有作任何限制，读已提交和可重复读这两个等级一般采用 MVCC 机制来实现，MySQL 的默认级别就是读提交，而串行化的方式一般是采用加锁来实现的，事务只能一个一个执行，粒度较大，效率太低一般不采用。所以现在的问题是：为什么可重复读不满足我们的需求？<br>我们知道可重复读是通过 MVCC 实现的，简而言之，在进行操作的时候会利用<code>undo log</code>来拿到数据在访问前的状态，这样可以在不使用锁的前提下保证并发安全性。但是，为了效率起见，MVCC 的实现有时候并不排除幻读和丢失更新现象：</p>
+<ol>
+<li>一个事务中有多次查询，在后面的查询中能查到之前不存在的数据，这就是常提到的幻读现象。<br>幻读有时候会被误认为能用 MVCC 来解决，看下面的事务执行图：<br><img src="/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E5%B9%82%E7%AD%89/%E4%BA%8B%E5%8A%A1MVCC%E4%B8%8D%E8%83%BD%E9%81%BF%E5%85%8D%E5%B9%BB%E8%AF%BB.png" alt="事务MVCC不能避免幻读" title="事务MVCC不能避免幻读"><br>事务 2 是在事务 1 之前执行的，这意味着事务 2 插入的数据能被事务 1 看到，事务 1 第一次读数据的时候，数据尚不存在，之后事务 2 插入了数据，事务 1 再读就能读出来了。<br>解决幻读的方法主要是 Next-Key Lock，包括处理某个确定值的行锁和处理某个区间的 gap 锁。</li>
+<li>脏读、不可重复读、幻读三个问题考虑的场景基本上都是一个事务写一个事务<strong>只读</strong>，但没有考虑两个事务都在对数据进行修改的情况。如下图所示：<br><img src="/imgs/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E5%B9%82%E7%AD%89/%E4%BA%8B%E5%8A%A1MVCC%E4%B8%8D%E8%83%BD%E9%81%BF%E5%85%8D%E4%B8%A2%E5%A4%B1%E6%9B%B4%E6%96%B0%E9%97%AE%E9%A2%98.png" alt="事务MVCC不能避免丢失更新问题" title="事务MVCC不能避免丢失更新问题"><br>两个事务都读取数据 A 然后对其执行写操作，但因为事务 2 是后写的，所以事务 A 作的修改就被覆盖掉了，这就是丢失更新问题。<br>丢失更新问题一般通过加锁来解决，更具体地说，是行锁中的排他锁（共享锁就不行了，而且共享锁很容易导致死锁），在读出数据的时候使用 “for update” 子句来加锁，使两个事务不能同时对该条数据进行读写操作。<br>在代码中，幂等检查是更加复合的操作，加行锁可以保证一次请求的多次重试之间互斥，但又不必像设置成串行化隔离级别会将所有请求的事务都调整成互斥的，这样粒度太大、影响并发性能。</li>
+</ol>
+<p><strong>总而言之</strong>，代码中的 JdbcKeyStore 没有采取并入业务操作所在事务的方案，而是使用了数据库行锁来保证并发安全性，行锁可以保证操作同一条数据的两个事务能够按先后顺序进入临界区，这同时解决了幻读问题。至于为什么不用乐观锁，这在上边已经提到过了。</p>
+<h2 id="五、测试"><a href="#五、测试" class="headerlink" title="五、测试"></a>五、测试</h2><p>幂等检查器的原理是给所有非幂等的接口织入检查代码（AOP），这样的接口是比较多的，因此性能的好坏可以直接影响业务逻辑的执行效率。因此：</p>
+<ul>
+<li>一方面需要保证幂等检查本身是正确无误的；</li>
+<li>另一方面需要评估它对业务本身造成的影响、是否在可接受的性能损耗范围内。</li>
+</ul>
+<h3 id="功能测试（并发）"><a href="#功能测试（并发）" class="headerlink" title="功能测试（并发）"></a>功能测试（并发）</h3><p>检查组件是否正常工作的手段主要是将同一请求发多次到一个接口，观察成功执行的情况下是否只执行了一次，失败的情况下是否有重试。根据执行状态有下面几个测试点：</p>
+<ol>
+<li>同时发 3 个请求，1 次正常执行，其他被抛弃；</li>
+<li>同时发 3 个请求，1 次超时，其他被抛弃；</li>
+<li>同时发 3 个请求，1 次抛出 Exception 异常，重试一次成功，其他被抛弃；</li>
+<li>同时发 3 个请求，1 次抛出 RuntimeException（或 Error）异常，其他被抛弃。</li>
+</ol>
+<p>第 2 条不管超时后是否有执行成功都会抛弃掉其他重试请求，因为特别长时间的超时影响用户体验，本身就没有继续执行下去的必要。<br>第 3、4 条区别是异常的类型——也就是必检和免检的区别，免检异常一般是代码有漏洞或无法恢复的系统崩溃这些情况，重试几次一般也不会有什么作用，所以不如直接放弃好了。</p>
+<p>具体测试用例见 <a target="_blank" rel="noopener" href="http://www.github.com/tallate/TIdempotent">项目下的 tidp-test 模块</a> 。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p><a target="_blank" rel="noopener" href="https://github.com/spring-cloud/spring-cloud-sleuth">Spring Cloud Sleuth</a><br><a target="_blank" rel="noopener" href="https://github.com/openzipkin/zipkin">zipkin</a><br><a target="_blank" rel="noopener" href="https://github.com/opentracing/specification/blob/master/specification.md">OpenTracing</a></p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/19867883">怎样正确做 Web 应用的压力测试？</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/Detector/p/8684658.html">【测试设计】性能测试工具选择：wrk？jmeter？locust？还是 LR？</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%B9%82%E7%AD%89/" rel="tag"># 幂等</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/cd87e5dd.html" rel="prev" title="司库云系统简析">
+                  <i class="fa fa-angle-left"></i> 司库云系统简析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/755a34bb.html" rel="next" title="服务治理——熔断">
+                  服务治理——熔断 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

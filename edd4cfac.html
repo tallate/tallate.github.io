@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="使用主从复制 运行 Master调整 Master 内存中保存的缓冲积压部分（replication backlog），以便执行部分重同步。 123# 缓冲区越大，可断开连接再重连执行部分重同步的时间越长，缓冲区会在每次连接时分配。repl-backlog-size 1mbrepl-backlog-ttl 3600 运行 Slave先在配置文件中设置 Master 和 logfile 路径再运">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Redis 复制">
+<meta property="og:url" content="https://tallate.github.io/edd4cfac.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="使用主从复制 运行 Master调整 Master 内存中保存的缓冲积压部分（replication backlog），以便执行部分重同步。 123# 缓冲区越大，可断开连接再重连执行部分重同步的时间越长，缓冲区会在每次连接时分配。repl-backlog-size 1mbrepl-backlog-ttl 3600 运行 Slave先在配置文件中设置 Master 和 logfile 路径再运">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/Redis/%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png">
+<meta property="article:published_time" content="2019-09-22T04:21:48.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.901Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/Redis/%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/edd4cfac.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/edd4cfac.html","path":"/edd4cfac.html","title":"Redis 复制"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Redis 复制 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6"><span class="nav-number">1.</span> <span class="nav-text">使用主从复制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AA%E8%AF%BB-Slave"><span class="nav-number">1.1.</span> <span class="nav-text">只读 Slave</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6%E5%92%8C%E5%BC%82%E6%AD%A5%E5%A4%8D%E5%88%B6"><span class="nav-number">2.</span> <span class="nav-text">同步复制和异步复制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E8%A7%A6%E5%8F%91%E5%A4%8D%E5%88%B6"><span class="nav-number">3.</span> <span class="nav-text">什么时候触发复制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%8E%9F%E7%90%86"><span class="nav-number">4.</span> <span class="nav-text">主从复制原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B-Slave%E6%80%8E%E4%B9%88%E4%B8%8EMaster%E5%BB%BA%E7%AB%8B%E8%BF%9E%E6%8E%A5"><span class="nav-number">4.1.</span> <span class="nav-text">主从复制执行过程 - Slave怎么与Master建立连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B-Master%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86PSYNC%E5%91%BD%E4%BB%A4"><span class="nav-number">4.2.</span> <span class="nav-text">主从复制执行过程 - Master如何处理PSYNC命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B-Master%E5%A6%82%E4%BD%95%E5%8F%91%E9%80%81%E5%8F%8ASlave%E5%A6%82%E4%BD%95%E6%8E%A5%E6%94%B6%E5%A4%8D%E5%88%B6%E6%95%B0%E6%8D%AE"><span class="nav-number">4.3.</span> <span class="nav-text">主从复制执行过程 - Master如何发送及Slave如何接收复制数据</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">5.</span> <span class="nav-text">主从复制存在的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%BA%93%E9%97%B4%E7%BD%91%E7%BB%9C%E6%96%AD%E4%BA%86%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F"><span class="nav-number">5.1.</span> <span class="nav-text">主从库间网络断了怎么办？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%95%E6%9C%BA%E6%81%A2%E5%A4%8D"><span class="nav-number">5.2.</span> <span class="nav-text">宕机恢复</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%AF%E5%90%A6%E5%8F%AF%E4%BB%A5%E5%85%B3%E9%97%AD%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-number">5.3.</span> <span class="nav-text">是否可以关闭持久化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E4%B8%BB%E4%BB%8E%E6%95%B0%E6%8D%AE%E7%9A%84%E4%B8%80%E8%87%B4%E6%80%A7-%E6%95%B0%E6%8D%AE%E4%B8%A2%E5%A4%B1%E7%AA%97%E5%8F%A3%E7%9A%84%E5%AD%98%E5%9C%A8"><span class="nav-number">5.4.</span> <span class="nav-text">如何保证主从数据的一致性 - 数据丢失窗口的存在</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E6%9C%9F%E7%9A%84-key-%E9%97%AE%E9%A2%98"><span class="nav-number">5.5.</span> <span class="nav-text">过期的 key 问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QA"><span class="nav-number">6.</span> <span class="nav-text">QA</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AOF%E6%97%A5%E5%BF%97%E6%9B%B4%E5%85%A8%EF%BC%8C%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E4%B8%8D%E4%BD%BF%E7%94%A8AOF%E8%80%8C%E6%98%AFRDB%E5%91%A2%EF%BC%9F"><span class="nav-number">6.1.</span> <span class="nav-text">AOF日志更全，为什么主从同步不使用AOF而是RDB呢？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%88%87%E6%8D%A2%E8%BF%87%E7%A8%8B%E4%B8%AD%EF%BC%8C%E5%AE%A2%E6%88%B7%E7%AB%AF%E8%83%BD%E6%AD%A3%E5%B8%B8%E8%BF%9B%E8%A1%8C%E8%AF%B7%E6%B1%82%E5%90%97%EF%BC%9F"><span class="nav-number">6.2.</span> <span class="nav-text">主从切换过程中，客户端能正常进行请求吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E6%9E%9C%E5%AE%9E%E7%8E%B0%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E4%B8%8D%E6%84%9F%E7%9F%A5%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%9A%84%E4%B8%AD%E6%96%AD%EF%BC%9F"><span class="nav-number">6.3.</span> <span class="nav-text">如果实现应用程序不感知服务器的中断？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E6%95%B0%E6%8D%AE%E5%8F%91%E7%94%9F%E4%B8%8D%E4%B8%80%E8%87%B4%E6%80%8E%E4%B9%88%E5%8A%9E%EF%BC%9F"><span class="nav-number">6.4.</span> <span class="nav-text">主从数据发生不一致怎么办？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/edd4cfac.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Redis 复制 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Redis 复制
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-22 12:21:48" itemprop="dateCreated datePublished" datetime="2019-09-22T12:21:48+08:00">2019-09-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BC%93%E5%AD%98/" itemprop="url" rel="index"><span itemprop="name">缓存</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+<h2 id="使用主从复制"><a href="#使用主从复制" class="headerlink" title="使用主从复制"></a>使用主从复制</h2><ol>
+<li>运行 Master<br>调整 Master 内存中保存的缓冲积压部分（replication backlog），以便执行部分重同步。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># 缓冲区越大，可断开连接再重连执行部分重同步的时间越长，缓冲区会在每次连接时分配。</span><br><span class="line">repl-backlog-size 1mb</span><br><span class="line">repl-backlog-ttl 3600</span><br></pre></td></tr></table></figure></li>
+<li>运行 Slave<br>先在配置文件中设置 Master 和 logfile 路径再运行 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">slaveof 172.16.205.141 6379</span><br><span class="line">logfile &quot;/usr/redis/log/slave.log&quot;</span><br></pre></td></tr></table></figure></li>
+<li>级联复制（从从复制）<br>之前是所有 Slave 连到一个 Master 上，这是一种中心化的办法，对 Master 的负担较大，事实上我们完全可以不全部连到 Master 上，而是 Master-&gt;Slave1-&gt;Slave2 这样传递。<br>实现级联复制也较简单，只用修改 Slave2 配置文件的<code>slaveof</code>属性即可。</li>
+<li>Master write，Slave read<br>通过程序（客户端）实现数据的读写分离，即在程序中判断请求是读是写，让 Master 负责处理写请求，Slave 负责处理读请求；通过扩展 Slave 处理更多的并发请求，减轻 Master 端的负载。</li>
+</ol>
+<h3 id="只读-Slave"><a href="#只读-Slave" class="headerlink" title="只读 Slave"></a>只读 Slave</h3><p>Redis2.6 之后，Redis 支持只读模式，可以使用<code>slave-read-only</code>配置来控制这个行为。<br>只读模式下的 slave 将会拒绝所有写入命令，因此实践中不可能由于某种出错而将数据写入 slave 。但这并不意味着该特性旨在将一个 slave 实例暴露到 Internet ，或者更广泛地说，将之暴露在存在不可信客户端的网络，因为像 DEBUG 或者 CONFIG 这样的管理员命令仍在启用。但是，在 redis.conf 文件中使用 rename-command 指令可以禁用上述管理员命令以提高只读实例的安全性。</p>
+<h2 id="同步复制和异步复制"><a href="#同步复制和异步复制" class="headerlink" title="同步复制和异步复制"></a>同步复制和异步复制</h2><p>Redis 使用默认的<strong>异步复制</strong>，其特点是低延迟和高性能，不会影响 Redis 主线程的响应效率。</p>
+<ul>
+<li>Redis 复制在 master 侧是非阻塞的。这意味着 master 在一个或多个 slave 进行初次同步或者是部分重同步时，可以继续处理查询请求。</li>
+<li>复制在 slave 侧大部分也是非阻塞的。当 slave 进行初次同步时，它可以使用旧数据集处理查询请求，假设你在 redis.conf 中配置了让 Redis 这样做的话。否则，你可以配置如果复制流断开， Redis slave 会返回一个 error 给客户端。但是，在初次同步之后，旧数据集必须被删除，同时加载新的数据集。 slave 在这个短暂的时间窗口内（如果数据集很大，会持续较长时间），会阻塞到来的连接请求。自 Redis 4.0 开始，可以配置 Redis 使删除旧数据集的操作在另一个不同的线程中进行，但是，加载新数据集的操作依然需要在主线程中进行并且会阻塞 slave 。</li>
+</ul>
+<blockquote>
+<p>Redis 虽然声称是单线程模型，但是很多功能仍然是采用多线程实现的。</p>
+</blockquote>
+<h2 id="什么时候触发复制"><a href="#什么时候触发复制" class="headerlink" title="什么时候触发复制"></a>什么时候触发复制</h2><ul>
+<li>当一个 Master 和一个 Slave 实例连接正常时，Master 通过向 Slave 发送命令流来<strong>增量同步</strong>自身数据集的改变情况，包括客户端的写入、key 的过期等；</li>
+<li>Master 与 Slave 之间因为网络问题或宕机，之后 Slave 重新连上 Master 时会尝试进行<strong>部分重同步</strong>，即只获取在断开连接期间内丢失的命令流；<br>为此，slave 会记住旧 master 的旧 <strong>replication ID</strong> 和<strong>复制偏移量</strong>，因此即使询问旧的 replication ID，其也可以将部分复制缓冲提供给连接的 slave 。</li>
+<li>当无法进行部分重同步时，Slave 会请求进行全量重同步。Master 需要创建所有数据的快照，将之发送给 Slave，之后在数据集发生更改时持续发送命令流到 Slave。</li>
+</ul>
+<h2 id="主从复制原理"><a href="#主从复制原理" class="headerlink" title="主从复制原理"></a>主从复制原理</h2><p>当用户往 Master 端写入数据时，通过<code>Redis Sync</code>机制将数据文件发送至 Slave，Slave 也会执行相同的操作确保数据一致。</p>
+<ol>
+<li>同一个 Master 可以拥有多个 Slaves。Master 下的 Slave 还可以接受同一架构中其它 Slave 的链接与同步请求，实现数据的<strong>级联复制</strong>，即 Master-&gt;Slave-&gt;Slave 模式；<br><code>repl-diskless-sync-delay</code>参数可以延迟启动数据传输，目的可以在第一个 slave 就绪后，等待更多的 slave 就绪。<br><strong>主从复制最好配置成级联复制，因为这样更容易解决单点问题，避免Master承受过大的复制压力</strong>。</li>
+<li>Master 以<strong>非阻塞</strong>的方式同步数据至 slave，这将意味着 Master 会继续处理一个或多个 slave 的读写请求；</li>
+<li>Slave 端同步数据也可以修改为非阻塞的方式，当 slave 在执行新的同步时，它仍可以用旧的数据信息来提供查询；否则，当 slave 与 master 失去联系时，slave 会返回一个错误给客户端；</li>
+<li>主从复制可以做到<strong>读写分离</strong>，保证了可扩展性，即多个 slave 专门提供只读查询与数据的冗余，Master 端专门提供写操作；</li>
+<li>通过配置禁用 Master 数据持久化机制，将其数据持久化操作交给 Slaves 完成，避免在 Master 中要有独立的进程来完成此操作。</li>
+<li>Redis 主从复制的性能问题，为了主从复制的速度和连接的稳定性，Slave 和 Master 最好在同一个局域网内。</li>
+</ol>
+<p>标识同步进程：</p>
+<ol>
+<li>每个 Master 都有一个<code>Replication ID</code>：这是一个较大的伪随机字符串，标记了一个给定的数据集。</li>
+<li>每个 Master 持有一个偏移量<code>offset</code>，Master 将自己产生的复制流发送给 slave 时，发送多少个字节的数据，自身的偏移量就会增加多少，目的是当有新的操作修改自己的数据集时，它可以以此更新 Slave 的状态。即使没有 Slave 连接到 Master，offset 也会自增，所以基本上每一对 <code>&lt;Replication ID, offset&gt;</code> 都会标识一个 Master 数据集的确切版本。</li>
+<li>Slave 也维护了一个复制偏移量<code>offset</code>，代表从库同步的字节数，从库每收到主节点传来的 N 个字节数据时，从库的 offset 增加 N。<br>Master 和 Slave 的<code>offset</code>总是不断增大，这也是判断主从数据是否同步的标志，若主从的 offset 相同则表示数据同步量，不通则表示数据不同步。</li>
+</ol>
+<p>复制积压缓冲区<br>主节点(master)响应写命令时，不但会把命名发送给从节点，还会写入复制积压缓冲区，用于复制命令丢失的数据补救。<br>Slave 连接中断时主节点仍然可以响应命令，但因复制连接中断命令无法发送给 Slave。之后，当 Slave 重启并触发部分复制时，Master 可以将复制积压缓冲区的内容同步给 Slave，从而提高复制效率；</p>
+<p>部分重同步过程：</p>
+<ol>
+<li>当 Slave 连接到 Master，发送一个<code>PSYNC</code>命令表明自己记录的旧的 Master <code>Replication ID</code>和它们至今为止处理的偏移量<code>offset</code>；</li>
+<li>Master 仅发送 Slave 所需的增量部分的命令流，即上次同步偏移量<code>offset</code>之后执行的写命令；</li>
+<li>但是如果 master 的缓冲区中没有足够的命令积压缓冲记录，或者如果 slave 引用了不再知道的历史记录（replication ID），则会转而进行一个全量重同步：在这种情况下， slave 会得到一个完整的数据集副本，从头开始。</li>
+</ol>
+<p>全量同步（完整重同步）：</p>
+<ol>
+<li>Slave 向 Master 发送<code>PSYNC</code>命令；</li>
+<li>Master 执行<code>BGSAVE</code>命令，开启一个后台进程用于生成一个 RDB 文件；</li>
+<li>同时它开始缓冲所有从客户端接收到的新的写入命令；</li>
+<li>当后台保存完成时， master 将数据集文件传输给 slave， slave 将之保存在磁盘上，然后加载文件到内存；</li>
+<li>再然后 master 会将所有缓冲的写命令发给 slave，这个过程以指令流的形式完成并且和 Redis 协议本身的格式相同。<blockquote>
+<p>可以通过<code>telnet</code>连接到 Redis 服务器上然后发送<code>SYNC</code>命令来模拟这个过程，但是因为<code>SYNC</code>功能有限（比如不支持部分重同步），现在的版本用<code>PSYNC</code>作为代替。<br>正常情况下，全量同步会先在磁盘上创建一个 RDB 文件，传输时将其加载进内存，然后 Slave 对此进行数据的同步，如果磁盘性能很低，这个过程压力会比较大，<code>Redis 2.8.18</code>之后支持直接传输 RDB 文件，可以使用<code>repl-diskless-sync</code>配置参数配置。</p>
+</blockquote>
+</li>
+</ol>
+<p>全量同步完成以后，在此后的时间里主从维护着心跳检查来确认对方是否在线，每隔一段时间（默认 10 秒，通过<code>repl-ping-slave-period</code>参数指定）主节点向从节点发送 PING 命令判断从节点是否在线，而从节点每秒 1 次向主节点发送 REPLCONF ACK 命令，命令格式为：<code>REPLCONF ACK &#123;offset&#125;</code>，其中 offset 指的是从节点保存的复制偏移量，作用是：</p>
+<ol>
+<li>向主节点报告自己复制进度，主节点会对比复制偏移量向从节点发送未同步的命令；</li>
+<li>判断主节点是否在线。</li>
+</ol>
+<h3 id="主从复制执行过程-Slave怎么与Master建立连接"><a href="#主从复制执行过程-Slave怎么与Master建立连接" class="headerlink" title="主从复制执行过程 - Slave怎么与Master建立连接"></a>主从复制执行过程 - Slave怎么与Master建立连接</h3><p><img src="/imgs/Redis/%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png" alt="主从复制" title="主从复制"><br>1、Slave Redis实例上配置<code>slaveof xxx</code>，表示将成为另一台Redis实例的从服务器，启动 Slave时，需要设置当前节点的Master信息，并开始主从同步过程；<br>代码位置：<code>replication.c/slaveofCommand()</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 进入连接状态（重点）</span><br><span class="line">server.repl_state = REDIS_REPL_CONNECT;</span><br><span class="line">server.master_repl_offset = 0;</span><br><span class="line">server.repl_down_since = 0;</span><br></pre></td></tr></table></figure>
+<p>2、上边设置复制信息成功后，Redis服务器会有一个cron任务（<code>serverCron</code>）定时判断需要进行同步操作，向Master建立连接，也就是一个握手的过程；<br>代码位置：<code>replication.c/replicationCron()</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if (server.repl_state == REPL_STATE_CONNECT) &#123;</span><br><span class="line">   if (connectWithMaster() == C_OK) &#123;</span><br><span class="line">       serverLog(LL_NOTICE,&quot;MASTER &lt;-&gt; SLAVE sync started&quot;);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>serverCron是Redis的主事件循环，负责超多的任务，包括过期key处理、rehash、备份RDB文件、AOF重写等等。</p>
+</blockquote>
+<p>3、确定连接后，接下来，cron任务里还有比较关键的一项是确定复制方案，<br>会先向 Master 发送一个 PSYNC Command，Master会返回复制方案，也就是下面的全量、增量及不支持这3种情况：<br>代码位置：<code>replication.c/syncWithMaster()</code><br><code>replication.c/slaveTryPartialResynchronization()</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// 向主服务器发送 PSYNC 命令</span><br><span class="line">reply = sendSynchronousCommand(fd,&quot;PSYNC&quot;,psync_runid,psync_offset,NULL);</span><br><span class="line"></span><br><span class="line">// 全量复制</span><br><span class="line">if (!strncmp(reply,&quot;+FULLRESYNC&quot;,11)) &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 增量复制</span><br><span class="line">if (!strncmp(reply,&quot;+CONTINUE&quot;,9)) &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 错误，目前master不支持PSYNC</span><br><span class="line">if (strncmp(reply,&quot;-ERR&quot;,4)) &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意PSYNC命令的两个参数：</p>
+<ul>
+<li>主库的runID：每个Redis实例启动时都会自动生成的一个随机ID，用来唯一标识这个实例。<br>当从库和主库第一次复制时，因为不知道主库的runID，因此会将runID设为”?”。</li>
+<li>复制进度offset：设为-1表示第一次复制。</li>
+</ul>
+<p>4、Master接收到命令后需要判断需要全量同步还是部分同步<br>这部分代码在<code>replication.c/syncCommand()</code>中，接下来我们再讨论主节点如何判断同步方式及同步的流程。</p>
+<h3 id="主从复制执行过程-Master如何处理PSYNC命令"><a href="#主从复制执行过程-Master如何处理PSYNC命令" class="headerlink" title="主从复制执行过程 - Master如何处理PSYNC命令"></a>主从复制执行过程 - Master如何处理PSYNC命令</h3><p>1、无论是第一次连接还是重新连接，Master 都会启动一个后台进程（fork），将<strong>数据快照</strong>保存到数据文件中，同时 Master 会记录<strong>所有修改数据的命令</strong>并缓存在数据文件中（持久化），Master会将文件内容加载到内存中，等之后回传给Slave（复制）；<br>2、Master端与Slave端完成握手后，需要判断是需要进行全量还是增量复制（也就是上面的返回<code>+FULLRESYNC</code>还是<code>+CONTINUE</code><br>处理Slave的<code>PSYNC</code>命令的代码位置：<code>replication.c/syncCommand()</code><br>判断是否需要执行全量复制的代码位置：<code>replication.c/masterTryPartialResynchronization()</code><br>判断执行<strong>全量复制</strong>的条件如下代码所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">// 检查 master id 是否和 runid 一致，只有一致的情况下才考虑执行psync</span><br><span class="line">if (strcasecmp(master_runid, server.runid)) &#123;</span><br><span class="line">    /* Run id &quot;?&quot; is used by slaves that want to force a full resync. */</span><br><span class="line">    // 从服务器提供的 run id 和服务器的 run id 不一致</span><br><span class="line">    if (master_runid[0] != &#x27;?&#x27;) &#123;</span><br><span class="line">        redisLog(REDIS_NOTICE,&quot;Partial resynchronization not accepted: &quot;</span><br><span class="line">            &quot;Runid mismatch (Client asked for runid &#x27;%s&#x27;, my runid is &#x27;%s&#x27;)&quot;,</span><br><span class="line">            master_runid, server.runid);</span><br><span class="line">    // 从服务器提供的 run id 为 &#x27;?&#x27; ，表示强制 FULL RESYNC</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        redisLog(REDIS_NOTICE,&quot;Full resync requested by slave.&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    // 需要 full resync</span><br><span class="line">    goto need_full_resync;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 判断当前Slave带来的offset在Master的backlog中是否还能找到，找不到则执行全量复制</span><br><span class="line">if (getLongLongFromObjectOrReply(c,c-&gt;argv[2],&amp;psync_offset,NULL) !=</span><br><span class="line">       REDIS_OK) goto need_full_resync;</span><br><span class="line"></span><br><span class="line">// 如果没有backlog</span><br><span class="line">if (!server.repl_backlog ||</span><br><span class="line">    // 或者 psync_offset 小于 server.repl_backlog_off</span><br><span class="line">    // （想要恢复的那部分数据已经被覆盖）</span><br><span class="line">    psync_offset &lt; server.repl_backlog_off ||</span><br><span class="line">    // psync offset 大于 backlog 所保存的数据的偏移量</span><br><span class="line">    psync_offset &gt; (server.repl_backlog_off + server.repl_backlog_histlen))</span><br><span class="line">&#123;</span><br><span class="line">    // 执行 FULL RESYNC</span><br><span class="line">    redisLog(REDIS_NOTICE,</span><br><span class="line">        &quot;Unable to partial resync with the slave for lack of backlog (Slave request was: %lld).&quot;, psync_offset);</span><br><span class="line">    if (psync_offset &gt; server.master_repl_offset) &#123;</span><br><span class="line">        redisLog(REDIS_WARNING,</span><br><span class="line">            &quot;Warning: slave tried to PSYNC with an offset that is greater than the master replication offset.&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    goto need_full_resync;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3、如果是部分复制<br>Master会向Slave发送 backlog 中从 offset 到 backlog 尾部之间的数据<br>代码：<code>replication.c/addReplyReplicationBacklog()</code><br>部分复制在3.0版本和之后的版本中的实现有比较大的差异。<br>在3.0时，部分复制发生在Slave向Master发送PSYNC命令时。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">void syncCommand(redisClient *c) &#123;</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    if (!strcasecmp(c-&gt;argv[0]-&gt;ptr,&quot;psync&quot;)) &#123;</span><br><span class="line">        // 尝试进行 PSYNC</span><br><span class="line">        if (masterTryPartialResynchronization(c) == REDIS_OK) &#123;</span><br><span class="line">            // 可执行 PSYNC</span><br><span class="line">            server.stat_sync_partial_ok++;</span><br><span class="line">            return; /* No full resync needed, return. */</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            // 不可执行 PSYNC</span><br><span class="line">            char *master_runid = c-&gt;argv[1]-&gt;ptr;</span><br><span class="line">            </span><br><span class="line">            /* Increment stats for failed PSYNCs, but only if the</span><br><span class="line">             * runid is not &quot;?&quot;, as this is used by slaves to force a full</span><br><span class="line">             * resync on purpose when they are not albe to partially</span><br><span class="line">             * resync. */</span><br><span class="line">            if (master_runid[0] != &#x27;?&#x27;) server.stat_sync_partial_err++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int masterTryPartialResynchronization(redisClient *c) &#123;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    /* If we reached this point, we are able to perform a partial resync:</span><br><span class="line">     * 程序运行到这里，说明可以执行 partial resync</span><br><span class="line">     *</span><br><span class="line">     * 1) Set client state to make it a slave.</span><br><span class="line">     *    将客户端状态设为 salve  </span><br><span class="line">     *</span><br><span class="line">     * 2) Inform the client we can continue with +CONTINUE</span><br><span class="line">     *    向 slave 发送 +CONTINUE ，表示 partial resync 的请求被接受</span><br><span class="line">     *</span><br><span class="line">     * 3) Send the backlog data (from the offset to the end) to the slave. </span><br><span class="line">     *    发送 backlog 中，客户端所需要的数据</span><br><span class="line">     */</span><br><span class="line">    c-&gt;flags |= REDIS_SLAVE;</span><br><span class="line">    c-&gt;replstate = REDIS_REPL_ONLINE;</span><br><span class="line">    c-&gt;repl_ack_time = server.unixtime;</span><br><span class="line">    listAddNodeTail(server.slaves,c);</span><br><span class="line">    /* We can&#x27;t use the connection buffers since they are used to accumulate</span><br><span class="line">     * new commands at this stage. But we are sure the socket send buffer is</span><br><span class="line">     * emtpy so this write will never fail actually. */</span><br><span class="line">    // 向从服务器发送一个同步 +CONTINUE ，表示 PSYNC 可以执行</span><br><span class="line">    buflen = snprintf(buf,sizeof(buf),&quot;+CONTINUE\r\n&quot;);</span><br><span class="line">    if (write(c-&gt;fd,buf,buflen) != buflen) &#123;</span><br><span class="line">        freeClientAsync(c);</span><br><span class="line">        return REDIS_OK;</span><br><span class="line">    &#125;</span><br><span class="line">    // 发送 backlog 中的内容（也即是从服务器缺失的那些内容）到从服务器</span><br><span class="line">    psync_len = addReplyReplicationBacklog(c,psync_offset);</span><br><span class="line">    redisLog(REDIS_NOTICE,</span><br><span class="line">        &quot;Partial resynchronization request accepted. Sending %lld bytes of backlog starting from offset %lld.&quot;, psync_len, psync_offset);</span><br><span class="line">        </span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.0后，在每次命令执行完之后，还会触发命令传播：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">void processInputBufferAndReplicate(client *c) &#123;</span><br><span class="line">    // 处理命令然后广播命令</span><br><span class="line">    // if this is a slave, we just process the commands</span><br><span class="line">    if (!(c-&gt;flags &amp; CLIENT_MASTER)) &#123;</span><br><span class="line">        processInputBuffer(c);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        /* If the client is a master we need to compute the difference</span><br><span class="line">         * between the applied offset before and after processing the buffer,</span><br><span class="line">         * to understand how much of the replication stream was actually</span><br><span class="line">         * applied to the master state: this quantity, and its corresponding</span><br><span class="line">         * part of the replication stream, will be propagated to the</span><br><span class="line">         * sub-replicas and to the replication backlog. */</span><br><span class="line">        size_t prev_offset = c-&gt;reploff;</span><br><span class="line">        processInputBuffer(c);</span><br><span class="line">        // applied is how much of the replication stream was actually applied to the master state</span><br><span class="line">        size_t applied = c-&gt;reploff - prev_offset;</span><br><span class="line">        if (applied) &#123;</span><br><span class="line"></span><br><span class="line">            replicationFeedSlavesFromMasterStream(server.slaves,</span><br><span class="line">                    c-&gt;pending_querybuf, applied);</span><br><span class="line">            sdsrange(c-&gt;pending_querybuf,applied,-1);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>所谓命令传播，就是当Master节点每处理完一个命令都会把命令广播给所有的子节点，而每个子节点接收到Master的广播过来的命令后，会在处理完之后继续广播给自己的子节点。<br>命令传播也是异步的操作，即Master节点处理完客户端的命令之后会立马向客户端返回结果，而不会一直等待所有的子节点都确认完成操作后再返回以保证Redis高效的性能。<br>4、什么时候会改为采用全量复制<br>上面的增量复制中，我们看到Redis实际上是将repl_backlog中的内容复制给了Slave，backlog是一块内存缓冲区（默认大小为1M），每次处理完命令之后，先写入缓冲区repl_backlog, 然后再发送给Slave。<br>如果一个Slave断连了一段时间，重启后Master可以将这块缓冲区内的内容复制给Slave，但是如果断连的时间比较长，也有可能会触发全量复制，因为缓冲区能保存的命令有限，只能至多保存的命令长度为repl_backlog_length，如果某个子节点落后当前最新命令的长度大于了repl_backlog_length，那么就会触发全量复制。<br>5、如果是全量复制<br>这种情况下，Master并不会直接将RDB文件传给Slave，而是先发给Slave<code>+FULLRESYNC</code>，；<br>代码：<code>replication.c/masterTryPartialResynchronization()</code>的末尾<br>什么时候Master会将RDB文件传给Slave呢？如果当前已经有可用的RDB文件，则直接将RDB文件传输给Slave；如果当前RDB正在备份过程中，Master会在每次RDB文件备份完毕后执行一次传输任务。<br><code>replication.c/syncCommand()</code>末尾Master判断RDB当前的备份状态，设置标识表示当前RDB文件是否可用于复制，如果可以复制则会在之后的主事件循环中触发文件的发送：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">void syncCommand(redisClient *c) &#123;</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    /* Here we need to check if there is a background saving operation</span><br><span class="line">     * in progress, or if it is required to start one */</span><br><span class="line">    // 检查是否有 BGSAVE 在执行</span><br><span class="line">    if (server.rdb_child_pid != -1) &#123;</span><br><span class="line">        /* Ok a background save is in progress. Let&#x27;s check if it is a good</span><br><span class="line">         * one for replication, i.e. if there is another slave that is</span><br><span class="line">         * registering differences since the server forked to save */</span><br><span class="line">        redisClient *slave;</span><br><span class="line">        listNode *ln;</span><br><span class="line">        listIter li;</span><br><span class="line"></span><br><span class="line">        // 如果有至少一个 slave 在等待这个 BGSAVE 完成</span><br><span class="line">        // 那么说明正在进行的 BGSAVE 所产生的 RDB 也可以为其他 slave 所用</span><br><span class="line">        listRewind(server.slaves,&amp;li);</span><br><span class="line">        while((ln = listNext(&amp;li))) &#123;</span><br><span class="line">            slave = ln-&gt;value;</span><br><span class="line">            if (slave-&gt;replstate == REDIS_REPL_WAIT_BGSAVE_END) break;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        if (ln) &#123;</span><br><span class="line">            /* Perfect, the server is already registering differences for</span><br><span class="line">             * another slave. Set the right state, and copy the buffer. */</span><br><span class="line">            // 幸运的情况，可以使用目前 BGSAVE 所生成的 RDB</span><br><span class="line">            copyClientOutputBuffer(c,slave);</span><br><span class="line">            // 设置复制状态</span><br><span class="line">            c-&gt;replstate = REDIS_REPL_WAIT_BGSAVE_END;</span><br><span class="line">            redisLog(REDIS_NOTICE,&quot;Waiting for end of BGSAVE for SYNC&quot;);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            /* No way, we need to wait for the next BGSAVE in order to</span><br><span class="line">             * register differences */</span><br><span class="line">            // 不好运的情况，必须等待下个 BGSAVE</span><br><span class="line">            c-&gt;replstate = REDIS_REPL_WAIT_BGSAVE_START;</span><br><span class="line">            redisLog(REDIS_NOTICE,&quot;Waiting for next BGSAVE for SYNC&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        /* Ok we don&#x27;t have a BGSAVE in progress, let&#x27;s start one */</span><br><span class="line">        // 没有 BGSAVE 在进行，开始一个新的 BGSAVE</span><br><span class="line">        redisLog(REDIS_NOTICE,&quot;Starting BGSAVE for SYNC&quot;);</span><br><span class="line">        if (rdbSaveBackground(server.rdb_filename) != REDIS_OK) &#123;</span><br><span class="line">            redisLog(REDIS_NOTICE,&quot;Replication failed, can&#x27;t BGSAVE&quot;);</span><br><span class="line">            addReplyError(c,&quot;Unable to perform background save&quot;);</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line">        // 设置状态</span><br><span class="line">        c-&gt;replstate = REDIS_REPL_WAIT_BGSAVE_END;</span><br><span class="line">        /* Flush the script cache for the new slave. */</span><br><span class="line">        // 因为新 slave 进入，刷新复制脚本缓存</span><br><span class="line">        replicationScriptCacheFlush();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>主事件循环中发RDB文件的代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">int serverCron(struct aeEventLoop *eventLoop, long long id, void *clientData) &#123;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    /* Check if a background saving or AOF rewrite in progress terminated. */</span><br><span class="line">    // 检查 BGSAVE 或者 BGREWRITEAOF 是否已经执行完毕</span><br><span class="line">    if (server.rdb_child_pid != -1 || server.aof_child_pid != -1) &#123;</span><br><span class="line">        int statloc;</span><br><span class="line">        pid_t pid;</span><br><span class="line"></span><br><span class="line">        // 接收子进程发来的信号，非阻塞</span><br><span class="line">        if ((pid = wait3(&amp;statloc,WNOHANG,NULL)) != 0) &#123;</span><br><span class="line">            int exitcode = WEXITSTATUS(statloc);</span><br><span class="line">            int bysignal = 0;</span><br><span class="line">            </span><br><span class="line">            if (WIFSIGNALED(statloc)) bysignal = WTERMSIG(statloc);</span><br><span class="line"></span><br><span class="line">            // BGSAVE 执行完毕</span><br><span class="line">            if (pid == server.rdb_child_pid) &#123;</span><br><span class="line">                backgroundSaveDoneHandler(exitcode,bysignal);</span><br><span class="line"></span><br><span class="line">            // BGREWRITEAOF 执行完毕</span><br><span class="line">            &#125; else if (pid == server.aof_child_pid) &#123;</span><br><span class="line">                backgroundRewriteDoneHandler(exitcode,bysignal);</span><br><span class="line"></span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                redisLog(REDIS_WARNING,</span><br><span class="line">                    &quot;Warning, detected child with unmatched pid: %ld&quot;,</span><br><span class="line">                    (long)pid);</span><br><span class="line">            &#125;</span><br><span class="line">            updateDictResizePolicy();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来的调用包括：<br><code>replication.c/backgroundSaveDoneHandler()</code><br><code>replication.c/updateSlavesWaitingBgsave()</code><br><code>replication.c/sendBulkToSlave()</code></p>
+<p>全量同步的大致流程如此，主要分为以下几步：</p>
+<ol>
+<li>Master节点开启子进程进行RDB文件生成</li>
+<li>Master节点将RDB文件发送给Slave节点</li>
+<li>Slave节点清空内存中的所有数据并删除之前的RDB文件</li>
+<li>Slave节点使用从Master接收的RDB文件恢复数据到内存中</li>
+</ol>
+<p>需要注意的是，这个过程中的每一步都是耗时的IO操作，所以大部分时候Redis都是尽可能采用增量复制，而不是全量复制。<br>下面再来讨论Master如何发送及Slave如何接收这份数据。</p>
+<h3 id="主从复制执行过程-Master如何发送及Slave如何接收复制数据"><a href="#主从复制执行过程-Master如何发送及Slave如何接收复制数据" class="headerlink" title="主从复制执行过程 - Master如何发送及Slave如何接收复制数据"></a>主从复制执行过程 - Master如何发送及Slave如何接收复制数据</h3><p>1、如果是全量复制<br>Slave和Master刚开始握手完毕后，会注册一个<code>readSyncBulkPayload</code>处理器，用于读取从Master发送过来的RDB文件。<br>2、Slave 将数据文件保存到磁盘上，然后再加载到内存中；<br>从库接收到RDB文件后，会<strong>先清空当前数据库，然后加载RDB文件</strong>，这是因为从库在开始和主库同步前可能保存了其他数据，为了避免之前数据的影响，从库需要先把当前数据库清空。<br>3、同步过程中主库产生的新数据也要同步给从库<br>主库同步数据给从库的过程中，主库不会被阻塞，仍然可以正常接收请求（否则Redis服务不就中断了？），但是这些请求中的写操作并没有记录到刚刚生成的RDB文件中，为了保证主从库的数据一致性，主库会在内存中用专门的<strong>replication buffer（代码中对应</strong>repl_backlog_buffer<strong>）</strong>记录RDB文件生成后收到的所有写操作。<br><code>repl_backlog_buffer</code>是一个环形缓冲区，主库会记录自己写到的位置，而从库则会记录自己已经读到的位置，可以使用<code>repl_backlog_size</code>来配置这个缓冲区的大小，如果配得过小，可能会导致增量复制阶段从库复制进度赶不上主库，进而导致从库重新进行全量复制。<br>在Master端定义的offset是<code>master_repl_offset</code>，在Slave端定义的offset是<code>slave_repl_offset</code>，正常情况下这两个偏移量是基本相等的。<br>增量同步期间，从库在发送psync的同时，会把自己当前的slave_repl_offset发给主库，主库判断自己的master_repl_offset和slave_repl_offset之间的差距，如果断连了，master_repl_offset可能会超过slave_repl_offset，那么将这超过的部分发给slave就可以恢复同步了。</p>
+<h2 id="主从复制存在的问题"><a href="#主从复制存在的问题" class="headerlink" title="主从复制存在的问题"></a>主从复制存在的问题</h2><h3 id="主从库间网络断了怎么办？"><a href="#主从库间网络断了怎么办？" class="headerlink" title="主从库间网络断了怎么办？"></a>主从库间网络断了怎么办？</h3><p>Redis2.8之前，如果主从同步过程中出现了网络闪断，那么主从是会重新进行一次全量复制的，开销非常大。<br>Redis2.8之后，网络闪断后，主从会采取<strong>增量复制</strong>，将闪断期间的命令发给从库。</p>
+<h3 id="宕机恢复"><a href="#宕机恢复" class="headerlink" title="宕机恢复"></a>宕机恢复</h3><p>因为 slave 顶多只负责处理读请求，slave 挂掉不会造成数据丢失的问题。<br>slave 宕机的情况下，应该要求客户端具有一定的熔断恢复能力，并且能在重启后快速恢复：</p>
+<ol>
+<li>恢复正常后重新连接；</li>
+<li>Master 收到 Slave 的连接后，第一次同步时，主节点做一次 bgsave，并同时将后续修改操作记录到内存 buffer；</li>
+<li>Master 将其完整的 rdb 数据文件全量发送给 Slave；</li>
+<li>Slave 接收完成后将 rdb 镜像文件加载到内存，加载完成后，再通知 Master 将期间修改的操作记录同步到 Slave 节点进行重放就完成了同步过程；</li>
+<li>如果 Master 同时收到多个 Slave 发来的同步请求，Master 只会在后台启动一个进程保存数据文件，然后将其发送给所有的 Slave，确保 Slave 正常。</li>
+</ol>
+<p>主从复制无法应对 Master 挂掉的情况，实际上这种方案只能尽量保证数据不会丢失，不能保证服务的高可用性，为此，需要引入 Redis 的 Sentinel 机制。</p>
+<p>客户端可以使用 <code>WAIT</code> 命令来请求同步复制某些特定的数据。但是，WAIT 命令只能确保在其他 Redis 实例中有指定数量的已确认的副本：在故障转移期间，由于不同原因的故障转移或是由于 Redis 持久性的实际配置，故障转移期间确认的写入操作可能仍然会丢失。</p>
+<h3 id="是否可以关闭持久化"><a href="#是否可以关闭持久化" class="headerlink" title="是否可以关闭持久化"></a>是否可以关闭持久化</h3><p>作为复制方案中的一环，可以考虑关闭 Master 或 Slave 的持久化功能，但是并不建议关掉它们，因为：</p>
+<ul>
+<li>如果关闭 Master 的持久化：重启（重启功能可以由一些只能运维工具来保证，比如 K8S）的 Master 将从一个空数据集开始，如果一个 Slave 试图与它同步，那么这个 Slave 也会被清空。</li>
+<li>如果关闭 Slave 的持久化：重启的 Slave 需要从 Master 全量同步数据。</li>
+</ul>
+<p>正如前所述，关闭了持久化并配置了自动重启的 Master 是危险的——会导致整个集群的数据全部被清空。<br>如果 Sentinel 集群用于需要高可用的场景、且 Master 被关闭掉了持久化功能，也是非常危险的：</p>
+<ul>
+<li>如果重启比较慢，Sentinel 的故障迁移机制重新选主，一个 Slave 会上升为 Master；</li>
+<li>如果重启得足够快，Sentinel 没有探测到故障，此时 Master 数据被清空了，而 Slave 仍从 Master 同步数据，这将引起上边提到的故障模式——数据将丢失。</li>
+</ul>
+<p>因此，如果考虑磁盘性能过慢会导致延迟、关掉了持久化，那么自动重启进程这项应该被禁用。</p>
+<h3 id="如何保证主从数据的一致性-数据丢失窗口的存在"><a href="#如何保证主从数据的一致性-数据丢失窗口的存在" class="headerlink" title="如何保证主从数据的一致性 - 数据丢失窗口的存在"></a>如何保证主从数据的一致性 - 数据丢失窗口的存在</h3><p>由于 Redis 使用<strong>异步复制</strong>，无法保证Slave和Master的实时一致性，因此总会有一个<strong>数据丢失窗口</strong>。<br>那在什么情况下，从库会滞后执行同步命令呢？</p>
+<ol>
+<li>一方面，主从库间的网络可能会有传输延迟，所以从库不能及时地收到主库发送的命令，从库上执行同步命令的时间就会被延后。</li>
+<li>另一方面，即使从库及时收到了主库的命令，但是，也可能会因为正在处理其它复杂度高的命令（例如集合操作命令）而阻塞。此时，从库需要处理完当前的命令，才能执行主库发送的命令操作，这就会造成主从数据不一致。而在主库命令被滞后处理的这段时间内，主库本身可能又执行了新的写操作。这样一来，主从库间的数据不一致程度就会进一步加剧。</li>
+</ol>
+<p>因为异步复制的本质，Redis主从复制无法完全避免数据的丢失，除了尽量保证网络连接状况良好外，还可以写一些监控程序来监控主从库间的复制进度，原理是实时给Redis实例发<code>info replication</code>命令得到<code>master_repl_offset</code>和<code>slave_repl_offset</code>这两个进度信息，计算这二者的差值即可得到主从复制进度的实时程度，如果某个从库进度差值大于我们预设的一个阈值，我们可以让客户端不再和这个从库连接进行数据读取，从而减少读到不一致数据的情况。</p>
+<blockquote>
+<p>这个阈值当然不能设置得过低，否则可能导致所有从库都连不上了。</p>
+</blockquote>
+<p>既然无法避免，那么只能退一步、控制影响范围了，Redis 可以保证：</p>
+<ol>
+<li>Redis slave 每秒钟都会 ping master，确认已处理的复制流的数量。</li>
+<li>Redis master 会记得上一次从每个 slave 都收到 ping 的时间。</li>
+<li>用户可以配置一个最小的 slave 数量，使得它滞后 &lt;&#x3D; 最大秒数。</li>
+<li>如果至少有 N 个 slave ，并且滞后小于 M 秒，则写入将被接受。如果条件不满足，master 将会回复一个 error 并且写入将不被接受。</li>
+</ol>
+<p>这些条件是通过<code>min-slaves-to-write</code>和<code>min-slaves-max-lag</code>这两个配置来实现的：</p>
+<ul>
+<li><code>min-slaves-to-write</code>：最少有n个slave的连接还是健康的情况下才能提供服务，至于怎么判断连接是否健康，需要看下面一个配置；</li>
+<li><code>min-slaves-max-lag</code>：判断连接健康的最大延迟时间，slave每次PING Master时Master都会记录该Slave 最后一次PING的时间，如果最后一次PING成功的时间距今比较长了，就说明该Slave的连接状态很有可能已经出问题了。</li>
+</ul>
+<p>对于给定的写入来说，虽然不能保证绝对实时的一致性，但至少数据丢失的时间窗限制在给定的秒数内。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"># It is possible for a master to stop accepting writes if there are less than</span><br><span class="line"># N slaves connected, having a lag less or equal than M seconds.</span><br><span class="line">#</span><br><span class="line"># The N slaves need to be in &quot;online&quot; state.</span><br><span class="line">#</span><br><span class="line"># The lag in seconds, that must be &lt;= the specified value, is calculated from</span><br><span class="line"># the last ping received from the slave, that is usually sent every second.</span><br><span class="line">#</span><br><span class="line"># This option does not GUARANTEES that N replicas will accept the write, but</span><br><span class="line"># will limit the window of exposure for lost writes in case not enough slaves</span><br><span class="line"># are available, to the specified number of seconds.</span><br><span class="line">#</span><br><span class="line"># For example to require at least 3 slaves with a lag &lt;= 10 seconds use:</span><br><span class="line">#</span><br><span class="line"># min-slaves-to-write 3</span><br><span class="line"># min-slaves-max-lag 10</span><br><span class="line">#</span><br><span class="line"># Setting one or the other to 0 disables the feature.</span><br><span class="line">#</span><br><span class="line"># By default min-slaves-to-write is set to 0 (feature disabled) and</span><br><span class="line"># min-slaves-max-lag is set to 10.</span><br><span class="line"></span><br><span class="line">min-slaves-to-write &lt;slave 数量&gt;</span><br><span class="line">min-slaves-max-lag &lt;秒数&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="过期的-key-问题"><a href="#过期的-key-问题" class="headerlink" title="过期的 key 问题"></a>过期的 key 问题</h3><p>由于复制的异步特性，对 key 设置过期时间和写入操作很容易导致 race condition 及导致数据集不一致，比如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(1) sadd x 1</span><br><span class="line">(2) expire x 100</span><br><span class="line">(3) sadd x 2</span><br></pre></td></tr></table></figure>
+<p>在 Master 上，命令(3)是在过期前执行的，而 Slave 上可能因为延后导致命令(3)执行前 x 就已经过期了，此时 x 是没有过期时间的（ttl x 得到-1 表示不过期），这就导致了数据的不一致。</p>
+<blockquote>
+<p>set 命令不会出现这个问题，因为 set 会将过期时间给覆盖成-1。当然情况比较复杂，也有可能是我没有想到。</p>
+</blockquote>
+<p>为了保证针对过期的 key 的复制能够正确工作，Redis 提供如下保证：</p>
+<ol>
+<li>slave 不会让 key 过期，而是等待 master 让 key 过期。当一个 master 让一个 key 到期（或由于 LRU 算法将之驱逐）时，它会合成一个 DEL 命令并传输到所有的 slave。一旦一个 slave 被提升为一个 master ，它将开始独立地过期 key，而不需要任何旧 master 的帮助。</li>
+<li>但是，由于这是 master 驱动的 key 过期行为，master 无法及时提供 DEL 命令，所以有时候 slave 的内存中仍然可能存在在逻辑上已经过期的 key 。为了处理这个问题，slave 使用它的逻辑时钟以报告只有在不违反数据集的一致性的读取操作（从主机的新命令到达）中才存在 key。用这种方法，slave 避免报告逻辑过期的 key 仍然存在。在实际应用中，使用 slave 程序进行缩放的 HTML 碎片缓存，将避免返回已经比期望的时间更早的数据项。</li>
+<li>在 Lua 脚本执行期间，不执行任何 key 过期操作。当一个 Lua 脚本运行时，从概念上讲，master 中的时间是被冻结的，这样脚本运行的时候，一个给定的键要么存在要么不存在。这可以防止 key 在脚本中间过期，保证将相同的脚本发送到 slave ，从而在二者的数据集中产生相同的效果。</li>
+</ol>
+<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><h3 id="AOF日志更全，为什么主从同步不使用AOF而是RDB呢？"><a href="#AOF日志更全，为什么主从同步不使用AOF而是RDB呢？" class="headerlink" title="AOF日志更全，为什么主从同步不使用AOF而是RDB呢？"></a>AOF日志更全，为什么主从同步不使用AOF而是RDB呢？</h3><p>网络传输效率：RDB直接存储数据，而不是命令，数据量更小，传输更快。<br>恢复效率：因为使用AOF恢复数据库的话是需要将AOF中记录的命令再执行一次的，这个效率远不如直接将RDB中的数据直接加载到内存里。</p>
+<h3 id="主从切换过程中，客户端能正常进行请求吗？"><a href="#主从切换过程中，客户端能正常进行请求吗？" class="headerlink" title="主从切换过程中，客户端能正常进行请求吗？"></a>主从切换过程中，客户端能正常进行请求吗？</h3><p>主库故障后从库仍能正常接收读请求，但主库挂掉了所以无法处理写请求。</p>
+<h3 id="如果实现应用程序不感知服务器的中断？"><a href="#如果实现应用程序不感知服务器的中断？" class="headerlink" title="如果实现应用程序不感知服务器的中断？"></a>如果实现应用程序不感知服务器的中断？</h3><ol>
+<li>客户端可以缓存写请求，因为使用Redis的场景同步写请求比较少，且一般都不会在应用程序的关键路径上，所以在不能立刻执行写请求的情况下，客户端完全可以先把请求缓存起来，给应用程序返回一个确认即可。</li>
+<li>另外，主从切换后，客户端要能及时和新主库重新建立连接。</li>
+</ol>
+<h3 id="主从数据发生不一致怎么办？"><a href="#主从数据发生不一致怎么办？" class="headerlink" title="主从数据发生不一致怎么办？"></a>主从数据发生不一致怎么办？</h3><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/hongmoshui/p/10594639.html">Redis复制实现原理</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/102859170">Redis集群——主从复制数据同步</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Redis/" rel="tag"># Redis</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/a2b16944.html" rel="prev" title="Redis 持久化">
+                  <i class="fa fa-angle-left"></i> Redis 持久化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/a894e74e.html" rel="next" title="Disruptor 原理">
+                  Disruptor 原理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

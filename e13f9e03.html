@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="主从同步MySQL的主从同步是基于bin log实现的。 bin log 同步流程备库 B 和主库 A 之间维持了一个长连接，主库 A 内部有一个线程专门服务于与 B 的 bin log 同步，一个事务日志同步的过程如下：  在备库 B 上通过 change master 命令，设置主库 A 的 IP、端口、用户名、密码，以及要从哪个位置开始请求 binlog，这个位置包含文件名和日志偏移量；">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL5_1高可用集群">
+<meta property="og:url" content="https://tallate.github.io/e13f9e03.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="主从同步MySQL的主从同步是基于bin log实现的。 bin log 同步流程备库 B 和主库 A 之间维持了一个长连接，主库 A 内部有一个线程专门服务于与 B 的 bin log 同步，一个事务日志同步的过程如下：  在备库 B 上通过 change master 命令，设置主库 A 的 IP、端口、用户名、密码，以及要从哪个位置开始请求 binlog，这个位置包含文件名和日志偏移量；">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/MySQL/MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/MySQL/MySQL-%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/MySQL/MySQL-%E4%B8%BB%E5%A4%87%E5%90%8C%E6%AD%A5%E6%B5%81%E7%A8%8B%E5%9B%BE.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/MySQL/MySQL-%E5%8F%8CM%E6%9E%B6%E6%9E%84%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2%E6%B5%81%E7%A8%8B.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/MySQL/MySQL-%E4%B8%80%E4%B8%BB%E5%A4%9A%E4%BB%8E%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/MySQL/MySQL-%E4%B8%80%E4%B8%BB%E5%A4%9A%E4%BB%8E%E7%9A%84%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/MySQL/MySQL-%E5%B8%A6proxy%E7%9A%84%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E6%9E%B6%E6%9E%84.png">
+<meta property="article:published_time" content="2020-05-29T02:18:28.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.879Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="MySQL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/MySQL/MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/e13f9e03.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/e13f9e03.html","path":"/e13f9e03.html","title":"MySQL5_1高可用集群"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>MySQL5_1高可用集群 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5"><span class="nav-number">1.</span> <span class="nav-text">主从同步</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#bin-log-%E5%90%8C%E6%AD%A5%E6%B5%81%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">bin log 同步流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#binlog%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.2.</span> <span class="nav-text">binlog格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E5%A4%87%E5%BB%B6%E8%BF%9F"><span class="nav-number">1.3.</span> <span class="nav-text">主备延迟</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B6%E8%A1%8C%E5%A4%8D%E5%88%B6%E7%AD%96%E7%95%A5"><span class="nav-number">1.4.</span> <span class="nav-text">并行复制策略</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8A%E5%90%8C%E6%AD%A5"><span class="nav-number">1.5.</span> <span class="nav-text">半同步</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5-%E5%8D%8A%E5%90%8C%E6%AD%A5-%E5%85%A8%E5%90%8C%E6%AD%A5"><span class="nav-number">1.5.1.</span> <span class="nav-text">异步 &amp; 半同步 &amp; 全同步</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2"><span class="nav-number">2.</span> <span class="nav-text">主备切换</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2%E6%B5%81%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">主备切换流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8C-M-%E6%9E%B6%E6%9E%84"><span class="nav-number">2.2.</span> <span class="nav-text">双 M 架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E9%9D%A0%E6%80%A7%E4%BC%98%E5%85%88%E7%AD%96%E7%95%A5"><span class="nav-number">2.2.1.</span> <span class="nav-text">可靠性优先策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E7%94%A8%E6%80%A7%E4%BC%98%E5%85%88%E7%AD%96%E7%95%A5"><span class="nav-number">2.2.2.</span> <span class="nav-text">可用性优先策略</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%B8%BB%E5%A4%9A%E4%BB%8E"><span class="nav-number">2.3.</span> <span class="nav-text">一主多从</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB"><span class="nav-number">3.</span> <span class="nav-text">读写分离</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E2%80%9C%E8%BF%87%E6%9C%9F%E8%AF%BB%E2%80%9D%E9%97%AE%E9%A2%98"><span class="nav-number">3.1.</span> <span class="nav-text">“过期读”问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8E%A2%E6%B4%BB"><span class="nav-number">4.</span> <span class="nav-text">探活</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#select-1"><span class="nav-number">4.1.</span> <span class="nav-text">select 1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%A1%A8%E5%88%A4%E6%96%AD"><span class="nav-number">4.2.</span> <span class="nav-text">查表判断</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E5%88%A4%E6%96%AD"><span class="nav-number">4.3.</span> <span class="nav-text">更新判断</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E9%83%A8%E7%BB%9F%E8%AE%A1"><span class="nav-number">4.4.</span> <span class="nav-text">内部统计</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#QA"><span class="nav-number">5.</span> <span class="nav-text">QA</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E7%9A%84%E6%B5%81%E7%A8%8B"><span class="nav-number">5.1.</span> <span class="nav-text">主从同步的流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-%E6%98%AF%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E6%95%B0%E6%8D%AE%E4%B8%8D%E4%B8%A2%E5%A4%B1%E7%9A%84"><span class="nav-number">5.2.</span> <span class="nav-text">MySQL 是怎么保证数据不丢失的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-%E6%98%AF%E6%80%8E%E4%B9%88%E4%BF%9D%E8%AF%81%E9%AB%98%E5%8F%AF%E7%94%A8%E7%9A%84"><span class="nav-number">5.3.</span> <span class="nav-text">MySQL 是怎么保证高可用的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL%E5%A6%82%E4%BD%95%E4%BC%98%E5%8C%96%E5%8D%83%E4%B8%87%E7%BA%A7%E7%9A%84%E5%A4%A7%E8%A1%A8%EF%BC%9F"><span class="nav-number">5.4.</span> <span class="nav-text">MySQL如何优化千万级的大表？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e13f9e03.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="MySQL5_1高可用集群 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MySQL5_1高可用集群
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-05-29 10:18:28" itemprop="dateCreated datePublished" datetime="2020-05-29T10:18:28+08:00">2020-05-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+<h1 id="主从同步"><a href="#主从同步" class="headerlink" title="主从同步"></a>主从同步</h1><p>MySQL的主从同步是基于bin log实现的。</p>
+<h2 id="bin-log-同步流程"><a href="#bin-log-同步流程" class="headerlink" title="bin log 同步流程"></a>bin log 同步流程</h2><p><img src="/imgs/MySQL/MySQL%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.png" alt="MySQL主从复制" title="MySQL主从复制"><br>备库 B 和主库 A 之间维持了一个长连接，主库 A 内部有一个线程专门服务于与 B 的 bin log 同步，一个事务日志同步的过程如下：</p>
+<ol>
+<li>在备库 B 上通过 change master 命令，设置主库 A 的 IP、端口、用户名、密码，以及要从哪个位置开始请求 binlog，这个位置包含文件名和日志偏移量；</li>
+<li>在备库 B 上执行 start slave 命令，这时候备库会启动两个线程，就是图中的 <code>io_thread</code> 和 <code>sql_thread</code>。其中 io_thread 负责与主库建立连接。</li>
+<li>主库 A 校验完用户名、密码后，开始按照备库 B 传过来的位置，从本地读取 bin log，发给 B。</li>
+<li>备库 B 拿到 bin log 后，写到本地文件，称为中转日志（relay log）。</li>
+<li>sql_thread 读取中转日志，解析出日志里的命令，并执行。</li>
+</ol>
+<h2 id="binlog格式"><a href="#binlog格式" class="headerlink" title="binlog格式"></a>binlog格式</h2><p>MySQL的bin log主要支持三种格式，分别是statement、row以及mixed。MySQL是在5.1.5版本开始支持row的、在5.1.8版本中开始支持mixed。</p>
+<ul>
+<li>statement：binlog中记录的是SQL语句的原文<br>容易引起<strong>主从不一致</strong>，因为binlog是按事务提交顺序记录的，但是两个并发执行的事务中update语句可能是乱序的。</li>
+<li>row：记录原数据</li>
+</ul>
+<h2 id="主备延迟"><a href="#主备延迟" class="headerlink" title="主备延迟"></a>主备延迟</h2><p>产生主备延迟的可能情况：</p>
+<ol>
+<li>备库所在的机器性能较主库差；</li>
+<li>备库的压力较大，比如因为备库不跑业务，所以很多人会随意执行一些特别耗时的操作，这些查询耗费大量的 CPU 资源，影响了同步速度，造成主备延迟。</li>
+<li>出现了大事务，比如，一次性用 delete 语句删除大量数据，或者大表的 DDL。</li>
+<li>一个服务器开放N个链接给客户端来连接，但是Slave里读取binlog的线程只有一个，当某个SQL在Slave上执行的时间稍长或由于某个SQL要进行锁表就会导致Master的SQL大量积压，未被同步到Slave，这就导致了主从不一致，也就是主从延迟。</li>
+</ol>
+<h2 id="并行复制策略"><a href="#并行复制策略" class="headerlink" title="并行复制策略"></a>并行复制策略</h2><p>为了避免备库追不上主库的情况，MySQL 利用并行复制策略提高复制的效率，从上面的<strong>主备同步流程图</strong>可知，并行化可以加到客户端连接和写入数据两个过程中。</p>
+<ol>
+<li>按表分发策略<br>如果两个事务更新不同的表，它们就可以并行。因为数据是存储在表里的，所以按表分发，可以保证两个 worker 不会更新同一行。<br>当然，如果有跨表的事务，还是要把两张表放在一起考虑的。</li>
+<li>按行分发策略<br>按表复制存在热点表的并行复制问题，即热点表会被分配给一个 worker 执行复制，这样就会退化成单线程复制。<br>按行复制的核心思路是：如果两个事务没有更新相同的行，则它们在备库上可以并行执行，为了知道具体修改了哪些行，这种模式需要设置 binlog 的格式为 row（因为 statement 格式直接记录更新语句，row 记录的是受影响的具体数据的 ID）。</li>
+</ol>
+<h2 id="半同步"><a href="#半同步" class="headerlink" title="半同步"></a>半同步</h2><p>在 MySQL 5.5 版本之前一直采用的是上述的异步复制方案，主库的事务执行不会管备库的同步进度，如果备库落后，主库不幸 crash，那么就会导致数据丢失。<br>于是在 MySQL 在 5.5 中就顺其自然地引入了半同步复制，主库在应答客户端提交的事务前需要保证至少一个从库接收并写到 relay log 中。</p>
+<h3 id="异步-半同步-全同步"><a href="#异步-半同步-全同步" class="headerlink" title="异步 &amp; 半同步 &amp; 全同步"></a>异步 &amp; 半同步 &amp; 全同步</h3><ul>
+<li>对于异步复制，主库将事务 Binlog 事件写入到 bin log 文件中，此时主库只会通知一下 Dump 线程发送这些新的 Binlog，然后主库就会继续处理提交操作，而此时不会保证这些 Binlog 传到任何一个从库节点上。</li>
+<li>对于全同步复制，当主库提交事务之后，所有的从库节点必须收到，APPLY 并且提交这些事务，然后主库线程才能继续做后续操作。这里面有一个很明显的缺点就是，主库完成一个事务的时间被拉长，性能降低。</li>
+<li>对于半同步复制，是介于全同步复制和异步复制之间的一种，主库只需要等待至少一个从库节点收到并且 Flush Binlog 到 Relay Log 文件即可，主库不需要等待所有从库给主库反馈。同时，这里只是一个收到的反馈，而不是已经完全执行并且提交的反馈，这样就节省了很多时间。</li>
+</ul>
+<h1 id="主备切换"><a href="#主备切换" class="headerlink" title="主备切换"></a>主备切换</h1><p>主备功能主要是通过 bin log 实现的。</p>
+<h2 id="主备切换流程"><a href="#主备切换流程" class="headerlink" title="主备切换流程"></a>主备切换流程</h2><p><img src="/imgs/MySQL/MySQL-%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2%E6%B5%81%E7%A8%8B.png" alt="MySQL-主备切换流程" title="MySQL-主备切换流程"><br>如图示，客户端的读写都是直接访问的节点 A，而节点 B 是 A 的备库，通常是只读的，只是将 A 的更新同步过来到本地执行，节点 A 的 update 同步到节点 B 的流程图如下所示：<br><img src="/imgs/MySQL/MySQL-%E4%B8%BB%E5%A4%87%E5%90%8C%E6%AD%A5%E6%B5%81%E7%A8%8B%E5%9B%BE.png" alt="MySQL-主备同步流程图" title="MySQL-主备同步流程图"></p>
+<ol>
+<li>主库接收到客户端的更新请求后，执行内部事务的更新逻辑，同时写 binlog；</li>
+<li>备库 B 跟主库 A 之间维持了一个长连接，专门用于服务备库 B 的事务日志同步；</li>
+</ol>
+<p>当需要切换时，切换到状态 2，这时候客户端读写访问的都是节点 B，而节点 A 是 B 的备库；</p>
+<h2 id="双-M-架构"><a href="#双-M-架构" class="headerlink" title="双 M 架构"></a>双 M 架构</h2><p>实际生产中更多采用的是双 M 架构：<br><img src="/imgs/MySQL/MySQL-%E5%8F%8CM%E6%9E%B6%E6%9E%84%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2%E6%B5%81%E7%A8%8B.png" alt="MySQL-双M架构主备切换流程" title="MySQL-双M架构主备切换流程"><br>与原先的方案相比，只是节点 A 和 B 之间多了一条线，这样，节点 A 和 B 之间总是互为主备关系，在切换的时候就不用再修改主备关系。</p>
+<h3 id="可靠性优先策略"><a href="#可靠性优先策略" class="headerlink" title="可靠性优先策略"></a>可靠性优先策略</h3><p>双 M 结构的可靠性优先主备切换流程如下：</p>
+<ol>
+<li>判断备库 B 现在的 <code>seconds_behind_master</code>，如果小于某个值（比如 5 秒）继续下一步，否则持续重试这一步；</li>
+<li>把主库 A 改成只读状态，即把 readonly 设置为 true；</li>
+<li>判断备库 B 的 seconds_behind_master 的值，直到这个值变成 0 为止；</li>
+<li>把备库 B 改成可读写状态，也就是把 readonly 设置为 false；</li>
+<li>把业务请求切到备库 B。</li>
+</ol>
+<p>这个切换流程一般由专门的 HA 系统来完成，称为<strong>可靠性优先流程</strong>。<br>注意：</p>
+<ol>
+<li>这个过程中，比较耗时的是第 3 步，可能会耗费好几秒的时间，因此一般会先在第 1 步中做判断，确保 seconds_behind_master 足够小后才执行。</li>
+</ol>
+<h3 id="可用性优先策略"><a href="#可用性优先策略" class="headerlink" title="可用性优先策略"></a>可用性优先策略</h3><p>可靠性优先策略中，同步流程中存在一段系统不可用的时间，如果强行把步骤 4、5 调整到最开始执行，也就是说不等主备数据同步，直接把连接切到备库 B，并且让备库 B 可以读写，那么系统几乎就没有不可用时间了，这个流程称为可用性优先策略。</p>
+<h2 id="一主多从"><a href="#一主多从" class="headerlink" title="一主多从"></a>一主多从</h2><p>平时使用数据库一般都是读多写少，在发展过程中很可能会先遇到读性能问题，为了解决读性能问题，在架构上的解决方式是<strong>一主多从</strong>。<br><img src="/imgs/MySQL/MySQL-%E4%B8%80%E4%B8%BB%E5%A4%9A%E4%BB%8E%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84.png" alt="MySQL-一主多从基本结构" title="MySQL-一主多从基本结构"><br>其中：</p>
+<ul>
+<li>A 和 A’互为主备；</li>
+<li>从库 B、C、D 指向主库 A，主库负责所有写入和一部分读，其他的读请求由从库分担。</li>
+</ul>
+<p><img src="/imgs/MySQL/MySQL-%E4%B8%80%E4%B8%BB%E5%A4%9A%E4%BB%8E%E7%9A%84%E4%B8%BB%E5%A4%87%E5%88%87%E6%8D%A2.png" alt="MySQL-一主多从的主备切换" title="MySQL-一主多从的主备切换"></p>
+<ul>
+<li>主备切换后，A’将成为新的主库；</li>
+<li>从库 B、C、D 改成连接到 A’。</li>
+</ul>
+<h1 id="读写分离"><a href="#读写分离" class="headerlink" title="读写分离"></a>读写分离</h1><p>上述的主从结构其实形成了一种读写分离的架构，连接信息一般保存到客户端，由客户端执行负载均衡。<br>另一种读写分离架构在客户端和服务器之间架设了一个代理层 proxy，客户端全部连接到这个 proxy，由 proxy 根据请求类型和上下文执行请求的路由分发。<br><img src="/imgs/MySQL/MySQL-%E5%B8%A6proxy%E7%9A%84%E8%AF%BB%E5%86%99%E5%88%86%E7%A6%BB%E6%9E%B6%E6%9E%84.png" alt="MySQL-带proxy的读写分离架构" title="MySQL-带proxy的读写分离架构"></p>
+<ul>
+<li>直连的架构，少了一层 proxy，因此性能稍微更好一点，排查问题也更方便，但是主备切换库迁移时客户端会感知到，所以客户端需要一个后端管理组件，比如 Zookeeper。</li>
+<li>带 proxy 架构，对客户端友好，但是同时 proxy 架构也更加复杂。</li>
+</ul>
+<h2 id="“过期读”问题"><a href="#“过期读”问题" class="headerlink" title="“过期读”问题"></a>“过期读”问题</h2><p>当客户端先写入再读取时可能会读到修改前的值，因为写入是对主库写入，读取是对从库读，而主从同步存在延迟，刚写入主库的数据可能还没有同步到所有的从库。<br>解决过期读问题的方案：</p>
+<ul>
+<li>强制走主库方案；<br>一些必须拿到最新结果的请求，可以强制将其发到主库上，比如用户支付后需要马上看到商品是否已经购买成功，这个请求需要马上拿到最新的结果，因此最好走主库；<br>一些请求没有必要立刻拿到最新的结果，比如商户发布商品后，用户即使没有马上看到商品也是可以的，因此用户读取商品列表的请求完全可以路由到从库上去。</li>
+<li>sleep 方案；<br>不大靠谱，但是一定程度上还是可以解决问题的。</li>
+<li>判断主备无延迟方案；<br>判断 <code>show slave status</code> 结果里的 <code>seconds_behind_master</code> 参数的值，等于 0 才执行查询请求，这个参数可以表明从库是否已经完全同步。</li>
+<li>配合 semi-sync 方案；</li>
+<li>等主库位点方案；</li>
+<li>等 GTID 方案。</li>
+</ul>
+<h1 id="探活"><a href="#探活" class="headerlink" title="探活"></a>探活</h1><p>在一主一备的双 M 架构里，主备切换只需要把客户端流量切到备库；而在一主多从架构里，主备切换除了要把客户端流量切到备库外，还需要把从库接到新主库上。<br>主备切换有两种场景：主动切换和被动切换，其中被动切换往往是因为主库出问题而由 HA 系统发起的。</p>
+<h2 id="select-1"><a href="#select-1" class="headerlink" title="select 1"></a>select 1</h2><p><code>select 1</code>只能用于判断该数据库进程仍能执行，但是<strong>不能说明主库没有问题</strong>，比如，数据库线程池（由参数 innodb_thread_concurrency 控制）被打满的情况下，虽然<code>select 1</code>能执行，但是线程池还是会被堵住。</p>
+<blockquote>
+<p>innodb_thread_concurrency 控制的是并发查询，而不是并发连接，因为并发连接多只是多占用一些内存空间，并不会占用 CPU 资源。</p>
+</blockquote>
+<h2 id="查表判断"><a href="#查表判断" class="headerlink" title="查表判断"></a>查表判断</h2><p>为了知道线程池是否被打满，我们可以创建一张<code>health_check</code>表，里面只放一条数据，然后定时执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from mysql.health_check;</span><br></pre></td></tr></table></figure>
+<p>这种方法的缺点是，<strong>不能用于判断磁盘空间是否满了</strong>，因为如果磁盘空间满了，所有的更新语句和事务提交语句都会被堵塞，但是查询语句仍能执行。</p>
+<h2 id="更新判断"><a href="#更新判断" class="headerlink" title="更新判断"></a>更新判断</h2><p>更新一行数据，一般会放一个 timestamp 字段，用来表示最后一次执行检测的时间。<br>但是要注意如果主备都要检测，就不能只有一行数据了，因为会产生<strong>行冲突</strong>，导致主备同步的停止。一般会采用数据库实例的 server_id 作为主键，因为 MySQL 规定了主备服务器的 server_id 必须不同，这样就能保证主备的检测命令不会冲突了。<br>这种方式仍然存在一种问题：这种更新语句占用的 IO 资源很少，即使当时 IO 已经 100%，检测语句仍可以获得 IO 资源来执行，但系统可能已经出问题了，也就是说，这种检测存在随机性。</p>
+<h2 id="内部统计"><a href="#内部统计" class="headerlink" title="内部统计"></a>内部统计</h2><p>前面几种方法都是通过外部调用来发现问题的，更好的方式是利用 MySQL 本身的统计数据：<code>performance_schema</code>库的<code>file_summary_by_event_name</code>表。</p>
+<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><h2 id="主从同步的流程"><a href="#主从同步的流程" class="headerlink" title="主从同步的流程"></a>主从同步的流程</h2><p>主备服务器之间维持了一个长连接，备库上回启动两个线程，一个 io_thread 负责与主库建立连接并读取 bin log，另一个 sql_thread 负责解析命令并执行。</p>
+<h2 id="MySQL-是怎么保证数据不丢失的"><a href="#MySQL-是怎么保证数据不丢失的" class="headerlink" title="MySQL 是怎么保证数据不丢失的"></a>MySQL 是怎么保证数据不丢失的</h2><h2 id="MySQL-是怎么保证高可用的"><a href="#MySQL-是怎么保证高可用的" class="headerlink" title="MySQL 是怎么保证高可用的"></a>MySQL 是怎么保证高可用的</h2><h2 id="MySQL如何优化千万级的大表？"><a href="#MySQL如何优化千万级的大表？" class="headerlink" title="MySQL如何优化千万级的大表？"></a>MySQL如何优化千万级的大表？</h2><ol>
+<li>优化SQL和索引；</li>
+<li>加缓存，比如Memcached或Redis；</li>
+<li>主从复制或主主复制，实现读写分离<br>可以在应用层做，效率高<br>也可以用三方工具，如360的atlas</li>
+<li>使用MySQL自带的分区表<br>优点是对应用透明，但是SQL需要针对分区表做一些优化，sql条件中要带上分区条件的列，从而使查询定位到少量的分区上，否则就会扫描全部分区。</li>
+<li>垂直拆分，根据模块耦合情况将一个大系统分为多个小系统</li>
+<li>水平切分，选择合适的sharding key将大表数据拆分到多个小表上</li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zero-gg/p/9057092.html">MySQL 5.7 半同步复制技术</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/MySQL/" rel="tag"># MySQL</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/f2150593.html" rel="prev" title="Netty 原理总结">
+                  <i class="fa fa-angle-left"></i> Netty 原理总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/a87bf883.html" rel="next" title="MySQL6_1其他主题">
+                  MySQL6_1其他主题 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="先分析ES中的搜索原理，然后总结ES中的搜索方法，主要包括轻量查询、请求体查询。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ES3_1分布式搜索">
+<meta property="og:url" content="https://tallate.github.io/1c3259ad.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="先分析ES中的搜索原理，然后总结ES中的搜索方法，主要包括轻量查询、请求体查询。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/ES/%E6%9F%A5%E8%AF%A2%E9%98%B6%E6%AE%B5.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/ES/%E5%8F%96%E5%9B%9E%E9%98%B6%E6%AE%B5.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/ES/ES%E7%9A%84%E7%B4%A2%E5%BC%95%E5%92%8C%E6%90%9C%E7%B4%A2.png">
+<meta property="article:published_time" content="2019-08-21T01:03:54.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.859Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="ElasticSearch">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/ES/%E6%9F%A5%E8%AF%A2%E9%98%B6%E6%AE%B5.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/1c3259ad.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/1c3259ad.html","path":"/1c3259ad.html","title":"ES3_1分布式搜索"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ES3_1分布式搜索 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">分布式搜索原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E9%98%B6%E6%AE%B5%EF%BC%88query%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">查询阶段（query）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%96%E5%9B%9E%E9%98%B6%E6%AE%B5%EF%BC%88fetch%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">取回阶段（fetch）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B1%E5%88%86%E9%A1%B5%E9%97%AE%E9%A2%98%EF%BC%88Deep-Pagination%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">深分页问题（Deep Pagination）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%81%8F%E5%A5%BD-%E8%A7%A3%E5%86%B3Bouncing-Results%E9%97%AE%E9%A2%98"><span class="nav-number">1.4.</span> <span class="nav-text">偏好 - 解决Bouncing Results问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B6%85%E6%97%B6"><span class="nav-number">1.5.</span> <span class="nav-text">超时</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1"><span class="nav-number">1.6.</span> <span class="nav-text">路由</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.7.</span> <span class="nav-text">搜索类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E6%80%A7"><span class="nav-number">1.8.</span> <span class="nav-text">相关性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#TF-IDF"><span class="nav-number">1.8.1.</span> <span class="nav-text">TF-IDF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BM-25"><span class="nav-number">1.8.2.</span> <span class="nav-text">BM 25</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2-%E8%BD%BB%E9%87%8F%E6%9F%A5%E8%AF%A2%EF%BC%88Query-string%EF%BC%89-%E5%9C%A8URL%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%9F%A5%E8%AF%A2%E5%8F%82%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">搜索 - 轻量查询（Query-string） - 在URL中使用查询参数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#URI%E6%9F%A5%E8%AF%A2%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="nav-number">2.1.</span> <span class="nav-text">URI查询的方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E6%9D%A1%E4%BB%B6"><span class="nav-number">2.2.</span> <span class="nav-text">查询条件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%90%E5%90%AB%E5%AD%97%E6%AE%B5"><span class="nav-number">2.3.</span> <span class="nav-text">隐含字段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Query-string-%E7%9A%84%E4%BC%98%E7%82%B9"><span class="nav-number">2.4.</span> <span class="nav-text">Query-string 的优点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Query-string-%E7%9A%84%E7%BC%BA%E7%82%B9"><span class="nav-number">2.5.</span> <span class="nav-text">Query-string 的缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E8%BF%94%E5%9B%9E%E5%AD%97%E6%AE%B5"><span class="nav-number">2.6.</span> <span class="nav-text">搜索返回字段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E9%A1%B5"><span class="nav-number">2.7.</span> <span class="nav-text">分页</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E4%BD%93%E6%9F%A5%E8%AF%A2%EF%BC%88%E6%9F%A5%E8%AF%A2%E8%A1%A8%E8%BE%BE%E5%BC%8F%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">请求体查询（查询表达式）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E6%9F%A5%E8%AF%A2%E6%98%AF%E5%90%A6%E5%90%88%E6%B3%95"><span class="nav-number">3.1.</span> <span class="nav-text">验证查询是否合法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#term"><span class="nav-number">3.2.</span> <span class="nav-text">term</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E5%90%88%E6%9F%A5%E8%AF%A2"><span class="nav-number">3.3.</span> <span class="nav-text">复合查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%A8%E6%96%87%E6%9F%A5%E8%AF%A2"><span class="nav-number">3.4.</span> <span class="nav-text">全文查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%BB%93%E6%9E%84%E5%8C%96%E6%9F%A5%E8%AF%A2%E8%AF%AD%E5%8F%A5"><span class="nav-number">3.5.</span> <span class="nav-text">其他结构化查询语句</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%81%9A%E5%90%88-aggs"><span class="nav-number">3.6.</span> <span class="nav-text">聚合 - aggs</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%81%9A%E5%90%88%E4%BD%9C%E7%94%A8%E8%8C%83%E5%9B%B4"><span class="nav-number">3.6.1.</span> <span class="nav-text">聚合作用范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E8%81%9A%E5%90%88"><span class="nav-number">3.6.2.</span> <span class="nav-text">简单聚合</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Bucket"><span class="nav-number">3.6.3.</span> <span class="nav-text">Bucket</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pipeline"><span class="nav-number">3.6.4.</span> <span class="nav-text">Pipeline</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ARGUMENT-%E4%B8%80%E4%BA%9B%E7%89%B9%E6%AE%8A%E7%9A%84%E5%8F%82%E6%95%B0"><span class="nav-number">3.7.</span> <span class="nav-text">ARGUMENT 一些特殊的参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Doc-Values-fielddata-%E6%AD%A3%E6%8E%92%E7%B4%A2%E5%BC%95"><span class="nav-number">3.8.</span> <span class="nav-text">Doc Values &#x2F; fielddata - 正排索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%97%AD-Doc-Values"><span class="nav-number">3.8.1.</span> <span class="nav-text">关闭 Doc Values</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E4%B8%8E%E7%9B%B8%E5%85%B3%E6%80%A7"><span class="nav-number">3.9.</span> <span class="nav-text">排序与相关性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E9%A1%B5-1"><span class="nav-number">3.10.</span> <span class="nav-text">分页</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#from-%E5%92%8C-size%EF%BC%88%E5%88%86%E9%A1%B5%EF%BC%89%E3%80%81Search-After"><span class="nav-number">3.10.1.</span> <span class="nav-text">from 和 size（分页）、Search After</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%B8%E6%A0%87%E6%9F%A5%E8%AF%A2-Scroll"><span class="nav-number">3.10.2.</span> <span class="nav-text">游标查询 Scroll</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E8%B7%B5"><span class="nav-number">3.11.</span> <span class="nav-text">实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E8%AE%A2%E5%8D%95%E6%98%A8%E5%A4%A9%E7%9A%84%E9%97%AE%E9%A2%98%E8%AE%A2%E5%8D%95"><span class="nav-number">3.11.1.</span> <span class="nav-text">查询订单昨天的问题订单</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E6%9D%A1%E4%BB%B6%E6%9F%A5%E8%AF%A2"><span class="nav-number">3.11.2.</span> <span class="nav-text">多条件查询</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Search%E6%BA%90%E7%A0%81%E6%B5%81%E7%A8%8B"><span class="nav-number">4.</span> <span class="nav-text">Search源码流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E7%B4%A2%E5%BC%95%E5%92%8C%E6%90%9C%E7%B4%A2%E7%9A%84%E8%BF%87%E7%A8%8B%EF%BC%88%E5%8D%95%E6%9C%BA%E8%A7%86%E8%A7%92%EF%BC%89"><span class="nav-number">4.1.</span> <span class="nav-text">建立索引和搜索的过程（单机视角）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E7%AB%8B%E7%B4%A2%E5%BC%95"><span class="nav-number">4.1.1.</span> <span class="nav-text">建立索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E6%90%9C%E7%B4%A2"><span class="nav-number">4.1.2.</span> <span class="nav-text">执行搜索</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2%E8%BF%87%E7%A8%8B%EF%BC%88%E9%9B%86%E7%BE%A4%E8%A7%86%E8%A7%92%EF%BC%89"><span class="nav-number">4.2.</span> <span class="nav-text">分布式搜索过程（集群视角）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Query%E6%B5%81%E7%A8%8B"><span class="nav-number">4.2.1.</span> <span class="nav-text">Query流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Fetch%E9%98%B6%E6%AE%B5"><span class="nav-number">4.2.2.</span> <span class="nav-text">Fetch阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E6%90%9C%E7%B4%A2%E7%9A%84%E6%95%B0%E6%8D%AE%E8%8A%82%E7%82%B9%E6%B5%81%E7%A8%8B"><span class="nav-number">4.2.3.</span> <span class="nav-text">执行搜索的数据节点流程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#QA"><span class="nav-number">5.</span> <span class="nav-text">QA</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%90%8C%E6%9F%A5%E8%AF%A2%E5%A4%9A%E6%AC%A1%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C%E4%B8%8D%E5%90%8C"><span class="nav-number">5.1.</span> <span class="nav-text">相同查询多次执行结果不同</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E6%A1%A3"><span class="nav-number">6.1.</span> <span class="nav-text">文档</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E3%80%81%E6%98%A0%E5%B0%84%E5%92%8C%E6%96%87%E6%A1%A3"><span class="nav-number">6.2.</span> <span class="nav-text">索引、映射和文档</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2"><span class="nav-number">6.3.</span> <span class="nav-text">搜索</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4"><span class="nav-number">6.4.</span> <span class="nav-text">集群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BA%90%E7%A0%81"><span class="nav-number">6.5.</span> <span class="nav-text">源码</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/1c3259ad.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ES3_1分布式搜索 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ES3_1分布式搜索
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-08-21 09:03:54" itemprop="dateCreated datePublished" datetime="2019-08-21T09:03:54+08:00">2019-08-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>先分析ES中的搜索原理，然后总结ES中的搜索方法，主要包括轻量查询、请求体查询。</p>
+<span id="more"></span>
+
+<h1 id="分布式搜索原理"><a href="#分布式搜索原理" class="headerlink" title="分布式搜索原理"></a>分布式搜索原理</h1><p>在分布式环境中执行的搜索是一个两阶段的过程，我们称之为 <strong>query then fetch</strong> 。<br>ES的一个概念</p>
+<h2 id="查询阶段（query）"><a href="#查询阶段（query）" class="headerlink" title="查询阶段（query）"></a>查询阶段（query）</h2><p><img src="/imgs/ES/%E6%9F%A5%E8%AF%A2%E9%98%B6%E6%AE%B5.png" alt="查询阶段" title="查询阶段"></p>
+<ul>
+<li>客户端发送一个 search 请求到<strong>协调节点（Coordinating Node）</strong>（也就是 Node 3），协调节点会创建一个大小为 <code>from+size</code> 的<strong>空优先队列</strong>。</li>
+<li>协调节点将请求广播到索引中每一个分片拷贝（主分片或者副本分片）。<br>比如如果集群中有3对主副分配，那么协调节点会从中随机选择3个分片，发送查询请求</li>
+<li>每个分片在本地执行搜索并构建一个匹配文档的 <strong>优先队列</strong>。<br>一个 优先队列 仅仅是一个存有 top-n 匹配文档的有序列表。优先队列的大小取决于分页参数 from 和 size ，其值为 from + size，比如下面的搜索请求需要足够大的优先队列来放入 100 条文档。  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GET /_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;from&quot;: 90,</span><br><span class="line">    &quot;size&quot;: 10</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>协调节点将在之后的请求中轮询所有的分片拷贝来分摊负载，因此更多的副本（结合更多的硬件）能增加搜索吞吐率。<br>每个分片返回各自优先队列中所有文档的 <strong>ID 和排序值（_score）</strong> 给协调节点 ，它合并这些值到自己的优先队列中来产生一个全局排序后的结果列表。</li>
+</ul>
+<h2 id="取回阶段（fetch）"><a href="#取回阶段（fetch）" class="headerlink" title="取回阶段（fetch）"></a>取回阶段（fetch）</h2><p><img src="/imgs/ES/%E5%8F%96%E5%9B%9E%E9%98%B6%E6%AE%B5.png" alt="取回阶段" title="取回阶段"></p>
+<ul>
+<li>协调节点辨别出哪些文档需要被取回并向相关的分片提交多个 GET 请求。</li>
+<li>每个分片加载并 丰富 文档（_source），如果有需要的话，接着返回文档给协调节点。</li>
+<li>一旦所有的文档都被取回了，协调节点需要对 number_of_shards * (from + size) 大小的文档集合排序，协调节点返回结果给客户端。</li>
+</ul>
+<h2 id="深分页问题（Deep-Pagination）"><a href="#深分页问题（Deep-Pagination）" class="headerlink" title="深分页问题（Deep Pagination）"></a>深分页问题（Deep Pagination）</h2><p>先查后取的过程支持用 <code>from</code> 和 <code>size</code> 参数分页，但是这是 有限制的 。 要记住需要传递信息给协调节点的每个分片必须先创建一个 from + size 长度的队列，协调节点需要根据 <code>number_of_shards * (from + size)</code> 排序文档，来找到被包含在 size 里的文档。<br>取决于你的文档的大小，分片的数量和你使用的硬件，给 10,000 到 50,000 的结果文档深分页（ 1,000 到 5,000 页）是完全可行的。但是使用足够大的 from 值，排序过程可能会变得非常沉重，使用大量的 CPU、内存和带宽。因为这个原因，我们强烈建议你不要使用深分页。<br>实际上，深分页很少符合人的行为。当 2 到 3 页过去以后，人会停止翻页，并且改变搜索标准。会不知疲倦地一页一页的获取网页直到你的服务崩溃的罪魁祸首一般是机器人或者 web spider。<br>如果你确实需要从你的集群取回大量的文档，你可以通过用 <code>scroll</code> 查询禁用排序使这个取回行为更有效率。</p>
+<h2 id="偏好-解决Bouncing-Results问题"><a href="#偏好-解决Bouncing-Results问题" class="headerlink" title="偏好 - 解决Bouncing Results问题"></a>偏好 - 解决Bouncing Results问题</h2><p>偏好这个参数 <code>preference</code> 允许 用来控制由哪些分片或节点来处理搜索请求。 它接受像 <code>_primary, _primary_first, _local, _only_node:xyz, _prefer_node:xyz, 和 _shards:2,3</code> 这样的值，在<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/5.6/search-request-preference.html">search Preference</a>有说明。<br>偏好字段可以用于解决<strong>Bouncing Results</strong>问题。</p>
+<blockquote>
+<p>Bouncing Results<br>想象一下有两个文档有同样值的时间戳字段，搜索结果用 timestamp 字段来排序。 由于搜索请求是在所有有效的分片副本间轮询的，那就有可能发生主分片处理请求时，这两个文档是一种顺序， 而副本分片处理请求时又是另一种顺序。<br>特别是数据量不大的情况下会比较明显，如果数据量足够大的时候，结果一般不会出现偏差——只要保证文档均匀分散在各个分片上。<br>这就是所谓的 bouncing results 问题: 每次用户刷新页面，搜索结果表现是不同的顺序。 让同一个用户始终使用同一个分片，这样可以避免这种问题， 可以设置 preference 参数为一个特定的任意值比如用户会话 ID 来解决。</p>
+</blockquote>
+<h2 id="超时"><a href="#超时" class="headerlink" title="超时"></a>超时</h2><p>通常分片处理完它所有的数据后再把结果返回给协调节点，协调节点把收到的所有结果合并为最终结果。这意味着花费的时间是最慢分片的处理时间加结果合并的时间。如果有一个节点有问题，就会导致所有的响应缓慢。<br>参数 <code>timeout</code> 告诉 分片允许处理数据的最大时间。如果没有足够的时间处理所有数据，这个分片的结果可以是部分的，甚至是空数据。<br>搜索的返回结果会用属性 timed_out 标明分片是否返回的是部分结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">&quot;time_out&quot;: true // 表示搜索请求超时了</span><br></pre></td></tr></table></figure>
+<p>很有可能查询会超过设定的超时时间，这种情况可能有两个原因：</p>
+<ol>
+<li>超时检查是基于每文档做的。 但是某些查询类型有大量的工作在文档评估之前需要完成。 这种 “setup” 阶段并不考虑超时设置，所以太长的建立时间会导致超过超时时间的整体延迟。</li>
+<li>因为时间检查是基于每个文档的，一次长时间查询在单个文档上执行并且在下个文档被评估之前不会超时。 这也意味着差的脚本（比如带无限循环的脚本）将会永远执行下去。</li>
+</ol>
+<h2 id="路由"><a href="#路由" class="headerlink" title="路由"></a>路由</h2><p>路由能够在索引时提供来确保相关的文档，比如属于某个用户的文档被存储在某个分片上。 在搜索的时候，不用搜索索引的所有分片，而是通过指定几个 routing 值来限定只搜索几个相关的分片：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /_search?routing=user_1,user2</span><br></pre></td></tr></table></figure>
+
+<h2 id="搜索类型"><a href="#搜索类型" class="headerlink" title="搜索类型"></a>搜索类型</h2><p>缺省的搜索类型是 <code>query_then_fetch</code> 。 在某些情况下，你可能想明确设置 <code>search_type</code> 为 <code>dfs_query_then_fetch</code> 来改善相关性精确度：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /_search?search_type=dfs_query_then_fetch</span><br></pre></td></tr></table></figure>
+<p>搜索类型 <code>dfs_query_then_fetch</code> 有预查询阶段，这个阶段可以从所有相关分片获取词频来计算全局词频。</p>
+<h2 id="相关性"><a href="#相关性" class="headerlink" title="相关性"></a>相关性</h2><p>搜索的相关性算分描述了一个文档和查询语句匹配的程度，ES会对每个匹配查询条件的结果进行算分 _score<br>打分的本质是排序，需要把最符合用户需求的文档排在前面<br>ES 5之前，默认的相关性算分采用TF-IDF算法，现在采用BM 25算法。</p>
+<p>有以下指标可以用于衡量结果的相关性，即结果是否满足用户的期望：</p>
+<ul>
+<li>Precision（查准率）<br>尽可能返回较少的无关文档</li>
+<li>Recall(查全率&#x2F;召回率)<br>尽量返回较多的相关文档<br>体现在用户能否查到自己想要的数据</li>
+<li>Ranking（排序）</li>
+</ul>
+<h3 id="TF-IDF"><a href="#TF-IDF" class="headerlink" title="TF-IDF"></a>TF-IDF</h3><p>TF（词频Term Frequency）表示检索词在一篇文档中出现的频率</p>
+<ul>
+<li>度量一条查询语句和结果文档相关性的简单方法：将搜索中每一个词的TF进行相加</li>
+<li>停用词（Stop Word）对贡献相关度几乎没有用处，不应该考虑他们的TF。</li>
+</ul>
+<p>IDF（逆文档频率Inverse Document Frequency）<br>即log(全部文档数&#x2F;检索词出现过的文档总数)</p>
+<p>TF-IDF本质上就是将TF求和变成了加权求和&#x3D;TF(word) * IDF(word)</p>
+<h3 id="BM-25"><a href="#BM-25" class="headerlink" title="BM 25"></a>BM 25</h3><p>和经典的TF-IDF相比，当TF无限增加时，BM 25算分。</p>
+<h1 id="搜索-轻量查询（Query-string）-在URL中使用查询参数"><a href="#搜索-轻量查询（Query-string）-在URL中使用查询参数" class="headerlink" title="搜索 - 轻量查询（Query-string） - 在URL中使用查询参数"></a>搜索 - 轻量查询（Query-string） - 在URL中使用查询参数</h1><p>当在单一的索引下进行搜索的时候，Elasticsearch 转发请求到索引的每个分片中，可以是主分片也可以是副本分片，然后从每个分片中收集结果。多索引搜索恰好也是用相同的方式工作的——只是会涉及到更多的分片。<br>搜索一个索引有五个主分片和搜索五个索引各有一个分片准确来所说是等价的，因为索引只是一种逻辑结构，实际上处理请求的是分片。<br>搜索有两种形式：Query-string（URI） 和请求体查询。</p>
+<h2 id="URI查询的方式"><a href="#URI查询的方式" class="headerlink" title="URI查询的方式"></a>URI查询的方式</h2><ul>
+<li>q<br>指定查询语句</li>
+<li>df<br>默认字段，不指定时，会对所有字段进行查询</li>
+<li>sort<br>排序</li>
+<li>from, size<br>分页参数</li>
+<li>profile<br>可以用于查看查询是如何被执行的</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">HEAD /megacorp/employee/1</span><br><span class="line">GET /megacorp/employee/1</span><br><span class="line">GET /megacorp/employee/_search</span><br><span class="line"># 用q指定查询条件</span><br><span class="line">GET /megacorp/employee/_search?q=last_name:Smith</span><br><span class="line">GET /megacorp/employee/_search?q=+first_name:Jane last_name:Smith</span><br><span class="line">GET /_search?q=mary</span><br><span class="line">GET /_search?q=+name:(mary john) +date:&gt;2014-09-10 +(aggregations geo)</span><br><span class="line">GET /_search 在所有的索引中搜索所有的类型（无条件）</span><br><span class="line">/gb/_search 在 gb 索引中搜索所有的类型（指定索引）</span><br><span class="line">/gb,us/_search 在 gb 和 us 索引中搜索所有的文档（指定多个索引）</span><br><span class="line">/g*,u*/_search 在任何以 g 或者 u 开头的索引中搜索所有的类型（通配符）</span><br><span class="line">/gb/user/_search 在 gb 索引中搜索 user 类型（指定类型）</span><br><span class="line">/gb,us/user,tweet/_search 在 gb 和 us 索引中搜索 user 和 tweet 类型（指定多个类型）</span><br><span class="line">/_all/user,tweet/_search 在所有的索引中搜索 user 和 tweet 类型（指定多个类型但不限制索引）</span><br></pre></td></tr></table></figure>
+
+<p>可以在请求体中指定profile参数为true来展示查询的过程：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">get /doc/_search?q=name:a</span><br><span class="line">&#123;</span><br><span class="line">  &quot;profile&quot;: &quot;true&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="查询条件"><a href="#查询条件" class="headerlink" title="查询条件"></a>查询条件</h2><ul>
+<li>其中 ‘_search’ 表示搜索，默认返回 10 条结果；</li>
+<li>查询本身赋值给了参数 q，查询链接会被 URL 编码，所以可读性会比较差；</li>
+<li>“last_name:Smith”表示 last_name 字段中包含 Smith 的文档，”+last_name:Smith”表示必须与查询条件匹配，”-last_name:Smith”表示一定不与查询条件匹配；<br>至于多个条件存在的情况下，其实不会发生矛盾，”+first_name:Jane -first_name:Jane”可以看成先查出 first_name 包含”Jane”的，再过滤掉；</li>
+<li>区间查询<br>可以用区间表示：<br><code>q=year:&#123;2019 TO 2018&#125;</code><br><code>q=year:[* TO 2018]</code><br>也可以用算数符号来表示：<br><code>q=year:&gt;2010</code><br><code>q=year:(&gt;2010 &amp;&amp; &lt;=2018)</code><br><code>q=year:(+&gt;2010 +&lt;=2018)</code></li>
+</ul>
+<h2 id="隐含字段"><a href="#隐含字段" class="headerlink" title="隐含字段"></a>隐含字段</h2><p>当对文档进行索引时，Elasticsearch 取出所有字段的值拼接成一个大的字符串，作为 <code>_all</code> 字段进行索引。</p>
+<h2 id="Query-string-的优点"><a href="#Query-string-的优点" class="headerlink" title="Query-string 的优点"></a>Query-string 的优点</h2><p>简洁</p>
+<h2 id="Query-string-的缺点"><a href="#Query-string-的缺点" class="headerlink" title="Query-string 的缺点"></a>Query-string 的缺点</h2><ul>
+<li>晦涩难懂</li>
+<li>脆弱，小的语法错误就会报错</li>
+<li>效率较低，查询字符串搜索允许任何用户在索引的任意字段上执行可能较慢且重量级的查询，这可能会暴露隐私信息，甚至将集群拖垮</li>
+</ul>
+<h2 id="搜索返回字段"><a href="#搜索返回字段" class="headerlink" title="搜索返回字段"></a>搜索返回字段</h2><p>hits：匹配文档总数及所查询结果的前十个文档<br>_score：衡量文档与查询的匹配程度<br>took：整个搜索请求耗费的时间（毫秒）<br>shards：在查询中参与的分片总数，及失败（主分片和副本分片都挂掉）和成功的数量<br>timeout：返回值中的 timed_out 表示查询是否超时， timeout 不是停止执行查询，它仅仅是告知正在协调的节点返回到目前为止收集的结果并且关闭连接。在后台，其他的分片可能仍在执行查询即使是结果已经被发送了。使用超时是因为 SLA(服务等级协议)对你是很重要的，而不是因为想去中止长时间运行的查询。可以在查询条件中指定时间限制：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /_search?timeout=10ms</span><br></pre></td></tr></table></figure>
+<h2 id="分页"><a href="#分页" class="headerlink" title="分页"></a>分页</h2><p>size：显示应该返回的结果数量，默认是 10<br>from：显示应该跳过的初始结果数量，默认是 0</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET /_search?size=5&amp;from=5</span><br></pre></td></tr></table></figure>
+<p>考虑到<strong>分页过深（比如请求 10001 到 10010 的数据）</strong>以及<strong>一次请求太多结果</strong>的情况：结果集在返回之前先进行排序，但请记住<strong>一个请求经常跨越多个分片</strong>，每个分片都产生自己的排序结果，这些结果需要进行集中排序以保证整体顺序是正确的。<br>假设在一个有 5 个主分片的索引中搜索。 当我们请求结果的第一页（结果从 1 到 10 ），每一个分片产生前 10 的结果，并且返回给 协调节点 ，协调节点对 50 个结果排序得到全部结果的前 10 个。<br>现在假设我们请求第 1000 页–结果从 10001 到 10010 。所有都以相同的方式工作除了每个分片不得不产生前 10010 个结果以外。 然后协调节点对全部 50050 个结果排序最后丢弃掉这些结果中的 50040 个结果。可以看到，在分布式系统中，对结果排序的成本随分页的深度成指数上升。这就是 web 搜索引擎对<strong>任何查询都不要返回超过 1000 个结果</strong>的原因。</p>
+<h1 id="请求体查询（查询表达式）"><a href="#请求体查询（查询表达式）" class="headerlink" title="请求体查询（查询表达式）"></a>请求体查询（查询表达式）</h1><p>es 倾向于使用 GET 来表达查询操作，查询条件可以放到请求体中，而事实是这个 RFC 文档 <strong>RFC 7231</strong> — 一个专门负责处理 HTTP 语义和内容的文档 — 并没有规定一个带有请求体的 GET 请求应该如何处理！结果是，一些 HTTP 服务器允许这样子，而有一些 — 特别是一些用于缓存和代理的服务器 — 则不允许。所以 es 作了一个妥协，下面的 GET 请求同样可以使用 POST 来实现：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">GET /megacorp/employee/_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot; : &#123;</span><br><span class="line">        &quot;match&quot; : &#123;</span><br><span class="line">            &quot;last_name&quot; : &quot;Smith&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>查询表达式主要有两种结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    QUERY_NAME: &#123;</span><br><span class="line">        ARGUMENT: VALUE,</span><br><span class="line">        ARGUMENT: VALUE,...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">    QUERY_NAME: &#123;</span><br><span class="line">        FIELD_NAME: &#123;</span><br><span class="line">            ARGUMENT: VALUE,</span><br><span class="line">            ARGUMENT: VALUE,...</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="验证查询是否合法"><a href="#验证查询是否合法" class="headerlink" title="验证查询是否合法"></a>验证查询是否合法</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET /_validate/query?explain</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot; : &#123; ... &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="term"><a href="#term" class="headerlink" title="term"></a>term</h2><ul>
+<li>term：精确值 匹配，这些精确值可能是数字、时间、布尔或者那些 not_analyzed 的字符串，注意<strong>term 不会对输入的文本进行分析</strong>，这样和索引过的目标字符串比较很有可能出现明明看起来一样却匹配不上的现象（比如”Jane”被分析后变成”jane”，term 查询时使用”Jane”进行精确匹配当然匹配不上了！）；</li>
+<li>terms：同样是精确值匹配，但可以指定一个数组进行匹配；<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#123; &quot;term&quot; : &#123;&quot;first_name&quot;: &quot;jane&quot;&#125;&#125;</span><br><span class="line">&#123; &quot;terms&quot;: &#123; &quot;tag&quot;: [ &quot;search&quot;, &quot;full_text&quot;, &quot;nosql&quot; ] &#125;&#125;</span><br></pre></td></tr></table></figure></li>
+<li>keyword严格匹配<br>keyword类型字段可以精确匹配：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET /products/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;term&quot;: &#123;</span><br><span class="line">      &quot;productId.keyword&quot;: &#123;</span><br><span class="line">        &quot;value&quot;: &quot;123&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="复合查询"><a href="#复合查询" class="headerlink" title="复合查询"></a>复合查询</h2><p>constant_score查询可以将Query转换成Filter，不再计算相关性，且Filter可以有效利用缓存。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GET /products/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;explain&quot;: true,</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;constant_score&quot;: &#123;</span><br><span class="line">      &quot;filter&quot;: &#123;</span><br><span class="line">        &quot;term&quot;: &#123;</span><br><span class="line">          &quot;productId.keyword&quot;: &quot;123&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>将一个不变的常量评分（即 1）应用于所有匹配的文档。经常用于你只需要执行一个 filter 而没有其它查询的情况下，如果使用 bool 查询_score 值将总是为 0：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;constant_score&quot;: &#123;</span><br><span class="line">        &quot;filter&quot;: &#123;</span><br><span class="line">            &quot;term&quot;: &#123; &quot;category&quot;: &quot;ebooks&quot; &#125; </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>bool：复合语句，可以组合其他语句比如 must 必须匹配、must_not 必须不匹配、should 如果满足则增加_score 否则无影响、filter 用来排除文档不评分，特别的，如果没有 must 语句，那么至少需要能够匹配其中的一条 should 语句。但，如果存在至少一条 must 语句，则对 should 语句的匹配没有要求；每一个子查询都独自地计算文档的相关性得分。一旦他们的得分被计算出来， bool 查询就将这些得分进行合并并且返回一个代表整个布尔操作的得分。（虽说是布尔操作，但是结果分数其实是<code>[0, 1]</code>范围内的小数）<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;bool&quot;: &#123;</span><br><span class="line">        &quot;must&quot;: &#123; &quot;match&quot;: &#123; &quot;title&quot;: &quot;how to make millions&quot; &#125;&#125;,</span><br><span class="line">        &quot;must_not&quot;: &#123; &quot;match&quot;: &#123; &quot;tag&quot;: &quot;spam&quot; &#125;&#125;,</span><br><span class="line">        &quot;should&quot;: [</span><br><span class="line">            &#123; &quot;match&quot;: &#123; &quot;tag&quot;: &quot;starred&quot; &#125;&#125;</span><br><span class="line">        ],</span><br><span class="line">        &quot;filter&quot;: &#123;</span><br><span class="line">          &quot;range&quot;: &#123; &quot;date&quot;: &#123; &quot;gte&quot;: &quot;2014-01-01&quot; &#125;&#125; </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="全文查询"><a href="#全文查询" class="headerlink" title="全文查询"></a>全文查询</h2><p>全文查询的特点：</p>
+<ul>
+<li><p>索引和搜索时都会进行分词，查询字符串先传递到一个合适的分词器，然后生成一个供查询的词项列表；</p>
+</li>
+<li><p>查询的时候，先会对输入的查询进行分词，然后每个词项逐个进行底层的查询，最终将结果进行合并，并为每个文档生成一个算分。<br>比如查询”Hello World“，会查到包括”Hello“或”World“的所有结果。</p>
+</li>
+<li><p>match_all：简单的匹配所有文档，往往和 filter 搭配；</p>
+</li>
+<li><p>match：如果你在一个全文字段上使用 match 查询，在执行查询前，它将用正确的分析器去分析查询字符串；<br>如果在一个精确值的字段上使用它， 例如数字、日期、布尔或者一个 not_analyzed 字符串字段，那么它将会精确匹配给定的值；</p>
+</li>
+<li><p>multi_match：多个字段的 match；</p>
+</li>
+</ul>
+<h2 id="其他结构化查询语句"><a href="#其他结构化查询语句" class="headerlink" title="其他结构化查询语句"></a>其他结构化查询语句</h2><ul>
+<li><p>filter：不评分查询，实际上是给了每个查询出的文档一个默认的中性评价 1，并且<strong>过滤结果将会被缓存</strong>；</p>
+</li>
+<li><p>range（范围查询）：查询找出那些落在指定区间内的数字或者时间，gt 大于、gte 大于等于、lt 小于、lte 小于等于；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">GET /megacorp/employee/_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot; : &#123;</span><br><span class="line">        &quot;bool&quot;: &#123;</span><br><span class="line">            &quot;must&quot;: &#123;</span><br><span class="line">                &quot;match&quot; : &#123;</span><br><span class="line">                    &quot;last_name&quot; : &quot;smith&quot; </span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            &quot;filter&quot;: &#123;</span><br><span class="line">                &quot;range&quot; : &#123;</span><br><span class="line">                    &quot;age&quot; : &#123; &quot;gt&quot; : 30 &#125; </span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>exists 和 missing：指定字段有值或无值，但后来的版本中废弃了 missing，因为可以通过 must_not+exists 来实现类似的效果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123; &quot;exists&quot; : &#123; &quot;field&quot; : &quot;age&quot; &#125;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>about（全文搜索）<br>搜索结果将根据相关性排序。</p>
+</li>
+<li><p>match_phrase（短语搜索）<br>针对”rock climbing”这样的短语，如果直接使用 match 会分别使用”rock”和”climbing”两个单词进行搜索，而使用 match_phrase 则会直接使用整个短语进行搜索。</p>
+</li>
+<li><p>highlight（高亮）<br>指定某个属性中的匹配部分应该被高亮（结果会使用<em>标签包裹）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">GET /megacorp/employee/_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot; : &#123;</span><br><span class="line">        &quot;match_phrase&quot; : &#123;</span><br><span class="line">            &quot;about&quot; : &quot;rock climbing&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;highlight&quot;: &#123;</span><br><span class="line">        &quot;fields&quot; : &#123;</span><br><span class="line">            &quot;about&quot; : &#123;&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>前缀查询<br>prefix</p>
+</li>
+<li><p>正则表达式查询<br>regexp</p>
+</li>
+<li><p>通配符匹配<br>使用<code>*</code>匹配字符序列（包括空字符），使用<code>?</code>匹配单个字符。<br>最好不要把通配符放在前面，这样会很慢。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">GET mts_sample_order/orders/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;from&quot;: 1,</span><br><span class="line">  &quot;size&quot;: 10,</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;wildcard&quot;: &#123;</span><br><span class="line">      &quot;sample_type_name&quot;: &quot;咽拭子*&quot;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="聚合-aggs"><a href="#聚合-aggs" class="headerlink" title="聚合 - aggs"></a>聚合 - aggs</h2><p>Sorting, aggregations, and accessing field values in scripts 需要使用到一个称为 fielddata（正排索引）的数据结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">PUT megacorp/_mapping/employee/</span><br><span class="line">&#123;</span><br><span class="line">  &quot;properties&quot;: &#123;</span><br><span class="line">    &quot;interests&quot;: &#123; </span><br><span class="line">      &quot;type&quot;: &quot;text&quot;,</span><br><span class="line">      &quot;fielddata&quot;: true</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">GET /megacorp/employee/_search</span><br><span class="line">&#123;</span><br><span class="line">    &quot;aggs&quot; : &#123; // 和query同级的关键词</span><br><span class="line">        &quot;all_interests&quot; : &#123; // 自定义聚合名字</span><br><span class="line">            &quot;terms&quot; : &#123; // 聚合的定义：不同的type+body</span><br><span class="line">                &quot;field&quot; : &quot;interests&quot;</span><br><span class="line">             &#125;,</span><br><span class="line">            &quot;aggs&quot; : &#123; // 子聚合查询</span><br><span class="line">                &quot;avg_age&quot; : &#123;</span><br><span class="line">                    &quot;avg&quot; : &#123; &quot;field&quot; : &quot;age&quot; &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;max_salary&quot;: &#123; // 可以包含多个同级的聚合查询</span><br><span class="line">            &quot;max&quot;: &#123; // 求salary字段的最大值</span><br><span class="line">                &quot;field&quot;: &quot;salary&quot;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="聚合作用范围"><a href="#聚合作用范围" class="headerlink" title="聚合作用范围"></a>聚合作用范围</h3><ul>
+<li>ES聚合分析的默认作用范围是query的查询结果集</li>
+<li>ES还支持以下方式改变聚合的作用范围<br>Filter<br>Post Filter<br>Global</li>
+</ul>
+<h3 id="简单聚合"><a href="#简单聚合" class="headerlink" title="简单聚合"></a>简单聚合</h3><p>单值分析（只输出一个分析结果）：</p>
+<ul>
+<li>min, max, avg, sum</li>
+<li>Cardinality （类似 distinct count）</li>
+</ul>
+<p>多值分析（输出多个分析结果）：</p>
+<ul>
+<li>stats, extended stats</li>
+<li>percentile, percentile rank</li>
+<li>top hits</li>
+</ul>
+<h3 id="Bucket"><a href="#Bucket" class="headerlink" title="Bucket"></a>Bucket</h3><p>按照一定的规则，将文档分配到不同的桶中，从而达到分类的目的。<br>Bucket同样支持嵌套。</p>
+<p>常用的Bucket Aggregation函数：</p>
+<ul>
+<li>terms<br>按某个字段聚合，结果默认会进行分词<br>需要字段打开fielddata才能进行term aggregation<br>keyword默认支持doc_values<br>text需要在mapping中enable fielddata</li>
+<li>数字类型<ul>
+<li>Range</li>
+<li>Histogram<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">POST employees/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;size&quot;: 0,</span><br><span class="line">  &quot;aggs&quot;: &#123;</span><br><span class="line">    &quot;jobs&quot;: &#123;</span><br><span class="line">      &quot;terms&quot;: &#123;</span><br><span class="line">        &quot;field&quot;: &quot;job&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h3 id="Pipeline"><a href="#Pipeline" class="headerlink" title="Pipeline"></a>Pipeline</h3><p>对聚合分析结果再进行一次聚合分析<br>Pipeline的分析结果会输出到原结果中，根据位置的不同，分为两类：</p>
+<ul>
+<li>Sibing：结果和现有分析结果同级<br>max, min, avg, sum bucket<br>stats, extended status bucket<br>percentiles bucket</li>
+<li>Parent：结果内嵌到现有的聚合分析结果之中<br>Derivative（求导）<br>Cumultive Sum（累计求和）<br>Moving Function（滑动窗口）</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">POST employees/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;size&quot;: 0,</span><br><span class="line">  &quot;aggs&quot;: &#123;</span><br><span class="line">    &quot;jobs&quot;: &#123;</span><br><span class="line">      &quot;terms&quot;: &#123;</span><br><span class="line">        &quot;field&quot;: &quot;job.keyword&quot;,</span><br><span class="line">        &quot;size&quot;: 10</span><br><span class="line">      &#125;,</span><br><span class="line">      &quot;aggs&quot;: &#123;</span><br><span class="line">        &quot;avg_salary&quot;: &#123;</span><br><span class="line">          &quot;avg&quot;: &#123;</span><br><span class="line">            &quot;field&quot;: &quot;salary&quot;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;min_salary_by_job&quot;: &#123;</span><br><span class="line">      &quot;min_bucket&quot;: &#123; // min_bucket求之前结果的最小值</span><br><span class="line">        &quot;buckets_path&quot;: &quot;jobs&gt;avg_salary&quot; // buckets_path关键字指定路径</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="ARGUMENT-一些特殊的参数"><a href="#ARGUMENT-一些特殊的参数" class="headerlink" title="ARGUMENT 一些特殊的参数"></a>ARGUMENT 一些特殊的参数</h2><ul>
+<li>preference（偏好）<br>用来控制由哪些分片或节点来处理搜索请求。 它接受<a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/5.6/search-request-preference.html">像 _primary, _primary_first, _local, _only_node:xyz, _prefer_node:xyz, 和 _shards:2,3 这样的值</a>，但是最有用的值是某些随机字符串，它可以避免 bouncing results 问题（不同分片上排序顺序不同），这样可能发生每次用户刷新页面，搜索结果表现是不同的顺序，所以最好让同一个用户始终使用同一个分片，可以设置 preference 参数为一个特定的任意值比如用户会话 ID 来解决。</li>
+<li>timeout（超时）<br>在分布式搜索时需要由每个分片处理完、将结果返回给协调节点进行排序、再返回给客户端，所以整个过程的效率受到最慢的那个分片的处理速度和协调节点的处理速度二者的限制；<br>参数 timeout 告诉 分片允许处理数据的最大时间。如果没有足够的时间处理所有数据，这个分片的结果可以是部分的，甚至是空数据，搜索的返回结果会用属性 timed_out 标明分片是否返回的是部分结果（是否超时）；<br>需要注意可能会影响到整体延迟（并非上面说的超时时间）的条件，比如某些查询类型有大量的工作在文档评估之前需要完成、每次评估时基于每个文档的所以单个文档死循环也会影响整个查询死循环。</li>
+<li>routing（路由）<br>在索引时提供 routing 值可以确保文档被存储到某个分片上，在搜索的时候，不用搜索索引的所有分片，而是通过指定几个 routing 值来限定只搜索几个相关的分片，这个技术在 <strong>设计大规模搜索系统</strong> 时就会派上用场。</li>
+<li>search_type（搜索类型）<br>缺省的搜索类型是 query_then_fetch。你可能想明确设置 search_type 为 dfs_query_then_fetch 来改善相关性精确度，搜索类型 dfs_query_then_fetch 有预查询阶段，这个阶段可以从所有相关分片获取词频来计算全局词频。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GET /_search?preference=xyzabc123&amp;routing=user_1,user2&amp;search_type=dfs_query_then_fetch</span><br><span class="line">&#123;</span><br><span class="line">  &quot;from&quot;: 0,</span><br><span class="line">  &quot;size&quot;: 5,</span><br><span class="line">  &quot;timeout&quot;: &quot;1s&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="Doc-Values-fielddata-正排索引"><a href="#Doc-Values-fielddata-正排索引" class="headerlink" title="Doc Values &#x2F; fielddata - 正排索引"></a>Doc Values &#x2F; fielddata - 正排索引</h2><p>在搜索的时候，我们能通过搜索关键词快速得到结果集。当排序的时候，我们需要倒排索引里面某个字段值的集合，此时倒排索引无法发挥作用。换句话说，我们需要 <strong>转置</strong> 倒排索引。转置 结构在其他系统中经常被称作 <strong>列存储</strong> 。实质上，它将所有单字段的值存储在单数据列中，这使得对其进行操作是十分高效的，例如排序。<br>ES有2种方法实现：</p>
+<ul>
+<li>Fielddata（可以存储Text类型）</li>
+<li>Doc Values（列式存储，对Text类型无效）</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Doc Values</th>
+<th>Field data</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>何时创建</td>
+<td>索引时，和倒排索引一起创建</td>
+<td>搜索时动态创建</td>
+</tr>
+<tr>
+<td>创建位置</td>
+<td>磁盘文件</td>
+<td>JVM Heap</td>
+</tr>
+<tr>
+<td>优点</td>
+<td>避免大量内存占用</td>
+<td>索引速度快，不占用额外的磁盘空间</td>
+</tr>
+<tr>
+<td>缺点</td>
+<td>降低索引速度，占用额外磁盘空间</td>
+<td>文档过多时，动态创建开销大，占用过多JVM Heap</td>
+</tr>
+<tr>
+<td>缺省值</td>
+<td>ES 2.x 之后</td>
+<td>ES 1.x 及之前</td>
+</tr>
+</tbody></table>
+<p>当 working set 远小于节点的可用内存，系统会自动将所有的文档值保存在内存中，使得其读写十分高速； 当其远大于可用内存，操作系统会自动把 Doc Values 加载到系统的页缓存中，从而避免了 jvm 堆内存溢出异常。</p>
+<h3 id="关闭-Doc-Values"><a href="#关闭-Doc-Values" class="headerlink" title="关闭 Doc Values"></a>关闭 Doc Values</h3><p>Doc Value默认是启用的，可以通过Mapping设置关闭</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">PUT test_keyword/_mapping</span><br><span class="line">&#123;</span><br><span class="line">  &quot;properties&quot;: &#123;</span><br><span class="line">    &quot;user_name&quot;: &#123;</span><br><span class="line">      &quot;type&quot;: &quot;keyword&quot;,</span><br><span class="line">      &quot;doc_values&quot;: false</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>关闭有什么好处？增加索引速度、减少磁盘占用空间</li>
+<li>关闭会有什么问题？如果后续需要重新打开，则需要重建索引</li>
+<li>什么时候需要关闭？明确不需要做排序及聚合分析</li>
+</ul>
+<h2 id="排序与相关性"><a href="#排序与相关性" class="headerlink" title="排序与相关性"></a>排序与相关性</h2><ul>
+<li>sort将目标字段转换为排序所需的格式，date 字段的值表示为自 epoch (January 1, 1970 00:00:00 UTC)以来的毫秒数，通过 sort 字段的值进行返回。</li>
+<li>如果字段是一个数组（多值），可以使用 mode 指定其中 min 、 max 、 avg 或是 sum 进行排序；</li>
+<li>评分的计算方式取决于 <strong>查询类型</strong> 不同的查询语句用于不同的目的： fuzzy 查询会计算与关键词的拼写相似程度，terms 查询会计算 找到的内容与关键词组成部分匹配的百分比，但是通常我们说的 relevance 是我们用来计算全文本字段的值相对于全文本检索词相似程度的算法，Elasticsearch 的相似度算法 被定义为<strong>检索词频率&#x2F;反向文档频率（TF&#x2F;IDF）</strong>，包括以下内容：<ul>
+<li>检索词频率<br>　　检索词在该字段出现的频率？出现频率越高，相关性也越高。 字段中出现过 5 次要比只出现过 1 次的相关性高。</li>
+<li>反向文档频率<br>　　每个检索词在索引中出现的频率？频率越高，相关性越低。检索词出现在多数文档中会比出现在少数文档中的权重更低。</li>
+<li>字段长度准则<br>　　字段的长度是多少？长度越长，相关性越低。 检索词出现在一个短的 title 要比同样的词出现在一个长的 content 字段权重更大。</li>
+</ul>
+</li>
+<li>单个查询可以联合使用 TF&#x2F;IDF 和其他方式，比如短语查询中检索词的距离或模糊查询里的检索词相似度。如果多条查询子句被合并为一条复合查询语句 ，比如 bool 查询，则每个查询子句计算得出的评分会被合并到总的相关性评分中。</li>
+<li>字符串索引后（analusis）会有变化，排序时希望使用原字段（not_analyzed）进行排序，我们想要对同一个字段索引两次，而不是在_source 中保存两份字符串字段，这可以通过为字段添加一个 not_analyzed 子字段来实现：主字段用于搜索、子字段用于排序：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&quot;tweet&quot;: &#123; </span><br><span class="line">    &quot;type&quot;: &quot;string&quot;,</span><br><span class="line">    &quot;analyzer&quot;: &quot;english&quot;,</span><br><span class="line">    &quot;fields&quot;: &#123;</span><br><span class="line">        &quot;raw&quot;: &#123; </span><br><span class="line">            &quot;type&quot;: &quot;string&quot;,</span><br><span class="line">            &quot;index&quot;: &quot;not_analyzed&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&quot;sort&quot; : &#123;</span><br><span class="line">  &quot;date&quot;: &#123;</span><br><span class="line">    &quot;order&quot;: &quot;desc&quot;,</span><br><span class="line">    &quot;mode&quot;: &quot;min&quot;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>默认情况下，返回结果是按相关性倒序排列的</li>
+<li>可以在查询参数中加入 explain 参数解释排序结果<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">GET /_search?explain </span><br><span class="line">&#123;</span><br><span class="line">   &quot;query&quot; : &#123; &quot;match&quot; : &#123; &quot;tweet&quot; : &quot;honeymoon&quot; &#125;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h2 id="分页-1"><a href="#分页-1" class="headerlink" title="分页"></a>分页</h2><p>几种分页方式及应用场景</p>
+<ul>
+<li>Regular<br>平时查询ES只会返回头部的10条数据，一般用于实时获取顶部的部分文档，例如查询最新的订单。</li>
+<li>Scroll<br>需要全部文档时，例如导出全部数据</li>
+<li>Pagination<br>from + size的方式<br>如果需要深度分页，则选用Search After</li>
+</ul>
+<h3 id="from-和-size（分页）、Search-After"><a href="#from-和-size（分页）、Search-After" class="headerlink" title="from 和 size（分页）、Search After"></a>from 和 size（分页）、Search After</h3><p>ES中的分页是从每个分片上获取from + size条数据，然后协调节点聚合所有结果，再选取前from + size条数据。<br>因为是from + size，所以from特别大时会有<strong>深分页问题</strong>。<br>解决办法是<strong>Search After</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">POST users/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;size&quot;: 1,</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;match_all&quot;: &#123;&#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;search_after&quot;: [13, &quot;idididid&quot;],</span><br><span class="line">  &quot;sort&quot;: [</span><br><span class="line">    &#123;&quot;age&quot;: &quot;desc&quot;&#125;,</span><br><span class="line">    &#123;&quot;_id&quot;: &quot;asc&quot;&#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>缺点是：</p>
+<ul>
+<li>不支持指定页数（From）</li>
+<li>只能往下翻</li>
+</ul>
+<p>需要指定搜索sort：</p>
+<ul>
+<li>需要保证值是唯一的，可以加入_id保证唯一性</li>
+<li>每次查询使用上一次查询得到的最后一个文档的sort值进行查询（即上边的13和”idididid”）</li>
+</ul>
+<p>Search After会通过唯一排序值定位，将每次要处理的文档数都控制在size个。</p>
+<h3 id="游标查询-Scroll"><a href="#游标查询-Scroll" class="headerlink" title="游标查询 Scroll"></a>游标查询 Scroll</h3><p><code>scroll</code> 查询 可以用来对 Elasticsearch 有效地执行大批量的文档查询，而又不用付出深度分页那种代价。<br>游标查询允许我们 先做查询初始化，然后再批量地拉取结果。 这有点儿像传统数据库中的 <code>cursor</code> 。<br>游标查询会取某个时间点的快照数据。 查询初始化之后索引上的任何变化会被它忽略。 它通过保存旧的数据文件来实现这个特性，结果就像保留初始化时的索引 <code>视图</code> 一样。<br>深度分页的代价根源是结果集全局排序，如果去掉全局排序的特性的话查询结果的成本就会很低。 游标查询用字段 <code>_doc</code> 来排序。 这个指令让 Elasticsearch 仅仅从还有结果的分片返回下一批结果。<br>启用游标查询可以通过在查询的时候设置参数 scroll 的值为我们期望的游标查询的过期时间。 游标查询的过期时间会在每次做查询的时候刷新，所以这个时间只需要足够处理当前批的结果就可以了，而不是处理查询结果的所有文档的所需时间。 这个过期时间的参数很重要，因为保持这个游标查询窗口需要消耗资源，所以我们期望如果不再需要维护这种资源就该早点儿释放掉。 设置这个超时能够让 Elasticsearch 在稍后空闲的时候自动释放这部分资源。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">GET /old_index/_search?scroll=1m // 保持游标查询窗口一分钟。</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot;: &#123; &quot;match_all&quot;: &#123;&#125;&#125;,</span><br><span class="line">    &quot;sort&quot; : [&quot;_doc&quot;], // 关键字 _doc 是最有效的排序顺序。</span><br><span class="line">    &quot;size&quot;:  1000</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个查询的返回结果包括一个字段 <code>_scroll_id</code>， 它是一个 base64 编码的长字符串。现在我们能传递字段 <code>_scroll_id</code> 到 <code>_search/scroll</code> 查询接口获取下一批结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">GET /_search/scroll</span><br><span class="line">&#123;</span><br><span class="line">    &quot;scroll&quot;: &quot;1m&quot;, // 注意再次设置游标查询过期时间为一分钟。</span><br><span class="line">    &quot;scroll_id&quot; : &quot;cXVlcnlUaGVuRmV0Y2g7NTsxMDk5NDpkUmpiR2FjOFNhNnlCM1ZDMWpWYnRROzEwOTk1OmRSamJHYWM4U2E2eUIzVkMxalZidFE7MTA5OTM6ZFJqYkdhYzhTYTZ5QjNWQzFqVmJ0UTsxMTE5MDpBVUtwN2lxc1FLZV8yRGVjWlI2QUVBOzEwOTk2OmRSamJHYWM4U2E2eUIzVkMxalZidFE7MDs=&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个游标查询返回的下一批结果。 尽管我们指定字段 size 的值为 1000，我们有可能取到超过这个值数量的文档。 当查询的时候， 字段 size 作用于单个分片，所以每个批次实际返回的文档数量最大为 <code>size * number_of_primary_shards</code>。<br>当没有更多结果返回的时候，我们就处理完所有匹配的文档了。</p>
+<p>缺点：</p>
+<ul>
+<li>Scroll会创建一个快照，如果查询期间有新的数据写入以后，无法被查到</li>
+</ul>
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><h3 id="查询订单昨天的问题订单"><a href="#查询订单昨天的问题订单" class="headerlink" title="查询订单昨天的问题订单"></a>查询订单昨天的问题订单</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">// 查询索引</span><br><span class="line">GET _cat/indices</span><br><span class="line">// 查询昨天的订单中属于异常状态的订单，并取其中的部分字段</span><br><span class="line">GET /mts_reg_order/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot;: &#123;</span><br><span class="line">    &quot;bool&quot;: &#123;</span><br><span class="line">      &quot;must&quot;: &#123;</span><br><span class="line">        &quot;match&quot;: &#123;</span><br><span class="line">          &quot;order_status&quot;: &quot;SUSPEND&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &quot;filter&quot;: &#123;</span><br><span class="line">        &quot;range&quot;: &#123;</span><br><span class="line">          &quot;create_date&quot;: &#123;</span><br><span class="line">            &quot;gt&quot;: &quot;2020-09-23 00:00:00&quot;,</span><br><span class="line">            &quot;lt&quot;: &quot;2020-09-24 00:00:00&quot;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;: [&quot;order_id&quot;, &quot;hos_code&quot;],</span><br><span class="line">  &quot;size&quot;: 100</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="多条件查询"><a href="#多条件查询" class="headerlink" title="多条件查询"></a>多条件查询</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">// 这个语句的特点是must中放置了多个模糊匹配条件</span><br><span class="line">GET /mts_fee_order/_search</span><br><span class="line">&#123;</span><br><span class="line">  &quot;query&quot; : &#123;</span><br><span class="line">    &quot;bool&quot;: &#123;</span><br><span class="line">      &quot;must&quot;: [</span><br><span class="line">        &#123;&quot;match&quot;: &#123;&quot;order_status&quot;: &quot;SUSPEND&quot;&#125;&#125;,</span><br><span class="line">        &#123;&quot;match&quot;: &#123;&quot;pay_status&quot;: &quot;PAY_SUCCESS&quot;&#125;&#125;</span><br><span class="line">      ],</span><br><span class="line">      &quot;filter&quot;: &#123;</span><br><span class="line">        &quot;range&quot;: &#123;</span><br><span class="line">            &quot;create_date&quot;: &#123; &quot;gt&quot;: &quot;2020-09-23 15:00:00&quot;,</span><br><span class="line">            &quot;lt&quot;: &quot;2020-09-24 15:00:00&quot;&#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;_source&quot;: [&quot;order_id&quot;, &quot;hos_code&quot;], </span><br><span class="line">  &quot;size&quot;: 100</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="Search源码流程"><a href="#Search源码流程" class="headerlink" title="Search源码流程"></a>Search源码流程</h1><p>GET请求只能查询单个文档，通过_index、_type、_id三元组来确定唯一文档。<br>而Search在查到匹配的文档之后，还需要将从多个分片上得到的结果组合成单个排序列表，这个过程在协调节点上执行，被称为<code>query then fetch</code>。</p>
+<ul>
+<li>索引的所有分片（中的某个副本）都需要参与搜索，因为查询的时候不知道文档位于哪个分片；</li>
+<li>协调节点需要将结果合并，再根据ID获取文档内容。</li>
+</ul>
+<h2 id="建立索引和搜索的过程（单机视角）"><a href="#建立索引和搜索的过程（单机视角）" class="headerlink" title="建立索引和搜索的过程（单机视角）"></a>建立索引和搜索的过程（单机视角）</h2><p>ES中的搜索主要分为精确和全文两类：</p>
+<ul>
+<li><strong>精确值</strong>：比如日期、用户ID、IP地址等字段的完全匹配；<br>对精确值的搜索遵循“要么匹配、要么不匹配的原则”。</li>
+<li><strong>全文</strong>：对文本内容的模糊搜索，比如一条日志、邮件的内容等。<br>全文搜索不能确定目标是不是自己要搜索的，而是只能给出一个相似度的评分，评分越高，越有可能是自己要找的文档。</li>
+</ul>
+<p>在ES中执行搜索需要<strong>建立索引</strong>和<strong>执行搜索</strong>这两个步骤：<br><img src="/imgs/ES/ES%E7%9A%84%E7%B4%A2%E5%BC%95%E5%92%8C%E6%90%9C%E7%B4%A2.png" alt="ES的索引和搜索" title="ES的索引和搜索"><br>在ES中建立索引和执行搜索的大致流程如上图所示。</p>
+<blockquote>
+<p>这个过程比较关注单机视角下的文档处理，因此对最后两步的<code>查找匹配文档</code>和<code>相关性得分</code>进行了省略，这部分需要在下面的分布式搜索流程中再作分析。</p>
+</blockquote>
+<h3 id="建立索引"><a href="#建立索引" class="headerlink" title="建立索引"></a>建立索引</h3><p>如果是全文数据，则对文本内容进行分析，这项工作在 ES 中由<strong>分析器</strong>实现。分析器实现如下功能：</p>
+<ul>
+<li>字符过滤器。主要是对字符串进行预处理，例如，去掉HTML，将&amp;转换成and等。</li>
+<li>分词器（Tokenizer）。将字符串分割为单个词条，例如，根据空格和标点符号分割，输出的词条称为词元（Token）。</li>
+<li>Token过滤器。根据停止词（Stop word）删除词元，例如，and、the等无用词，或者根据同义词表增加词条，例如，jump和leap。</li>
+<li>语言处理。对上一步得到的Token做一些和语言相关的处理，例如，转为小写，以及将单词转换为词根的形式。语言处理组件输出的结果称为词（Term）。分析完毕后，将分析器输出的词（Term）传递给索引组件，生成倒排和正排索引，再存储到文件系统中。</li>
+</ul>
+<h3 id="执行搜索"><a href="#执行搜索" class="headerlink" title="执行搜索"></a>执行搜索</h3><p>搜索依赖Lucene完成，对于全文搜索：</p>
+<ul>
+<li>对检索字段使用建立索引时相同的分析器进行分析，产生Token列表（词法分析）；</li>
+<li>根据查询语句的语法规则转换成一棵语法树（语法分析）；</li>
+<li>查找符合语法树的文档；</li>
+<li>对匹配到的文档列表进行相关性评分，评分策略一般使用TF&#x2F;IDF；</li>
+<li>根据评分结果进行排序。</li>
+</ul>
+<h2 id="分布式搜索过程（集群视角）"><a href="#分布式搜索过程（集群视角）" class="headerlink" title="分布式搜索过程（集群视角）"></a>分布式搜索过程（集群视角）</h2><p>ES中的search请求必须询问所请求的索引中的所有分片的某个副本来得到结果。比如一个索引有5个主分片，每个主分片有1个副分片，则一次搜索会访问共5个分片，但并不一定都是主分片。<br>search请求由协调节点接收请求，转发到数据节点查询结果，并最终在协调节点中合并结果返回。<br>搜索相关类：</p>
+<ul>
+<li>InitialSearchPhase（Query流程）</li>
+<li>FetchSearchPhase（Fatch流程）</li>
+</ul>
+<p>搜索流程中最重要的就是上面两个类，分别负责Query和Fetch流程。</p>
+<h3 id="Query流程"><a href="#Query流程" class="headerlink" title="Query流程"></a>Query流程</h3><p>代码入口：<code>InitialSearchPhase#run</code><br>1、查询广播到索引中每一个分片副本（主分片或副分片）<br>将请求体解析为SearchRequest<br><code>RestSearchAction#prepareRequest</code><br>构建本节点的shard列表和远程节点的shard列表，即<code>localShardsIterator</code>和<code>remoteShardIterators</code>，最终通过。<br><code>TransportSearchAction#executeSearch</code><br>merge过的shard列表传给RestSearchAction的构造<br><code>TransportSearchAction#searchAsyncAction</code><br>遍历所有shard发送请求<br><code>InitialSearchPhase#run</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">for (int index = 0; index &lt; maxConcurrentShardRequests; index++) &#123;</span><br><span class="line">    final SearchShardIterator shardRoutings = shardsIts.get(index);</span><br><span class="line">    assert shardRoutings.skip() == false;</span><br><span class="line">    performPhaseOnShard(index, shardRoutings, shardRoutings.nextOrNull());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终需要根据执行情况来判断是否要进入到下一阶段。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">executePhaseOnShard(shardIt, shard, new SearchActionListener&lt;FirstResult&gt;(new SearchShardTarget(shard.currentNodeId(),</span><br><span class="line">    shardIt.shardId(), shardIt.getClusterAlias(), shardIt.getOriginalIndices()), shardIndex) &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void innerOnResponse(FirstResult result) &#123;</span><br><span class="line">        maybeFork(thread, () -&gt; onShardResult(result, shardIt));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onFailure(Exception t) &#123;</span><br><span class="line">        maybeFork(thread, () -&gt; onShardFailure(shardIndex, shard, shard.currentNodeId(), shardIt, t));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">private void onShardResult(FirstResult result, SearchShardIterator shardIt) &#123;</span><br><span class="line">    </span><br><span class="line">    onShardSuccess(result);</span><br><span class="line">    </span><br><span class="line">    successfulShardExecution(shardIt);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private void successfulShardExecution(SearchShardIterator shardsIt) &#123;</span><br><span class="line">    ...</span><br><span class="line">    // 计数器累加</span><br><span class="line">    final int xTotalOps = totalOps.addAndGet(remainingOpsOnIterator);</span><br><span class="line">    // 检查是否收到全部回复</span><br><span class="line">    if (xTotalOps == expectedTotalOps) &#123;</span><br><span class="line">        // 调用executeNextPhase，从而开始执行取回阶段</span><br><span class="line">        onPhaseDone();</span><br><span class="line">    &#125; else if (xTotalOps &gt; expectedTotalOps) &#123;</span><br><span class="line">        throw new AssertionError(&quot;unexpected higher total ops [&quot; + xTotalOps + &quot;] compared to expected [&quot;</span><br><span class="line">            + expectedTotalOps + &quot;]&quot;);</span><br><span class="line">    &#125; else if (shardsIt.skip() == false) &#123;</span><br><span class="line">        maybeExecuteNext();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2、每个分片在本地执行查询，并使用本地的Term&#x2F;Document Frequency信息进行打分，添加结果到大小为from+size的本地有序优先队列中；<br>优先队列是一个存有topN匹配文档的有序列表。优先队列大小为分页参数from + size。<br>TODO<br>3、每个分片返回各自优先队列中所有文档的ID和排序值给协调节点，协调节点合并这些值到自己的优先队列中，产生一个全局排序后的列表。<br>为了避免在协调节点中创建的<code>number_of_shards * (from + size)</code>优先队列过大，应尽量控制分页深度。<br>TODO</p>
+<h3 id="Fetch阶段"><a href="#Fetch阶段" class="headerlink" title="Fetch阶段"></a>Fetch阶段</h3><p>Fetch阶段的主要目的是通过文档ID获取完整的文档内容。<br>1、协调节点向相关节点发送GET请求（即根据ID获取文档）；<br>由上面对Query阶段的分析可知收到所有节点的回复后协调节点会触发Fetch流程（<code>executeNextPhase</code>）。<br><code>FetchSearchPhase#run</code><br>遍历查询阶段的shard列表，跳过查询结果为空的shard，对特定目标执行executeFetch获取数据。<br><code>FetchSearchPhase#innerRun</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">for (int i = 0; i &lt; docIdsToLoad.length; i++) &#123;</span><br><span class="line">    ...</span><br><span class="line">    SearchShardTarget searchShardTarget = queryResult.getSearchShardTarget();</span><br><span class="line">    Transport.Connection connection = context.getConnection(searchShardTarget.getClusterAlias(),</span><br><span class="line">        searchShardTarget.getNodeId());</span><br><span class="line">    ShardFetchSearchRequest fetchSearchRequest = createFetchRequest(queryResult.queryResult().getRequestId(), i, entry,</span><br><span class="line">        lastEmittedDocPerShard, searchShardTarget.getOriginalIndices());</span><br><span class="line">    executeFetch(i, searchShardTarget, counter, fetchSearchRequest, queryResult.queryResult(),</span><br><span class="line">        connection);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>executeFetch执行查询请求，并在获取后调用countDown。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">private void executeFetch(final int shardIndex, final SearchShardTarget shardTarget,</span><br><span class="line">                          final CountedCollector&lt;FetchSearchResult&gt; counter,</span><br><span class="line">                          final ShardFetchSearchRequest fetchSearchRequest, final QuerySearchResult querySearchResult,</span><br><span class="line">                          final Transport.Connection connection) &#123;</span><br><span class="line">    context.getSearchTransport().sendExecuteFetch(connection, fetchSearchRequest, context.getTask(),</span><br><span class="line">        new SearchActionListener&lt;FetchSearchResult&gt;(shardTarget, shardIndex) &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void innerOnResponse(FetchSearchResult result) &#123;</span><br><span class="line">                counter.onResult(result);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            @Override</span><br><span class="line">            public void onFailure(Exception e) &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    logger.debug(() -&gt; new ParameterizedMessage(&quot;[&#123;&#125;] Failed to execute fetch phase&quot;, fetchSearchRequest.id()), e);</span><br><span class="line">                    counter.onFailure(shardIndex, shardTarget, e);</span><br><span class="line">                &#125; finally &#123;</span><br><span class="line">                    // the search context might not be cleared on the node where the fetch was executed for example</span><br><span class="line">                    // because the action was rejected by the thread pool. in this case we need to send a dedicated</span><br><span class="line">                    // request to clear the search context.</span><br><span class="line">                    releaseIrrelevantSearchContext(querySearchResult);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2、分片所在节点接收到请求后，向协调节点返回数据；<br>3、协调节点等待所有文档获取完毕后，返回给客户端。<br>收集器定义如下，包括收到的shard数据存放在哪里，及收到完成后谁来处理：<br><code>FetchSearchPhase#innerRun</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">final CountedCollector&lt;FetchSearchResult&gt; counter = new CountedCollector&lt;&gt;(r -&gt; fetchResults.set(r.getShardIndex(), r),</span><br><span class="line">    docIdsToLoad.length, // we count down every shard in the result no matter if we got any results or not</span><br><span class="line">    finishPhase, context);</span><br></pre></td></tr></table></figure>
+<p>每有一个shard执行完毕就执行一次<code>counter.countDown()</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">void countDown() &#123;</span><br><span class="line">    assert counter.isCountedDown() == false : &quot;more operations executed than specified&quot;;</span><br><span class="line">    if (counter.countDown()) &#123;</span><br><span class="line">        onFinish.run();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最后一个执行完毕后，执行finishPhase：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">final Runnable finishPhase = ()</span><br><span class="line">            -&gt; moveToNextPhase(searchPhaseController, scrollId, reducedQueryPhase, queryAndFetchOptimization ?</span><br><span class="line">            queryResults : fetchResults);</span><br></pre></td></tr></table></figure>
+<p>moveToNextPhase开始执行下一个阶段，可以看到在FetchSearchPhase的构造函数中构建了下一个需要执行的Phase，即<code>ExpandSearchPhase</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">FetchSearchPhase(InitialSearchPhase.SearchPhaseResults&lt;SearchPhaseResult&gt; resultConsumer,</span><br><span class="line">                 SearchPhaseController searchPhaseController,</span><br><span class="line">                 SearchPhaseContext context) &#123;</span><br><span class="line">    this(resultConsumer, searchPhaseController, context,</span><br><span class="line">        (response, scrollId) -&gt; new ExpandSearchPhase(context, response, // collapse only happens if the request has inner hits</span><br><span class="line">            (finalResponse) -&gt; sendResponsePhase(finalResponse, scrollId, context)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>4、ExpandSearchPhase<br>判断是否启用字段折叠，然后处理折叠，并将处理后的结果返回给客户端。<br>5、执行完毕后，调用sendResponsePhase回复客户端。</p>
+<h3 id="执行搜索的数据节点流程"><a href="#执行搜索的数据节点流程" class="headerlink" title="执行搜索的数据节点流程"></a>执行搜索的数据节点流程</h3><p>上面Query阶段和Fetch阶段都涉及到搜索流程，Query是根据条件过滤文档，Fetch是根据过滤后的结果取对应的文档内容。<br>1、注册搜索处理器<br><code>SearchTransportService#registerRequestHandler</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">org.elasticsearch.action.search.SearchTransportService#registerRequestHandler</span><br></pre></td></tr></table></figure>
+<p>2、响应Query请求<br>调用Lucene执行搜索，及聚合结果<br><code>Service#executeQueryPhase</code><br>3、响应Fetch请求<br>即GET操作</p>
+<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><ol>
+<li>为什么搜索是近实时的？</li>
+<li>为什么文档的 CRUD (创建-读取-更新-删除) 操作是 实时 的？</li>
+<li>Elasticsearch 是怎样保证更新被持久化在断电时也不丢失数据?</li>
+<li>为什么删除文档不会立刻释放空间？</li>
+<li>refresh, flush, 和 optimize API 都做了什么, 你什么情况下应该使用他们？</li>
+</ol>
+<h2 id="相同查询多次执行结果不同"><a href="#相同查询多次执行结果不同" class="headerlink" title="相同查询多次执行结果不同"></a>相同查询多次执行结果不同</h2><p>有可能是<strong>Bouncing Results</strong>问题，也有可能是主分片发生了**强制段合并(forcemerge)**，导致请求落到不同分片上得到的结果得分不同（<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1445643">Elasticsearch:执行同样的查询语句多次结果不一致？！</a>）。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><h2 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/cn/elasticsearch/guide/current/index.html">Elasticsearch: 权威指南</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/index.html">Elasticsearch Reference</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/rest-apis.html">REST APIs</a></li>
+</ol>
+<h2 id="索引、映射和文档"><a href="#索引、映射和文档" class="headerlink" title="索引、映射和文档"></a>索引、映射和文档</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/napoay/article/details/52032931">Elasticsearch 索引的父子关系(index parent-child)</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/blog/elasticsearch-versioning-support">Elasticsearch Versioning Support</a></li>
+</ol>
+<h2 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/cn/elasticsearch/guide/current/search-in-depth.html">深入搜索</a></li>
+</ol>
+<h2 id="集群"><a href="#集群" class="headerlink" title="集群"></a>集群</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.elastic.co/guide/cn/elasticsearch/guide/current/scale.html">扩容设计</a></li>
+</ol>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/sinat_14913533/article/details/85833635">elasticsearch 源码编译问题</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ElasticSearch/" rel="tag"># ElasticSearch</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/58f1e2d5.html" rel="prev" title="ES3_3URL查询">
+                  <i class="fa fa-angle-left"></i> ES3_3URL查询
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/bf6ba1a3.html" rel="next" title="ES2_3文档操作源码分析">
+                  ES2_3文档操作源码分析 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="接口扩展策略注解 @SPIDubbo中的很多扩展接口，如 Protocol、Transporter、Filter 等，都是通过 JDK 的 SPI 机制实现的，也就是说这些功能都可被用户自定义的扩展所替换，接口扩展点由注解@SPI定义。JDK 中 SPI（Service Provider Interface）的设计与策略模式如出一辙，开发者可以替换掉 Dubbo 原扩展接口的默认实现，完成">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dubbo的SPI原理">
+<meta property="og:url" content="https://tallate.github.io/bf6c261d.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="接口扩展策略注解 @SPIDubbo中的很多扩展接口，如 Protocol、Transporter、Filter 等，都是通过 JDK 的 SPI 机制实现的，也就是说这些功能都可被用户自定义的扩展所替换，接口扩展点由注解@SPI定义。JDK 中 SPI（Service Provider Interface）的设计与策略模式如出一辙，开发者可以替换掉 Dubbo 原扩展接口的默认实现，完成">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-09-07T10:51:58.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.855Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="Dubbo">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tallate.github.io/bf6c261d.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/bf6c261d.html","path":"/bf6c261d.html","title":"Dubbo的SPI原理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Dubbo的SPI原理 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A5%E5%8F%A3%E6%89%A9%E5%B1%95%E7%AD%96%E7%95%A5%E6%B3%A8%E8%A7%A3-SPI"><span class="nav-number">1.</span> <span class="nav-text">接口扩展策略注解 @SPI</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%BB%E5%8F%96%E6%89%A9%E5%B1%95%E7%82%B9"><span class="nav-number">1.1.</span> <span class="nav-text">读取扩展点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90-Adaptive-%E5%AE%9E%E4%BE%8B"><span class="nav-number">1.2.</span> <span class="nav-text">生成 Adaptive 实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87-URL-%E5%8A%A8%E6%80%81%E9%80%89%E6%8B%A9%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.3.</span> <span class="nav-text">通过 URL 动态选择协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98"><span class="nav-number">1.4.</span> <span class="nav-text">缓存</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/bf6c261d.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Dubbo的SPI原理 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Dubbo的SPI原理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-07 18:51:58" itemprop="dateCreated datePublished" datetime="2019-09-07T18:51:58+08:00">2019-09-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Dubbo/" itemprop="url" rel="index"><span itemprop="name">Dubbo</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+
+
+<h2 id="接口扩展策略注解-SPI"><a href="#接口扩展策略注解-SPI" class="headerlink" title="接口扩展策略注解 @SPI"></a>接口扩展策略注解 @SPI</h2><p>Dubbo中的很多扩展接口，如 Protocol、Transporter、Filter 等，都是通过 JDK 的 SPI 机制实现的，也就是说这些功能都可被用户自定义的扩展所替换，接口扩展点由注解<code>@SPI</code>定义。<br>JDK 中 SPI（Service Provider Interface）的设计与策略模式如出一辙，开发者可以替换掉 Dubbo 原扩展接口的默认实现，完成自定义需求，即可以自定义实现策略。<br>Dubbo 在 JDK 现有 SPI 实现的基础上做了如下改进：</p>
+<ol>
+<li>JDK 标准的 SPI 会一次性实例化扩展点所有实现，如果有扩展实现初始化很耗时，但如果没用上也加载，会很浪费资源。</li>
+<li>如果扩展点加载失败，连扩展点的名称都拿不到了。比如：JDK 标准的 ScriptEngine，通过 getName();获取脚本类型的名称，但如果 RubyScriptEngine 因为所依赖的 jruby.jar 不存在，导致 RubyScriptEngine 类加载失败，这个失败原因被吃掉了，和 ruby 对应不起来，当用户执行 ruby 脚本时，会报不支持 ruby，而不是真正失败的原因。</li>
+<li>增加了对扩展点 IoC 和 AOP 的支持，一个扩展点可以直接 setter 注入其它扩展点。</li>
+</ol>
+<p>那么 Dubbo 的 SPI 机制是怎么实现的呢？以协议扩展为例，Dubbo 中协议被抽象为 Protocol 接口。</p>
+<h3 id="读取扩展点"><a href="#读取扩展点" class="headerlink" title="读取扩展点"></a>读取扩展点</h3><p>ServiceConfig#protocol</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Protocol protocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension()</span><br></pre></td></tr></table></figure>
+
+<p>Dubbo 使用 ExtensionLoader 实现扩展点加载。</p>
+<ul>
+<li>ExtensionLoader#getExtensionLoader()<br>获取 ExtensionLoader 实现，保证每种扩展点一个单例。</li>
+<li>ExtensionLoader#getAdaptiveExtension()<br>根据不同的 SPI 扩展点，即不同的 interface，生成不同的 Adaptive 实例的代码。<br>-&gt; getAdaptiveExtensionClass()<br>-&gt; getExtensionClasses()<br>-&gt; loadExtensionClasses()<br>加载所有的扩展点实现，直到扩展点方法执行时才决定调用是一个扩展点实现，即从众多的实现策略中决定具体使用哪一个策略。<br>ExtensionLoader 会依次从<code>META-INF/dubbo/internal</code>（Dubbo 内部实现）、<code>META-INF/dubbo/</code>（开发者自定义策略）、<code>META-INF/services/</code>这几个目录下读取扩展点实现，目录下的同名文件配置了对应扩展点的实现策略，调用 loadFile 来加载对应的扩展策略。<br>-&gt; loadFile(Map&lt;String, Class&lt;?&gt;&gt; extensionClasses, String dir)</li>
+</ul>
+<h3 id="生成-Adaptive-实例"><a href="#生成-Adaptive-实例" class="headerlink" title="生成 Adaptive 实例"></a>生成 Adaptive 实例</h3><ul>
+<li>ExtensionLoader#loadFile<br>-&gt; String fileName &#x3D; dir + type.getName()<br>拼接文件路径<br>-&gt; ClassLoader classLoader &#x3D; findClassLoader()<br>拿到 ExtensionLoader 的类加载器。<br>-&gt; Class&lt;?&gt; clazz &#x3D; Class.forName(line, true, classLoader);<br>文件每行是一个实现类的全路径名，通过反射加载并拿到具体类型。<br>-&gt; extensionClasses.put(n, clazz)<br>添加到 map 里返回。</li>
+<li>ExtensionLoader#cachedClasses<br>-&gt; cachedClasses.set(classes)<br>添加到缓存。</li>
+<li>ExtensionLoader#createAdaptiveExtensionClass<br>-&gt; ExtensionLoader#createAdaptiveExtensionClassCode<br>生成 Adaptive 类。<br>-&gt; compiler &#x3D; ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.common.compiler.Compiler.class).getAdaptiveExtension()<br>拿到编译接口扩展点的一个具体实现，dubbo 内部支持 jdk 和 javassist，默认是 javassist。<br>-&gt; compiler.compile(code, classLoader)<br>编译代码，生成 Adaptive 实例类。</li>
+</ul>
+<p>上面提到 Compiler 也是一个扩展点，同样也依赖这个流程来实例化，在运行时生成 Adaptive 实例的时候，需要生成 Compiler 接口的 Adaptive 实例，即运行生成 Adaptive 实例的时候需要先有一个 Compiler 接口的 Adaptive 实例，那这样岂不是陷入了死循环，这里就要提到显示指定 Adaptive 实例的情况。<code>@Adaptive</code>注解支持类级别和方法级别：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、类级别：只能拥有一个，注解打在接口实现类上，显示的注册一个Adaptive实例，在编译期就存在，如`AdaptiveCompiler`，解决了上面的死循环问题，由`AdaptiveCompiler`依据dubbo配置决定使用哪个编译类；</span><br><span class="line">2、方法级别：在运行期动态的生成Adaptive实例。</span><br></pre></td></tr></table></figure>
+
+<h3 id="通过-URL-动态选择协议"><a href="#通过-URL-动态选择协议" class="headerlink" title="通过 URL 动态选择协议"></a>通过 URL 动态选择协议</h3><p>ExtensionLoader#createAdaptiveExtensionClassCode<br>生成的 Protocol 的 Adaptive 实例类，依据 URL 中 protocol key-value 的值，选择对应的 Protocol 策略来暴露和引用服务。<br>扩展点方法调用会有 URL 参数（或是参数有 URL 成员），这样依赖的扩展点可以从 URL 拿到配置信息，所有的扩展点自己定好配置的 Key 后，配置信息从 URL 上从最外层传入，URL 在配置传递上即是一条总线。<br>以 dubbo+zookeeper 为例，暴露和引用远程服务都是注册在 zookeeper 上的，服务注册在 zookeeper 上本质其实是一个 URL，远程服务调用的过程中依据 URL 的 key-value 来动态决定执行 Protocol、Filter 等接口扩展点的执行策略。<br>下面是 Provider 端暴露 HelloService 服务时在 zookeeper 上注册的 URL，在 zookeeper 上的路径为&#x2F;dubbo&#x2F;com.dubbo.test.service.HelloService&#x2F;providers，URL 表示了采用 dubbo 协议，接口为 com.dubbo.test.service.HelloService，方法为 say，要执行的 Filter 为 whiteFilter 等。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[zk： localhost：2181(CONNECTED) 1] Is /dubbo/com.dubbo.test.service.HelloService/providers</span><br><span class="line">[dubbo://127.0.0.1:2O881/com.dubbo.test.service.HelloService?anyhost=true&amp;application=dubbo-test-service&amp;dubbo=2.4.10&amp;group=test-prod&amp;interface=com.dubbo.test.service.HelloService&amp;methods=say&amp;pid=21242&amp;revision=l.0&amp;service.filter=whiteFilter&amp;side=providerxtamp=1495436105078&amp;version=l.0]</span><br></pre></td></tr></table></figure>
+
+<h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><ul>
+<li>volatile Class&lt;~&gt; cachedAdaptiveClass<br>这个是缓存 AdaptiveClass，如果一个扩展类的类上面带有 @Adaptive 注解，那么这个类就会被缓存在这个地方，每一种类型的扩展类只有一个 AdaptiveClass，如果发现有多个，则会报错。另外，当通过 getAdaptiveExtensionClass 来获取自适应扩展类时，如果当前还没有 AdaptiveClass，则会自动创建一个（动态生成 Java 代码，再编译，典型的比如 Protocol$Adaptive 就是这么生成的）</li>
+<li>Set&lt;~&gt; cachedWrapperClasses<br>这个是缓存包装类的，Dubbo 判断一个扩展类是否是包装类比较简单，通过构造函数来判断，如果这个扩展类有一个构造函数，其中参数是当前扩展类的类型，那么就是包装类，举个例子，ProtocolFilterWrapper 就是 protocol 扩展类的包装类，因为有这个构造函数：<code>public ProtocolFilterWrapper(Protocol protocol)</code></li>
+<li>Map&lt;~&gt; cachedActivates<br>这个是缓存激活的扩展类，当然，@Activate 注解还可以规定激活的条件和时机</li>
+<li>Holder&lt;~&gt; cachedClasses<br>这个是缓存 Adaptive 和 Wrapper 扩展类之外的普通扩展类</li>
+</ul>
+<p>扩展类被加载后会根据一定的规则放入以上 4 个缓存中，比如带有 @Adaptive 注解的会被放入 cachedAdaptiveClass。</p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Dubbo/" rel="tag"># Dubbo</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/459b2cfd.html" rel="prev" title="Dubbo的网络通信">
+                  <i class="fa fa-angle-left"></i> Dubbo的网络通信
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/353ec849.html" rel="next" title="Dubbo 概述">
+                  Dubbo 概述 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

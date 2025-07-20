@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="命名服务把服务器名、资源名记录到zk里。通过调用Zookeeper节点创建的API接口就可以创建一个顺序节点，并且在API返回值中会返回这个节点的完整名字，利用此特性，可以生成全局ID，其步骤如下  客户端根据任务类型，在指定类型的任务下通过调用接口创建一个顺序节点，如”job-“。 创建完成后，会返回一个完整的节点名，如”job-00000001”。 客户端拼接type类型和返回值后，就可以作为">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ZooKeeper 的应用">
+<meta property="og:url" content="https://tallate.github.io/60ef81a3.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="命名服务把服务器名、资源名记录到zk里。通过调用Zookeeper节点创建的API接口就可以创建一个顺序节点，并且在API返回值中会返回这个节点的完整名字，利用此特性，可以生成全局ID，其步骤如下  客户端根据任务类型，在指定类型的任务下通过调用接口创建一个顺序节点，如”job-“。 创建完成后，会返回一个完整的节点名，如”job-00000001”。 客户端拼接type类型和返回值后，就可以作为">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/ZooKeeper/ZooKeeper%E5%91%BD%E5%90%8D%E6%9C%8D%E5%8A%A1.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/ZooKeeper/%E6%8E%92%E4%BB%96%E9%94%81.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/ZooKeeper/%E5%85%B1%E4%BA%AB%E9%94%81.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/ZooKeeper/%E5%88%86%E5%B8%83%E5%BC%8F%E9%98%9F%E5%88%97.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/ZooKeeper/%E5%88%86%E5%B8%83%E5%BC%8F%E5%B1%8F%E9%9A%9C.png">
+<meta property="article:published_time" content="2019-07-29T10:52:36.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.883Z">
+<meta property="article:author" content="tallate">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/ZooKeeper/ZooKeeper%E5%91%BD%E5%90%8D%E6%9C%8D%E5%8A%A1.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/60ef81a3.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/60ef81a3.html","path":"/60ef81a3.html","title":"ZooKeeper 的应用"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ZooKeeper 的应用 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%91%BD%E5%90%8D%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.</span> <span class="nav-text">命名服务</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86"><span class="nav-number">2.</span> <span class="nav-text">配置管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">集群管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Master%E9%80%89%E4%B8%BE"><span class="nav-number">4.</span> <span class="nav-text">Master选举</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">5.</span> <span class="nav-text">分布式锁</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E4%BB%96%E9%94%81"><span class="nav-number">5.1.</span> <span class="nav-text">排他锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B1%E4%BA%AB%E9%94%81"><span class="nav-number">5.2.</span> <span class="nav-text">共享锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E9%94%81"><span class="nav-number">5.2.1.</span> <span class="nav-text">获取锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E8%AF%BB%E5%86%99%E9%A1%BA%E5%BA%8F"><span class="nav-number">5.2.2.</span> <span class="nav-text">判断读写顺序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8A%E6%94%BE%E9%94%81"><span class="nav-number">5.2.3.</span> <span class="nav-text">释放锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%83%8A%E7%BE%A4%E7%8E%B0%E8%B1%A1"><span class="nav-number">5.2.4.</span> <span class="nav-text">惊群现象</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%98%9F%E5%88%97%EF%BC%88FIFO%E5%85%88%E5%85%A5%E5%85%88%E5%87%BA%EF%BC%89"><span class="nav-number">6.</span> <span class="nav-text">分布式队列（FIFO先入先出）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E5%B1%8F%E9%9A%9C"><span class="nav-number">7.</span> <span class="nav-text">分布式屏障</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/60ef81a3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ZooKeeper 的应用 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ZooKeeper 的应用
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-07-29 18:52:36" itemprop="dateCreated datePublished" datetime="2019-07-29T18:52:36+08:00">2019-07-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ZooKeeper/" itemprop="url" rel="index"><span itemprop="name">ZooKeeper</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="命名服务"><a href="#命名服务" class="headerlink" title="命名服务"></a>命名服务</h1><p>把服务器名、资源名记录到zk里。<br><img src="/imgs/ZooKeeper/ZooKeeper%E5%91%BD%E5%90%8D%E6%9C%8D%E5%8A%A1.png" alt="ZooKeeper命名服务" title="ZooKeeper命名服务"><br>通过调用Zookeeper节点创建的API接口就可以创建一个顺序节点，并且在API返回值中会返回这个节点的完整名字，利用此特性，可以生成全局ID，其步骤如下</p>
+<ol>
+<li>客户端根据任务类型，在指定类型的任务下通过调用接口创建一个顺序节点，如”job-“。</li>
+<li>创建完成后，会返回一个完整的节点名，如”job-00000001”。</li>
+<li>客户端拼接type类型和返回值后，就可以作为全局唯一ID了，如”type2-job-00000001”。</li>
+</ol>
+<h1 id="配置管理"><a href="#配置管理" class="headerlink" title="配置管理"></a>配置管理</h1><p>程序分布式的部署在不同的机器上，将程序的配置信息放在zk的znode下，当有配置发生改变时，也就是znode发生变化时，可以通过改变zk中某个目录节点的内容，利用watcher通知给各个客户端从而更改配置。</p>
+<h1 id="集群管理"><a href="#集群管理" class="headerlink" title="集群管理"></a>集群管理</h1><p>Zookeeper的两大特性：</p>
+<ul>
+<li>客户端如果对Zookeeper的数据节点注册Watcher监听，那么当该数据及诶单内容或是其子节点列表发生变更时，Zookeeper服务器就会向订阅的客户端发送变更通知。</li>
+<li>对在Zookeeper上创建的临时节点，一旦客户端与服务器之间的会话失效，那么临时节点也会被自动删除。</li>
+</ul>
+<p>利用其两大特性，可以实现集群机器存活监控系统，若监控系统在<code>/clusterServers</code>节点上注册一个Watcher监听，那么但凡进行动态添加机器的操作，就会在&#x2F;clusterServers节点下创建一个临时节点：<code>/clusterServers/[Hostname]</code>，这样，监控系统就能够实时监测机器的变动情况。</p>
+<h1 id="Master选举"><a href="#Master选举" class="headerlink" title="Master选举"></a>Master选举</h1><p>集群需要有一个Master，比如MySQL中需要有一个Master来负责写请求。ZooKeeper的强一致性可以保证这样的Master是唯一的。<br>集群中的每个节点可以定时在一个命名空间内创建节点，但只有一个客户端能创建成功，此时其成为Master。</p>
+<h1 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h1><p>分布式锁用于控制分布式系统之间同步访问共享资源的一种方式，可以保证不同系统访问一个或一组资源时的一致性，主要分为排它锁和共享锁。</p>
+<h2 id="排他锁"><a href="#排他锁" class="headerlink" title="排他锁"></a>排他锁</h2><p><img src="/imgs/ZooKeeper/%E6%8E%92%E4%BB%96%E9%94%81.png" alt="排他锁" title="排他锁"></p>
+<ul>
+<li>获取锁，在需要获取排它锁时，所有客户端通过调用接口，在&#x2F;exclusive_lock节点下创建临时子节点&#x2F;exclusive_lock&#x2F;lock。Zookeeper可以保证只有一个客户端能够创建成功，没有成功的客户端需要注册&#x2F;exclusive_lock节点监听。 </li>
+<li>释放锁，当获取锁的客户端宕机或者正常完成业务逻辑都会导致临时节点的删除，此时，所有在&#x2F;exclusive_lock节点上注册监听的客户端都会收到通知，可以重新发起分布式锁获取。</li>
+</ul>
+<h2 id="共享锁"><a href="#共享锁" class="headerlink" title="共享锁"></a>共享锁</h2><p>共享锁又称为读锁，若事务T1对数据对象O1加上共享锁，那么当前事务只能对O1进行读取操作，其他事务也只能对这个数据对象加共享锁，直到该数据对象上的所有共享锁都被释放。<br><img src="/imgs/ZooKeeper/%E5%85%B1%E4%BA%AB%E9%94%81.png" alt="共享锁" title="共享锁"></p>
+<h3 id="获取锁"><a href="#获取锁" class="headerlink" title="获取锁"></a>获取锁</h3><p>在需要获取共享锁时，所有客户端都会到&#x2F;shared_lock下面创建一个临时顺序节点，如果是读请求，那么就创建例如&#x2F;shared_lock&#x2F;host1-R-00000001的节点，如果是写请求，那么就创建例如&#x2F;shared_lock&#x2F;host2-W-00000002的节点。</p>
+<h3 id="判断读写顺序"><a href="#判断读写顺序" class="headerlink" title="判断读写顺序"></a>判断读写顺序</h3><p>不同事务可以同时对一个数据对象进行读写操作，而更新操作必须在当前没有任何事务进行读写情况下进行，通过Zookeeper来确定分布式读写顺序，大致分为四步。</p>
+<ol>
+<li>创建完节点后，获取&#x2F;shared_lock节点下所有子节点，并对该节点变更注册监听。</li>
+<li>确定自己的节点序号在所有子节点中的顺序。</li>
+<li>对于读请求：若没有比自己序号小的子节点或所有比自己序号小的子节点都是读请求，那么表明自己已经成功获取到共享锁，同时开始执行读取逻辑，若有写请求，则需要等待。对于写请求：若自己不是序号最小的子节点，那么需要等待。</li>
+<li>接收到Watcher通知后，重复步骤1。</li>
+</ol>
+<h3 id="释放锁"><a href="#释放锁" class="headerlink" title="释放锁"></a>释放锁</h3><p>其释放锁的流程与独占锁一致。</p>
+<h3 id="惊群现象"><a href="#惊群现象" class="headerlink" title="惊群现象"></a>惊群现象</h3><p>上述共享锁的实现方案，可以满足一般分布式集群竞争锁的需求，但是如果机器规模扩大会出现一些问题，下面着重分析判断读写顺序的步骤3。</p>
+<p>针对如上图所示的情况进行分析</p>
+<ol>
+<li>host1首先进行读操作，完成后将节点&#x2F;shared_lock&#x2F;host1-R-00000001删除。</li>
+<li>余下4台机器均收到这个节点移除的通知，然后重新从&#x2F;shared_lock节点上获取一份新的子节点列表。</li>
+<li>每台机器判断自己的读写顺序，其中host2检测到自己序号最小，于是进行写操作，余下的机器则继续等待。</li>
+<li>继续…</li>
+</ol>
+<p>可以看到，host1客户端在移除自己的共享锁后，Zookeeper发送了子节点更变Watcher通知给所有机器，然而除了给host2产生影响外，对其他机器没有任何作用。大量的Watcher通知和子节点列表获取两个操作会重复运行，这样会造成系能鞥影响和网络开销，更为严重的是，如果同一时间有多个节点对应的客户端完成事务或事务中断引起节点小时，Zookeeper服务器就会在短时间内向其他所有客户端发送大量的事件通知，这就是所谓的<strong>羊群效应（惊群效应）</strong>。</p>
+<p>可以有如下改动来避免羊群效应。</p>
+<ol>
+<li>客户端调用create接口常见类似于<code>/shared_lock/[Hostname]-请求类型-序号</code>的临时顺序节点。</li>
+<li>客户端调用getChildren接口获取所有已经创建的子节点列表（不注册任何Watcher）。</li>
+<li>如果无法获取共享锁，就调用exist接口来对比自己小的节点注册Watcher。对于读请求：向比自己序号小的最后一个写请求节点注册Watcher监听。对于写请求：向比自己序号小的最后一个节点注册Watcher监听。</li>
+<li>等待Watcher通知，继续进入步骤2。</li>
+</ol>
+<p>此方案改动主要在于：每个锁竞争者，只需要关注&#x2F;shared_lock节点下序号比自己小的那个节点是否存在即可。</p>
+<h1 id="分布式队列（FIFO先入先出）"><a href="#分布式队列（FIFO先入先出）" class="headerlink" title="分布式队列（FIFO先入先出）"></a>分布式队列（FIFO先入先出）</h1><p>先进入队列的请求操作先完成后，才会开始处理后面的请求。FIFO队列就类似于全写的共享模型，所有客户端都会到&#x2F;queue_fifo这个节点下创建一个临时节点，如&#x2F;queue_fifo&#x2F;host1-00000001。<br><img src="/imgs/ZooKeeper/%E5%88%86%E5%B8%83%E5%BC%8F%E9%98%9F%E5%88%97.png" alt="分布式队列" title="分布式队列"><br>创建完节点后，按照如下步骤执行。</p>
+<ol>
+<li>通过调用getChildren接口来获取&#x2F;queue_fifo节点的所有子节点，即获取队列中所有的元素。</li>
+<li>确定自己的节点序号在所有子节点中的顺序。</li>
+<li>如果自己的序号不是最小，那么需要等待，同时向比自己序号小的最后一个节点注册Watcher监听。</li>
+<li>接收到Watcher通知后，重复步骤1。</li>
+</ol>
+<h1 id="分布式屏障"><a href="#分布式屏障" class="headerlink" title="分布式屏障"></a>分布式屏障</h1><p>最终的合并计算需要基于很多并行计算的子结果来进行，开始时，&#x2F;queue_barrier节点已经默认存在，并且将结点数据内容赋值为数字n来代表Barrier值，之后，所有客户端都会到&#x2F;queue_barrier节点下创建一个临时节点，例如&#x2F;queue_barrier&#x2F;host1。<br><img src="/imgs/ZooKeeper/%E5%88%86%E5%B8%83%E5%BC%8F%E5%B1%8F%E9%9A%9C.png" alt="分布式屏障" title="分布式屏障"></p>
+<p>创建完节点后，按照如下步骤执行。</p>
+<ol>
+<li>通过调用getData接口获取&#x2F;queue_barrier节点的数据内容，如10。</li>
+<li>通过调用getChildren接口获取&#x2F;queue_barrier节点下的所有子节点，同时注册对子节点变更的Watcher监听。</li>
+<li>统计子节点的个数。</li>
+<li>如果子节点个数还不足10个，那么需要等待。</li>
+<li>接受到Wacher通知后，重复步骤3。</li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/73038da0.html" rel="prev" title="ZooKeeper 原理总结">
+                  <i class="fa fa-angle-left"></i> ZooKeeper 原理总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/4ea5471b.html" rel="next" title="ZooKeeper 的使用">
+                  ZooKeeper 的使用 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

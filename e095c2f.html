@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="架构选型   消息队列 Kafka RocketMQ    适用场景 大量消息快速消费如流式计算 高性能、稳定、高可靠   热度 与周边生态系统的兼容性最好 有活跃中文社区   消息可靠传递 √ √   延迟 毫秒级 毫秒级   性能 每秒几十万 每秒几十万   消息丢失 参数优化配置后0丢失 参数优化配置后0丢失   消费模式 Pull Pull + Push（原理都是Pull）   可用性">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RocketMQ 概述">
+<meta property="og:url" content="https://tallate.github.io/e095c2f.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="架构选型   消息队列 Kafka RocketMQ    适用场景 大量消息快速消费如流式计算 高性能、稳定、高可靠   热度 与周边生态系统的兼容性最好 有活跃中文社区   消息可靠传递 √ √   延迟 毫秒级 毫秒级   性能 每秒几十万 每秒几十万   消息丢失 参数优化配置后0丢失 参数优化配置后0丢失   消费模式 Pull Pull + Push（原理都是Pull）   可用性">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/RocketMQ/RocketMQ-%E6%9E%B6%E6%9E%84%E5%9B%BE.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/RocketMQ/RocketMQ-%E9%83%A8%E7%BD%B2%E5%9B%BE.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/RocketMQ/rocketmq_architecture.png">
+<meta property="article:published_time" content="2020-08-12T04:21:48.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.898Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="RocketMQ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/RocketMQ/RocketMQ-%E6%9E%B6%E6%9E%84%E5%9B%BE.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/e095c2f.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/e095c2f.html","path":"/e095c2f.html","title":"RocketMQ 概述"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>RocketMQ 概述 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">架构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">选型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text">部署结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A8%E6%8B%89%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.3.</span> <span class="nav-text">推拉模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A8%E6%A8%A1%E5%BC%8F%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">1.3.1.</span> <span class="nav-text">推模式优缺点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%89%E6%A8%A1%E5%BC%8F%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">1.3.2.</span> <span class="nav-text">拉模式优缺点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#QA"><span class="nav-number">2.</span> <span class="nav-text">QA</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E5%8F%AF%E4%BB%A5%E5%81%9A%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">2.1.</span> <span class="nav-text">消息队列可以做什么？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%E5%8F%AF%E4%BB%A5%E5%81%9A%E5%88%B0%E5%9C%A8%E6%B6%88%E6%81%AF%E7%94%9F%E4%BA%A7%E3%80%81%E6%B6%88%E8%B4%B9%E8%BF%87%E7%A8%8B%E4%B8%AD%E4%B8%8D%E9%87%8D%E3%80%81%E4%B8%8D%E4%B8%A2%EF%BC%88Exactly-once%EF%BC%89%EF%BC%9F"><span class="nav-number">2.2.</span> <span class="nav-text">哪些消息队列可以做到在消息生产、消费过程中不重、不丢（Exactly once）？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RocketMQ%E4%B8%AD%E7%9A%84Consumer%E6%98%AF%E6%8E%A8%E8%BF%98%E6%98%AF%E6%8B%89%EF%BC%9F"><span class="nav-number">2.3.</span> <span class="nav-text">RocketMQ中的Consumer是推还是拉？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RocketMQ%E5%8F%91%E9%80%81%E3%80%81%E5%AD%98%E5%82%A8%E3%80%81%E6%8E%A5%E6%94%B6%E7%9A%84%E6%B5%81%E7%A8%8B%EF%BC%9F"><span class="nav-number">2.4.</span> <span class="nav-text">RocketMQ发送、存储、接收的流程？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BD%93%E5%8F%91%E7%8E%B0%E6%B6%88%E8%B4%B9%E8%80%85%E4%B8%8D%E6%B6%88%E8%B4%B9%E6%97%B6%EF%BC%8C%E5%A6%82%E4%BD%95%E8%AF%8A%E6%96%AD%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">2.5.</span> <span class="nav-text">当发现消费者不消费时，如何诊断问题？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E6%B6%88%E6%81%AF%E5%8F%91%E9%80%81%E7%9A%84%E4%B8%A5%E6%A0%BC%E9%A1%BA%E5%BA%8F%E6%80%A7%EF%BC%9F"><span class="nav-number">2.6.</span> <span class="nav-text">怎么实现消息发送的严格顺序性？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RocketMQ%E8%83%BD%E5%90%A6%E5%81%9A%E5%88%B0%E5%8D%95%E9%98%9F%E5%88%97%E7%9A%84%E5%B9%B6%E8%A1%8C%E6%B6%88%E8%B4%B9%EF%BC%9F"><span class="nav-number">2.7.</span> <span class="nav-text">RocketMQ能否做到单队列的并行消费？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1%EF%BC%9F"><span class="nav-number">2.8.</span> <span class="nav-text">怎么实现负载均衡？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RocketMQ%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E4%B8%8D%E4%B8%A2%EF%BC%88%E6%B6%88%E6%81%AF%E4%B8%80%E5%AE%9A%E8%83%BD%E8%A2%AB%E6%B6%88%E8%B4%B9%EF%BC%89%EF%BC%9F"><span class="nav-number">2.9.</span> <span class="nav-text">RocketMQ如何保证消息不丢（消息一定能被消费）？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RocketMQ%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E6%B6%88%E6%81%AF%E5%8E%BB%E9%87%8D%EF%BC%9F"><span class="nav-number">2.10.</span> <span class="nav-text">RocketMQ如何实现消息去重？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B6%88%E8%B4%B9%E5%A4%B1%E8%B4%A5%E6%80%8E%E4%B9%88%E9%87%8D%E5%8F%91%E7%9A%84%EF%BC%9F"><span class="nav-number">2.11.</span> <span class="nav-text">消费失败怎么重发的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E5%88%A4%E6%96%AD%E6%B6%88%E6%81%AF%E5%A0%86%E7%A7%AF%E4%BA%86%EF%BC%9F"><span class="nav-number">2.12.</span> <span class="nav-text">怎么判断消息堆积了？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%B7%E7%9B%98%E7%9A%84%E5%8E%9F%E7%90%86%EF%BC%9F"><span class="nav-number">2.13.</span> <span class="nav-text">刷盘的原理？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0%E6%B6%88%E6%81%AF%E5%A4%8D%E5%88%B6%EF%BC%88Broker%E4%B8%BB%E4%BB%8E%E4%B9%8B%E9%97%B4%EF%BC%89%EF%BC%9F"><span class="nav-number">2.14.</span> <span class="nav-text">怎么实现消息复制（Broker主从之间）？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RocketMQ-%E5%A6%82%E4%BD%95%E4%BF%9D%E8%AF%81%E6%B6%88%E6%81%AF%E7%9A%84%E9%AB%98%E5%8F%AF%E7%94%A8%EF%BC%9F"><span class="nav-number">2.15.</span> <span class="nav-text">RocketMQ 如何保证消息的高可用？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#broker%E9%9B%86%E7%BE%A4%E7%9A%84master%E5%AE%95%E6%9C%BA%EF%BC%8Cslave%E6%98%AF%E6%80%8E%E4%B9%88%E6%8F%90%E4%BE%9B%E6%9C%8D%E5%8A%A1%E7%9A%84%EF%BC%9Fmaster%E6%98%AF%E6%80%8E%E4%B9%88%E5%88%87%E6%8D%A2%E5%9B%9E%E6%9D%A5%E7%9A%84%EF%BC%9F"><span class="nav-number">2.16.</span> <span class="nav-text">broker集群的master宕机，slave是怎么提供服务的？master是怎么切换回来的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88-RocketMQ-%E4%BD%BF%E7%94%A8-NameServer-%E8%80%8C%E4%B8%8D%E6%98%AF-ZooKeeper-%E4%BD%9C%E4%B8%BA%E6%9C%8D%E5%8A%A1%E6%B3%A8%E5%86%8C%E8%A1%A8"><span class="nav-number">2.17.</span> <span class="nav-text">为什么 RocketMQ 使用 NameServer 而不是 ZooKeeper 作为服务注册表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NameServer%E6%98%AF%E6%80%8E%E4%B9%88%E6%84%9F%E7%9F%A5Broker%E7%9A%84%E5%8F%98%E5%8C%96%E7%9A%84%EF%BC%9F"><span class="nav-number">2.18.</span> <span class="nav-text">NameServer是怎么感知Broker的变化的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RocketMQ%E7%9A%84%E4%BA%8B%E5%8A%A1%E6%B6%88%E6%81%AF%E6%98%AF%E5%90%A6%E5%AE%8C%E6%95%B4%E5%AE%9E%E7%8E%B0%E4%BA%86%E4%BA%8B%E5%8A%A1%E7%9A%84ACID%E7%89%B9%E6%80%A7%EF%BC%9F"><span class="nav-number">2.19.</span> <span class="nav-text">RocketMQ的事务消息是否完整实现了事务的ACID特性？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E6%9C%89Half-Message%EF%BC%9F"><span class="nav-number">2.20.</span> <span class="nav-text">为什么要有Half Message？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AF%B4RocketMQ%E5%8F%AA%E8%83%BD%E4%BF%9D%E8%AF%81%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7%EF%BC%9F"><span class="nav-number">2.21.</span> <span class="nav-text">为什么说RocketMQ只能保证最终一致性？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RocketMQ%E4%BD%BF%E7%94%A8%E6%9F%90%E4%B8%AA%E6%B6%88%E6%81%AF%E5%BA%8F%E5%8F%B7messageID%E6%B6%88%E8%B4%B9%E6%9F%90%E4%B8%AA%E9%98%9F%E5%88%97%E7%9A%84%E6%B6%88%E6%81%AF%EF%BC%8C%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6%E6%98%AF%E5%A4%9A%E5%B0%91%EF%BC%9F%EF%BC%88%E5%81%87%E8%AE%BE%E6%B6%88%E6%81%AF%E6%96%87%E4%BB%B6commitLog%E6%95%B0%E9%87%8F%E4%B8%BAm%EF%BC%8C%E6%AF%8F%E4%B8%AA%E6%B6%88%E6%81%AF%E6%96%87%E4%BB%B6%E4%B8%AD%E6%B6%88%E6%81%AF%E6%9D%A1%E6%95%B0%E6%98%AFk%EF%BC%8C%E7%B4%A2%E5%BC%95%E6%96%87%E4%BB%B6consumerQueue%E7%9A%84%E6%95%B0%E9%87%8F%E6%98%AFn%EF%BC%8C%E9%98%9F%E5%88%97%E4%B8%AD%E5%85%B1%E6%9C%89j%E6%9D%A1%E6%B6%88%E6%81%AF%EF%BC%89"><span class="nav-number">2.22.</span> <span class="nav-text">RocketMQ使用某个消息序号messageID消费某个队列的消息，时间复杂度是多少？（假设消息文件commitLog数量为m，每个消息文件中消息条数是k，索引文件consumerQueue的数量是n，队列中共有j条消息）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83"><span class="nav-number">3.1.</span> <span class="nav-text">环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">3.2.</span> <span class="nav-text">原理</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e095c2f.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="RocketMQ 概述 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RocketMQ 概述
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-12 12:21:48" itemprop="dateCreated datePublished" datetime="2020-08-12T12:21:48+08:00">2020-08-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><span id="more"></span>
+
+<h1 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h1><h2 id="选型"><a href="#选型" class="headerlink" title="选型"></a>选型</h2><table>
+<thead>
+<tr>
+<th>消息队列</th>
+<th>Kafka</th>
+<th>RocketMQ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>适用场景</td>
+<td>大量消息快速消费如流式计算</td>
+<td>高性能、稳定、高可靠</td>
+</tr>
+<tr>
+<td>热度</td>
+<td>与周边生态系统的兼容性最好</td>
+<td>有活跃中文社区</td>
+</tr>
+<tr>
+<td>消息可靠传递</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>延迟</td>
+<td>毫秒级</td>
+<td>毫秒级</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>每秒几十万</td>
+<td>每秒几十万</td>
+</tr>
+<tr>
+<td>消息丢失</td>
+<td>参数优化配置后0丢失</td>
+<td>参数优化配置后0丢失</td>
+</tr>
+<tr>
+<td>消费模式</td>
+<td>Pull</td>
+<td>Pull + Push（原理都是Pull）</td>
+</tr>
+<tr>
+<td>可用性</td>
+<td>非常高（分布式）</td>
+<td>非常高（主从）</td>
+</tr>
+<tr>
+<td>topic数量对吞吐量的影响</td>
+<td>topic达到几十，几百个时，吞吐量会大幅度下降</td>
+<td>topic达到几百，几千个时，吞吐量会有较小幅度的下降</td>
+</tr>
+</tbody></table>
+<p>缺点：</p>
+<ul>
+<li>Kafka：同步收发消息的响应时延比较高，因为当客户端发送一条消息的时候，Kafka 并不会立即发送出去，而是要等一会儿攒一批再发送，在它的 Broker 中，很多地方都会使用这种“先攒一波再一起处理”的设计。当业务场景中，每秒钟消息数量没有那么多的时候，Kafka 的时延反而会比较高。所以，Kafka 不太适合在线业务场景。</li>
+<li>RocketMQ：没有太明显的缺点</li>
+</ul>
+<h2 id="部署结构"><a href="#部署结构" class="headerlink" title="部署结构"></a>部署结构</h2><p><img src="/imgs/RocketMQ/RocketMQ-%E6%9E%B6%E6%9E%84%E5%9B%BE.png" alt="RocketMQ-架构图" title="RocketMQ-架构图"><br><img src="/imgs/RocketMQ/RocketMQ-%E9%83%A8%E7%BD%B2%E5%9B%BE.png" alt="RocketMQ-部署图" title="RocketMQ-部署图"></p>
+<ul>
+<li>启动 NameServer，NameServer 起来后监听端口，等待 Broker、Producer、Consumer 连上来，相当于一个路由控制中心。</li>
+<li>Broker 启动，跟所有的 NameServer 保持长连接，定时发送心跳包。心跳包中包含当前 Broker 信息(IP+端口等)以及存储所有 Topic 信息。注册成功后，NameServer 集群中就有 Topic 跟 Broker 的映射关系。</li>
+<li>收发消息前，先创建 Topic，创建 Topic 时需要指定该 Topic 要存储在哪些 Broker 上，也可以在发送消息时自动创建 Topic。</li>
+<li>Producer 发送消息，启动时先跟 NameServer 集群中的其中一台建立长连接，并从 NameServer 中获取当前发送的 Topic 存在哪些 Broker 上，轮询从队列列表中选择一个队列，然后与队列所在的 Broker 建立长连接从而向 Broker 发消息。</li>
+<li>Consumer 跟 Producer 类似，跟其中一台 NameServer 建立长连接，获取当前订阅 Topic 存在哪些 Broker 上，然后直接跟 Broker 建立连接通道，开始消费消息。</li>
+</ul>
+<p>下图来自<a target="_blank" rel="noopener" href="https://github.com/apache/rocketmq/blob/master/docs/cn/architecture.md">GitHub</a><br><img src="/imgs/RocketMQ/rocketmq_architecture.png" alt="rocketmq_architecture" title="rocketmq_architecture"></p>
+<h2 id="推拉模型"><a href="#推拉模型" class="headerlink" title="推拉模型"></a>推拉模型</h2><h3 id="推模式优缺点"><a href="#推模式优缺点" class="headerlink" title="推模式优缺点"></a>推模式优缺点</h3><ul>
+<li><p>实时性高</p>
+</li>
+<li><p>推送速率难以适应消费速率</p>
+</li>
+<li><p>不同消费者的消费速率很有可能不一样，Broker难以平衡每个消费者的推送速率，如果要实现自适应就会大大增加Broker自身的复杂度</p>
+</li>
+</ul>
+<p>因此推模式适用于消息量不大、消费能力强要求实时性高的情况下。</p>
+<h3 id="拉模式优缺点"><a href="#拉模式优缺点" class="headerlink" title="拉模式优缺点"></a>拉模式优缺点</h3><ul>
+<li><p>消费者可以根据自己能力拉取消息处理，灵活稳定</p>
+</li>
+<li><p>可以更合适地进行消息的批量发送，基于推模式可以来一个消息就推送，也可以缓存一些消息之后再推送，但是推送的时候其实不知道消费者能不能一次性处理这么多消息。而拉模式可以根据消费者缓存能力决定拉取多少消息。</p>
+</li>
+<li><p>会造成消息的延迟消费，如果长时间没有消息，消费端不断轮询拉取，会造成一定时间的忙等，如果轮询时间过长，又会导致消息的延迟加大。</p>
+</li>
+</ul>
+<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><h2 id="消息队列可以做什么？"><a href="#消息队列可以做什么？" class="headerlink" title="消息队列可以做什么？"></a>消息队列可以做什么？</h2><p>异步处理耗时任务<br>解耦上下游系统<br>削峰填谷</p>
+<h2 id="哪些消息队列可以做到在消息生产、消费过程中不重、不丢（Exactly-once）？"><a href="#哪些消息队列可以做到在消息生产、消费过程中不重、不丢（Exactly-once）？" class="headerlink" title="哪些消息队列可以做到在消息生产、消费过程中不重、不丢（Exactly once）？"></a>哪些消息队列可以做到在消息生产、消费过程中不重、不丢（Exactly once）？</h2><p>Kafka、RocketMQ、RabbitMQ都没有实现这个需求，因为要实现Exactly once，除了重发外还需要做幂等，实现比较复杂，而且对性能影响比较大。</p>
+<h2 id="RocketMQ中的Consumer是推还是拉？"><a href="#RocketMQ中的Consumer是推还是拉？" class="headerlink" title="RocketMQ中的Consumer是推还是拉？"></a>RocketMQ中的Consumer是推还是拉？</h2><p>RocketMQ支持推和拉，但这两种方式实际上都是通过pull实现的，只是拉是同步的，而推是传个回调函数，当RocketMQ客户端接收到消息后再调用这个回调函数。</p>
+<h2 id="RocketMQ发送、存储、接收的流程？"><a href="#RocketMQ发送、存储、接收的流程？" class="headerlink" title="RocketMQ发送、存储、接收的流程？"></a>RocketMQ发送、存储、接收的流程？</h2><h2 id="当发现消费者不消费时，如何诊断问题？"><a href="#当发现消费者不消费时，如何诊断问题？" class="headerlink" title="当发现消费者不消费时，如何诊断问题？"></a>当发现消费者不消费时，如何诊断问题？</h2><ol>
+<li>检查连接状态，看消费者是否正常连接Broker；</li>
+<li>看消费者是否有分配到ConsumeQueue，因为一个ConsumeQueue只能被一个消费者消费，所以消费者数量超过ConsumeQueue时，就会出现部分消费者没有ConsumeQueue可消费的情况；</li>
+<li>生产者是否有正常消费，从控制台就可以看；</li>
+<li>如果检查完以上步骤后仍然没有发现问题，则需要查看消费者的客户端日志再进一步分析。</li>
+</ol>
+<h2 id="怎么实现消息发送的严格顺序性？"><a href="#怎么实现消息发送的严格顺序性？" class="headerlink" title="怎么实现消息发送的严格顺序性？"></a>怎么实现消息发送的严格顺序性？</h2><p>RMQ中的<strong>分区算法</strong>指的就是把消息发到固定的某些队列上，因为同一队列只能被一个消费者消费，因此可以保证这个队列中消息的顺序性。<br>可选的分区算法如：</p>
+<ol>
+<li>在表中存储key和分区的对应关系，通过查表确定分区号；</li>
+<li>取模</li>
+</ol>
+<h2 id="RocketMQ能否做到单队列的并行消费？"><a href="#RocketMQ能否做到单队列的并行消费？" class="headerlink" title="RocketMQ能否做到单队列的并行消费？"></a>RocketMQ能否做到单队列的并行消费？</h2><p>RocketMQ 在消费的时候，为了保证消息的不丢失和严格顺序，每个队列只能串行消费（一个消费者可以消费多个队列），无法做到并发，否则会出现消费空洞的问题。那如果放宽一下限制，不要求严格顺序，能否做到单个队列的并行消费呢？</p>
+<h2 id="怎么实现负载均衡？"><a href="#怎么实现负载均衡？" class="headerlink" title="怎么实现负载均衡？"></a>怎么实现负载均衡？</h2><h2 id="RocketMQ如何保证消息不丢（消息一定能被消费）？"><a href="#RocketMQ如何保证消息不丢（消息一定能被消费）？" class="headerlink" title="RocketMQ如何保证消息不丢（消息一定能被消费）？"></a>RocketMQ如何保证消息不丢（消息一定能被消费）？</h2><ol>
+<li>Producer端重试<br>默认push重试3次。</li>
+<li>Broker端只有在复制半数以上副本之后才会返回发送成功。<blockquote>
+<p>和MySQL里的semisync有点像。</p>
+</blockquote>
+</li>
+<li>Consumer端重复消费<br>DefaultMQPushConsumer默认超时重试无限次，默认异常重试16次，过期或重试不成功则进入死信队列、默认凌晨 3 点会清除死信队列，为了确保重试不会出现重复消费，业务逻辑一般都需要保证幂等（幂等key可以使用业务oid或uniqId）。<br>Consumer有两种返回值，CONSUME_SUCCESS和CONSUME_LATER，后者令Broker将消息转移到另一个Retry队列中供重试使用。</li>
+</ol>
+<h2 id="RocketMQ如何实现消息去重？"><a href="#RocketMQ如何实现消息去重？" class="headerlink" title="RocketMQ如何实现消息去重？"></a>RocketMQ如何实现消息去重？</h2><p>RocketMQ本身没有实现消息的去重功能，因为RocketMQ是At-Least-Once的。<br>所以，很多时候我们需要自己通过Redis等来实现消息去重，但是要注意的是不要用错了msgId：</p>
+<ul>
+<li><code>MessageExt.msgId</code>：重试时这个msgId是会变的，因此不适合当作幂等key；</li>
+<li><code>MessageExt.properties[&quot;PROPERTY_UNIQ_CLIENT_MESSAGE_ID_KEYIDX&quot;]</code>：相对上面那个msgId来说，这个UNIQ_KEY就算重试多次值还是一样的，因此更适合当作幂等key。</li>
+</ul>
+<h2 id="消费失败怎么重发的？"><a href="#消费失败怎么重发的？" class="headerlink" title="消费失败怎么重发的？"></a>消费失败怎么重发的？</h2><h2 id="怎么判断消息堆积了？"><a href="#怎么判断消息堆积了？" class="headerlink" title="怎么判断消息堆积了？"></a>怎么判断消息堆积了？</h2><h2 id="刷盘的原理？"><a href="#刷盘的原理？" class="headerlink" title="刷盘的原理？"></a>刷盘的原理？</h2><ol>
+<li>CommitLog</li>
+<li>ConsumeLog</li>
+</ol>
+<h2 id="怎么实现消息复制（Broker主从之间）？"><a href="#怎么实现消息复制（Broker主从之间）？" class="headerlink" title="怎么实现消息复制（Broker主从之间）？"></a>怎么实现消息复制（Broker主从之间）？</h2><h2 id="RocketMQ-如何保证消息的高可用？"><a href="#RocketMQ-如何保证消息的高可用？" class="headerlink" title="RocketMQ 如何保证消息的高可用？"></a>RocketMQ 如何保证消息的高可用？</h2><ol>
+<li>NameServer 集群<br>NameServer集群节点没有Master、Slave之分，即使挂掉其中几台，其他的仍可提供服务。</li>
+<li>Broker多主多从<br>Broker支持多主多从集群，即使其中某台Master挂掉了，其他Master照样可以提供服务，而且挂掉的Master，其从节点照样可以通过选举得到一个新的Master。</li>
+</ol>
+<h2 id="broker集群的master宕机，slave是怎么提供服务的？master是怎么切换回来的？"><a href="#broker集群的master宕机，slave是怎么提供服务的？master是怎么切换回来的？" class="headerlink" title="broker集群的master宕机，slave是怎么提供服务的？master是怎么切换回来的？"></a>broker集群的master宕机，slave是怎么提供服务的？master是怎么切换回来的？</h2><h2 id="为什么-RocketMQ-使用-NameServer-而不是-ZooKeeper-作为服务注册表"><a href="#为什么-RocketMQ-使用-NameServer-而不是-ZooKeeper-作为服务注册表" class="headerlink" title="为什么 RocketMQ 使用 NameServer 而不是 ZooKeeper 作为服务注册表"></a>为什么 RocketMQ 使用 NameServer 而不是 ZooKeeper 作为服务注册表</h2><p>NameServer 具有<strong>高可用性</strong>，就算其中某台挂掉，其他服务器仍然能提供服务注册和查询功能。<br>ZooKeeper 的设计目标是<strong>高一致性</strong>，其中某台服务器挂掉，整个 ZooKeeper 集群就无法提供服务了——直到下一个Leader被选举出来为止。</p>
+<h2 id="NameServer是怎么感知Broker的变化的？"><a href="#NameServer是怎么感知Broker的变化的？" class="headerlink" title="NameServer是怎么感知Broker的变化的？"></a>NameServer是怎么感知Broker的变化的？</h2><h2 id="RocketMQ的事务消息是否完整实现了事务的ACID特性？"><a href="#RocketMQ的事务消息是否完整实现了事务的ACID特性？" class="headerlink" title="RocketMQ的事务消息是否完整实现了事务的ACID特性？"></a>RocketMQ的事务消息是否完整实现了事务的ACID特性？</h2><h2 id="为什么要有Half-Message？"><a href="#为什么要有Half-Message？" class="headerlink" title="为什么要有Half Message？"></a>为什么要有Half Message？</h2><ol>
+<li>可以先确认Broker服务器是否正常，如果半消息都发送失败了，就说明Broker挂了。</li>
+<li>可以通过半消息来回查事务状态，如果半消息发出后一直没有被二次确认，就会回查事务状态。<blockquote>
+<p>事务回查有两种情况：1、由于网络等原因一直没有执行事务的commit和rollback；2、本地事务执行成功了，但是返回commit的时候服务挂了，Broker最终也没有收到消息，因此还是半消息状态，因此仍会进行重试。</p>
+</blockquote>
+</li>
+</ol>
+<h2 id="为什么说RocketMQ只能保证最终一致性？"><a href="#为什么说RocketMQ只能保证最终一致性？" class="headerlink" title="为什么说RocketMQ只能保证最终一致性？"></a>为什么说RocketMQ只能保证最终一致性？</h2><p>比如以一个转帐功能为例，A账户扣减、发MQ消息通知另一个服务增加B账户的余额，扣减和增加是在两个事务中执行的，MQ虽然能保证两个事务最终一定都能执行上，但是并不能保证中间状态不会出现，比如某个时刻A账户扣减了、但是B账户仍为原状。</p>
+<h2 id="RocketMQ使用某个消息序号messageID消费某个队列的消息，时间复杂度是多少？（假设消息文件commitLog数量为m，每个消息文件中消息条数是k，索引文件consumerQueue的数量是n，队列中共有j条消息）"><a href="#RocketMQ使用某个消息序号messageID消费某个队列的消息，时间复杂度是多少？（假设消息文件commitLog数量为m，每个消息文件中消息条数是k，索引文件consumerQueue的数量是n，队列中共有j条消息）" class="headerlink" title="RocketMQ使用某个消息序号messageID消费某个队列的消息，时间复杂度是多少？（假设消息文件commitLog数量为m，每个消息文件中消息条数是k，索引文件consumerQueue的数量是n，队列中共有j条消息）"></a>RocketMQ使用某个消息序号messageID消费某个队列的消息，时间复杂度是多少？（假设消息文件commitLog数量为m，每个消息文件中消息条数是k，索引文件consumerQueue的数量是n，队列中共有j条消息）</h2><p>复杂度是O(1)，因为消息序号中包含了消息在commitLog中的偏移量，因此可以直接通过偏移量来拿到消息。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/miaoying/p/10319840.html">rocketmq 控制台搭建（rocketmq-console）</a></li>
+<li><a target="_blank" rel="noopener" href="http://rocketmq.apache.org/docs/quick-start/">Quick Start</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.iocoder.cn/RocketMQ/build-debugging-environment/">RocketMQ 源码解析 —— 调试环境搭建</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/zhu_tianwei/article/details/40951301">RocketMQ管理命令说明</a></li>
+</ol>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/apache/rocketmq/blob/master/docs/cn/features.md">特性(features)</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/apache/rocketmq/blob/master/docs/cn/design.md">设计(design)</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/91528718">RocketMQ 实战(三) - 消息的有序性</a></li>
+<li><a target="_blank" rel="noopener" href="https://help.aliyun.com/document_detail/43348.html?spm=5176.doc43490.6.566.Zd5Bl7">事务消息</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.iocoder.cn/categories/RocketMQ/">RocketMQ 源码分析</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/RocketMQ/" rel="tag"># RocketMQ</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/3648b215.html" rel="prev" title="RocketMQ 的应用">
+                  <i class="fa fa-angle-left"></i> RocketMQ 的应用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/28a7425f.html" rel="next" title="RocketMQ 消息的存储和查询原理">
+                  RocketMQ 消息的存储和查询原理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

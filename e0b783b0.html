@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Ingest NodeIngest Node提供了一种类似Logstash的功能：  预处理能力，可拦截Index或Bulk API的请求 对数据进行转换，并重新返回给Index或Bulk API比如为某个字段设置默认值、重命名某个字段的字段名、对字段值进行Split操作支持设置Painless脚本，对数据进行更加复杂的加工。  相对Logstash来说：    - Logstash Ingest">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ES5_3IngestNode">
+<meta property="og:url" content="https://tallate.github.io/e0b783b0.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="Ingest NodeIngest Node提供了一种类似Logstash的功能：  预处理能力，可拦截Index或Bulk API的请求 对数据进行转换，并重新返回给Index或Bulk API比如为某个字段设置默认值、重命名某个字段的字段名、对字段值进行Split操作支持设置Painless脚本，对数据进行更加复杂的加工。  相对Logstash来说：    - Logstash Ingest">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/ES/ES-IngestNode.png">
+<meta property="article:published_time" content="2021-07-01T13:14:48.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.862Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="ElasticSearch">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/ES/ES-IngestNode.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/e0b783b0.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/e0b783b0.html","path":"/e0b783b0.html","title":"ES5_3IngestNode"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>ES5_3IngestNode | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Ingest-Node"><span class="nav-number">1.</span> <span class="nav-text">Ingest Node</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E5%BB%BAIngest-Node-Pipeline-Processor"><span class="nav-number">1.1.</span> <span class="nav-text">构建Ingest Node - Pipeline &amp; Processor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BApipeline"><span class="nav-number">1.2.</span> <span class="nav-text">创建pipeline</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E5%BB%BApipeline"><span class="nav-number">1.3.</span> <span class="nav-text">构建pipeline</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E6%AE%B5%E6%8B%86%E5%88%86-split"><span class="nav-number">1.3.1.</span> <span class="nav-text">字段拆分 - split</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E6%AE%B5%E5%80%BC%E9%87%8D%E7%BD%AE-set"><span class="nav-number">1.3.2.</span> <span class="nav-text">字段值重置 - set</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e0b783b0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="ES5_3IngestNode | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ES5_3IngestNode
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-01 21:14:48" itemprop="dateCreated datePublished" datetime="2021-07-01T21:14:48+08:00">2021-07-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="Ingest-Node"><a href="#Ingest-Node" class="headerlink" title="Ingest Node"></a>Ingest Node</h2><p>Ingest Node提供了一种类似Logstash的功能：</p>
+<ul>
+<li>预处理能力，可拦截Index或Bulk API的请求</li>
+<li>对数据进行转换，并重新返回给Index或Bulk API<br>比如为某个字段设置默认值、重命名某个字段的字段名、对字段值进行Split操作<br>支持设置Painless脚本，对数据进行更加复杂的加工。</li>
+</ul>
+<p>相对Logstash来说：</p>
+<table>
+<thead>
+<tr>
+<th>-</th>
+<th>Logstash</th>
+<th>Ingest Node</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据输入与输出</td>
+<td>支持从不同的数据源读取，并写入不同的数据源</td>
+<td>支持从ES REST API获取数据，并且写入ES</td>
+</tr>
+<tr>
+<td>数据缓冲</td>
+<td>实现了简单的数据队列，支持重写</td>
+<td>不支持缓冲</td>
+</tr>
+<tr>
+<td>数据处理</td>
+<td>支持大量插件、支持定制开发</td>
+<td>内置插件，支持开发Plugin（但是添加Plugin需要重启）</td>
+</tr>
+<tr>
+<td>配置和使用</td>
+<td>增加了一定的架构复杂度</td>
+<td>无需额外部署</td>
+</tr>
+</tbody></table>
+<h3 id="构建Ingest-Node-Pipeline-Processor"><a href="#构建Ingest-Node-Pipeline-Processor" class="headerlink" title="构建Ingest Node - Pipeline &amp; Processor"></a>构建Ingest Node - Pipeline &amp; Processor</h3><p><img src="/imgs/ES/ES-IngestNode.png" alt="ES-IngestNode" title="ES-IngestNode"></p>
+<ul>
+<li>Pipeline<br>管道会对通过的数据（文档），按照顺序进行加工</li>
+<li>Processor<br>对加工的行为进行抽象封装</li>
+</ul>
+<h3 id="创建pipeline"><a href="#创建pipeline" class="headerlink" title="创建pipeline"></a>创建pipeline</h3><p>为ES添加一个Pipeline：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">PUT _ingest/pipeline/blog_pipeline</span><br><span class="line">&#123;</span><br><span class="line">  &quot;description&quot;: &quot;a blog pipeline&quot;,</span><br><span class="line">  &quot;processors&quot;: [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;split&quot;: &#123;</span><br><span class="line">          &quot;field&quot;: &quot;tags&quot;,</span><br><span class="line">          &quot;separator&quot;: &quot;,&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line"></span><br><span class="line">      &#123;</span><br><span class="line">        &quot;set&quot;:&#123;</span><br><span class="line">          &quot;field&quot;: &quot;views&quot;,</span><br><span class="line">          &quot;value&quot;: 0</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>查看Pipeline：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">GET _ingest/pipeline/blog_pipeline</span><br></pre></td></tr></table></figure>
+<p>测试Pipeline：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">POST _ingest/pipeline/blog_pipeline/_simulate</span><br><span class="line">&#123;</span><br><span class="line">  &quot;docs&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;_source&quot;: &#123;</span><br><span class="line">        &quot;title&quot;: &quot;Introducing cloud computering&quot;,</span><br><span class="line">        &quot;tags&quot;: &quot;openstack,k8s&quot;,</span><br><span class="line">        &quot;content&quot;: &quot;You konw, for cloud&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>可以看到tags被拆分成了数组</li>
+<li>最终文档中新增了一个views字段</li>
+</ul>
+<p>使用Pipeline更新文档：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PUT tech_blogs/_doc/2?pipeline=blog_pipeline</span><br><span class="line">&#123;</span><br><span class="line">  &quot;title&quot;: &quot;Introducing cloud computering&quot;,</span><br><span class="line">  &quot;tags&quot;: &quot;openstack,k8s&quot;,</span><br><span class="line">  &quot;content&quot;: &quot;You konw, for cloud&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但是使用_update_by_query更新文档时可能会报错：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">POST /tech_blogs/_update_by_query?pipeline=blog_pipeline</span><br><span class="line">&#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">  ...</span><br><span class="line">  &quot;failures&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;index&quot;: &quot;tech_blogs&quot;,</span><br><span class="line">      &quot;type&quot;: &quot;doc&quot;,</span><br><span class="line">      &quot;id&quot;: &quot;1&quot;,</span><br><span class="line">      &quot;cause&quot;: &#123;</span><br><span class="line">        &quot;type&quot;: &quot;exception&quot;,</span><br><span class="line">        &quot;reason&quot;: &quot;java.lang.IllegalArgumentException: java.lang.IllegalArgumentException: field [tags] of type [java.util.ArrayList] cannot be cast to [java.lang.String]&quot;,</span><br><span class="line">        &quot;caused_by&quot;: &#123;</span><br><span class="line">          &quot;type&quot;: &quot;illegal_argument_exception&quot;,</span><br><span class="line">          &quot;reason&quot;: &quot;java.lang.IllegalArgumentException: field [tags] of type [java.util.ArrayList] cannot be cast to [java.lang.String]&quot;,</span><br><span class="line">          &quot;caused_by&quot;: &#123;</span><br><span class="line">            &quot;type&quot;: &quot;illegal_argument_exception&quot;,</span><br><span class="line">            &quot;reason&quot;: &quot;field [tags] of type [java.util.ArrayList] cannot be cast to [java.lang.String]&quot;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;header&quot;: &#123;</span><br><span class="line">          &quot;processor_type&quot;: &quot;split&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line">      &quot;status&quot;: 500</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>是因为对已经拆分过的字段再用split processor拆分，相当于要对数组类型的字段做字符串切分操作。<br>为了避免这种情况，可以通过加条件来忽略已经处理过的文档：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">POST tech_blogs/_update_by_query?pipeline=blog_pipeline</span><br><span class="line">&#123;</span><br><span class="line">    &quot;query&quot;: &#123;</span><br><span class="line">        &quot;bool&quot;: &#123;</span><br><span class="line">            &quot;must_not&quot;: &#123;</span><br><span class="line">                &quot;exists&quot;: &#123;</span><br><span class="line">                    &quot;field&quot;: &quot;views&quot;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="构建pipeline"><a href="#构建pipeline" class="headerlink" title="构建pipeline"></a>构建pipeline</h3><p>processor的种类比较多，这里列出一部分。</p>
+<h4 id="字段拆分-split"><a href="#字段拆分-split" class="headerlink" title="字段拆分 - split"></a>字段拆分 - split</h4><p>ES的_ingest命令可以分析pipeline：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">POST _ingest/pipeline/_simulate</span><br><span class="line">&#123;</span><br><span class="line">  &quot;pipeline&quot;: &#123;</span><br><span class="line">    &quot;description&quot;: &quot;to split blog tags&quot;,</span><br><span class="line">    &quot;processors&quot;: [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;split&quot;: &#123;</span><br><span class="line">          &quot;field&quot;: &quot;tags&quot;,</span><br><span class="line">          &quot;separator&quot;: &quot;,&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;docs&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;_index&quot;: &quot;index&quot;,</span><br><span class="line">      &quot;_id&quot;: &quot;id&quot;,</span><br><span class="line">      &quot;_source&quot;: &#123;</span><br><span class="line">        &quot;title&quot;: &quot;Introducing big data......&quot;,</span><br><span class="line">        &quot;tags&quot;: &quot;hadoop,elasticsearch,spark&quot;,</span><br><span class="line">        &quot;content&quot;: &quot;You konw, for big data&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;_index&quot;: &quot;index&quot;,</span><br><span class="line">      &quot;_id&quot;: &quot;idxx&quot;,</span><br><span class="line">      &quot;_source&quot;: &#123;</span><br><span class="line">        &quot;title&quot;: &quot;Introducing cloud computering&quot;,</span><br><span class="line">        &quot;tags&quot;: &quot;openstack,k8s&quot;,</span><br><span class="line">        &quot;content&quot;: &quot;You konw, for cloud&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>pipeline中只有一个processor，它将文档的tags字段按”,”拆分为数组</li>
+<li>文档有一个tags字段，但是原始值中多个标签被拼成了一个字符串</li>
+</ul>
+<h4 id="字段值重置-set"><a href="#字段值重置-set" class="headerlink" title="字段值重置 - set"></a>字段值重置 - set</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">POST _ingest/pipeline/_simulate</span><br><span class="line">&#123;</span><br><span class="line">  &quot;pipeline&quot;: &#123;</span><br><span class="line">    &quot;description&quot;: &quot;to split blog tags&quot;,</span><br><span class="line">    &quot;processors&quot;: [</span><br><span class="line">      &#123;</span><br><span class="line">        &quot;split&quot;: &#123;</span><br><span class="line">          &quot;field&quot;: &quot;tags&quot;,</span><br><span class="line">          &quot;separator&quot;: &quot;,&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;,</span><br><span class="line"></span><br><span class="line">      &#123;</span><br><span class="line">        &quot;set&quot;:&#123;</span><br><span class="line">          &quot;field&quot;: &quot;views&quot;,</span><br><span class="line">          &quot;value&quot;: 0</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    ]</span><br><span class="line">  &#125;,</span><br><span class="line">  &quot;docs&quot;: [</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;_index&quot;:&quot;index&quot;,</span><br><span class="line">      &quot;_id&quot;:&quot;id&quot;,</span><br><span class="line">      &quot;_source&quot;:&#123;</span><br><span class="line">        &quot;title&quot;:&quot;Introducing big data......&quot;,</span><br><span class="line">        &quot;tags&quot;:&quot;hadoop,elasticsearch,spark&quot;,</span><br><span class="line">        &quot;content&quot;:&quot;You konw, for big data&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      &quot;_index&quot;:&quot;index&quot;,</span><br><span class="line">      &quot;_id&quot;:&quot;idxx&quot;,</span><br><span class="line">      &quot;_source&quot;:&#123;</span><br><span class="line">        &quot;title&quot;:&quot;Introducing cloud computering&quot;,</span><br><span class="line">        &quot;tags&quot;:&quot;openstack,k8s&quot;,</span><br><span class="line">        &quot;content&quot;:&quot;You konw, for cloud&quot;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>添加文档时，使用processor set来增加一个新字段views</li>
+</ul>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ElasticSearch/" rel="tag"># ElasticSearch</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/5202f69.html" rel="prev" title="ES5_4Painless">
+                  <i class="fa fa-angle-left"></i> ES5_4Painless
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/54180c33.html" rel="next" title="HBase总结">
+                  HBase总结 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

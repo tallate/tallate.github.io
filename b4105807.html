@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="一～四章讲单机数据库。五～九章讲分布式数据库，适合多看几遍。十～十二讲数据如何被更高效地处理，即批处理、流处理。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《设计数据密集型应用》">
+<meta property="og:url" content="https://tallate.github.io/b4105807.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="一～四章讲单机数据库。五～九章讲分布式数据库，适合多看几遍。十～十二讲数据如何被更高效地处理，即批处理、流处理。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-11-08T03:12:18.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.911Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="分布式系统">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tallate.github.io/b4105807.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/b4105807.html","path":"/b4105807.html","title":"《设计数据密集型应用》"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>《设计数据密集型应用》 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E5%8F%AF%E9%9D%A0%E3%80%81%E5%BC%B9%E6%80%A7%E3%80%81%E5%8F%AF%E7%BB%B4%E6%8A%A4%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">一、可靠、弹性、可维护的应用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B%E5%92%8C%E6%9F%A5%E8%AF%A2%E8%AF%AD%E8%A8%80"><span class="nav-number">2.</span> <span class="nav-text">二、数据模型和查询语言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%AD%98%E5%82%A8%E5%92%8C%E6%A3%80%E7%B4%A2"><span class="nav-number">3.</span> <span class="nav-text">三、存储和检索</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E7%BC%96%E7%A0%81%E5%92%8C%E6%BC%94%E5%8F%98"><span class="nav-number">4.</span> <span class="nav-text">四、编码和演变</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%A4%8D%E5%88%B6%EF%BC%88Replication%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">五、复制（Replication）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6"><span class="nav-number">5.1.</span> <span class="nav-text">主从复制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5-OR-%E5%BC%82%E6%AD%A5%E5%A4%8D%E5%88%B6"><span class="nav-number">5.1.1.</span> <span class="nav-text">同步 OR 异步复制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E7%9A%84%E4%B8%80%E8%88%AC%E8%BF%87%E7%A8%8B"><span class="nav-number">5.1.2.</span> <span class="nav-text">复制的一般过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%81%A2%E5%A4%8D-Follower%E6%95%85%E9%9A%9C"><span class="nav-number">5.1.3.</span> <span class="nav-text">故障恢复 - Follower故障</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E8%BD%AC%E7%A7%BB%EF%BC%88Failover%EF%BC%89-Leader%E6%95%85%E9%9A%9C"><span class="nav-number">5.1.4.</span> <span class="nav-text">故障转移（Failover） - Leader故障</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Replication-Log%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.1.5.</span> <span class="nav-text">Replication Log的实现</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E5%BB%B6%E8%BF%9F%EF%BC%88Replication-Lag%EF%BC%89"><span class="nav-number">5.2.</span> <span class="nav-text">复制延迟（Replication Lag）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E4%B8%BB%E5%A4%8D%E5%88%B6%EF%BC%88Multi-Leader-Replication%EF%BC%89"><span class="nav-number">5.3.</span> <span class="nav-text">多主复制（Multi-Leader Replication）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A0%E4%B8%BB%E5%A4%8D%E5%88%B6%EF%BC%88Leaderless-Replication%EF%BC%89"><span class="nav-number">5.4.</span> <span class="nav-text">无主复制（Leaderless Replication）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%88%86%E5%8C%BA"><span class="nav-number">6.</span> <span class="nav-text">六、分区</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%8C%BA%E5%92%8C%E5%A4%8D%E5%88%B6"><span class="nav-number">6.1.</span> <span class="nav-text">分区和复制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KV%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%88%86%E5%8C%BA"><span class="nav-number">6.2.</span> <span class="nav-text">KV数据库的分区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E7%BA%A7%E7%B4%A2%E5%BC%95%EF%BC%88%E5%85%B3%E7%B3%BB%E6%95%B0%E6%8D%AE%E5%BA%93%E3%80%81%E6%96%87%E6%A1%A3%E6%95%B0%E6%8D%AE%E5%BA%93%EF%BC%89%E7%9A%84%E5%88%86%E5%8C%BA"><span class="nav-number">6.3.</span> <span class="nav-text">二级索引（关系数据库、文档数据库）的分区</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E7%89%87%E5%86%8D%E5%B9%B3%E8%A1%A1%EF%BC%88%E6%89%A9%E5%AE%B9%EF%BC%89"><span class="nav-number">6.4.</span> <span class="nav-text">分片再平衡（扩容）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E6%88%96%E6%89%8B%E5%8A%A8%E5%86%8D%E5%B9%B3%E8%A1%A1%EF%BC%88Rebalancing%EF%BC%89"><span class="nav-number">6.5.</span> <span class="nav-text">自动或手动再平衡（Rebalancing）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E8%B7%AF%E7%94%B1"><span class="nav-number">6.6.</span> <span class="nav-text">请求路由</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E4%BA%8B%E5%8A%A1"><span class="nav-number">7.</span> <span class="nav-text">七、事务</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F%E7%9A%84%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">8.</span> <span class="nav-text">八、分布式系统的故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%B1%E8%B4%A5%E5%92%8C%E9%83%A8%E5%88%86%E5%A4%B1%E8%B4%A5"><span class="nav-number">8.1.</span> <span class="nav-text">失败和部分失败</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%8F%AF%E4%BF%A1%E7%9A%84%E7%BD%91%E7%BB%9C"><span class="nav-number">8.2.</span> <span class="nav-text">不可信的网络</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%8F%AF%E4%BF%A1%E7%9A%84%E6%97%B6%E9%92%9F"><span class="nav-number">8.3.</span> <span class="nav-text">不可信的时钟</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E4%B8%80%E8%87%B4%E6%80%A7%E5%92%8C%E5%85%B1%E8%AF%86"><span class="nav-number">9.</span> <span class="nav-text">九、一致性和共识</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E3%80%81%E6%89%B9%E5%A4%84%E7%90%86"><span class="nav-number">10.</span> <span class="nav-text">十、批处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%81%E4%B8%80%E3%80%81%E6%B5%81%E5%A4%84%E7%90%86"><span class="nav-number">11.</span> <span class="nav-text">十一、流处理</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/b4105807.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="《设计数据密集型应用》 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《设计数据密集型应用》
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-11-08 11:12:18" itemprop="dateCreated datePublished" datetime="2020-11-08T11:12:18+08:00">2020-11-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AF%BB%E4%B9%A6/" itemprop="url" rel="index"><span itemprop="name">读书</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>一～四章讲单机数据库。<br>五～九章讲分布式数据库，适合多看几遍。<br>十～十二讲数据如何被更高效地处理，即批处理、流处理。</p>
+<span id="more"></span>
+
+<h1 id="一、可靠、弹性、可维护的应用"><a href="#一、可靠、弹性、可维护的应用" class="headerlink" title="一、可靠、弹性、可维护的应用"></a>一、可靠、弹性、可维护的应用</h1><h1 id="二、数据模型和查询语言"><a href="#二、数据模型和查询语言" class="headerlink" title="二、数据模型和查询语言"></a>二、数据模型和查询语言</h1><h1 id="三、存储和检索"><a href="#三、存储和检索" class="headerlink" title="三、存储和检索"></a>三、存储和检索</h1><h1 id="四、编码和演变"><a href="#四、编码和演变" class="headerlink" title="四、编码和演变"></a>四、编码和演变</h1><h1 id="五、复制（Replication）"><a href="#五、复制（Replication）" class="headerlink" title="五、复制（Replication）"></a>五、复制（Replication）</h1><p>复制数据的原因：</p>
+<ul>
+<li>放到离用户更近的地方，减少延迟；</li>
+<li>即使系统的部分fail了，系统仍旧是可用的；</li>
+<li>扩容系统提高吞吐量以应对查询。</li>
+</ul>
+<p>复制的三种算法：</p>
+<ol>
+<li>单主（single-leader）</li>
+<li>多主（multi-leader）</li>
+<li>无主（leaderless）</li>
+</ol>
+<h2 id="主从复制"><a href="#主从复制" class="headerlink" title="主从复制"></a>主从复制</h2><p>可以通过主从复制来保证数据被保存到了所有的副本上：</p>
+<blockquote>
+<p>leader和master、follower和slave这里是同义词</p>
+</blockquote>
+<ol>
+<li>写请求均被发给leader；</li>
+<li>follower拷贝leader的replication log并重演到本地。</li>
+<li>读请求被发给leader或follower都可以。</li>
+</ol>
+<h3 id="同步-OR-异步复制"><a href="#同步-OR-异步复制" class="headerlink" title="同步 OR 异步复制"></a>同步 OR 异步复制</h3><p>同步复制的优点：</p>
+<ol>
+<li>能确保数整体性能据被拷贝到了follower；</li>
+</ol>
+<p>同步复制的缺点：</p>
+<ol>
+<li>leader被复制过程阻塞了，会影响性能；</li>
+<li>如果复制失败——比如follower短暂的不可用，整个请求也会失败。</li>
+</ol>
+<p>异步复制的优点：</p>
+<ol>
+<li>不影响leader响应请求的性能；</li>
+</ol>
+<p>异步复制的缺点：</p>
+<ol>
+<li>如果数据还没被复制到任何follower的情况下leader挂掉了，且leader不可恢复（或者暂时不可恢复），则数据就3额丢失了；</li>
+</ol>
+<p>一般会采用权衡的方案，即半同步（semi-synchronous）的模式。</p>
+<h3 id="复制的一般过程"><a href="#复制的一般过程" class="headerlink" title="复制的一般过程"></a>复制的一般过程</h3><ol>
+<li>follower从leader下载一个全新的快照；</li>
+<li>follower从leader请求最新数据，也就是上面快照之后写入的新数据；</li>
+</ol>
+<h3 id="故障恢复-Follower故障"><a href="#故障恢复-Follower故障" class="headerlink" title="故障恢复 - Follower故障"></a>故障恢复 - Follower故障</h3><p>Follower故障了只需要重启后从Leader下载log然后加载即可。</p>
+<h3 id="故障转移（Failover）-Leader故障"><a href="#故障转移（Failover）-Leader故障" class="headerlink" title="故障转移（Failover） - Leader故障"></a>故障转移（Failover） - Leader故障</h3><ol>
+<li>判断leader宕机<br>一般是<strong>大部分</strong>副本均PING leader超时就认为leader宕机了。</li>
+<li>选择新leader<br>通过选举或一个controller node来选择下一个新leader。<br>一般优先选择数据最新的副本。</li>
+<li>更新配置以选择新leader<br>客户端需要将请求发给新的leader<br>旧leader重启后，需要成为新leader的follower，以免发生脑裂。</li>
+</ol>
+<h3 id="Replication-Log的实现"><a href="#Replication-Log的实现" class="headerlink" title="Replication Log的实现"></a>Replication Log的实现</h3><p>Replication Log的实现方式：</p>
+<ul>
+<li>基于语句的<br>日志中记录的写入语句，比如SQL的INSERT、UPDATE、DELETE。<br>缺点是：一些每次执行结果都会变的语句，在leader和follower上执行结果不一致，比如now()、rand()，最好在写入日志时进行替换；一些语句的执行是有顺序要求的，复制指令的过程中不能乱序；一些语句有副作用，可能会导致不同副本上执行结果不一样。</li>
+<li>WAL（写前日志）<br>如MySQL里的redolog和undolog。</li>
+<li>逻辑日志<br>如MySQL里的binlog</li>
+</ul>
+<h2 id="复制延迟（Replication-Lag）"><a href="#复制延迟（Replication-Lag）" class="headerlink" title="复制延迟（Replication Lag）"></a>复制延迟（Replication Lag）</h2><p>数据被拷贝到从服务器期间，主从是不一致的，一般情况下这个间隔时间是很短的，但是如果网络出现了问题就有可能会变得比较严重了。<br>TODO：我需要先研究下MySQL中是怎么处理这种延迟的。</p>
+<h2 id="多主复制（Multi-Leader-Replication）"><a href="#多主复制（Multi-Leader-Replication）" class="headerlink" title="多主复制（Multi-Leader Replication）"></a>多主复制（Multi-Leader Replication）</h2><h2 id="无主复制（Leaderless-Replication）"><a href="#无主复制（Leaderless-Replication）" class="headerlink" title="无主复制（Leaderless Replication）"></a>无主复制（Leaderless Replication）</h2><h1 id="六、分区"><a href="#六、分区" class="headerlink" title="六、分区"></a>六、分区</h1><h2 id="分区和复制"><a href="#分区和复制" class="headerlink" title="分区和复制"></a>分区和复制</h2><p>数据只存在于一个分区，而一个分区可以有多个复制，因此分区和复制是一对多的关系。</p>
+<h2 id="KV数据库的分区"><a href="#KV数据库的分区" class="headerlink" title="KV数据库的分区"></a>KV数据库的分区</h2><p>倾斜（<strong>skew</strong>）指一些分区存储的数据比其他的多，或接受更多的查询请求。倾斜会导致大部分请求被打到了少数节点上，产生<strong>热点问题</strong>。</p>
+<ul>
+<li>解决热点问题的一种最简单的方式是<strong>随机分配数据</strong><br>但是这种方式的问题是不知道数据被分配到了哪个节点上，所以可能需要遍历所有节点才能获取到数据。</li>
+<li>根据范围分区<br>根据范围边界我们可以快速得知一个key存在于哪个分区，如果已知分区和节点的映射关系，我们就可以直接将key定位到一个节点上。<br>优点除了找得快外，每个分区里的key也可以是有序的，这样顺序查找会快一些。<br>缺点是可能出现热点数据，比如按创建时间分区的话，最近产生的数据就会被扎堆访问。所以分区的key需要谨慎选择。<br>例子：Bigtable</li>
+<li>根据key的hash值进行分区<br>这种方式的好处是key在分区间能分布得比较均匀（和hash函数有关）。<br>缺点是范围查询非常不便。<br>Cassandra和MongoDB采用MD5作为hash函数；<br>Redis（Cluster）采用CRC16。</li>
+</ul>
+<p>即使用hash的方式来分区，极端情况下仍有可能发生热点问题，比如大部分请求集中于少数的key上。<br>为了解决这种倾斜问题，应用可以通过设计数据分布方案来分散数据，比如给key加上一些随机数来帮助key分散得更均匀。</p>
+<h2 id="二级索引（关系数据库、文档数据库）的分区"><a href="#二级索引（关系数据库、文档数据库）的分区" class="headerlink" title="二级索引（关系数据库、文档数据库）的分区"></a>二级索引（关系数据库、文档数据库）的分区</h2><ul>
+<li>根据文档分片<br>最常用的文档数据库比如Elasticsearch，如果将MySQL的每一行看作一个文档，二级索引实际上就是为文档建立索引。<br>二级索引服务于单个数据库实例（一个分片），因此又被称为<strong>本地索引</strong>，如果要查询数据库的多个分片，就需要从每个分片对应的二级索引上查询一次。<br>ShardingJDBC的分库分表方案就是采用这种每个库都建一个索引的方式。<br>MongoDB、Elasticsearch等均是采用的这种方案。</li>
+<li>根据Term（词）分片<br>Term可以看作文档中的一个字段，根据Term索引即将一个范围内的Term索引到同一分片内，不考虑对应文档实际所处的分片，这种索引方式被称为<strong>全局索引（global term-partitioned）</strong>。<br>比如文档有一个颜色字段，我们可以将颜色首字母a-r的索引到第一个分片，s-z的索引到第二个分片，查询时如果判断要查询的颜色是红色（red）则可以直接定位到第一个分片上去查到所有的Term，然后再取到所有的文档。<br>好处是我们不需要遍历每个分片上的每个索引了。<br>缺点是写操作变得非常复杂，因为一次写入会影响多个分片，而且还需要分布式事务来保证这个过程的原子性。<br>这种方案比较少见，已知的有Riak、Oracle data warehouse。</li>
+</ul>
+<h2 id="分片再平衡（扩容）"><a href="#分片再平衡（扩容）" class="headerlink" title="分片再平衡（扩容）"></a>分片再平衡（扩容）</h2><p>Rebalancing：在集群中将一个节点的负载转移到另一个节点的过程称为Rebalancing。</p>
+<ul>
+<li>hash mod N<br>N变大的情况下将原来对其他节点的请求打到新节点上。<br>但是只要N变大原来key的定位就会发生变化，会发生很多不必要的Rebalancing，一个key第一次可能会被定位到节点0，第二次扩容可能会被定位到节点1，等等。</li>
+<li>固定数量的分片<br>类似于Redis的做法，分片数量固定，且大于节点数，分片被平均分配到节点上，扩容也是针对分片进行的。<br>缺点是容易导致数据倾斜，比如大部分key被hash到了少数分片上。</li>
+<li>动态分片<br>如果一个分片存储的数据过多，这个分片会被拆分成多个子分片，拆分后，两半中的一部分；<br>如果一个分片里的数据被删得过多了，也可以和相邻的分片合并。<br>动态分片的好处是分片数可以随着数据容量动态调整。<br>缺点是当刚开始数据集合为空（比如建了个新表）的情况下，只会有一个分区，这时所有请求都会被打到单个节点上，这时别的节点就都空着没事干了，在HBase上刚开始会创建固定数量的初始分片。</li>
+<li>分片与节点数成比例<br>在Cassandra中，每个节点都会分配固定数量的分片，数据总量提升时每个分片容纳的数据量也会随着提升，除非增加节点数量。<br>当一个节点加入到集群后，它会随即选出固定数量个分片进行分裂，并带走其中的一半。</li>
+</ul>
+<h2 id="自动或手动再平衡（Rebalancing）"><a href="#自动或手动再平衡（Rebalancing）" class="headerlink" title="自动或手动再平衡（Rebalancing）"></a>自动或手动再平衡（Rebalancing）</h2><p>自动优势：方便；<br>自动劣势：容易损害网络请求的性能，因为rebalancing需要重定向请求并将大量数据从一个节点移动到另一个节点。<br>特别是结合故障检测后，比如一个节点因为过载暂时不能很快响应请求，其他节点判断它挂掉了，并开始执行故障迁移（包含数据的Rebalancing）。</p>
+<h2 id="请求路由"><a href="#请求路由" class="headerlink" title="请求路由"></a>请求路由</h2><p>客户端如果将请求打到key真实存在的节点上。</p>
+<ol>
+<li>允许客户端访问任意节点，如果该节点上存在key则响应，不存在的情况下重定向到该key真实存在的节点上；</li>
+<li>有一个路由节点专门负责重定向，客户端都需要先访问该节点，由该节点将请求转发到目标节点上；</li>
+<li>客户端需要感知每个分区所在的节点，然后直连到节点上。</li>
+</ol>
+<p>后两种方式一般都需要有一个服务注册表（如ZooKeeper）存储服务的分片信息供查询。</p>
+<h1 id="七、事务"><a href="#七、事务" class="headerlink" title="七、事务"></a>七、事务</h1><p>这一章蛮难的，前面的还好，到后面Weak Isolation的Write Skew和Serializability之前都没有深入了解过看得比较吃力，我打算等把MySQL的原理再深入一下后回来重读这一章。</p>
+<h1 id="八、分布式系统的故障排除"><a href="#八、分布式系统的故障排除" class="headerlink" title="八、分布式系统的故障排除"></a>八、分布式系统的故障排除</h1><h2 id="失败和部分失败"><a href="#失败和部分失败" class="headerlink" title="失败和部分失败"></a>失败和部分失败</h2><p>分布式系统的特征之一就是存在部分失败，哪些节点会挂掉是不可预测的。</p>
+<h2 id="不可信的网络"><a href="#不可信的网络" class="headerlink" title="不可信的网络"></a>不可信的网络</h2><p>网络可能出现的问题：</p>
+<ol>
+<li>请求可能丢失；</li>
+<li>请求可能停留在一个队列中，并在之后投递；</li>
+<li>远程节点可能挂掉；</li>
+<li>远程节点可能会暂时停止响应；</li>
+<li>远程节点可能处理了请求，但是响应被丢失了；</li>
+<li>远程节点可能处理了请求，但是响应会比较慢。</li>
+</ol>
+<p>错误检测：</p>
+<ol>
+<li>如果网络请求得到错误响应，可以直接判断节点挂掉了；</li>
+<li>很多时候根本没有响应，这时只能多试几次，等待超时。</li>
+</ol>
+<p>但是现实中的大部分系统都是没有一个明确的超时时间可以断定它已经挂掉的，这意味着，如果等得太短会导致误判一个节点挂掉，等得太长又起不到及时检测出问题的作用。</p>
+<h2 id="不可信的时钟"><a href="#不可信的时钟" class="headerlink" title="不可信的时钟"></a>不可信的时钟</h2><h1 id="九、一致性和共识"><a href="#九、一致性和共识" class="headerlink" title="九、一致性和共识"></a>九、一致性和共识</h1><h1 id="十、批处理"><a href="#十、批处理" class="headerlink" title="十、批处理"></a>十、批处理</h1><h1 id="十一、流处理"><a href="#十一、流处理" class="headerlink" title="十一、流处理"></a>十一、流处理</h1><script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" rel="tag"># 分布式系统</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/52fcb70f.html" rel="prev" title="Lab_2_Raft">
+                  <i class="fa fa-angle-left"></i> Lab_2_Raft
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/1942bbd0.html" rel="next" title="Redis作为缓存系统">
+                  Redis作为缓存系统 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

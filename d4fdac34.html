@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="领域驱动设计（Domain Driven Design）是一种架构思想，目的是正确地划定一个业务的边界，令架构整体上更清晰。这里记录下DDD的落地方案——从Bean的定义到架构如何构建。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于DDD">
+<meta property="og:url" content="https://tallate.github.io/d4fdac34.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="领域驱动设计（Domain Driven Design）是一种架构思想，目的是正确地划定一个业务的边界，令架构整体上更清晰。这里记录下DDD的落地方案——从Bean的定义到架构如何构建。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E5%BE%AE%E6%9C%8D%E5%8A%A1/%E5%85%AD%E8%BE%B9%E5%BD%A2%E6%9E%B6%E6%9E%84%E7%9A%84%E6%A8%A1%E5%9D%97%E5%88%92%E5%88%86.png">
+<meta property="article:published_time" content="2021-01-31T12:29:50.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.889Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="DDD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/%E5%BE%AE%E6%9C%8D%E5%8A%A1/%E5%85%AD%E8%BE%B9%E5%BD%A2%E6%9E%B6%E6%9E%84%E7%9A%84%E6%A8%A1%E5%9D%97%E5%88%92%E5%88%86.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/d4fdac34.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/d4fdac34.html","path":"/d4fdac34.html","title":"关于DDD"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>关于DDD | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Domain-Primitive-DP"><span class="nav-number">1.</span> <span class="nav-text">Domain Primitive(DP)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Make-Implicit-Concepts-Explicit%EF%BC%88%E5%B0%86%E9%9A%90%E6%80%A7%E7%9A%84%E6%A6%82%E5%BF%B5%E6%98%BE%E6%80%A7%E5%8C%96%EF%BC%89"><span class="nav-number">1.0.1.</span> <span class="nav-text">Make Implicit Concepts Explicit（将隐性的概念显性化）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Make-Implicit-Context-Explicit%EF%BC%88%E5%B0%86-%E9%9A%90%E6%80%A7%E7%9A%84-%E4%B8%8A%E4%B8%8B%E6%96%87-%E6%98%BE%E6%80%A7%E5%8C%96%EF%BC%89"><span class="nav-number">1.0.2.</span> <span class="nav-text">Make Implicit Context Explicit（将 隐性的 上下文 显性化）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Encapsulate-Multi-Object-Behavior%EF%BC%88%E5%B0%81%E8%A3%85-%E5%A4%9A%E5%AF%B9%E8%B1%A1-%E8%A1%8C%E4%B8%BA%EF%BC%89"><span class="nav-number">1.0.3.</span> <span class="nav-text">Encapsulate Multi-Object Behavior（封装 多对象 行为）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">架构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E8%84%9A%E6%9C%AC%E7%9A%84%E5%86%99%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">事务脚本的写法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%B9%E9%80%A0%E6%80%9D%E8%B7%AF-%E9%98%B2%E8%85%90%E5%B1%82%EF%BC%88ACL%EF%BC%89"><span class="nav-number">2.2.</span> <span class="nav-text">改造思路 - 防腐层（ACL）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E8%BE%B9%E5%BD%A2%E6%9E%B6%E6%9E%84%EF%BC%88Hexagonal-Architecture%EF%BC%89"><span class="nav-number">2.3.</span> <span class="nav-text">六边形架构（Hexagonal Architecture）</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/d4fdac34.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="关于DDD | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          关于DDD
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-01-31 20:29:50" itemprop="dateCreated datePublished" datetime="2021-01-31T20:29:50+08:00">2021-01-31</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>领域驱动设计（Domain Driven Design）是一种架构思想，目的是正确地划定一个业务的边界，令架构整体上更清晰。<br>这里记录下DDD的落地方案——从Bean的定义到架构如何构建。</p>
+<span id="more"></span>
+
+<h1 id="Domain-Primitive-DP"><a href="#Domain-Primitive-DP" class="headerlink" title="Domain Primitive(DP)"></a>Domain Primitive(DP)</h1><p>DP的概念：</p>
+<ul>
+<li>DP是Immutable的Value Object；</li>
+<li>DP是业务的原始语言定义，比如我们要讨论用户中心这样的系统，就需要定义类似User、Name这样的DP；</li>
+<li>DP可以是业务对象的复杂组合，比如User由Name、Phone等组成，它需要保证构造时使用的Name、Phone是足以构成一个User对象。</li>
+</ul>
+<p>DP规定了业务代码中Bean的编写规范，DP包含3个原则：</p>
+<ul>
+<li>Make Implicit Concepts Explicit（将隐性的概念显性化）</li>
+<li>Make Implicit Context Explicit（将 隐性的 上下文 显性化）</li>
+<li>Encapsulate Multi-Object Behavior（封装 多对象 行为）</li>
+</ul>
+<h3 id="Make-Implicit-Concepts-Explicit（将隐性的概念显性化）"><a href="#Make-Implicit-Concepts-Explicit（将隐性的概念显性化）" class="headerlink" title="Make Implicit Concepts Explicit（将隐性的概念显性化）"></a>Make Implicit Concepts Explicit（将隐性的概念显性化）</h3><p>平时我们习惯写<strong>贫血模型</strong>的Bean：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class User &#123;</span><br><span class="line">    private Long userId;</span><br><span class="line">    private String userName;</span><br><span class="line">    private String phone;</span><br><span class="line">    private String address;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这么写的主要问题是对phone、address等字段的规定非常宽松，格式校验必须在业务代码中写：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">private boolean isInvalidName(String name) &#123;</span><br><span class="line">    return null == name || name.length() == 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private boolean isInvalidPhone(String phone) &#123;</span><br><span class="line">    String pattern = &quot;^0[1-9]&#123;2,3&#125;-?\\d&#123;8&#125;$&quot;;</span><br><span class="line">    return !phone.matches(pattern);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public User register(String name, String phone, String address) &#123;</span><br><span class="line">    // 格式校验</span><br><span class="line">    if(isInvalidName(name)) &#123;</span><br><span class="line">        throw ValidationException(&quot;name&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    if(isInvalidPhone(phone)) &#123;</span><br><span class="line">        throw ValidationException(&quot;phone&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    // 其他校验</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    // 创建用户</span><br><span class="line">    </span><br><span class="line">    return user;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这么写的缺点是：<br>1、接口清晰度差</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">register(&quot;张三&quot;, &quot;地球村&quot;, &quot;0571-12345678&quot;);</span><br></pre></td></tr></table></figure>
+<p>像上面这样调用的话不会出现编译错误，但是运行时会报错。<br>2、数据校验和错误处理<br>register方法入口需要对参数格式进行校验，其实对每个传name、phone、address的地方都需要这么写一次校验，非常繁琐。</p>
+<p>解决办法是对name、phone、address进行封装，即所谓的<strong>充血模型</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">public class PhoneNumber &#123;</span><br><span class="line">    </span><br><span class="line">    private final String number;</span><br><span class="line">    </span><br><span class="line">    public String getNumber() &#123;</span><br><span class="line">        return number;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public PhoneNumber(String number) &#123;</span><br><span class="line">        if (number == null) &#123;</span><br><span class="line">            throw new ValidationException(&quot;number 不能为空&quot;);</span><br><span class="line">        &#125; else if (isValid(number)) &#123;</span><br><span class="line">            throw new ValidationException(&quot;number 格式错误&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        this.number = number;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getAreaCode() &#123;</span><br><span class="line">        for (int i = 0; i &lt; number.length(); i++) &#123;</span><br><span class="line">            String prefix = number.substring(0, i);</span><br><span class="line">            if (isAreaCode(prefix)) &#123;</span><br><span class="line">                return prefix;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    private static boolean isAreaCode(String prefix) &#123;</span><br><span class="line">        String[] areas = new String[]&#123;&quot;0571&quot;, &quot;021&quot;, &quot;010&quot;&#125;;</span><br><span class="line">        return Arrays.asList(areas).contains(prefix);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public static boolean isValid(String number) &#123;</span><br><span class="line">        String pattern = &quot;^0?[1-9]&#123;2,3&#125;-?\\d&#123;8&#125;$&quot;;</span><br><span class="line">        return number.matches(pattern);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>PhoneNumber是不可变（Immutable）的对象；</li>
+<li>校验逻辑都在构造方法里，只要PhoneNumber被创建出来后，一定是被校验通过的，只要能带入参数里的一定是正确的或null，数据校验的工作被前置到了调用方；</li>
+</ul>
+<h3 id="Make-Implicit-Context-Explicit（将-隐性的-上下文-显性化）"><a href="#Make-Implicit-Context-Explicit（将-隐性的-上下文-显性化）" class="headerlink" title="Make Implicit Context Explicit（将 隐性的 上下文 显性化）"></a>Make Implicit Context Explicit（将 隐性的 上下文 显性化）</h3><p>多个传参之间紧密关联，可以组合成一个Bean，比如支付时需要给出支付金额和支付货币，我们可以将这两个参数组合成一个完整的概念Money：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class Money &#123;</span><br><span class="line">    private BigDecimal amount;</span><br><span class="line">    private Currency currency;</span><br><span class="line">    public Money(BigDecimal amount, Currency currency) &#123;</span><br><span class="line">        this.amount = amount;</span><br><span class="line">        this.currency = currency;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里货币&lt;amount, currency&gt;是一个隐性的上下文概念，合并成Money后完成了显性化，可以在Money中添加一些对货币的限制。</p>
+<h3 id="Encapsulate-Multi-Object-Behavior（封装-多对象-行为）"><a href="#Encapsulate-Multi-Object-Behavior（封装-多对象-行为）" class="headerlink" title="Encapsulate Multi-Object Behavior（封装 多对象 行为）"></a>Encapsulate Multi-Object Behavior（封装 多对象 行为）</h3><p>将涉及到多个对象的行为封装为一个对象，比如将转换汇率这个操作转换为一个<code>ExchangeRate</code>对象：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public class ExchangeRate &#123;</span><br><span class="line">    private BigDecimal rate;</span><br><span class="line">    private Currency from;</span><br><span class="line">    private Currency to;</span><br><span class="line"></span><br><span class="line">    public ExchangeRate(BigDecimal rate, Currency from, Currency to) &#123;</span><br><span class="line">        this.rate = rate;</span><br><span class="line">        this.from = from;</span><br><span class="line">        this.to = to;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public Money exchange(Money fromMoney) &#123;</span><br><span class="line">        notNull(fromMoney);</span><br><span class="line">        isTrue(this.from.equals(fromMoney.getCurrency()));</span><br><span class="line">        BigDecimal targetAmount = fromMoney.getAmount().multiply(rate);</span><br><span class="line">        return new Money(targetAmount, to);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h1><h2 id="事务脚本的写法"><a href="#事务脚本的写法" class="headerlink" title="事务脚本的写法"></a>事务脚本的写法</h2><p>最普通写业务的思路，基本是MVC架构，并把核心业务逻辑统统写到一个方法内，顶多把一些能复用的拆到一些子方法内。<br>事务脚本的主要问题是：</p>
+<ul>
+<li>可维护性差</li>
+<li>可扩展性差</li>
+<li>可测试性差</li>
+</ul>
+<h2 id="改造思路-防腐层（ACL）"><a href="#改造思路-防腐层（ACL）" class="headerlink" title="改造思路 - 防腐层（ACL）"></a>改造思路 - 防腐层（ACL）</h2><p>很多时候我们的系统会去依赖其他的系统，被依赖的系统可能会包含不合理的数据结构、API、协议或技术实现，如果对外部系统强依赖，会导致我们的系统被“腐蚀”。<br>解决办法是加入一个防腐层来隔离：</p>
+<ul>
+<li>接口适配</li>
+<li>缓存</li>
+<li>降级</li>
+<li>易测试</li>
+<li>功能开关</li>
+</ul>
+<p>比如，为了屏蔽业务系统和消息队列服务，可以使用一个抽象的AuditMessageProducer、AuditMessage实现对底层消息队列服务的隔离。<br>系统中有很多与外部系统相关的计算，比如接收外部系统传入的金额，对账户金额的计算、账户余额的校验、转帐限制、金额增减等。解决办法是<strong>使用DP封装</strong>。<br>对于跨多个域对象的行为，封装到业务Service不合适，但封装到单个的DP中也不合适，这种情况最好是单独为其创建一个<strong>Domain Service</strong>。</p>
+<h2 id="六边形架构（Hexagonal-Architecture）"><a href="#六边形架构（Hexagonal-Architecture）" class="headerlink" title="六边形架构（Hexagonal Architecture）"></a>六边形架构（Hexagonal Architecture）</h2><p>传统架构是分层的。<br>而Hex中，架构变成内外关系，具体到项目的组成会有以下6个组件：<br><img src="/imgs/%E5%BE%AE%E6%9C%8D%E5%8A%A1/%E5%85%AD%E8%BE%B9%E5%BD%A2%E6%9E%B6%E6%9E%84%E7%9A%84%E6%A8%A1%E5%9D%97%E5%88%92%E5%88%86.png" alt="六边形架构的模块划分" title="六边形架构的模块划分"></p>
+<ul>
+<li>Types<br>保存对外暴露的Domain Primitives(DP)，纯POJO，不依赖任何类库。</li>
+<li>Domain<br>核心业务逻辑，包含有状态的 Entity、领域服务 Domain Service、以及各种外部依赖的接口类(如 Repository、ACL、中间件等）。Domain 模块仅依赖 Types模块,也是纯 POJO 。</li>
+<li>Application<br>Application 模块主要包含 Application Ser vice 和一些相关的类。Application 模块依赖Domain 模块。还是不依赖任何框架,纯 POJO。</li>
+<li>Infrastructure<br>Infrastructure 模块包含了 Persistence、Messaging、External 等模块。比如:Persistence模块包含数据库 DAO 的实现,包含 Data Object、ORM Mapper、Entity 到 DO 的转化类等。Persistence 模块要依赖具体的 ORM 类库,比如 MyBatis。如果要用 Spring-Mybatis提供的注解方案,则需要依赖 Spring。</li>
+<li>Web<br>Web 模块包含 Controller 等相关代码。如果用 SpringMVC 则需要依赖 Spring。</li>
+<li>Start<br>Start模块是SpringBoot的启动类。</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li>《The Complete Works of Tao Technology 2020》 - 阿里技术专家详解 DDD 系列</li>
+<li><a target="_blank" rel="noopener" href="https://martinfowler.com/bliki/AnemicDomainModel.html">AnemicDomainModel - Martin Fowler</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DDD/" rel="tag"># DDD</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/14bfa738.html" rel="prev" title="热点数据发现">
+                  <i class="fa fa-angle-left"></i> 热点数据发现
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/e04c766b.html" rel="next" title="Kafka原理总结">
+                  Kafka原理总结 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="背景上半年参与一个微服务架构 Web 服务的开发，期间提交了近 2W 行 Java 代码，删除近 1W 行，虽然只是 SaaS 层的代码，但是还是学到了不少东西，写代码方面学了一些 Java 基础和编程规范相关的知识，架构方面了解了一些分布式系统相关的概念，另外又抽时间自学了一些中间件、DevOps（主要是怎么使用 Docker 简化运维）相关的工具。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="司库云系统简析">
+<meta property="og:url" content="https://tallate.github.io/cd87e5dd.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="背景上半年参与一个微服务架构 Web 服务的开发，期间提交了近 2W 行 Java 代码，删除近 1W 行，虽然只是 SaaS 层的代码，但是还是学到了不少东西，写代码方面学了一些 Java 基础和编程规范相关的知识，架构方面了解了一些分布式系统相关的概念，另外又抽时间自学了一些中间件、DevOps（主要是怎么使用 Docker 简化运维）相关的工具。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/%E5%8F%B8%E5%BA%93%E4%BA%91%E7%B3%BB%E7%BB%9F%E7%AE%80%E6%9E%90/%E5%A5%91%E7%BA%A6%E6%B5%8B%E8%AF%95%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+<meta property="article:published_time" content="2018-10-12T11:50:53.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.907Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="yonyou">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/%E5%8F%B8%E5%BA%93%E4%BA%91%E7%B3%BB%E7%BB%9F%E7%AE%80%E6%9E%90/%E5%A5%91%E7%BA%A6%E6%B5%8B%E8%AF%95%E7%A4%BA%E6%84%8F%E5%9B%BE.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/cd87e5dd.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/cd87e5dd.html","path":"/cd87e5dd.html","title":"司库云系统简析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>司库云系统简析 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%9A%E5%8A%A1%E5%BC%80%E5%8F%91%E6%80%BB%E7%BB%93"><span class="nav-number">2.</span> <span class="nav-text">业务开发总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E6%B8%B8%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.1.</span> <span class="nav-text">上游功能实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E6%B8%B8%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.2.</span> <span class="nav-text">下游功能实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E6%9D%82%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.3.</span> <span class="nav-text">复杂功能实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%A5%E8%A1%A8%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.4.</span> <span class="nav-text">报表实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC"><span class="nav-number">2.5.</span> <span class="nav-text">编码风格</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E6%B5%8B"><span class="nav-number">2.6.</span> <span class="nav-text">自测</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">技术总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.1.</span> <span class="nav-text">设计模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.2.</span> <span class="nav-text">微服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RMI-%E8%BF%9C%E7%A8%8B%E8%B0%83%E7%94%A8"><span class="nav-number">3.3.</span> <span class="nav-text">RMI 远程调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81"><span class="nav-number">3.4.</span> <span class="nav-text">分布式锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E8%A1%A5%E5%81%BF%E6%9C%BA%E5%88%B6"><span class="nav-number">3.5.</span> <span class="nav-text">事务补偿机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-Cloud-%E5%90%8E%E5%8F%B0%E7%B3%BB%E7%BB%9F"><span class="nav-number">3.6.</span> <span class="nav-text">Spring Cloud 后台系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SpringBoot"><span class="nav-number">3.6.1.</span> <span class="nav-text">SpringBoot</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Rest-%E5%8D%8F%E8%AE%AE"><span class="nav-number">3.6.2.</span> <span class="nav-text">Rest 协议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97"><span class="nav-number">3.7.</span> <span class="nav-text">日志</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E6%97%A5%E5%BF%97"><span class="nav-number">3.7.1.</span> <span class="nav-text">异常日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%9A%E5%8A%A1%E6%97%A5%E5%BF%97"><span class="nav-number">3.7.2.</span> <span class="nav-text">业务日志</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/cd87e5dd.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="司库云系统简析 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          司库云系统简析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-10-12 19:50:53" itemprop="dateCreated datePublished" datetime="2018-10-12T19:50:53+08:00">2018-10-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>上半年参与一个微服务架构 Web 服务的开发，期间提交了近 2W 行 Java 代码，删除近 1W 行，虽然只是 SaaS 层的代码，但是还是学到了不少东西，写代码方面学了一些 Java 基础和编程规范相关的知识，架构方面了解了一些分布式系统相关的概念，另外又抽时间自学了一些中间件、DevOps（主要是怎么使用 Docker 简化运维）相关的工具。</p>
+<span id="more"></span>
+
+<h2 id="业务开发总结"><a href="#业务开发总结" class="headerlink" title="业务开发总结"></a>业务开发总结</h2><p>我所在的部门偏重业务，就我体验来讲，大家对技术并不会钻研太深，项目经理也认为技术员一招一大批，但是找到懂业务的人才却很难，一方面生活中很少人去接触 To B 的业务，另一方面，项目中用到的业务知识占绝大部分，而技术基本都是由一个平台部门来包装的。<br>项目开发过程中主要涉及到大型企业投融资方面的业务，比如贷款、发债、担保等，因为公司比较看重保密协议，所以我无法在此分享详细的业务相关的内容，只能分享实现过程中的一些想法。</p>
+<h3 id="上游功能实现"><a href="#上游功能实现" class="headerlink" title="上游功能实现"></a>上游功能实现</h3><p>司库云中的业务与企业平时填的单据相关，单据之间会有上下游的关系（或者说提供者和消费者），填下游单据前必须填好对应的上游单据（光保存可能还不行，还要先由上级领导审批通过），实际上传统企业都有类似的业务。<br>实现上游功能有一些注意事项：</p>
+<ol>
+<li>上游需要给下游提供接口，最常见的比如检查上游是否被删除了，因为当下游引用上游到实际保存下游之间会有一段时间，如果在这段时间内上游被删除了，那么这之后再去保存下游就是没有意义的了；</li>
+<li>上游有时需要提供一个特殊的接口，名为“参照”，用于列出可以被引用的上游单据，就像输入一些关键词到百度搜索的搜索框中就会弹出一个下拉菜单显示所有相关的搜索项；</li>
+<li>删除前必须检查是否已经被下游引用过了，一般来说可以直接由下游提供一个接口来实现这种检查，但是对一些下游特别多、而且会越变越多的单据（指的是用户、银行这些经常被参照到的数据），其实更好的实现方式是将这种耦合转移到数据库中，比如用一个 refinfo 表来记录所有参照信息（当然也可以直接把删除操作去了…）；</li>
+<li>为下游开发人员提供接口及接口文档，这条是容易被忽视的，因为程序员普遍不喜欢读没有注释的代码和给自己的代码加注释；</li>
+</ol>
+<h3 id="下游功能实现"><a href="#下游功能实现" class="headerlink" title="下游功能实现"></a>下游功能实现</h3><p>实现下游功能似乎会简单一点，但也不尽然：</p>
+<ol>
+<li>和上游开发沟通接口，最基本的，应该提供所需的返回值格式，而上游则需要说明需要传入哪些参数，另外，这个接口最好是批量的，可以提高效率；</li>
+<li>下游开发者需要对 RMI 远程调用的原理比较熟悉，像调用方法、传参、抛出异常等过程，本质上都是和本地调用不同的。</li>
+</ol>
+<h3 id="复杂功能实现"><a href="#复杂功能实现" class="headerlink" title="复杂功能实现"></a>复杂功能实现</h3><p>对于一些比较复杂的功能，牵扯到的模块比较多、逻辑比较复杂，做好记录就很重要。写代码最难的不是写代码这个过程，因为只需要基础知识过关、有节操（编码规范），写代码是不难的，难的是写代码前的准备工作，。</p>
+<ol>
+<li>编码前最好是用软件工程中讲过的建模工具进行建模，最常用的如流程图、时序图等；</li>
+<li>就算不想当“画图工程师”、至少也要做好文字记录，最头疼的是见到某些大佬写的 1k 来行的大方法，还没有多少注释。一些人非常自负，觉得“自己的代码自解释、看不懂纯粹是水平不行”。自解释不知道有没有做到，但加注释绝对是对别人负责的做法，因为不是所有人都有时间去看自己写的代码的，而看注释可以更快地理解自己的想法，不至于迷失在代码细节里。</li>
+<li>在用友，其实你不需要懂太多，Java+设计模式+软件工程基础就够了，我在这里学到的最多的应该是软件工程中对风险的控制了：有人懂的话就不要自己瞎想了，有现成的代码就不要自己写了。对于一些复杂的功能，如果之前有人实现过了，那么借鉴一下代码绝对是更划算的做法（还有一个比较阴险的理由是，可以把锅推给人家，所以我觉得抄代码的基本前提是把代码看明白）；</li>
+<li>当我们需要写业务代码时，首先要做的第一步应该是和需求进行讨论了，但是很多需求人员其实并不懂代码，他们往往只会从用户的角度对功能进行描述，因此偶尔会碰到沟通困难的情况，这时候可以选择：<ol>
+<li>拿流程图和需求进行交流，这样更容易让对方明白自己的脑回路；</li>
+<li>催对方把需求写明白一点（容易打起来）；</li>
+<li>拜托其他人去和沟通交流。<br>另一方面，如果系统之前已经有类似的功能，首选应该是和相关的开发进行讨论。</li>
+</ol>
+</li>
+</ol>
+<h3 id="报表实现"><a href="#报表实现" class="headerlink" title="报表实现"></a>报表实现</h3><p>报表是一种需要从多个表里查数据的功能，根据业务复杂度不同涉及到的表可能达到 7、8 个，如果想用一个 sql 把功能写明白，可以想见这样的 sql 会有多大、多复杂，而且根据编码规范，使用存储过程&#x2F;函数也是禁止的（因为在云环境下持久层相对业务层更不好扩展）。所以一般是将 sql 拆成多个，在业务代码中进行联结及分页，刚开始实现时我们将数据库里的数据全部查了出来，然后在内存中进行过滤，对几千条数据进行查询就花了超过 10 秒，所以后来研究了一些优化的方法，将速度压到了 1 秒以下：</p>
+<ol>
+<li>批量查询<br>据说磁盘 IO 效率（次磁盘访问&#x2F;秒）和指令执行效率（条指令&#x2F;秒）之间的比值接近 20W:1，因此用更多的指令执行来取代一次磁盘访问一般是值得的。<br>比如需要查某几个班级中的所有同学，我们应该将这些班级的 id 放到一个 in 子句内来批量查询，查出来的数据再在代码里借助 Map 等结构来分出不同班级的同学，因此我们应该写出类似下面的 sql 和代码：<div><div class="fold_hider"><div class="close hider_title">显示/折叠代码</div></div><div class="fold">
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select s.id, s.name from student s where s.class in (&#x27;c1&#x27;, &#x27;c2&#x27;);</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, List&lt;Student&gt;&gt; stuMap = new HashMap&lt;String, List&lt;Student&gt;&gt;();</span><br><span class="line">for(Student s : students) &#123;  </span><br><span class="line">  List&lt;Student&gt; tmps = stuMap.get(s.getClass());</span><br><span class="line">  if(null == tmps) &#123;</span><br><span class="line">    tmps = new ArrayList&lt;&gt;();</span><br><span class="line">    stuMap.put(s.getClass(), tmps);</span><br><span class="line">  &#125;</span><br><span class="line">  tmps.add(s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</div></div></li>
+<li>“短路”<br>实现内存分页其实没有必要将所有数据都查出来，在查到超过当前页所需要的数据量之后其实就可以直接返回了。</li>
+<li>多线程<br>每一行或某几行之间的查询是相互独立的，那么就可以考虑将这些分到多个线程里分别处理。</li>
+</ol>
+<h3 id="编码风格"><a href="#编码风格" class="headerlink" title="编码风格"></a>编码风格</h3><p>不论是写什么代码，最重要的是风格的统一，所有人最好都使用相同的编码风格，对于容易引起异常的编码方式，可以使用 Sonar、FindBugs、阿里编码规范插件等来进行约束，对于一些不规范的编码风格，则只能由自己主动进行交流纠正（大部分人都会因为怕麻烦而懒得帮别人审查，都只遵守自己心里的那套规范，至少我周围是这样）；</p>
+<h3 id="自测"><a href="#自测" class="headerlink" title="自测"></a>自测</h3><p>功能开发完毕后，一般不能直接提交到 git 仓库上，因为很有可能会存在自己没有料到的 Bug，所以最好自己先根据功能需求的描述进行自测。当测试提交了一个 Bug，为了完整地纠正这个 Bug，最好满足以下条件：</p>
+<ol>
+<li>思考问题原因；</li>
+<li>枚举测试没有考虑到的细节；</li>
+<li>追究相关场景，因为相同的问题可能在其他类似的功能里出现；</li>
+<li>多练练跑步，只要跑得够快，测试就追不上自己。</li>
+</ol>
+<h2 id="技术总结"><a href="#技术总结" class="headerlink" title="技术总结"></a>技术总结</h2><h3 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h3><ol>
+<li>静态工厂方法模式<br>通过静态工厂方法来提供对象实例，一方面方法名比构造器可读性更高，而且多了一层包装后，减少了暴露，更容易修改；<div><div class="fold_hider"><div class="close hider_title">显示/折叠代码</div></div><div class="fold">
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public static RepayIntstAnalyzer getInstance(...) &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line">public static RepayIntstAnalyzer getInstance4Extend(...) &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</div></div></li>
+<li>策略模式<br>算法很多时候是复杂的，策略模式是针对算法的优化的一种模式，平时若两种算法具有某些代码是重叠的，我们可能直接将它们写在一块，从软件工程的角度来讲，就是代码内聚性低，比如下面的代码将 A 和 B 算法的代码合到一个方法内部：<div><div class="fold_hider"><div class="close hider_title">显示/折叠代码</div></div><div class="fold">
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">void doAlgo(op) &#123;</span><br><span class="line">    doBefore();</span><br><span class="line">    if(op is A) &#123;</span><br><span class="line">        do A;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        do B;</span><br><span class="line">    &#125;</span><br><span class="line">    doAfter();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</div></div>
+为了使得算法的逻辑更加清晰，我们可以将两个算法封装到两个类中，根据用户的输入来传入不同的算法实现类：<div><div class="fold_hider"><div class="close hider_title">显示/折叠代码</div></div><div class="fold">
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">if(srcType == SrcType.REPAY_PRCPL) &#123;</span><br><span class="line">  filter = new RefRepayPrcplFilter();</span><br><span class="line">&#125; else if(srcType == SrcType.REPAY_INTST) &#123;</span><br><span class="line">  filter = new RefRepayIntstFilter();</span><br><span class="line">&#125; else if(srcType == SrcType.INTST_ADJUST) &#123;</span><br><span class="line">  filter= new RefIntAdjFilter();</span><br><span class="line">&#125; else if(srcType == SrcType.LIST) &#123;</span><br><span class="line">  filter = new RefListFlter();</span><br><span class="line">&#125;</span><br><span class="line">issueRegisterList = filter.doFilter(issueReigsterList);</span><br></pre></td></tr></table></figure>
+</div></div>
+使用策略模式可以减少算法之间的耦合，也可以方便后续加入新的算法，当然坏处是在一定程度上会增加代码冗余度。</li>
+</ol>
+<h3 id="微服务"><a href="#微服务" class="headerlink" title="微服务"></a>微服务</h3><p>微服务软件将各模块划分到不同的项目中，互相通过 RMI 进行调用，好处是能根据需要来部署模块、利于后期进行扩展，坏处是实现起来复杂很多。应用中，用友希望实现自己的云原生环境，开发了一个类似阿里云的应用实例管理平台，可以调配 CPU、内存、硬盘等资源，当然还有最基础的应用生命周期、配置、日志管理等功能。对其中的代码我没有研究过（部门之间相互隔离，代码是不能直接看到的），不过这些功能我设想可以基于 Docker 开放的 REST 接口来实现，工作量不会小。<br>既然涉及到微服务的基础设施，就不得不提 Spring Boot 了，Spring Boot 是一个应用启动器，它的主要作用是减少手动配置，其核心是约定大于配置的理念，每个模块都具有默认的功能，只要在 pom.xml 中引入该模块即可使用，除非有特定需求，否则不需要额外的配置。<br>在司库云中，每个业务项目在 web.xml 配置文件（Spring 配置文件）中，注册了一个 MwClientLoader 类，用于注册所有微服务的基础设施。<br>司库云是我经历的第一个微服务架构项目，我无法很自信地说哪里好哪里坏，但我也感觉到有很多不合理的地方，比如：</p>
+<ol>
+<li>有现成的就是不用，基于 ZooKeeper 的分布式锁不用 Curator 而是自己写了个客户端，结果后期出现低级 Bug（比如死锁、释放了别的线程占用的锁等）；</li>
+<li>将所有工具类（包括中间件的客户端）都写到一个 tmc-utils 项目中，供业务模块依赖，虽然方便，但是导致 tmc-utils 项目颇为臃肿、不稳定，甚至到了后面都没有人知道里面塞了什么东西了；</li>
+<li>将所有实现微服务客户端所需的基础设施写到 MwClientLoader 这个类里来引入，所以司库云其实并没有依赖 Spring Boot；</li>
+</ol>
+<h3 id="RMI-远程调用"><a href="#RMI-远程调用" class="headerlink" title="RMI 远程调用"></a>RMI 远程调用</h3><p>RMI 是一种将远程调用包装成本地调用形式的技术。在司库云中，即是将接口和参数序列化后通过 HTTP 协议传过去。在毕设《基于微服务的资金云系统发债管理子系统》中我也有按着这种思路自己实现了一种简单的 RMI 框架。<br>RMI 调用中，框架异常和业务异常默认没有区分，必须得开发自己进行约定，传参只提供对基本类型的转换，如果要传复杂对象，则必须自己将对象属性保存在 Map 中，然后由接收端取出属性还原对象。<br>服务接口提供者和消费者一般处于独立的两个模块内，这意味着它们会被部署到不同的两个应用实例内，使用 RMI 的方式来相互调用，就像本地方法调用一样，会有方法名、参数、异常抛出等。当时令我们困扰的是如何区分业务抛出的异常和 RMI 框架抛出的异常。要知道所有分布式系统都是建立在不稳定的网络条件之上的，超时这种网络异常是家常便饭。对此我们主要有两种方式：</p>
+<ol>
+<li>使用返回值表示业务异常（接口本身没有返回值的情况下）；<div><div class="fold_hider"><div class="close hider_title">显示/折叠代码</div></div><div class="fold">
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">try &#123;</span><br><span class="line">  // ...业务操作</span><br><span class="line">&#125; catch (Exception e) &#123;</span><br><span class="line">  return &quot;外部放款单出现错误：&quot; + e.getMessage();</span><br><span class="line">&#125; finally &#123;</span><br><span class="line">  // 释放锁</span><br><span class="line">  infinance.setId(infinance.getInfinancepayid());</span><br><span class="line">  //new VOLockOperaor().unlock(infinance);</span><br><span class="line">  infinance.setId(null);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</div></div></li>
+<li>分别定义业务异常和 RMI 框架异常，分别捕捉。<div><div class="fold_hider"><div class="close hider_title">显示/折叠代码</div></div><div class="fold">
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">try &#123;</span><br><span class="line">  // ...业务操作</span><br><span class="line">&#125; catch (FrameworkException e) &#123;</span><br><span class="line">  // ...处理框架抛出异常</span><br><span class="line">&#125; catch(BusinessException e) &#123;</span><br><span class="line">  // ...处理业务代码抛出的异常</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</div></div>
+当然，不管是哪种方式，最重要的是接口提供方和调用方开发者的统一。</li>
+</ol>
+<p>调用方在自测的时候，需要注意接口版本是正确的，有一种情况是，我们并不知道 Bug 是出在自己的代码里还是 RPC 接口里，我们本地只有 RPC 接口的声明，因此普通打断点跟代码的形式就行不通了，我想到的解决办法主要有以下几点：<br>    * 细心编码、滴水不漏，但不是每个人都是 Dijkstra；<br>    * 不厌其烦地调试，在发起远程调用的方法处打断点，将请求参数拦截下来，然后另起一个上游模块实例，使用这些数据调用上游接口，再尝试对 Bug 进行定位；<br>    * 搭建私有化环境，所有关联服务都放到 localhost 里调试，这种方法必须将几乎所有相关项目的配置文件里的 IP 都改成 localhost，动作比较大，而且这样就和微服务没什么关系了；<br>    * 契约测试，将服务消费者与服务提供者解耦<br><img src="/imgs/%E5%8F%B8%E5%BA%93%E4%BA%91%E7%B3%BB%E7%BB%9F%E7%AE%80%E6%9E%90/%E5%A5%91%E7%BA%A6%E6%B5%8B%E8%AF%95%E7%A4%BA%E6%84%8F%E5%9B%BE.png" alt="X" title="契约测试示意图"></p>
+<p>RPC 远程调用的开销远高于本地调用，过于滥用会对系统性能造成影响，为了避免这个问题，一方面，在设计之初需要由更懂业务的人参与业务模块的划分，减少远程调用；另一方面，可以考虑使用更高效的通信协议、更高效的通信模式（NIO、AIO）和更高效的序列化&#x2F;反序列化协议，提高 RPC 协议本身的效率，在分布式系统中，可以说拿下网络协议就是拿下了成功的一半（当然复杂的系统绝不只需要对应用层的考量）。</p>
+<p>RPC 涉及到多个独立服务实例间的相互调用，会引入数据一致性风险，我在《基于微服务的资金云系统发债管理子系统》这个课题中也做过初步的探究。</p>
+<h3 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h3><p>司库云中封装 Curator 实现了一套 ZooKeeper 客户端，利用 apache common pool2 重用客户端，我们在使用期间发现了一些小问题，比如在测试中曾发生过这么个现象：</p>
+<blockquote>
+<p>A 修改保存了一条数据，在加锁后后台逻辑出现问题意外退出了，此时锁并没有释放，而 B 又上来操作了同一条数据，因为锁已经被占用了，因此第一次操作失败了，但是再执行一次操作却正常通过了。</p>
+</blockquote>
+<p>其中一处示例 RPC 调用代码如下所示。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">try &#123;</span><br><span class="line">    // 加锁、校验时间戳</span><br><span class="line">    this.lock(values);</span><br><span class="line">    this.checkTs(values);</span><br><span class="line"></span><br><span class="line">    // 执行业务操作</span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    // 调用审批微服务</span><br><span class="line">    service.approve(paralist, message);</span><br><span class="line">    try &#123;</span><br><span class="line">      // 更新到数据库及执行其他业务操作</span><br><span class="line">      ...</span><br><span class="line">    &#125; catch (Exception ex) &#123;</span><br><span class="line">        // 事务补充.防止审批流服务和业务单据的状态不一致</span><br><span class="line">        service.unapprove(paralist);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; finally &#123;</span><br><span class="line">    //释放锁</span><br><span class="line">    this.unlock(values);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>加锁不管成功与否，都会调用 finally 块中的 unlock 方法释放对象的锁，因此会产生上面的现象。解决办法是令 lock 方法调用返回加锁是否成功，只有成功的情况才能调用 unlock。</p>
+<p>当测试对数据的批量操作时，还出现过这样的情况：</p>
+<blockquote>
+<p>A 和 B 同时操作 1、2、3 三条数据，二人给出数据的顺序是不确定的，结果两个人的界面都一直在转圈圈（表示正在执行），最后两个人都傻等着直到不耐烦、点了刷新页面。</p>
+</blockquote>
+<p>调用 Curator 接口进行加锁的关键代码如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">((ACLBackgroundPathAndBytesable)client.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT)).forPath(&quot;/IUAP_ZKLOCK_ROOT/&quot; + lockPath, String.valueOf(System.currentTimeMillis()).getBytes());</span><br></pre></td></tr></table></figure>
+<p>因为锁客户端创建的是一个持久节点，所以在加锁后、且客户端意外退出的还未释放锁的情况下，那个节点就留在 ZooKeeper 集群中了，代码中并没有对这些“野锁”的自动删除功能，所以之后就再也不能对这条数据进行操作了（可能测试人员那会有其他工具，但是这样管理的成本也太高了）。使用 ZooKeeper 实现锁实际上还有其他策略，比如使用临时顺序节点和 watch 机制实现。</p>
+<p>显然这是发生死锁的现象，从操作系统的进程调度中我们学过，为了解决死锁问题，主要解决方式是预防死锁（破坏产生死锁的条件）、避免死锁（银行家算法）和检测解除（资源分配图）这几种策略。<br>以简单起见，我们最后选择破坏一个最显然的产生死锁条件，即资源的占用顺序是不确定的，这样可能会发生 A 先占用 1 再占用 2，而 B 先占用 2 再占用 1，它们发生循环等待，产生死锁。解决办法也比较简单，只要对数据的 ID 统一进行排序后再按顺序进行加锁即可。<br>另外，加锁操作理应有一个超时时间，不管后台正在进行什么样的操作，“一直转圈圈”相对“没执行完就报了个错”来说，是用户更难以接受的。</p>
+<p>涉及同步的代码都是比较难测出隐藏问题的，与其自告奋勇从零开始，不如虚心谨慎采纳现成的方案工具为上，与其将寻找漏洞的任务交给测试，不如在开发时小心谨慎为上。</p>
+<h3 id="事务补偿机制"><a href="#事务补偿机制" class="headerlink" title="事务补偿机制"></a>事务补偿机制</h3><p>之前讨论过，RPC 涉及到多个独立服务之间的相互调用，可能会发生某一次调用失败然后导致多个数据库之间数据不一致的情况。<br>如果是单个服务的情况下，可以依赖本地事务的统一提交和回滚，就算把电线忽然拔了，也还是可以用 bin-log 来恢复出错的数据。<br>在多个服务的情况下，就要依靠分布式事务了。司库云中实现的是最简单但也相当实用的一种，称为<strong>事务补偿</strong>，示例代码已经在上一节中包含，这里单独给出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">service.approve(vo);</span><br><span class="line">try &#123;</span><br><span class="line">  // 更新到数据库及执行其他业务操作</span><br><span class="line">  ...</span><br><span class="line">&#125; catch (Exception ex) &#123;</span><br><span class="line">  // 最好记录日志，供发生意外时手动恢复</span><br><span class="line">  // 事务补充.防止审批流服务和业务单据的状态不一致</span><br><span class="line">  service.unapprove(paralist);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>分布式事务和本地事务<br>分布式事务必须是建立在本地事务基础之上的，分布式事务只能保证多个服务之间互相调用的原子性，本地事务可以保证本地代码的执行满足 ACID 特性。</li>
+<li>事务和异常？<br>分布式事务的实现和异常处理机制紧密关联，为了使一次操作尽可能成功，一般出错都需要进行重试，但是网络异常不能保证某次远程调用是否真的成功，所以需要额外考虑某种机制保证接口是幂等的。</li>
+<li>事务补偿机制和分布式事务之间的关系。<br>事务补偿机制就是对事务链中的任何一个正向操作，都存在一个相应的逆向操作。事务补偿机制是分布式事务的必要组成部分（当然还要有本地事务、幂等性等组件）。</li>
+</ul>
+<h3 id="Spring-Cloud-后台系统"><a href="#Spring-Cloud-后台系统" class="headerlink" title="Spring Cloud 后台系统"></a>Spring Cloud 后台系统</h3><h4 id="SpringBoot"><a href="#SpringBoot" class="headerlink" title="SpringBoot"></a>SpringBoot</h4><p>SpringBoot 是一个服务启动器，简单地说：</p>
+<ul>
+<li>核心思想是“约定大于配置”，即如果要引入某个组件的功能，我们会优先使用该组件的默认配置，比如引入 Tomcat 后默认会监听 8080 端口的请求并将请求传递给 Controller。<br>SpringBoot 在原有 Spring 框架的基础上实现了</li>
+<li>Spring 集成了一些类库，用于简化开发，包括各种中间件的客户端、框架、容器等。</li>
+</ul>
+<h4 id="Rest-协议"><a href="#Rest-协议" class="headerlink" title="Rest 协议"></a>Rest 协议</h4><p>现在一般的 Web 项目开放的网络接口基本上都会声称是 REST 的，司库云也不例外，但实际上呢？为了方便项目中所有接口的方法都是 POST，链接是一个动词，总之，怎么方便怎么来。<br>有一次碰到过一个接口偏偏把参数放到请求链接后面（@param()），结果因为参数过长导致服务器读取到的参数被截短了，因为该接口被很多下游功能使用，一改肯定会导致所有功能都出问题，后来没办法只能改 Tomcat 服务器的配置。</p>
+<h3 id="日志"><a href="#日志" class="headerlink" title="日志"></a>日志</h3><h4 id="异常日志"><a href="#异常日志" class="headerlink" title="异常日志"></a>异常日志</h4><p>像日志这种必不可少又特别常用的功能，项目中当然也提供了一个公共接口，其中封装了一些日志框架的常用功能，比如，从最常用的 Log4j 到比较成熟的日志框架 Logback，都免不了的一些像滚动日志、定期删除等功能。</p>
+<h4 id="业务日志"><a href="#业务日志" class="headerlink" title="业务日志"></a>业务日志</h4><p>业务日志是对所有 Service 接口调用做的日志，虽然后期也没什么用。<br>其实这种接口等级的日志我觉得可以用于分布式事务出错后的手动回滚，但是这样来说频率及每次所需要记录的内容也会大很多，会对系统性能造成一定影响。</p>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/yonyou/" rel="tag"># yonyou</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/d22d78e6.html" rel="prev" title="华为软挑小结">
+                  <i class="fa fa-angle-left"></i> 华为软挑小结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/d9c44370.html" rel="next" title="服务治理——幂等">
+                  服务治理——幂等 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

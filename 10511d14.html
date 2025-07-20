@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="记录一些平时看到或用过的 shell 脚本技巧和代码片段。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 脚本基础">
+<meta property="og:url" content="https://tallate.github.io/10511d14.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="记录一些平时看到或用过的 shell 脚本技巧和代码片段。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-21T02:18:28.000Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.874Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="Linux">
+<meta property="article:tag" content="脚本">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tallate.github.io/10511d14.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/10511d14.html","path":"/10511d14.html","title":"Linux 脚本基础"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Linux 脚本基础 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">186</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%85%89%E6%A0%87%E8%B7%B3%E8%BD%AC%E5%8F%8A%E5%85%B6%E4%BB%96%E6%96%B9%E4%BE%BF%E6%93%8D%E4%BD%9C%E7%9A%84%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="nav-number">1.1.</span> <span class="nav-text">命令行光标跳转及其他方便操作的快捷键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%A1%E9%81%93"><span class="nav-number">1.2.</span> <span class="nav-text">管道</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%AE%9A%E5%90%91-%E5%92%8C"><span class="nav-number">1.3.</span> <span class="nav-text">重定向&gt;和&gt;&gt;</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">1.4.</span> <span class="nav-text">环境变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E5%8F%A5%E5%92%8C%E5%91%BD%E4%BB%A4"><span class="nav-number">1.5.</span> <span class="nav-text">语句和命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%86%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C%E8%B5%8B%E5%80%BC%E7%BB%99%E5%8F%98%E9%87%8F"><span class="nav-number">1.6.</span> <span class="nav-text">将执行结果赋值给变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E2%80%98%E4%B8%8E%E2%80%9D%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">1.7.</span> <span class="nav-text">‘与”之间的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E5%8F%B0%E8%BF%90%E8%A1%8C"><span class="nav-number">1.8.</span> <span class="nav-text">后台运行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E8%84%9A%E6%9C%AC%E5%89%8D%E7%9A%84%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.9.</span> <span class="nav-text">写脚本前的准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E7%99%BB%E5%BD%95-shell"><span class="nav-number">1.9.1.</span> <span class="nav-text">默认登录 shell</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bin-bash"><span class="nav-number">1.9.2.</span> <span class="nav-text">#!&#x2F;bin&#x2F;bash</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C%E6%9D%83"><span class="nav-number">1.9.3.</span> <span class="nav-text">脚本执行权</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A6%81%E6%AD%A2%E4%BD%BF%E7%94%A8%E6%9C%AA%E5%AE%9A%E4%B9%89%E7%9A%84%E5%8F%98%E9%87%8F%EF%BC%8C%E9%81%BF%E5%85%8D%E7%B2%97%E5%BF%83%E5%AF%BC%E8%87%B4%E8%84%9A%E6%9C%AC%E9%80%BB%E8%BE%91%E9%94%99%E8%AF%AF"><span class="nav-number">1.9.4.</span> <span class="nav-text">禁止使用未定义的变量，避免粗心导致脚本逻辑错误</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A6%81%E6%AD%A2%E5%87%BA%E9%94%99%E5%90%8E%E7%BB%A7%E7%BB%AD%E6%89%A7%E8%A1%8C%EF%BC%8C%E9%81%BF%E5%85%8D%E9%94%99%E8%AF%AF%E5%BD%B1%E5%93%8D%E9%9D%A2%E8%A2%AB%E7%BB%A7%E7%BB%AD%E6%89%A9%E5%A4%A7"><span class="nav-number">1.9.5.</span> <span class="nav-text">禁止出错后继续执行，避免错误影响面被继续扩大</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%86%E6%A0%87%E5%87%86%E8%BE%93%E5%87%BA%E5%92%8C%E9%94%99%E8%AF%AF%E8%BE%93%E5%87%BA%E5%90%8C%E6%97%B6%E9%87%8D%E5%AE%9A%E5%90%91%E5%88%B0%E5%90%8C%E4%B8%80%E4%BD%8D%E7%BD%AE"><span class="nav-number">1.9.6.</span> <span class="nav-text">将标准输出和错误输出同时重定向到同一位置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95"><span class="nav-number">1.10.</span> <span class="nav-text">语法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="nav-number">1.10.1.</span> <span class="nav-text">系统定义变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E5%AE%9A%E4%B9%89%E5%8F%98%E9%87%8F"><span class="nav-number">1.10.2.</span> <span class="nav-text">用户定义变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%BB%BA%E5%8F%98%E9%87%8F"><span class="nav-number">1.10.3.</span> <span class="nav-text">内建变量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%96%E6%B6%88%E5%8F%98%E9%87%8F%E6%88%96%E5%8F%96%E6%B6%88%E5%8F%98%E9%87%8F%E7%9A%84%E8%B5%8B%E5%80%BC"><span class="nav-number">1.10.4.</span> <span class="nav-text">取消变量或取消变量的赋值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E7%AE%97%E6%95%B0%E8%BF%90%E7%AE%97"><span class="nav-number">1.10.5.</span> <span class="nav-text">执行算数运算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#if-%E8%AF%AD%E5%8F%A5"><span class="nav-number">1.10.6.</span> <span class="nav-text">if 语句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#case-%E8%AF%AD%E5%8F%A5"><span class="nav-number">1.10.7.</span> <span class="nav-text">case 语句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#while-%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5"><span class="nav-number">1.10.8.</span> <span class="nav-text">while 循环语句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#for-%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5"><span class="nav-number">1.10.9.</span> <span class="nav-text">for 循环语句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#function-%E5%87%BD%E6%95%B0"><span class="nav-number">1.10.10.</span> <span class="nav-text">function 函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#readonly%E3%80%81local"><span class="nav-number">1.10.11.</span> <span class="nav-text">readonly、local</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-%E4%BB%A3%E6%9B%BF"><span class="nav-number">1.10.12.</span> <span class="nav-text">使用$()代替&#96;</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-%E4%BB%A3%E6%9B%BF-1"><span class="nav-number">1.10.13.</span> <span class="nav-text">使用[[]]代替[]</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B0%81%E8%A3%85%EF%BC%8C%E6%8F%90%E5%8D%87%E5%86%85%E8%81%9A%E6%80%A7%E5%92%8C%E5%8F%AF%E8%AF%BB%E6%80%A7"><span class="nav-number">1.10.14.</span> <span class="nav-text">封装，提升内聚性和可读性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E8%AF%95"><span class="nav-number">1.11.</span> <span class="nav-text">调试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link"><span class="nav-number">1.11.1.</span> <span class="nav-text">$?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E8%B0%83%E8%AF%95"><span class="nav-number">1.11.2.</span> <span class="nav-text">脚本调试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#test"><span class="nav-number">1.11.3.</span> <span class="nav-text">test</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5"><span class="nav-number">2.1.</span> <span class="nav-text">输入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F"><span class="nav-number">2.2.</span> <span class="nav-text">排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%BB%E9%87%8D"><span class="nav-number">2.3.</span> <span class="nav-text">去重</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%89%E8%A1%8C%E8%AF%BB%E5%8F%96%E6%96%87%E4%BB%B6"><span class="nav-number">2.4.</span> <span class="nav-text">按行读取文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%81%8D%E5%8E%86%E4%B8%80%E4%B8%AA%E7%9B%AE%E5%BD%95%E4%B8%8B%E7%9A%84%E6%89%80%E6%9C%89%E6%96%87%E4%BB%B6"><span class="nav-number">2.5.</span> <span class="nav-text">遍历一个目录下的所有文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%9F%E8%AE%A1%E6%AF%8F%E7%A7%92"><span class="nav-number">2.6.</span> <span class="nav-text">统计每秒</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%9F%E8%AE%A1%E8%A1%8C%E6%95%B0"><span class="nav-number">2.7.</span> <span class="nav-text">统计行数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">2.8.</span> <span class="nav-text">正则表达式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%9F%E8%AE%A1%E6%9C%BA%E5%99%A8%E5%8F%82%E6%95%B0"><span class="nav-number">2.9.</span> <span class="nav-text">统计机器参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E5%8D%A0%E7%94%A8-CPU-%E6%9C%80%E5%A4%9A%E7%9A%84%E8%BF%9B%E7%A8%8B"><span class="nav-number">2.9.1.</span> <span class="nav-text">查看占用 CPU 最多的进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%BE%E6%9C%80%E8%80%97-CPU-%E7%9A%84%E8%BF%9B%E7%A8%8B%E5%AF%B9%E5%BA%94%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%90%8D"><span class="nav-number">2.9.2.</span> <span class="nav-text">找最耗 CPU 的进程对应的服务名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E6%9F%90%E4%B8%AA%E7%AB%AF%E5%8F%A3%E7%9A%84%E8%BF%9E%E6%8E%A5%E6%83%85%E5%86%B5"><span class="nav-number">2.9.3.</span> <span class="nav-text">查询某个端口的连接情况</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C"><span class="nav-number">2.9.4.</span> <span class="nav-text">网络</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E6%9C%9F%E6%93%8D%E4%BD%9C"><span class="nav-number">2.10.</span> <span class="nav-text">日期操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#URLEncode"><span class="nav-number">2.11.</span> <span class="nav-text">URLEncode</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">186</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/10511d14.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Linux 脚本基础 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Linux 脚本基础
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-07-21 10:18:28" itemprop="dateCreated datePublished" datetime="2019-07-21T10:18:28+08:00">2019-07-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>记录一些平时看到或用过的 shell 脚本技巧和代码片段。</p>
+<span id="more"></span>
+
+<h2 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h2><h3 id="命令行光标跳转及其他方便操作的快捷键"><a href="#命令行光标跳转及其他方便操作的快捷键" class="headerlink" title="命令行光标跳转及其他方便操作的快捷键"></a>命令行光标跳转及其他方便操作的快捷键</h3><p>这是一个小 trick，但是我发现有不少人不知道。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Ctrl+a: 跳到命令行首</span><br><span class="line">Ctrl+e: 跳到命令行尾</span><br><span class="line">Ctrl+u: 删除光标至命令行首的内容</span><br><span class="line">Ctrl+k: 删除光标至命令行尾的内容</span><br><span class="line">Ctrl+&lt;-  跳到前一个单词首部</span><br><span class="line">Ctrl+-&gt;  跳到后一个单词尾部</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Ctrl+l  清屏（clear）</span><br><span class="line"></span><br><span class="line">Esc+.   (键盘按键)上一个命令的最后一个参数</span><br><span class="line"></span><br><span class="line">!$      （命令）上一个命令的最后一个参数,用法如：ls !$ </span><br></pre></td></tr></table></figure>
+
+<h3 id="管道"><a href="#管道" class="headerlink" title="管道"></a>管道</h3><h3 id="重定向-和"><a href="#重定向-和" class="headerlink" title="重定向&gt;和&gt;&gt;"></a>重定向&gt;和&gt;&gt;</h3><h3 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h3><h3 id="语句和命令"><a href="#语句和命令" class="headerlink" title="语句和命令"></a>语句和命令</h3><h3 id="将执行结果赋值给变量"><a href="#将执行结果赋值给变量" class="headerlink" title="将执行结果赋值给变量"></a>将执行结果赋值给变量</h3><p>有两种方式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">PARM=`echo &#x27;HELLO WORLD&#x27;`</span><br><span class="line">echo $PARM</span><br><span class="line">PARM=$(pwd)</span><br><span class="line">echo $PARM</span><br></pre></td></tr></table></figure>
+
+<h3 id="‘与”之间的区别"><a href="#‘与”之间的区别" class="headerlink" title="‘与”之间的区别"></a>‘与”之间的区别</h3><p>单引号<code>&#39;</code>和双引号<code>&quot;</code>都可以用于将数值转换为字符串，但如果希望将命令的返回值转换为字符串，则必须使用<code>&quot;</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">huanggaochi@app03:~$ echo &#x27;$(date)&#x27;</span><br><span class="line">$(date)</span><br><span class="line">huanggaochi@app03:~$ echo &quot;$(date)&quot;</span><br><span class="line">Fri Jan 10 12:32:07 CST 2020</span><br></pre></td></tr></table></figure>
+
+<h3 id="后台运行"><a href="#后台运行" class="headerlink" title="后台运行"></a>后台运行</h3><p>有些命令在执行时会不断的在屏幕上输出信息，影响到我们继续输入命令了，此时便可以在执行这条命令前，将这段命令的最后面添加个”&amp;”符号，那么从一开始执行该命令就会是在后台执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run mysql &amp;</span><br></pre></td></tr></table></figure>
+
+<h3 id="写脚本前的准备工作"><a href="#写脚本前的准备工作" class="headerlink" title="写脚本前的准备工作"></a>写脚本前的准备工作</h3><h4 id="默认登录-shell"><a href="#默认登录-shell" class="headerlink" title="默认登录 shell"></a>默认登录 shell</h4><p>在 Linux 操作系统，<code>/bin/bash</code>是默认登录 shell，是在创建用户时分配的，可以使用 chsh 命令改变默认 shell：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">chsh &lt;用户名&gt; -s &lt;新shell&gt;</span><br><span class="line">chsh huanggaochi -s /bin/sh</span><br></pre></td></tr></table></figure>
+<h4 id="bin-bash"><a href="#bin-bash" class="headerlink" title="#!&#x2F;bin&#x2F;bash"></a>#!&#x2F;bin&#x2F;bash</h4><p>位于脚本的第一行，称为释伴（shebang）行，这里#叫作 hash、!叫作 bang，shebang 用于显式声明命令通过&#x2F;bin&#x2F;bash 来执行。</p>
+<h4 id="脚本执行权"><a href="#脚本执行权" class="headerlink" title="脚本执行权"></a>脚本执行权</h4><p>使用 chmod 命令来使脚本可执行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod a+x test.sh</span><br></pre></td></tr></table></figure>
+<h4 id="禁止使用未定义的变量，避免粗心导致脚本逻辑错误"><a href="#禁止使用未定义的变量，避免粗心导致脚本逻辑错误" class="headerlink" title="禁止使用未定义的变量，避免粗心导致脚本逻辑错误"></a>禁止使用未定义的变量，避免粗心导致脚本逻辑错误</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env bash</span><br><span class="line"># 在脚本开头声明</span><br><span class="line">set -o nounset</span><br><span class="line">a=1 # 去掉这一行后执行会报错</span><br><span class="line">printf $a</span><br></pre></td></tr></table></figure>
+<h4 id="禁止出错后继续执行，避免错误影响面被继续扩大"><a href="#禁止出错后继续执行，避免错误影响面被继续扩大" class="headerlink" title="禁止出错后继续执行，避免错误影响面被继续扩大"></a>禁止出错后继续执行，避免错误影响面被继续扩大</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env bash</span><br><span class="line">set -o errexit</span><br><span class="line"># 执行其他shell脚本，如果出错会直接退出，一个最简单的报错比如没有sp.sh的执行权限，此时会报错：./sp.sh: Permission denied</span><br><span class="line"># 如果没有加set -o errexit，会输出“执行sp结束”</span><br><span class="line">./sp.sh</span><br><span class="line">printf 执行sp结束</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>一些命令——比如 rm 的-f 参数——可以强制忽略错误，此时脚本无法捕捉到 errexit，这样的参数在脚本中并不推荐使用。</p>
+</blockquote>
+<h4 id="将标准输出和错误输出同时重定向到同一位置"><a href="#将标准输出和错误输出同时重定向到同一位置" class="headerlink" title="将标准输出和错误输出同时重定向到同一位置"></a>将标准输出和错误输出同时重定向到同一位置</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ls /etc/passwd &gt; out.txt 2&gt;$1</span><br><span class="line">或者</span><br><span class="line">ls /etc/passwd &amp;&gt; out.txt</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h3><h4 id="系统定义变量"><a href="#系统定义变量" class="headerlink" title="系统定义变量"></a>系统定义变量</h4><p>系统变量是由系统系统自己创建的，这些变量通常由大写字母组成，可以通过“set”命令查看。</p>
+<h4 id="用户定义变量"><a href="#用户定义变量" class="headerlink" title="用户定义变量"></a>用户定义变量</h4><p>用户变量由系统用户来生成和定义，变量的值可以通过命令“echo $&lt;变量名&gt;”查看。</p>
+<h4 id="内建变量"><a href="#内建变量" class="headerlink" title="内建变量"></a>内建变量</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$0 命令行中的脚本名字</span><br><span class="line">$1 第一个命令行参数</span><br><span class="line">$2 第二个命令行参数</span><br><span class="line">...</span><br><span class="line">$9 第9个命令行参数</span><br><span class="line">$# 命令行参数的数量</span><br><span class="line">$#### 所有命令行参数，以空格隔开</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>命令建议：变量名大写、局部变量小写，函数名小写，命名需要体现变量、函数本身的作用，不能随便命名。</p>
+</blockquote>
+<h4 id="取消变量或取消变量的赋值"><a href="#取消变量或取消变量的赋值" class="headerlink" title="取消变量或取消变量的赋值"></a>取消变量或取消变量的赋值</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">name=1</span><br><span class="line">unset name</span><br><span class="line">echo $name</span><br></pre></td></tr></table></figure>
+<h4 id="执行算数运算"><a href="#执行算数运算" class="headerlink" title="执行算数运算"></a>执行算数运算</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 使用expr命令执行算数运算</span><br><span class="line">expr 5 + 2</span><br><span class="line"># $[]表达式</span><br><span class="line">result=$[16 + 4]</span><br></pre></td></tr></table></figure>
+<h4 id="if-语句"><a href="#if-语句" class="headerlink" title="if 语句"></a>if 语句</h4><p>可以使用-eq、-ne、-gt、-lt、-ge、-le 比较两个数字的大小。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">x=10</span><br><span class="line">y=10</span><br><span class="line">if [[ $x -gt $y ]]</span><br><span class="line">then</span><br><span class="line">echo &#x27;x &gt; y&#x27;</span><br><span class="line">else</span><br><span class="line">echo &#x27;y &gt; x&#x27;</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+<p>判空方法就比较多了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">if [[ ! $x ]]</span><br><span class="line">if [[ ! -n &quot;$x&quot; ]]</span><br><span class="line">if [[ test -z $x ]]</span><br><span class="line">if [[ &quot;$x&quot; == &quot;&quot; ]]</span><br></pre></td></tr></table></figure>
+<h4 id="case-语句"><a href="#case-语句" class="headerlink" title="case 语句"></a>case 语句</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">x=1</span><br><span class="line">case $x in</span><br><span class="line">1)</span><br><span class="line">echo &#x27;x=1&#x27;</span><br><span class="line">;;</span><br><span class="line">2)</span><br><span class="line">echo &#x27;x=2&#x27;</span><br><span class="line">;;</span><br><span class="line">*)</span><br><span class="line">echo &#x27;nothing&#x27;</span><br><span class="line">;;</span><br><span class="line">esac</span><br></pre></td></tr></table></figure>
+<h4 id="while-循环语句"><a href="#while-循环语句" class="headerlink" title="while 循环语句"></a>while 循环语句</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">i=0</span><br><span class="line">while [[ $i -lt 10 ]]</span><br><span class="line">do</span><br><span class="line">    echo $i</span><br><span class="line">    i=$(($i+1))</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<p>遍历一个列表：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">i=0</span><br><span class="line">while true; do</span><br><span class="line">    # 提取列表中一个item数据，根据数据格式不同，提取方式会有变化，下面以读取json文件为例：</span><br><span class="line">    item=$(./jq --argjson i $i -r &#x27;.items[$i]&#x27; data.json)</span><br><span class="line">    if [[ &quot;$item&quot; == &quot;&quot; || &quot;$item&quot; == &quot;null&quot; ]]; then</span><br><span class="line">        break</span><br><span class="line">    fi</span><br><span class="line">    echo $item</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h4 id="for-循环语句"><a href="#for-循环语句" class="headerlink" title="for 循环语句"></a>for 循环语句</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for i in 1 2 3</span><br><span class="line">do</span><br><span class="line">    echo $i</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h4 id="function-函数"><a href="#function-函数" class="headerlink" title="function 函数"></a>function 函数</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">function isEmpty() &#123;</span><br><span class="line">    if [[ &quot;$1&quot; == &quot;&quot; || &quot;$1&quot; == &quot;null&quot; ]];then</span><br><span class="line">        return 1</span><br><span class="line">    fi</span><br><span class="line">    return 0</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">isEmpty &#x27;123&#x27;</span><br><span class="line">if [[ $? -eq 1 ]];then</span><br><span class="line">    echo &quot;isEmpty&quot;</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+<h4 id="readonly、local"><a href="#readonly、local" class="headerlink" title="readonly、local"></a>readonly、local</h4><p>顾名思义，readonly 限制变量只读，local 限制变量生命周期在函数范围内。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env bash</span><br><span class="line">set -o nounset</span><br><span class="line">set -o errexit</span><br><span class="line"></span><br><span class="line">test() &#123;</span><br><span class="line">    readonly x=1</span><br><span class="line">    local y=2</span><br><span class="line">    echo $x</span><br><span class="line">    echo $y</span><br><span class="line">&#125;</span><br><span class="line">test</span><br><span class="line">echo $x</span><br><span class="line">echo $y # 这条语句会报错</span><br></pre></td></tr></table></figure>
+<h4 id="使用-代替"><a href="#使用-代替" class="headerlink" title="使用$()代替&#96;"></a>使用$()代替&#96;</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;A-`echo B-\`echo C-\\\`echo D\\\`\``&quot;</span><br><span class="line">echo &quot;A-$(echo B-$(echo C-$(echo D)))&quot;</span><br></pre></td></tr></table></figure>
+<p>$()支持内嵌，且不用转义，而且&#96;和’看起来很像，容易混淆。</p>
+<h4 id="使用-代替-1"><a href="#使用-代替-1" class="headerlink" title="使用[[]]代替[]"></a>使用[[]]代替[]</h4><p>用单中括号（下面命令只是作为示范，没有实际意义）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[ &quot;$&#123;name&#125;&quot; \&gt; &quot;a&quot; -o $&#123;name&#125; \&lt; &quot;m&quot; ]</span><br></pre></td></tr></table></figure>
+<p>用双中括号：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[ &quot;$&#123;name&#125;&quot; &gt; &quot;a&quot; &amp;&amp; &quot;$&#123;name&#125;&quot; &lt; &quot;m&quot; ]]</span><br></pre></td></tr></table></figure>
+<p>[[]]可以避免转义问题，且可以使用以下功能：<br>||：逻辑OR<br>&amp;&amp;：逻辑AND<br>&lt;：字符串比较（不需要转义）<br>&#x3D;&#x3D;：通配符匹配<br>&#x3D;~：正则表达式匹配</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">t=&quot;abc123&quot;</span><br><span class="line">[[ &quot;$t&quot; == abc#### ]] # true 通配符</span><br><span class="line">[[ &quot;$t&quot; == &quot;abc*&quot; ]] # false 字面值比较</span><br><span class="line">[[ &quot;$t&quot; =~ [abc]+[123]+ ]] # true 正则表达式</span><br><span class="line">[[ &quot;$t&quot; =~ &quot;abc*&quot; ]] # false 字面值比较</span><br></pre></td></tr></table></figure>
+<h4 id="封装，提升内聚性和可读性"><a href="#封装，提升内聚性和可读性" class="headerlink" title="封装，提升内聚性和可读性"></a>封装，提升内聚性和可读性</h4><p>以日志函数为例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[function] log() &#123; # classsic logger</span><br><span class="line">    local prefix=&quot;[$(date +%Y/%m/%d\ %H:%M:%S)]: &quot;</span><br><span class="line">    echo &quot;$&#123;prefix&#125; $@&quot; &gt;&amp;2</span><br><span class="line">    # return 只返回不会打印出来plainplainplainplainplainplainplainplainplainplainplainplainplain</span><br><span class="line">    [return i;]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">log &quot;INFO&quot; &quot;a message&quot;</span><br><span class="line">echo $?</span><br></pre></td></tr></table></figure>
+
+<h3 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h3><p>除了 echo 外 shell 还有以下工具用于调试 shell 脚本。</p>
+<h4 id=""><a href="#" class="headerlink" title="$?"></a><code>$?</code></h4><p>这个命令可以检查前一命令的结束状态，返回 0 表示执行成功了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">huanggaochi@app08:~$ ls /etc/passwd</span><br><span class="line">/etc/passwd</span><br><span class="line">huanggaochi@app08:~$ echo $?</span><br><span class="line">0</span><br></pre></td></tr></table></figure>
+<h4 id="脚本调试"><a href="#脚本调试" class="headerlink" title="脚本调试"></a>脚本调试</h4><p>bash 提供了一些方便调试的选项：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 跟踪脚本里每个命令的执行，并附加扩充信息</span><br><span class="line">sh -x test.sh</span><br><span class="line"># 对脚本进行语法检查，并跟踪脚本里每个命令的执行</span><br><span class="line">sh -nv test.sh</span><br></pre></td></tr></table></figure>
+<p>也可以直接在脚本里设置：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set -o verbose</span><br><span class="line">set -o xtrace</span><br></pre></td></tr></table></figure>
+<h4 id="test"><a href="#test" class="headerlink" title="test"></a>test</h4><p>test 命令可以用来测试脚本：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">-d 如果文件存在并且是目录，返回 true</span><br><span class="line">-e 如果文件存在，返回 true</span><br><span class="line">-f 如果文件存在并且是普通文件，返回 true</span><br><span class="line">-r 如果文件存在并可读，返回 true</span><br><span class="line">-s 如果文件存在并且不为空，返回 true</span><br><span class="line">-w 如果文件存在并可写，返回 true</span><br><span class="line">-x 如果文件存在并可执行，返回 true</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><h3 id="输入"><a href="#输入" class="headerlink" title="输入"></a>输入</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">echo &#x27;Please enter your name&#x27;</span><br><span class="line">read name</span><br><span class="line">echo &quot;My name is $name&quot;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这里不能用单引号’包裹$name，否则会被解析为字符串</p>
+</blockquote>
+<h3 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h3><p>如果输出只有一列：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sort test.txt</span><br></pre></td></tr></table></figure>
+<p>但是默认情况下是按照字典序排序的，如果数据本身是数字，则需要明确指明：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sort -n test.txt</span><br></pre></td></tr></table></figure>
+<p>按第 2 列排序：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sort -n -t &#x27; &#x27; -k 2 test.txt</span><br></pre></td></tr></table></figure>
+<h3 id="去重"><a href="#去重" class="headerlink" title="去重"></a>去重</h3><p>sort 命令也支持去重：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sort -u test.txt</span><br></pre></td></tr></table></figure>
+<p>uniq 命令专门用来去重，不过针对的是连续出现的相同记录：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sort test.txt | uniq</span><br></pre></td></tr></table></figure>
+<h3 id="按行读取文件"><a href="#按行读取文件" class="headerlink" title="按行读取文件"></a>按行读取文件</h3><p>写法 1：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">while read line</span><br><span class="line">do</span><br><span class="line">echo $line</span><br><span class="line">done &lt; filename(待读取的文件)</span><br></pre></td></tr></table></figure>
+<p>写法 2：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/bash</span><br><span class="line">cat filename(待读取的文件) | while read line</span><br><span class="line">do</span><br><span class="line">echo $line</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<p>写法 3：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">for line in `cat filename(待读取的文件)`</span><br><span class="line">do</span><br><span class="line">echo $line</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<p>for 读取和 while 读取是有区别的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ cat file</span><br><span class="line">1</span><br><span class="line">2 3</span><br><span class="line"></span><br><span class="line">$ 使用 while 读取</span><br><span class="line">1</span><br><span class="line">2 3</span><br><span class="line"></span><br><span class="line">$ 使用 for 读取</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td></tr></table></figure>
+<h3 id="遍历一个目录下的所有文件"><a href="#遍历一个目录下的所有文件" class="headerlink" title="遍历一个目录下的所有文件"></a>遍历一个目录下的所有文件</h3><p>如果碰到文件夹则递归搜索，碰到文件则执行自定义操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">function read_dir() &#123;</span><br><span class="line">for file in `ls $1`; do</span><br><span class="line">    if [[ -d $1&quot;/&quot;$&#123;file&#125; ]]; then</span><br><span class="line">        read_dir $1&quot;/&quot;$&#123;file&#125;</span><br><span class="line">    elif [[ $&#123;file&#125; != *md ]]; then</span><br><span class="line">        # 跳过不符合匹配条件的文件plainplainplainplainplainplainplainplainplainplain</span><br><span class="line">        echo &#x27;忽略文件:&#x27;$1&quot;/&quot;$&#123;file&#125;</span><br><span class="line">    else</span><br><span class="line">        # 处理该文件</span><br><span class="line">        echo $1&quot;/&quot;$&#123;file&#125;</span><br><span class="line">    fi</span><br><span class="line">done</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">read_dir $1</span><br></pre></td></tr></table></figure>
+<h3 id="统计每秒"><a href="#统计每秒" class="headerlink" title="统计每秒"></a>统计每秒</h3><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mfryf/archive/2012/05/09/2491955.html">Linux Shell统计每秒钟内文件增加行数</a></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">DATE=$(date +%s)</span><br><span class="line">count=$(grep -c &quot;&quot; short.txt)</span><br><span class="line">while true</span><br><span class="line">do</span><br><span class="line">        DATE_New = $(date +%s)</span><br><span class="line">        if (( $(date +%s) == DATE+1))</span><br><span class="line">        then</span><br><span class="line"></span><br><span class="line">        DATE = $(date +%s)</span><br><span class="line">        count_new = $(grep -c &quot;&quot; short.txt)</span><br><span class="line">        add = $((count_new - count))</span><br><span class="line">        if [[ ! -n &quot;$add&quot; ]]</span><br><span class="line">        then</span><br><span class="line">        add = 0</span><br><span class="line">        fi</span><br><span class="line">        echo add line number is:$add</span><br><span class="line">        count = $count_new</span><br><span class="line">        fi</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h3 id="统计行数"><a href="#统计行数" class="headerlink" title="统计行数"></a>统计行数</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">grep &quot;过滤&quot; a.txt b.txt | wc -l</span><br><span class="line"># 直接用 grep 的-c 参数统计可以快一点，而且能分别统计每个文件的行数</span><br><span class="line">grep &quot;过滤&quot; -c a.txt b.txt</span><br></pre></td></tr></table></figure>
+<h3 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h3><p>捕获 IP 和分组，分组使用括号包围，可以通过数组${BASH_REMATCH}来获得：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">if [[ $ip =~ ^([0-9]&#123;1,2&#125;|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]&#123;1,2&#125;|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]&#123;1,2&#125;|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.([0-9]&#123;1,2&#125;|1[0-9][0-9]|2[0-4][0-9]|25[0-5])$ ]];then</span><br><span class="line">	echo &quot;match&quot;</span><br><span class="line">	echo $&#123;BASH_REMATCH[1]&#125;</span><br><span class="line">	echo $&#123;BASH_REMATCH[2]&#125;</span><br><span class="line">	echo $&#123;BASH_REMATCH[3]&#125;</span><br><span class="line">	echo $&#123;BASH_REMATCH[4]&#125;</span><br><span class="line">else</span><br><span class="line">	echo &quot;Not match&quot;</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+<p>按行读取并提取：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">while read line</span><br><span class="line">do</span><br><span class="line">    # 每一行格式为&quot;a,b,c&quot;plain</span><br><span class="line">    if [[ $line =~ ^\&quot;(.+)\&quot;,\&quot;(.+)\&quot;,\&quot;(.+)\&quot;$ ]];then</span><br><span class="line">        echo $&#123;BASH_REMATCH[1]&#125;-$&#123;BASH_REMATCH[2]&#125;-$&#123;BASH_REMATCH[3]&#125;</span><br><span class="line">    else</span><br><span class="line">    	echo &quot;Not match&quot;</span><br><span class="line">    fi</span><br><span class="line">done &lt; data.txt</span><br></pre></td></tr></table></figure>
+<h3 id="统计机器参数"><a href="#统计机器参数" class="headerlink" title="统计机器参数"></a>统计机器参数</h3><h4 id="查看占用-CPU-最多的进程"><a href="#查看占用-CPU-最多的进程" class="headerlink" title="查看占用 CPU 最多的进程"></a>查看占用 CPU 最多的进程</h4><p>除了使用 top 命令外，还可以使用 ps 命令导出一份快照：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps H -eo pid,pcpu | sort -rnk2 | head</span><br></pre></td></tr></table></figure>
+<h4 id="找最耗-CPU-的进程对应的服务名"><a href="#找最耗-CPU-的进程对应的服务名" class="headerlink" title="找最耗 CPU 的进程对应的服务名"></a>找最耗 CPU 的进程对应的服务名</h4><p>可以使用 ps 命令或直接查询 proc 文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ps aux | fgrep &#123;pid&#125;</span><br><span class="line">ll /proc/&#123;pid&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="查询某个端口的连接情况"><a href="#查询某个端口的连接情况" class="headerlink" title="查询某个端口的连接情况"></a>查询某个端口的连接情况</h4><p>可以使用 netstat 或 lsof 查询已打开的文件列表：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">netstat -lap | fgrep &#123;port&#125;</span><br><span class="line">lsof -l &#123;port&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="网络"><a href="#网络" class="headerlink" title="网络"></a>网络</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 通过 HTTP 请求查询用户信息</span><br><span class="line">curl -s http://localhost:8080/userinfo?name=Mike\&amp;channel=WECHAT -o userinfo.json</span><br></pre></td></tr></table></figure>
+
+<h3 id="日期操作"><a href="#日期操作" class="headerlink" title="日期操作"></a>日期操作</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 当前时间格式化</span><br><span class="line">date &quot;+%Y-%m-%d %H:%M:%S&quot;</span><br><span class="line"># 把日期中的前缀 0 去掉</span><br><span class="line">date &#x27;+%-H:%-M:%-S&#x27;</span><br></pre></td></tr></table></figure>
+<p>加号表示欲显示的格式，可分为日期和时间两种，日期格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">%a : 星期几 (Sun..Sat)</span><br><span class="line">%A : 星期几 (Sunday..Saturday)</span><br><span class="line">%b : 月份 (Jan..Dec)</span><br><span class="line">%B : 月份 (January..December)</span><br><span class="line">%c : 直接显示日期和时间</span><br><span class="line">%d : 日 (01..31)</span><br><span class="line">%D : 直接显示日期 (mm/dd/yy)</span><br><span class="line">%h : 同 %b</span><br><span class="line">%j : 一年中的第几天 (001..366)</span><br><span class="line">%m : 月份 (01..12)</span><br><span class="line">%U : 一年中的第几周 (00..53) (以 Sunday 为一周的第一天的情形)</span><br><span class="line">%w : 一周中的第几天 (0..6)</span><br><span class="line">%W : 一年中的第几周 (00..53) (以 Monday 为一周的第一天的情形)</span><br><span class="line">%x : 直接显示日期 (mm/dd/yyyy)</span><br><span class="line">%y : 年份的最后两位数字 (00.99)</span><br><span class="line">%Y : 完整年份 (0000..9999)</span><br></pre></td></tr></table></figure>
+<p>时间格式如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">%%: 打印出%</span><br><span class="line">%n : 下一行</span><br><span class="line">%t : 跳格</span><br><span class="line">%H : 小时(00..23)</span><br><span class="line">%k : 小时(0..23)</span><br><span class="line">%l : 小时(1..12)</span><br><span class="line">%M : 分钟(00..59)</span><br><span class="line">%p : 显示本地 AM 或 PM</span><br><span class="line">%P : 显示本地 am 或 pm</span><br><span class="line">%r : 直接显示时间(12 小时制，格式为 hh:mm:ss [AP]M)</span><br><span class="line">%s : 从 1970 年 1 月 1 日 00:00:00 UTC 到目前为止的秒数</span><br><span class="line">%S : 秒(00..61)</span><br><span class="line">%T : 直接显示时间(24 小时制)</span><br><span class="line">%X : 相当于%H:%M:%S %p</span><br><span class="line">%Z : 显示时区</span><br></pre></td></tr></table></figure>
+
+<p>若是不以加号作为开头，则表示要设定时间：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">date &quot;0110082558.12&quot;</span><br></pre></td></tr></table></figure>
+<p>时间格式为：<code>MMDDhhmm[[CC]YY][.ss]</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">MM 为月份</span><br><span class="line">DD 为日</span><br><span class="line">hh 为小时</span><br><span class="line">mm 为分钟</span><br><span class="line">CC 为年份前两位数字</span><br><span class="line">YY 为年份后两位数字</span><br><span class="line">ss 为秒数</span><br></pre></td></tr></table></figure>
+
+<p>当我们使用日期时经常会对日期进行加减操作，比如找下一天：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">date -d next-day &#x27;+%Y-%m-%d %H:%M:%S&#x27;</span><br></pre></td></tr></table></figure>
+<p>除了next-day，还支持tomorrow、last-day、yesterday（同last-day）、next-month、next-week、next-monday、next-thursday、last-month、next-year、last-year。<br>除了日期，时间还有hour，minute，second。</p>
+<p>下例中，B是一个事先输入的日期：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 转换为时间戳</span><br><span class="line">date -d &quot;$B&quot; +%s</span><br><span class="line"># 5 分钟前</span><br><span class="line">date &quot;+%Y-%m-%d %H:%M:%S&quot; -d &quot;$B -5 minutes&quot;</span><br><span class="line"># 4 天后</span><br><span class="line">date &quot;+%Y-%m-%d %H:%M:%S&quot; -d &quot;$B +4 days&quot;</span><br><span class="line"># 比较两个日期间相差的天数</span><br><span class="line">expr &#x27;(&#x27; $(date +%s -d &quot;2016-08-08&quot;) - $(date +%s -d &quot;2016-09-09&quot;) &#x27;)&#x27; / 86400</span><br><span class="line"># 比较两个时间相差的秒数</span><br><span class="line">expr &#x27;(&#x27; $(date +%s -d &quot;$(date -d &quot;$B&quot; &#x27;+%Y-%m-%d %H:%M:%S&#x27;)&quot;) - $(date +%s -d &quot;2020-01-10 12:20:32&quot;) &#x27;)&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>除了格式化显示外，还可以指定系统时间：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">date -s &quot;2020-01-10 01:01&quot;</span><br><span class="line">date --set=&quot;2020-01-10 01:01&quot;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="URLEncode"><a href="#URLEncode" class="headerlink" title="URLEncode"></a>URLEncode</h3><p>URL编码将一些空格、括号等特殊字符转义为16进制数字，方便网络传输。<br>可以使用xxd将原字符串编码为16进制，然后每隔两位插入一个%，就可以得到URLEncoded字符串：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &#x27;你好&#x27; | tr -d &#x27;\n&#x27; | xxd -plain | sed &#x27;s/\(..\)/%\1/g&#x27; | tr -d &#x27;\n&#x27;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://dwmkerr.com/effective-shell-part-5-understanding-the-shell/">Effective Shell Interlude: Understanding the Shell</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.tldp.org/LDP/abs/html/index.html">Advanced Bash-Scripting Guide</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/jlevy/the-art-of-command-line/blob/master/README-zh.md">jlevy&#x2F;the-art-of-command-line</a></li>
+</ol>
+<script type="text&#x2F;javascript" src="https://unpkg.com/kity@2.0.4/dist/kity.min.js"></script><script type="text&#x2F;javascript" src="https://unpkg.com/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text&#x2F;javascript" src="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text&#x2F;css" href="https://unpkg.com/hexo-simple-mindmap@0.8.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Linux/" rel="tag"># Linux</a>
+              <a href="/tags/%E8%84%9A%E6%9C%AC/" rel="tag"># 脚本</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/9acacb00.html" rel="prev" title="Kubernetes入门">
+                  <i class="fa fa-angle-left"></i> Kubernetes入门
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/b791cedc.html" rel="next" title="微服务核心技术总结">
+                  微服务核心技术总结 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
