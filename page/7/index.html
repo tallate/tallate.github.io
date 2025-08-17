@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">187</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">189</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">187</span>
+          <span class="site-state-item-count">189</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -158,7 +158,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-count">83</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -175,6 +175,202 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/28a7425f.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/28a7425f.html" class="post-title-link" itemprop="url">RocketMQ 消息的存储和查询原理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-12 12:22:48" itemprop="dateCreated datePublished" datetime="2020-08-12T12:22:48+08:00">2020-08-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><img src="/imgs/RocketMQ/RocketMQ-%E6%B6%88%E6%81%AF%E5%AD%98%E5%82%A8.png" alt="RocketMQ-消息存储" title="RocketMQ-消息存储"><br>如上图所示，消息的存储分为如下 3 个部分：</p>
+<ol>
+<li>CommitLog：日志，存储消息主体；</li>
+<li>ConsumerQueue：在 CommitLog 中根据 Topic 和 Tag 检索消息是非常低效的，因此引入了 ConsumerQueue 作为消费消息的<strong>索引</strong>，它保存的其实是 CommitLog 中存储的消息的指针。</li>
+<li>IndexFile：<strong>hash 索引</strong>，提供一种通过 key 或时间区间来查询消息的方法。</li>
+</ol>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/28a7425f.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/965af9c3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/965af9c3.html" class="post-title-link" itemprop="url">RocketMQ 延时消息</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-12 12:22:48" itemprop="dateCreated datePublished" datetime="2020-08-12T12:22:48+08:00">2020-08-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="消息实时性"><a href="#消息实时性" class="headerlink" title="消息实时性"></a>消息实时性</h2><p>RocketMQ 支持 pull 和 push 两种消息消费模式，但 push 是使用长轮询 Pull 的方式实现的，可保证消息非常实时，消息实时性不低于 Push。<br>长轮询 pull 的原理是：发起 pull 请求失败后（比如 Broker 端暂时没有可以消费的消息），先 hold 住线程并挂起该请求。</p>
+<p>RocketMQ除了上述的准实时消息外，还支持<strong>延时消息</strong>。</p>
+<h2 id="延时消息"><a href="#延时消息" class="headerlink" title="延时消息"></a>延时消息</h2><p>RocketMQ里延时消息功能并不能指定时间，而是只能指定延时级别：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Message message = new Message(&quot;TopicTest&quot;, &quot;TagA&quot;, (&quot;Hello scheduled message &quot; + i).getBytes());</span><br><span class="line">// 设置延时等级3,这个消息将在10s之后发送(现在只支持固定的几个时间,详看delayTimeLevel)</span><br><span class="line">message.setDelayTimeLevel(3);</span><br><span class="line">producer.send(message);</span><br></pre></td></tr></table></figure>
+
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><ol>
+<li>延时消息和普通消息一样会先被写入<code>commitLog</code>，但不会立刻写入<code>consumerQueue</code>中，而是存放到<code>SCHEDULE_TOPIC_XXX</code>的topic下面，并且以延时粒度作为queueId区分；</li>
+<li>之后Broker端会有定时任务扫描<code>SCHEDULE_TOPIC_XXX</code>下的每个Queue，到时候后写入到consumerQueue中。</li>
+</ol>
+<p>源码入口是<code>ScheduleMessageService.start</code>，启动时会调用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">public void start() &#123;</span><br><span class="line">    if (started.compareAndSet(false, true)) &#123;</span><br><span class="line">        this.timer = new Timer(&quot;ScheduleMessageTimerThread&quot;, true);</span><br><span class="line">        // 1. 根据支持的各种延迟级别，添加不同延迟时间的TimeTask</span><br><span class="line">        for (Map.Entry&lt;Integer, Long&gt; entry : this.delayLevelTable.entrySet()) &#123;</span><br><span class="line">            Integer level = entry.getKey();</span><br><span class="line">            Long timeDelay = entry.getValue();</span><br><span class="line">            // 每个延迟级别对应一个offset，代表一个普通消息队列文件</span><br><span class="line">            Long offset = this.offsetTable.get(level);</span><br><span class="line">            if (null == offset) &#123;</span><br><span class="line">                offset = 0L;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            if (timeDelay != null) &#123;</span><br><span class="line">                this.timer.schedule(new DeliverDelayedMessageTimerTask(level, offset), FIRST_DELAY_TIME);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        // 2. 添加一个10s执行一次的TimeTask</span><br><span class="line">        this.timer.scheduleAtFixedRate(new TimerTask() &#123;</span><br><span class="line"></span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    if (started.get()) ScheduleMessageService.this.persist();</span><br><span class="line">                &#125; catch (Throwable e) &#123;</span><br><span class="line">                    log.error(&quot;scheduleAtFixedRate flush exception&quot;, e);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, 10000, this.defaultMessageStore.getMessageStoreConfig().getFlushDelayOffsetInterval());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>DeliverDelayedMessageTimerTask<br><code>ScheduleMessageService.executeOnTimeup</code>：<br>扫描延迟消息队列（<code>SCHEDULE_TOPIC_XXX</code>）的消息，将该延迟消息转换为指定的topic的消息。<br>1、读取不同延迟级别对应的延迟消息；<br>2、取得对应延迟级别读取的开始位置offset；<br>3、将延迟消息转换为指定topic的普通消息并存放起来。<br>4、修改下一次读取的offset值（修改的只是缓存），并指定下一次转换延迟消息的timetask。</p>
+<p><code>ScheduleMessageService.this.persist</code>：<br>将延迟队列扫描处理的进度offset持久化到delayOffset.json文件中。</p>
+<p>RocketMQ延迟队列也有一个缺点：Java中的Timer是单线程，而延迟消息的原理是Timer，也就是说当同时发送的延迟消息过多的时候一个线程处理速度一定是有瓶颈的，因此在实际项目中使用延迟消息一定不要过多依赖，只能作为一个辅助手段。</p>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1511,814 +1707,6 @@
 </ol>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
 <li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/zero-gg/p/9057092.html">MySQL 5.7 半同步复制技术</a></li>
-</ol>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/f2150593.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/f2150593.html" class="post-title-link" itemprop="url">Netty 原理总结</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-05-29 10:18:28" itemprop="dateCreated datePublished" datetime="2020-05-29T10:18:28+08:00">2020-05-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Netty/" itemprop="url" rel="index"><span itemprop="name">Netty</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-
-<h1 id="为什么使用-Netty"><a href="#为什么使用-Netty" class="headerlink" title="为什么使用 Netty"></a>为什么使用 Netty</h1><ol>
-<li>实现协议的局限性<br>今天，我们使用通用的应用程序或者类库来实现互相通讯，比如，我们经常使用一个 HTTP 客户端库来从 web 服务器上获取信息，或者通过 web 服务来执行一个远程的调用。<br>然而，有时候一个通用的协议或他的实现并没有很好的满足需求。比如我们无法使用一个通用的 HTTP 服务器来处理大文件、电子邮件以及近实时消息，比如金融信息和多人游戏数据。我们需要一个高度优化的协议来处理一些特殊的场景。例如你可能想实现一个优化了的 Ajax 的聊天应用、媒体流传输或者是大文件传输器，你甚至可以自己设计和实现一个全新的协议来准确地实现你的需求。<br>另一个不可避免的情况是当你不得不处理遗留的专有协议来确保与旧系统的互操作性。在这种情况下，重要的是我们如何才能快速实现协议而不牺牲应用的稳定性和性能。</li>
-<li>使用 Netty 可以有效改善这种情况<br>Netty 是一个提供 asynchronous event-driven （异步事件驱动）的网络应用框架，是一个用以快速开发高性能、高可靠性协议的服务器和客户端。<br>换句话说，Netty 是一个 NIO 客户端服务器框架，使用它可以快速简单地开发网络应用程序，比如服务器和客户端的协议。Netty 大大简化了网络程序的开发过程比如 TCP 和 UDP 的 socket 服务的开发。<br>“快速和简单”并不意味着应用程序会有难维护和性能低的问题，Netty 是一个精心设计的框架，它从许多协议的实现中吸收了很多的经验比如 FTP、SMTP、HTTP、许多二进制和基于文本的传统协议.因此，Netty 已经成功地找到一个方式,在不失灵活性的前提下来实现开发的简易性，高性能，稳定性。<br>有一些用户可能已经发现其他的一些网络框架也声称自己有同样的优势，所以你可能会问是 Netty 和它们的不同之处。答案就是 Netty 的哲学设计理念。Netty 从开始就为用户提供了用户体验最好的 API 以及实现设计。正是因为 Netty 的哲学设计理念，才让您得以轻松地阅读本指南并使用 Netty。</li>
-</ol>
-<h1 id="架构总览"><a href="#架构总览" class="headerlink" title="架构总览"></a>架构总览</h1><p><img src="/imgs/Netty/Netty%E6%9E%B6%E6%9E%84%E6%80%BB%E8%A7%88.png" alt="Netty架构总览" title="Netty架构总览"><br>Netty 的架构由三部分组成——缓冲（buffer），通道（channel），事件模型（event model）——所有的高级特性都构建在这三个核心组件之上。</p>
-<h2 id="NIO"><a href="#NIO" class="headerlink" title="NIO"></a>NIO</h2><ol>
-<li><a target="_blank" rel="noopener" href="https://segmentfault.com/q/1010000010446129">想了解 Aio 与 Nio 的利弊，为什么 Netty 没有采用 Aio 实现？</a></li>
-</ol>
-<p>NIO 基于传输层，可以自定义数据处理逻辑来作为应用层，或者基于现有的 HTTP 组件进行升级，在线上环境这样的升级会带来一些兼容性问题，HTTP 已有相应的协议升级机制：<a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Protocol_upgrade_mechanism">Protocol upgrade mechanism</a>。</p>
-<p>NIO 相对 BIO 优势：</p>
-<ol>
-<li>零拷贝<br>零拷贝减少线程上下文切换次数，且数据直接拷贝到内核空间，不占用 JVM 堆空间；</li>
-<li>减少线程资源浪费<br>NIO 可以一个线程监听多个 Socket 的连接、读、写请求，而不是像 BIO 那样每个 Socket 创建一个线程，但是同时会有一个问题：</li>
-</ol>
-<h2 id="Netty-核心组件"><a href="#Netty-核心组件" class="headerlink" title="Netty 核心组件"></a>Netty 核心组件</h2><ol>
-<li>Channel 和 ChannelHandler</li>
-<li>ByteBuf</li>
-<li>Pipeline</li>
-</ol>
-<h1 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h1><p><img src="/imgs/Netty/Netty%E6%B5%81%E7%A8%8B.png" alt="Netty流程" title="Netty流程"></p>
-<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><p>下面是一个启动Netty服务端的代码：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">ServerBootstrap bootstrap = new ServerBootstrap();</span><br><span class="line">        bootstrap.group(bossGroup(), workerGroup())</span><br><span class="line">                .channel(NioServerSocketChannel.class)</span><br><span class="line">                .childHandler(new ChannelInitializer&lt;SocketChannel&gt;() &#123;</span><br><span class="line"></span><br><span class="line">                    @Override</span><br><span class="line">                    protected void initChannel(SocketChannel ch) throws Exception &#123;</span><br><span class="line">                        // 空闲检测</span><br><span class="line">                        ch.pipeline().addLast(&quot;idleStateHandler&quot;, new IdleStateHandler(15, 0, 0,</span><br><span class="line">                                TimeUnit.MINUTES));</span><br><span class="line"></span><br><span class="line">                        // 半包/粘包分解器</span><br><span class="line">                        ch.pipeline().addLast(</span><br><span class="line">                                new DelimiterBasedFrameDecoder(2048, true, getFirstBytes()</span><br><span class="line">                                ));</span><br><span class="line">                        ch.pipeline().addLast(其他Handler比如解码之类的);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;).option(ChannelOption.SO_BACKLOG, 1024);</span><br><span class="line">bootstrap.bind(10885).sync()</span><br></pre></td></tr></table></figure>
-
-<h2 id="创建EventLoop"><a href="#创建EventLoop" class="headerlink" title="创建EventLoop"></a>创建EventLoop</h2><p>在上面的代码中，出现了<strong>bossGroup</strong>和<strong>workerGroup</strong>，bossGroup主要负责监听连接，拿到连接后，交给workerGroup中的线程来监听读或写事件。<br><code>io.netty.util.concurrent.MultithreadEventExecutorGroup#MultithreadEventExecutorGroup</code><br><code>EventExecutorGroup</code>会给每个线程创建一个<code>EventLoop</code>。</p>
-<p><code>io.netty.channel.nio.NioEventLoop#NioEventLoop</code><br><code>newChild()</code>创建EventLoop实例，其默认实现是<code>NioEventLoop</code>。</p>
-<p><code>io.netty.util.concurrent.MultithreadEventExecutorGroup#MultithreadEventExecutorGroup(int, java.util.concurrent.Executor, io.netty.util.concurrent.EventExecutorChooserFactory, java.lang.Object...)</code><br>服务器初始化过程中创建了个线程池<code>ThreadPerTaskExecutor</code>：</p>
-<ul>
-<li>每次执行任务都会构造一个线程执行<br><code>io.netty.util.concurrent.ThreadPerTaskExecutor#execute</code></li>
-</ul>
-<h2 id="创建及初始化-ServerSocketChannel"><a href="#创建及初始化-ServerSocketChannel" class="headerlink" title="创建及初始化 ServerSocketChannel"></a>创建及初始化 ServerSocketChannel</h2><p>Netty 有一个叫做 <strong>Channel</strong> 的统一的异步 I&#x2F;O 编程接口，这个编程接口抽象了所有点对点的通信操作。也就是说，如果你的应用是基于 Netty 的某一种传输实现，那么同样的，你的应用也可以运行在 Netty 的另一种传输实现上。Netty 提供了几种拥有相同编程接口的基本传输实现：</p>
-<ul>
-<li>基于 NIO 的 TCP&#x2F;IP 传输 (见 io.netty.channel.nio),</li>
-<li>基于 OIO 的 TCP&#x2F;IP 传输 (见 io.netty.channel.oio),</li>
-<li>基于 OIO 的 UDP&#x2F;IP 传输, 和</li>
-<li>本地传输 (见 io.netty.channel.local).</li>
-</ul>
-<p>切换不同的传输实现通常只需对代码进行几行的修改调整，例如选择一个不同的 <strong>ChannelFactory</strong> 实现。<br>此外，你甚至可以利用新的传输实现没有写入的优势，只需替换一些构造器的调用方法即可，例如串口通信。而且由于核心 API 具有高度的可扩展性，你还可以完成自己的传输实现。</p>
-<ol>
-<li>入口<br><code>io.netty.bootstrap.AbstractBootstrap#bind(int)</code><br>用户代码调用bind绑定端口时会触发Channel的创建和初始化</li>
-</ol>
-<p><code>io.netty.bootstrap.ServerBootstrap#init</code><br>对Channel的使用可以追溯到这个init方法，包括Channel的创建、属性等的设置。</p>
-<ol>
-<li><p>创建<br><code>NioServerSocketChannel</code>的构造方法 -&gt; <code>io.netty.channel.socket.nio.NioServerSocketChannel#newSocket</code><br>可以看到，Netty中的<code>ServerSocketChannel</code>其实就对应JDK NIO中的<code>ServerSocketChannel</code>，在创建<code>NioServerSocketChannel</code>的同时创建了一个NIO中的<code>ServerSocketChannel</code>。</p>
-</li>
-<li><p>初始化<br>中间包含对<code>childOptions</code>和<code>childAttrs</code>等的设置。</p>
-</li>
-<li><p>添加一个连接处理器<code>ServerBootstrapAcceptor</code>。</p>
-</li>
-</ol>
-<h2 id="注册Selector"><a href="#注册Selector" class="headerlink" title="注册Selector"></a>注册Selector</h2><p>紧接着上面的初始化过程，接下来是注册NIO中的Selector。<br><code>io.netty.channel.EventLoopGroup#register(io.netty.channel.Channel)</code><br>总而言之最终还是使用NIO注册了 Selector。<br><code>io.netty.channel.nio.AbstractNioChannel#doRegister</code></p>
-<h3 id="启动-NioEventLoop"><a href="#启动-NioEventLoop" class="headerlink" title="启动 NioEventLoop"></a>启动 NioEventLoop</h3><p><code>io.netty.bootstrap.AbstractBootstrap#doBind0</code><br>绑定端口号的同时，执行一个线程。<br><code>io.netty.util.concurrent.SingleThreadEventExecutor#startThread</code><br>NioEventLoop启动流程的最终启动了一个线程。<br><code>io.netty.channel.nio.NioEventLoop#run</code><br>该线程任务根据EventLoop的实现不同而有所不同，在<code>NioEventLoop</code>中，主要任务为以下3步：</p>
-<ol>
-<li><p>接收事件（selectionKey）<br><code>io.netty.channel.nio.NioEventLoop#select</code><br>当检查没有需要处理的selectionKey时就会发生空轮询，Netty在轮询时会记录空轮询次数，<strong>当空轮询达到一定次数时，将之前注册的事件先取消，从而避免了NIO的空轮询Bug</strong>。</p>
-</li>
-<li><p>检测新连接并创建NioSocketChannel<br><code>io.netty.channel.nio.NioEventLoop#processSelectedKeys</code><br>处理连接请求，并分发请求到<strong>pipeline</strong><br><code>io.netty.channel.nio.AbstractNioMessageChannel.NioMessageUnsafe#read</code></p>
-<ul>
-<li>每个连接创建一个<strong>ServerSocketChannel</strong>。<br> <code>io.netty.channel.socket.nio.NioServerSocketChannel#doReadMessages</code></li>
-<li>读取数据并分发到<strong>pipeline</strong><br> <code>io.netty.channel.ChannelPipeline#fireChannelReadComplete</code></li>
-</ul>
-</li>
-<li><p>执行线程任务<br><code>io.netty.util.concurrent.SingleThreadEventExecutor#runAllTasks(long)</code></p>
-</li>
-</ol>
-<h2 id="pipeline中的第一个ChannelHandler"><a href="#pipeline中的第一个ChannelHandler" class="headerlink" title="pipeline中的第一个ChannelHandler"></a>pipeline中的第一个ChannelHandler</h2><p>pipeline的第一个Handler为<code>ServerBootstrapAcceptor</code>，它的主要任务包括：</p>
-<ol>
-<li><p>将用户自定义<code>ChannelHandler</code>添加到pipeline</p>
-</li>
-<li><p>选择一个<code>NioEventLoop</code>传播事件<br><code>io.netty.channel.MultithreadEventLoopGroup#register(io.netty.channel.Channel)</code></p>
-</li>
-<li><p>注册selector<br>代码流程非常长，但是最终可以跟到<code>doRegister</code>这个方法，可以发现最后还是调用了JDK的SocketChannel注册Selector。<br><code>io.netty.channel.AbstractChannel.AbstractUnsafe#register0</code> -&gt; <code>io.netty.channel.nio.AbstractNioChannel#doRegister</code></p>
-</li>
-<li><p>注册读事件<br>代码最后判断第一次连接则触发连接激活事件，代码位置仍然是上边的<code>register0</code>。<br><code>io.netty.channel.AbstractChannel.AbstractUnsafe#register0</code><br>继续往下看可以看到最终将读事件（selectionKey）注册到了Selector<br><code>io.netty.channel.DefaultChannelPipeline.HeadContext#channelActive</code><br>-&gt; <code>io.netty.channel.DefaultChannelPipeline.HeadContext#readIfIsAutoRead</code><br>-&gt; <code>io.netty.channel.nio.AbstractNioChannel#doBeginRead</code></p>
-</li>
-</ol>
-<p>选择EventLoop：<br><code>io.netty.util.concurrent.MultithreadEventExecutorGroup#chooser</code><br>每当有客户端连接进来时，Netty需要决定选择哪个EventLoop，这个工作是由<code>EventExecutorChooser</code>负责的：</p>
-<ul>
-<li><code>GenericEventExecutorChooser</code>：循环选择。</li>
-<li><code>PowerOfTwoEventExecutorChooser</code>：也是循环选择，只不过<code>GenericEventExecutorChooser</code>使用了取模运算，而<code>PowerOfTwoEventExecutorChooser</code>是通过位运算实现的。</li>
-</ul>
-<h2 id="Pipeline"><a href="#Pipeline" class="headerlink" title="Pipeline"></a>Pipeline</h2><ol>
-<li><p>创建Pipeline<br>创建NioSocketChannel时会创建Pipeline：<br><code>io.netty.channel.AbstractChannel#AbstractChannel</code><br>Pipeline本身是一个<strong>双向链表</strong>的结构，且有两个哨兵节点<code>head</code>和<code>tail</code>。</p>
-</li>
-<li><p>添加Pipeline<br>添加到链表<br><code>io.netty.channel.ChannelPipeline#addLast(io.netty.channel.ChannelHandler...)</code><br>检查是否重复添加，如果加了<code>@Sharable</code>注解是可以重复添加的<br><code>io.netty.channel.DefaultChannelPipeline#checkMultiplicity</code><br>添加到链表末尾，也就是添加到<code>tail</code>节点的前面。<br><code>io.netty.channel.DefaultChannelPipeline#addLast0</code></p>
-</li>
-<li><p>删除Pipeline<br>有时候我们需要删除一个Pipeline上的某些ChannelHandler，比如已经进行过了授权校验，那下次就不需要再执行授权校验了，我们就可以直接把授权相关的那些ChannelHandler删除掉。<br>首先遍历Pipeline找到目标ChannelHandler。<br><code>io.netty.channel.DefaultChannelPipeline#getContextOrDie</code><br>然后从Pipeline中移除。<br><code>io.netty.channel.DefaultChannelPipeline#remove(AbstractChannelHandlerContext)</code></p>
-</li>
-<li><p>inBound事件传播<br>ChannelHandler中每个事件都有一个接口，<code>ChannelInboundHandler</code>专门处理输入事件，以<code>channelRead</code>为例。<br>EventLoop会将读事件传给Pipeline，然后按责任链模式的逻辑从<code>head</code>节点开始传播事件。<br><code>io.netty.channel.nio.AbstractNioByteChannel.NioByteUnsafe#read</code></p>
-</li>
-<li><p>outBound事件传播<br><code>ChannelOutboundHandler</code>专门用于处理输出事件，以<code>write</code>为例。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class EchoServerOutHandler extends ChannelOutboundHandlerAdapter &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception &#123;</span><br><span class="line">        ctx.channel().write(&quot;Hello&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>当我们在Handler中调用Context的write方法时，就是将写事件传给了Pipeline，Pipeline会从<code>tail</code>节点开始往前传播。<br><code>io.netty.channel.AbstractChannelHandlerContext#write</code></p>
-</li>
-</ol>
-<h2 id="心跳检测"><a href="#心跳检测" class="headerlink" title="心跳检测"></a>心跳检测</h2><p>应用协议层的心跳是必须的，它和 tcp keepalive 是完全不同的概念。应用层协议层的心跳检测的是连接双方的存活性，兼而连接质量，而 keepalive 检测的是连接本身的存活性。而且后者的超时时间默认过长，完全不能适应现代的网络环境。<br>Netty 内置通过增加 <code>IdleStateHandler</code> 产生 IDLE 事件进行便捷的心跳控制。你要处理的，就是心跳超时的逻辑，比如延迟重连。但它的轮训时间是固定的，无法动态修改，高级功能需要自己定制。<br>不同场景下需要切换不同的保活机制，在一些客户端比如 Android，频繁心跳的唤起会浪费大量的网络和电量，它的心跳策略会更加复杂一些。</p>
-<h2 id="优雅退出"><a href="#优雅退出" class="headerlink" title="优雅退出"></a>优雅退出</h2><p>Java 的优雅停机通常通过注册 JDK ShutdownHook 来实现。<br>Runtime.getRuntime().addShutdownHook();<br>一般通过 kill -15 进行 java 进程的关闭，以便在进程死亡之前进行一些清理工作。</p>
-<blockquote>
-<p>注意：kill -9 会立马杀死进程，不给遗言的机会，比较危险。</p>
-</blockquote>
-<p>虽然 netty 做了很多优雅退出的工作，通过 EventLoopGroup 的 shutdownGracefully 方法对 nio 进行了一些状态设置，但在很多情况下，这还不够多。它只负责单机环境的优雅关闭。<br>流量可能还会通过外层的路由持续进入，造成无效请求。一种可行的做法是首先在外层路由进行一次本地实例的摘除，把流量截断，然后再进行 netty 本身的优雅关闭。</p>
-<h2 id="示例协议实现"><a href="#示例协议实现" class="headerlink" title="示例协议实现"></a>示例协议实现</h2><p>不少中间件会实现自己的协议，比如 Redis、MySQL，MyCat、TiDB 用的就是 MySQL 协议。<br>netty 默认实现了 dns、haproxy、http、http2、memcache、mqtt、redis、smtp、socks、stomp、xml 等协议。<br>协议分为两种：</p>
-<ul>
-<li>文本协议在调试起来是比较直观和容易的，但安全性欠佳；</li>
-<li>二进制协议就需要依赖日志、wireshark 等其他方式进行分析，增加了开发难度。</li>
-</ul>
-<ol>
-<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/io/netty/example/echo/package-summary.html">示例协议 - echo</a></li>
-<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/io/netty/example/discard/package-summary.html">示例协议 - discard</a></li>
-<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/io/netty/example/uptime/package-summary.html">示例协议 - uptime</a></li>
-<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/io/netty/example/factorial/package-summary.html">示例二进制协议 - factorial</a></li>
-<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/io/netty/example/telnet/package-summary.html">示例文本协议 - telnet</a></li>
-</ol>
-<h1 id="数据结构-ByteBuf"><a href="#数据结构-ByteBuf" class="headerlink" title="数据结构 - ByteBuf"></a>数据结构 - ByteBuf</h1><p>Netty 使用自建的 buffer API，而不是使用 NIO 的 <a target="_blank" rel="noopener" href="http://docs.oracle.com/javase/7/docs/api/java/nio/ByteBuffer.html?is-external=true">ByteBuffer</a> 来表示一个连续的字节序列。与 ByteBuffer 相比这种方式拥有明显的优势。Netty 使用新的 buffer 类型 <a target="_blank" rel="noopener" href="http://netty.io/4.0/api/io/netty/buffer/ByteBuf.html">ByteBuf</a>，被设计为一个可从底层解决 ByteBuffer 问题，并可满足日常网络应用开发需要的缓冲类型。这些很酷的特性包括：</p>
-<ul>
-<li>如果需要，允许使用自定义的缓冲类型。</li>
-<li>复合缓冲类型中内置的透明的零拷贝实现。</li>
-<li>开箱即用的动态缓冲类型，具有像 StringBuffer 一样的动态缓冲能力。</li>
-<li>不再需要调用的 flip()方法。</li>
-<li>正常情况下具有比 ByteBuffer 更快的响应速度。</li>
-</ul>
-<p><img src="/imgs/Netty/ByteBuf%E7%BB%93%E6%9E%84.png" alt="ByteBuf结构" title="ByteBuf结构"><br>以上就是一个 ByteBuf 的结构图，从上面这幅图可以看到</p>
-<ol>
-<li>ByteBuf 是一个字节容器，容器里面的的数据分为三个部分，第一个部分是已经丢弃的字节，这部分数据是无效的；第二部分是可读字节，这部分数据是 ByteBuf 的主体数据， 从 ByteBuf 里面读取的数据都来自这一部分;最后一部分的数据是可写字节，所有写到 ByteBuf 的数据都会写到这一段。最后一部分虚线表示的是该 ByteBuf 最多还能扩容多少容量</li>
-<li>以上三段内容是被两个指针给划分出来的，从左到右，依次是读指针（readerIndex）、写指针（writerIndex），然后还有一个变量 capacity，表示 ByteBuf 底层内存的总容量</li>
-<li>从 ByteBuf 中每读取一个字节，readerIndex 自增 1，ByteBuf 里面总共有 writerIndex-readerIndex 个字节可读, 由此可以推论出当 readerIndex 与 writerIndex 相等的时候，ByteBuf 不可读</li>
-<li>写数据是从 writerIndex 指向的部分开始写，每写一个字节，writerIndex 自增 1，直到增到 capacity，这个时候，表示 ByteBuf 已经不可写了</li>
-<li>ByteBuf 里面其实还有一个参数 maxCapacity，当向 ByteBuf 写数据的时候，如果容量不足，那么这个时候可以进行扩容，直到 capacity 扩容到 maxCapacity，超过 maxCapacity 就会报错</li>
-</ol>
-<p>使用 ByteBuf 有以下好处：</p>
-<ol>
-<li>可以有效地区分可读数据和可写数据，读写之间相互没有冲突</li>
-<li>Extensibility 可扩展性<br>ByteBuf 具有丰富的操作集,可以快速的实现协议的优化。例如，ByteBuf 提供各种操作用于访问无符号值和字符串，以及在缓冲区搜索一定的字节序列。你也可以扩展或包装现有的缓冲类型用来提供方便的访问。自定义缓冲式仍然实现自 ByteBuf 接口，而不是引入一个不兼容的类型</li>
-<li>Transparent Zero Copy 透明的零拷贝<br>网络应用中需要减少内存拷贝操作次数。你可能有一组缓冲区可以被组合以形成一个完整的消息。网络提供了一种复合缓冲，允许你从现有的任意数的缓冲区创建一个新的缓冲区而无需内存拷贝。例如，一个信息可以由两部分组成：header 和 body。在一个模块化的应用，当消息发送出去时，这两部分可以由不同的模块生产和装配。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+--------+------+</span><br><span class="line">| header | body |</span><br><span class="line">+--------+------+</span><br></pre></td></tr></table></figure>
- 如果你使用的是 ByteBuffer ，你必须要创建一个新的大缓存区用来拷贝这两部分到这个新缓存区中。或者，你可以在 NIO做一个收集写操作，但限制你将复合缓冲类型作为 ByteBuffer 的数组而不是一个单一的缓冲区，这样打破了抽象，并且引入了复杂的状态管理。此外，如果你不从 NIO channel 读或写，它是没有用的。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 复合类型与组件类型不兼容。</span><br><span class="line">ByteBuffer[] message = new ByteBuffer[] &#123; header, body &#125;;</span><br></pre></td></tr></table></figure>
- 通过对比， ByteBuf 不会有警告，因为它是完全可扩展并有一个内置的复合缓冲区。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 复合类型与组件类型是兼容的。</span><br><span class="line">ByteBuf message = Unpooled.wrappedBuffer(header, body);</span><br><span class="line">// 因此，你甚至可以通过混合复合类型与普通缓冲区来创建一个复合类型。</span><br><span class="line">ByteBuf messageWithFooter = Unpooled.wrappedBuffer(message, footer);</span><br><span class="line">// 由于复合类型仍是 ByteBuf，访问其内容很容易，</span><br><span class="line">//并且访问方法的行为就像是访问一个单独的缓冲区，</span><br><span class="line">//即使你想访问的区域是跨多个组件。</span><br><span class="line">//这里的无符号整数读取位于 body 和 footer</span><br><span class="line">messageWithFooter.getUnsignedInt(</span><br><span class="line">     messageWithFooter.readableBytes() - footer.readableBytes() - 1);</span><br></pre></td></tr></table></figure></li>
-<li>Automatic Capacity Extension 自动容量扩展<br>许多协议定义可变长度的消息，这意味着没有办法确定消息的长度，直到你构建的消息。或者，在计算长度的精确值时，带来了困难和不便。这就像当你建立一个字符串。你经常估计得到的字符串的长度，让 StringBuffer 扩大了其本身的需求。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// 一种新的动态缓冲区被创建。在内部，实际缓冲区是被“懒”创建，从而避免潜在的浪费内存空间。</span><br><span class="line">ByteBuf b = Unpooled.buffer(4);</span><br><span class="line">// 当第一个执行写尝试，内部指定初始容量 4 的缓冲区被创建</span><br><span class="line">b.writeByte(&#x27;1&#x27;);</span><br><span class="line">b.writeByte(&#x27;2&#x27;);</span><br><span class="line">b.writeByte(&#x27;3&#x27;);</span><br><span class="line">b.writeByte(&#x27;4&#x27;);</span><br><span class="line">// 当写入的字节数超过初始容量 4 时，</span><br><span class="line">//内部缓冲区自动分配具有较大的容量</span><br><span class="line">b.writeByte(&#x27;5&#x27;);</span><br></pre></td></tr></table></figure></li>
-<li>Better Performance 更好的性能<br>最频繁使用的缓冲区 ByteBuf 的实现是一个非常薄的字节数组包装器（比如，一个字节）。与 ByteBuffer 不同，它没有复杂的边界和索引检查补偿，因此对于 JVM 优化缓冲区的访问更加简单。更多复杂的缓冲区实现是用于拆分或者组合缓存，并且比 ByteBuffer 拥有更好的性能。</li>
-</ol>
-<h2 id="粘包拆包和半包合并"><a href="#粘包拆包和半包合并" class="headerlink" title="粘包拆包和半包合并"></a>粘包拆包和半包合并</h2><p>基于流的传输比如 TCP&#x2F;IP, 接收到数据是存在 socket 接收的 buffer 中。不幸的是，基于流的传输并不是一个数据包队列，而是一个字节队列。造成粘包的原因，主要是由于缓冲区的介入，所以需要严格约定去所传输的包的格式——何时开始何时结束。意味着，即使你发送了 2 个独立的数据包，操作系统也不会作为 2 个消息处理而仅仅是作为一连串的字节而言。因此这是不能保证你远程写入的数据就会准确地读取。举个例子，让我们假设操作系统的 TCP&#x2F;TP 协议栈已经接收了 3 个数据包，在应用程序中读取数据的时候可能被分成下面的片段：<br><img src="/imgs/Netty/%E7%B2%98%E5%8C%85%E5%92%8C%E5%8D%8A%E5%8C%85%E9%97%AE%E9%A2%98.png" alt="粘包和半包问题" title="粘包和半包问题"><br>因此，一个接收方不管他是客户端还是服务端，都应该把接收到的数据整理成一个或者多个更有意义并且能够让程序的业务逻辑更好理解的数据。<br>在没有 Netty 的情况下，用户如果自己需要拆包，基本原理就是不断从 TCP 缓冲区中读取数据，每次读取完都需要判断是否是一个完整的数据包</p>
-<ul>
-<li>半包：如果当前读取的数据不足以拼接成一个完整的业务数据包，那就保留该数据，继续从 TCP 缓冲区中读取，直到得到一个完整的数据包。</li>
-<li>粘包：如果当前读到的数据加上已经读取的数据足够拼接成一个数据包，那就将已经读取的数据拼接上本次读取的数据，构成一个完整的业务数据包传递到业务逻辑，多余的数据仍然保留，以便和下次读到的数据尝试拼接。</li>
-</ul>
-<h2 id="解码器-ByteToMessageDecoder"><a href="#解码器-ByteToMessageDecoder" class="headerlink" title="解码器 - ByteToMessageDecoder"></a>解码器 - ByteToMessageDecoder</h2><p>入口：<code>io.netty.handler.codec.ByteToMessageDecoder#channelRead</code></p>
-<ol>
-<li>累加字节流<br>累加器累加已读入的字节数，如果超过<code>ByteBuf</code>当前可读入的空间大小，则执行扩容。<br><code>io.netty.handler.codec.ByteToMessageDecoder.Cumulator#cumulate</code></li>
-<li>调用子类的decode方法进行解析（模板方法）<br><code>io.netty.handler.codec.ByteToMessageDecoder#callDecode</code></li>
-<li>将子类解析出的ByteBuf向下传播<br><code>io.netty.handler.codec.ByteToMessageDecoder#fireChannelRead(io.netty.channel.ChannelHandlerContext, io.netty.handler.codec.CodecOutputList, int)</code></li>
-</ol>
-<h2 id="Netty中的一些拆箱即用的解码器"><a href="#Netty中的一些拆箱即用的解码器" class="headerlink" title="Netty中的一些拆箱即用的解码器"></a>Netty中的一些拆箱即用的解码器</h2><p>如果要自己实现所有协议的拆包无疑是非常麻烦的，实际上 Netty 已经自带了一些开箱即用的拆包器：</p>
-<ol>
-<li>固定长度的拆包器 <code>FixedLengthFrameDecoder</code><br>如果你的应用层协议非常简单，每个数据包的长度都是固定的，比如 100，那么只需要把这个拆包器加到 pipeline 中，Netty 会把一个个长度为 100 的数据包 (ByteBuf) 传递到下一个 channelHandler。</li>
-<li>行拆包器 <code>LineBasedFrameDecoder</code><br>从字面意思来看，发送端发送数据包的时候，每个数据包之间以<strong>换行符</strong>作为分隔，接收端通过 LineBasedFrameDecoder 将粘过的 ByteBuf 拆分成一个个完整的应用层数据包。</li>
-<li>分隔符拆包器 <code>DelimiterBasedFrameDecoder</code><br>DelimiterBasedFrameDecoder 是行拆包器的通用版本，只不过我们可以自定义分隔符。</li>
-<li>基于长度域拆包器 <code>LengthFieldBasedFrameDecoder</code><br>最后一种拆包器是最通用的一种拆包器，只要你的自定义协议中包含长度域字段，均可以使用这个拆包器来实现应用层拆包。由于上面三种拆包器比较简单，读者可以自行写出 demo，接下来，我们就结合我们小册的自定义协议，来学习一下如何使用基于长度域的拆包器来拆解我们的数据包。</li>
-</ol>
-<h2 id="编码-MessageToByteEncoder"><a href="#编码-MessageToByteEncoder" class="headerlink" title="编码 - MessageToByteEncoder"></a>编码 - MessageToByteEncoder</h2><p>编码器是一个ChannelHandler，一般是第一个添加到Pipeline内，然后write的最后会将数据进行编码再输出。</p>
-<ol>
-<li>匹配对象<br><code>io.netty.handler.codec.MessageToByteEncoder#acceptOutboundMessage</code></li>
-<li>内存分配<br><code>io.netty.handler.codec.MessageToByteEncoder#allocateBuffer</code></li>
-<li>调用子类的编码实现<br><code>io.netty.handler.codec.MessageToByteEncoder#encode</code></li>
-<li>释放内存<br><code>io.netty.util.ReferenceCountUtil#release(java.lang.Object)</code></li>
-<li>放到Pipeline里传播<br>默认情况下会一直传播到<code>head</code>节点<br><code>io.netty.channel.ChannelHandlerContext#write(java.lang.Object, io.netty.channel.ChannelPromise)</code><br><code>io.netty.channel.Channel.Unsafe#write</code></li>
-<li>输出<br>将数据暂存到ByteBuf，将堆内对象转换为堆外内存<br><code>io.netty.channel.nio.AbstractNioByteChannel#filterOutboundMessage</code><br>插入写队列<br><code>io.netty.channel.ChannelOutboundBuffer#addMessage</code><br>TODO: 什么时候刷新buffer队列？</li>
-</ol>
-<h1 id="自定义数据处理逻辑"><a href="#自定义数据处理逻辑" class="headerlink" title="自定义数据处理逻辑"></a>自定义数据处理逻辑</h1><h2 id="基于拦截链模式的事件模型-pipeline"><a href="#基于拦截链模式的事件模型-pipeline" class="headerlink" title="基于拦截链模式的事件模型 - pipeline"></a>基于拦截链模式的事件模型 - pipeline</h2><p>一个定义良好并具有扩展能力的事件模型是事件驱动开发的必要条件。Netty 具有定义良好的 I&#x2F;O 事件模型。由于严格的层次结构区分了不同的事件类型，因此 Netty 也允许你在不破坏现有代码的情况下实现自己的事件类型。这是与其他框架相比另一个不同的地方。很多 NIO 框架没有或者仅有有限的事件模型概念；在你试图添加一个新的事件类型的时候常常需要修改已有的代码，或者根本就不允许你进行这种扩展。<br>在 Netty 中一条连接对应一个 Channel，该 Channel 的所有处理逻辑都在一个 ChannelPipeline 对象内，ChannelPipeline 是一个双向链表结构，在一个 ChannelPipeline 内部一个 <a href="../%E6%8A%80%E6%9C%AF%E7%82%B9%E6%80%BB%E7%BB%93">ChannelEvent</a> 被一组 ChannelHandler 处理。这个管道是 Intercepting Filter (拦截过滤器)模式的一种高级形式的实现，因此对于一个事件如何被处理以及管道内部处理器间的交互过程，你都将拥有绝对的控制力。例如，你可以定义一个从 socket 读取到数据后的操作：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class MyReadHandler implements SimpleChannelHandler &#123;</span><br><span class="line">     public void messageReceived(ChannelHandlerContext ctx, MessageEvent evt) &#123;</span><br><span class="line">         Object message = evt.getMessage();</span><br><span class="line">         // Do something with the received message.</span><br><span class="line">            ...</span><br><span class="line">         // And forward the event to the next handler.</span><br><span class="line">         ctx.sendUpstream(evt);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>同时你也可以定义一种操作响应其他处理器的写操作请求：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class MyWriteHandler implements SimpleChannelHandler &#123;</span><br><span class="line">    public void writeRequested(ChannelHandlerContext ctx, MessageEvent evt) &#123;</span><br><span class="line">        Object message = evt.getMessage();</span><br><span class="line">        // Do something with the message to be written.</span><br><span class="line">            ...</span><br><span class="line">        // And forward the event to the next handler.</span><br><span class="line">        ctx.sendDownstream(evt);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>ChannelHandler 分为两种：</p>
-<ul>
-<li>ChannelInboundHandler<br>处理读数据逻辑，核心方法是 channelRead。</li>
-<li>ChannelOutBoundHandler<br>处理些数据逻辑，核心方法是 write，在链式处理中总是位于 ChannelInboundHandler 之后。</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">serverBootstrap</span><br><span class="line">        .childHandler(new ChannelInitializer&lt;NioSocketChannel&gt;() &#123;</span><br><span class="line">            protected void initChannel(NioSocketChannel ch) &#123;</span><br><span class="line">                // inBound，处理读数据的逻辑链</span><br><span class="line">                ch.pipeline().addLast(new InBoundHandlerA());</span><br><span class="line">                ch.pipeline().addLast(new InBoundHandlerB());</span><br><span class="line">                ch.pipeline().addLast(new InBoundHandlerC());</span><br><span class="line">                </span><br><span class="line">                // outBound，处理写数据的逻辑链</span><br><span class="line">                ch.pipeline().addLast(new OutBoundHandlerA());</span><br><span class="line">                ch.pipeline().addLast(new OutBoundHandlerB());</span><br><span class="line">                ch.pipeline().addLast(new OutBoundHandlerC());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
-
-<p>其执行顺序如下图所示：<br><img src="/imgs/Netty/pipeline%E6%89%A7%E8%A1%8C%E9%A1%BA%E5%BA%8F.png" alt="pipeline执行顺序" title="pipeline执行顺序"></p>
-<h2 id="异常处理"><a href="#异常处理" class="headerlink" title="异常处理"></a>异常处理</h2><p>netty 由于其异步化的开发方式，以及其事件机制，在异常处理方面就显得异常重要。为了保证连接的高可靠性，许多异常需要静悄悄的忽略，或者在用户态没有感知。<br>netty 的异常会通过 pipeline 进行传播，所以在任何一层进行处理都是可行的，但编程习惯上，习惯性抛到最外层集中处理。<br>为了最大限度的区别异常信息，通常会定义大量的异常类，不同的错误会抛出不同的异常。发生异常后，可以根据不同的类型选择断线重连（比如一些二进制协议的编解码紊乱问题)，或者调度到其他节点。</p>
-<h2 id="Codec-框架"><a href="#Codec-框架" class="headerlink" title="Codec 框架"></a>Codec 框架</h2><p>我们可以使用 POJO 代替 ChannelBuffer，从业务逻辑代码中分离协议处理部分总是一个很不错的想法。然而如果一切从零开始便会遭遇到实现上的复杂性。你不得不处理分段的消息。一些协议是多层的（例如构建在其他低层协议之上的协议）。一些协议过于复杂以致难以在一台独立状态机上实现。<br>因此，一个好的网络应用框架应该提供一种可扩展，可重用，可单元测试并且是多层的 codec 框架，为用户提供易维护的 codec 代码。<br>Netty 提供了一组构建在其核心模块之上的 codec 实现，这些简单的或者高级的 codec 实现帮你解决了大部分在你进行协议处理开发过程会遇到的问题，无论这些协议是简单的还是复杂的，二进制的或是简单文本的。</p>
-<h2 id="SSL-TLS-支持"><a href="#SSL-TLS-支持" class="headerlink" title="SSL &#x2F; TLS 支持"></a>SSL &#x2F; TLS 支持</h2><p>不同于传统阻塞式的 I&#x2F;O 实现，在 NIO 模式下支持 SSL 功能是一个艰难的工作。你不能只是简单的包装一下流数据并进行加密或解密工作，你不得不借助于 javax.net.ssl.SSLEngine，SSLEngine 是一个有状态的实现，其复杂性不亚于 SSL 自身。你必须管理所有可能的状态，例如密码套件，密钥协商（或重新协商），证书交换以及认证等。此外，与通常期望情况相反的是 SSLEngine 甚至不是一个绝对的线程安全实现。<br>在 Netty 内部，<a target="_blank" rel="noopener" href="http://netty.io/4.0/api/io/netty/handler/ssl/SslHandler.html">SslHandler</a> 封装了所有艰难的细节以及使用 SSLEngine 可 能带来的陷阱。你所做的仅是配置并将该 SslHandler 插入到你的 ChannelPipeline 中。同样 Netty 也允许你实现像 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Opportunistic_TLS">StartTlS</a> 那样所拥有的高级特性，这很容易。</p>
-<h2 id="HTTP-实现"><a href="#HTTP-实现" class="headerlink" title="HTTP 实现"></a>HTTP 实现</h2><p>HTTP 无 疑是互联网上最受欢迎的协议，并且已经有了一些例如 Servlet 容器这样的 HTTP 实现。因此，为什么 Netty 还要在其核心模块之上构建一套 HTTP 实现？<br>与现有的 HTTP 实现相比 Netty 的 HTTP 实现是相当与众不同的。在 HTTP 消息的低层交互过程中你将拥有绝对的控制力。这是因为 Netty 的 HTTP 实现只是一些 HTTP codec 和 HTTP 消息类的简单组合，这里不存在任何限制——例如那种被迫选择的线程模型。你可以随心所欲的编写那种可以完全按照你期望的工作方式工作的客户端或服务器端代码。这包括线程模型，连接生命期，快编码，以及所有 HTTP 协议允许你做的，所有的一切，你都将拥有绝对的控制力。<br>由于这种高度可定制化的特性，你可以开发一个非常高效的 HTTP 服务器，例如：</p>
-<ul>
-<li>要求持久化链接以及服务器端推送技术的聊天服务（如，<a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Comet_%28programming%29">Comet</a> )</li>
-<li>需要保持链接直至整个文件下载完成的媒体流服务（如，2 小时长的电影）</li>
-<li>需要上传大文件并且没有内存压力的文件服务（如，上传 1GB 文件的请求）</li>
-<li>支持大规模混合客户端应用用于连接以万计的第三方异步 web 服务。</li>
-</ul>
-<h2 id="WebSockets-实现"><a href="#WebSockets-实现" class="headerlink" title="WebSockets 实现"></a>WebSockets 实现</h2><p><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/WebSockets">WebSockets</a> 允许双向，全双工通信信道，在 TCP socket 中。它被设计为允许一个 Web 浏览器和 Web 服务器之间通过数据流交互。<br>WebSocket 协议已经被 IETF 列为 <a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc6455">RFC 6455</a> 规范。<br>Netty 已经实现了 WebSocket 和一些老版本的规范：<a target="_blank" rel="noopener" href="http://netty.io/4.0/api/io/netty/handler/codec/http/websocketx/package-frame.html">http://netty.io/4.0/api/io/netty/handler/codec/http/websocketx/package-frame.html</a></p>
-<h2 id="Google-Protocol-Buffer-整合"><a href="#Google-Protocol-Buffer-整合" class="headerlink" title="Google Protocol Buffer 整合"></a>Google Protocol Buffer 整合</h2><p><a target="_blank" rel="noopener" href="http://code.google.com/apis/protocolbuffers/docs/overview.html">Google Protocol Buffers</a> 是快速实现一个高效的二进制协议的理想方案。通过使用 <a target="_blank" rel="noopener" href="http://netty.io/4.0/api/io/netty/handler/codec/protobuf/ProtobufEncoder.html">ProtobufEncoder</a> 和 <a target="_blank" rel="noopener" href="http://netty.io/4.0/api/io/netty/handler/codec/protobuf/ProtobufDecoder.html">ProtobufDecoder</a>，你可以把 Google Protocol Buffers 编译器 (protoc) 生成的消息类放入到 Netty 的 codec 实现中。请参考“<a target="_blank" rel="noopener" href="http://docs.jboss.org/netty/3.2/xref/org/jboss/netty/example/localtime/package-summary.html">LocalTime</a>”实例，这个例子也同时显示出开发一个由简单协议定义 的客户及服务端是多么的容易。</p>
-<h1 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h1><h2 id="FastThreadLocal"><a href="#FastThreadLocal" class="headerlink" title="FastThreadLocal"></a>FastThreadLocal</h2><p>重写了JDK的ThreadLocal，但是速度更快</p>
-<h2 id="Recycle"><a href="#Recycle" class="headerlink" title="Recycle"></a>Recycle</h2><p>对象池</p>
-<h2 id="单机百万连接"><a href="#单机百万连接" class="headerlink" title="单机百万连接"></a>单机百万连接</h2><h2 id="Netty应用级别性能优化"><a href="#Netty应用级别性能优化" class="headerlink" title="Netty应用级别性能优化"></a>Netty应用级别性能优化</h2><h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><h2 id="如何使用-Netty"><a href="#如何使用-Netty" class="headerlink" title="如何使用 Netty"></a>如何使用 Netty</h2><p>Netty 是 Java 中的一个 NIO 框架：</p>
-<ol>
-<li>易用的 API；</li>
-<li>NIO 模型相对 BIO 更高效。</li>
-<li>解决了 Java 原生 NIO 接口存在的一些问题。<br>包括粘包半包问题、心跳检测等问题。</li>
-</ol>
-<h2 id="ServerBootstrap-默认情况下Netty服务端会起多个线程？又是什么时候启动这些线程的？"><a href="#ServerBootstrap-默认情况下Netty服务端会起多个线程？又是什么时候启动这些线程的？" class="headerlink" title="ServerBootstrap - 默认情况下Netty服务端会起多个线程？又是什么时候启动这些线程的？"></a>ServerBootstrap - 默认情况下Netty服务端会起多个线程？又是什么时候启动这些线程的？</h2><p>Netty中线程主要用于执行EventLoop的for循环任务，当ServerBootstrap<br>默认情况下创建2倍CPU核心线程数的线程。<br><code>io.netty.channel.MultithreadEventLoopGroup#MultithreadEventLoopGroup(int, java.util.concurrent.Executor, java.lang.Object...)</code><br>可以看到最终创建了个线程池<code>ThreadPerTaskExecutor</code><br><code>io.netty.util.concurrent.MultithreadEventExecutorGroup#MultithreadEventExecutorGroup(int, java.util.concurrent.Executor, io.netty.util.concurrent.EventExecutorChooserFactory, java.lang.Object...)</code></p>
-<h2 id="ServerBootstrap-Netty是如何解决JDK的空轮询Bug的？"><a href="#ServerBootstrap-Netty是如何解决JDK的空轮询Bug的？" class="headerlink" title="ServerBootstrap - Netty是如何解决JDK的空轮询Bug的？"></a>ServerBootstrap - Netty是如何解决JDK的空轮询Bug的？</h2><p>NioEventLoop</p>
-<h2 id="ServerBootstrap-Netty是如何保证异步串行无锁化的？"><a href="#ServerBootstrap-Netty是如何保证异步串行无锁化的？" class="headerlink" title="ServerBootstrap - Netty是如何保证异步串行无锁化的？"></a>ServerBootstrap - Netty是如何保证异步串行无锁化的？</h2><p>执行需要保证并发安全的操作时先判断是否是刚开始创建的线程，如果不是则放入一个单线程的线程池中执行。<br>线程创建位置：<code>SingleThreadEventExecutor</code>的构造方法<br>判断位置：<code>io.netty.util.concurrent.AbstractEventExecutor#inEventLoop</code></p>
-<h2 id="NioEventLoop-Netty如何检测新连接的接入？"><a href="#NioEventLoop-Netty如何检测新连接的接入？" class="headerlink" title="NioEventLoop - Netty如何检测新连接的接入？"></a>NioEventLoop - Netty如何检测新连接的接入？</h2><p>初始化ServerBootstrap时</p>
-<h2 id="NioEventLoop-新连接怎样被注册NioEventLoop线程？"><a href="#NioEventLoop-新连接怎样被注册NioEventLoop线程？" class="headerlink" title="NioEventLoop - 新连接怎样被注册NioEventLoop线程？"></a>NioEventLoop - 新连接怎样被注册NioEventLoop线程？</h2><p>调用bind时会启动一个NioEventLoop线程，用于监听连接请求。</p>
-<h2 id="pipeline-Netty如何判断ChannelHandler类型？"><a href="#pipeline-Netty如何判断ChannelHandler类型？" class="headerlink" title="pipeline - Netty如何判断ChannelHandler类型？"></a>pipeline - Netty如何判断ChannelHandler类型？</h2><p>ChannelHandler分为Inbound类型和Outbound类型，在Netty中将ChannelHandler添加到Pipeline时会判断这个ChannelHandler的类型，然后设置到一个bool类型的成员变量里，在传播时使用。<br><code>io.netty.channel.DefaultChannelHandlerContext#isInbound</code><br><code>io.netty.channel.DefaultChannelHandlerContext#isOutbound</code></p>
-<h2 id="pipeline-对ChannelHandler的添加会遵循什么样的顺序？"><a href="#pipeline-对ChannelHandler的添加会遵循什么样的顺序？" class="headerlink" title="pipeline - 对ChannelHandler的添加会遵循什么样的顺序？"></a>pipeline - 对ChannelHandler的添加会遵循什么样的顺序？</h2><p>根据Pipeline的传播逻辑可以看出，Inbound类型的ChannelHandler按添加顺序传播，而Outbound类型的ChannelHandler是按逆顺序传播的。</p>
-<h2 id="pipeline-用户手动触发事件传播，不同的触发方式有什么区别？"><a href="#pipeline-用户手动触发事件传播，不同的触发方式有什么区别？" class="headerlink" title="pipeline - 用户手动触发事件传播，不同的触发方式有什么区别？"></a>pipeline - 用户手动触发事件传播，不同的触发方式有什么区别？</h2><p>如果是在Pipeline中间的某个ChannelHandler中调用了read，则就是从这个节点开始往后传播，如果是write，就是从这个节点开始往前传播。</p>
-<h2 id="ByteBuf-内存的类别有哪些？"><a href="#ByteBuf-内存的类别有哪些？" class="headerlink" title="ByteBuf - 内存的类别有哪些？"></a>ByteBuf - 内存的类别有哪些？</h2><h2 id="ByteBuf-如何减少多线程之间内存分配的竞争？"><a href="#ByteBuf-如何减少多线程之间内存分配的竞争？" class="headerlink" title="ByteBuf - 如何减少多线程之间内存分配的竞争？"></a>ByteBuf - 如何减少多线程之间内存分配的竞争？</h2><h2 id="ByteBuf-不同大小的内存是如何进行分配的？"><a href="#ByteBuf-不同大小的内存是如何进行分配的？" class="headerlink" title="ByteBuf - 不同大小的内存是如何进行分配的？"></a>ByteBuf - 不同大小的内存是如何进行分配的？</h2><h2 id="ByteBuf-粘包半包问题是什么"><a href="#ByteBuf-粘包半包问题是什么" class="headerlink" title="ByteBuf - 粘包半包问题是什么"></a>ByteBuf - 粘包半包问题是什么</h2><h2 id="解码器抽象的解码过程？"><a href="#解码器抽象的解码过程？" class="headerlink" title="解码器抽象的解码过程？"></a>解码器抽象的解码过程？</h2><h2 id="Netty里面有哪些拆箱即用的解码器？"><a href="#Netty里面有哪些拆箱即用的解码器？" class="headerlink" title="Netty里面有哪些拆箱即用的解码器？"></a>Netty里面有哪些拆箱即用的解码器？</h2><h2 id="如何把对象变成字节流，并最终写到socket底层？"><a href="#如何把对象变成字节流，并最终写到socket底层？" class="headerlink" title="如何把对象变成字节流，并最终写到socket底层？"></a>如何把对象变成字节流，并最终写到socket底层？</h2><h2 id="如何使用Netty实现长短连接？"><a href="#如何使用Netty实现长短连接？" class="headerlink" title="如何使用Netty实现长短连接？"></a>如何使用Netty实现长短连接？</h2><p>长连接是为了复用连接资源，长连接下，多个请求可以使用同一个连接传输数据包。</p>
-<h2 id="如何使用Netty实现长短轮询？"><a href="#如何使用Netty实现长短轮询？" class="headerlink" title="如何使用Netty实现长短轮询？"></a>如何使用Netty实现长短轮询？</h2><p>长轮询的特点是请求发到服务器上时若没有资源（比如库存），请求会被挂起，直到资源充足后才返回。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li><a target="_blank" rel="noopener" href="https://wiki.jikexueyuan.com/project/netty-4-user-guide/">Netty 4.x 用户指南</a></li>
-<li><a target="_blank" rel="noopener" href="https://netty.io/wiki/user-guide-for-4.x.html">User guide for 4.x（上面这个文档的英文原版）</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/netty/netty">github - netty &#x2F; netty</a></li>
-<li><a target="_blank" rel="noopener" href="https://netty.io/4.0/xref/overview-summary.html">Netty Source Xref (4.0.56.Final)（同上为源码）</a></li>
-</ol>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/f312680c.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/f312680c.html" class="post-title-link" itemprop="url">MySQL4_2锁</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-05-28 10:18:28" itemprop="dateCreated datePublished" datetime="2020-05-28T10:18:28+08:00">2020-05-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<blockquote class="pullquote mindmap mindmap-md"><ul>
-<li>锁 &#x2F; 封锁<ul>
-<li>锁的类型<ul>
-<li>排他锁 &#x2F; X锁</li>
-<li>共享锁 &#x2F; S锁</li>
-</ul>
-</li>
-<li>封锁协议<ul>
-<li>一级封锁：对应读未提交</li>
-<li>二级封锁：对应读已提交</li>
-<li>三级封锁：对应可重复读</li>
-</ul>
-</li>
-<li>MySQL 并发安全<ul>
-<li>行锁 + 间隙锁 + MVCC</li>
-<li>隔离级别实现<ul>
-<li>读已提交：二级封锁协议（行锁）+MVCC</li>
-<li>可重复读：三级封锁协议+MVCC</li>
-<li>解决幻读：Next-Key Locks &#x3D; 行锁 + 间隙锁</li>
-</ul>
-</li>
-</ul>
-</li>
-<li>死锁</li>
-</ul>
-</li>
-</ul>
-</blockquote>
-
-
-
-<h2 id="封锁（Blockade）"><a href="#封锁（Blockade）" class="headerlink" title="封锁（Blockade）"></a>封锁（Blockade）</h2><p>封锁是数据库原理范畴内的概念，封锁分为排它锁、共享锁、活锁、死锁这4种，以及封锁协议定义了数据库如何使用这些锁来保证并发安全。<br>所谓封锁就是事务在对某个数据对象例如表、记录等操作之前，先向系统发出请求对其加锁。<br>加锁后事务 T 就对该数据对象有了一定的控制，在事务 T 释放它的锁之前，其他事务不能更新此数据对象。例如，事务 T1 要修改 A，若在读出 A 之前先锁住 A，其他事务就不能再读取和修改 A 了，直到 T1 修改并写回 A 后解除了对 A 的封锁为止。这样，就不会丢失 T1 的修改。<br>确切的控制由封锁的类型决定。基本的封锁类型有两种：排他锁(exclusive locks,简称 X 锁)和共享锁(share locks,简称 S 锁)</p>
-<ul>
-<li>**X 锁(排他写锁)**：若事务 T1 对数据对象 A 加上 X 锁，则只允许 T 读取和修改 A，其他任何事物都不能再对 A 加任何类型的锁，直到 T 释放 A 上的锁为止。这就保证了其他事务在 T 释放 A 上的锁之前不能再读取和修改 A；</li>
-<li>**S 锁(共享读锁)**：若事务 T 对数据 A 加上 S 锁，则事务 T 可以读 A 但是不能修改 A，其他事务只能对 A 加 S 锁而不能加 X 锁，直到 T 释放 A 上的 S 锁为止。这就保证了其他食物可以读 A，但在 T 释放 A 上的 S 锁之前不能对 A 进行任何修改。</li>
-</ul>
-<h3 id="封锁种类"><a href="#封锁种类" class="headerlink" title="封锁种类"></a>封锁种类</h3><ul>
-<li>排它锁（X锁）<br>可读可写，一个事务对表加了X锁，其他事务必须等该事务操作完这张表后，才可以对这张表操作。<br>如果一个事务给表加了 X 锁（意味着该事务要独占这个表），那么：<br>别的事务不可以继续获得该表的 S 锁<br>别的事务不可以继续获得该表中的某些记录的 S 锁<br>别的事务不可以继续获得该表的 X 锁<br>别的事务不可以继续获得该表中的某些记录的 X 锁</li>
-<li>共享锁（S锁）<br>只读，多个事务可以同时对都某一张表加共享锁<br>如果一个事务给表加了 S 锁，那么：<br>别的事务可以继续获得该表的 S 锁<br>别的事务可以继续获得该表中的某些记录的 S 锁<br>别的事务不可以继续获得该表的 X 锁<br>别的事务不可以继续获得该表中的某些记录的 X 锁</li>
-</ul>
-<h3 id="封锁协议"><a href="#封锁协议" class="headerlink" title="封锁协议"></a>封锁协议</h3><p>封锁有 3 级的封锁协议：</p>
-<ol>
-<li>一级封锁协议<br>事务 T 在对数据对象 A 进行修改之前，必须对其加 X 锁，直至事务结束才释放。事务结束包括正常结束(COMMIT)和非正常结束(ROLLBACK);<br>在一级加锁协议中，如果仅仅是对数据进行读操作而不进行修改，是不需要进行加锁的。所以只能避免修改丢失而不能避免不可重复读和脏读。</li>
-<li>二级封锁协议<br>在一级加锁协议的基础上增加事务 T 在读取数据 R 之前必须先对其加 S 锁，读完后即可释放 S 锁；<br>二级加锁协议除防止了丢失修改，还可进一步防止读脏数据。例如：事务 T1 正在对数据对象 R 进行修改，此前已经对 R 加上了 X 锁，此时事务 T2 想读取 R，就必须对 R 加上 S 锁，但是 T2 发现 R 已经被 T1 加上了 X 锁，于是 T2 只能等待 T1 释放了在 R 上加的锁之后才能对 R 加 S 锁并读取。这能防止 T2 读取到 T1 未提交的数据，从而避免了脏读。<br>但是在二级封锁协议中，由于读完数据后即可释放 S 锁，所以它不能保证可重复读。</li>
-<li>三级封锁协议<br>三级封锁协议是指，在一级封锁协议的基础上增加事务 T 在读取数据 R 之前对其加 S 锁直至事务结束才释放。<br>三级封锁协议除了防止丢失修改和读“脏”数据之外，还进一步防止了不可重复读。<br>上述三级协议的主要区别在于什么操作需要申请加锁，以及何时释放锁(即锁的持有时间)。不同的封锁协议使事务达到的一致性是不同的，封锁协议越高，一致性程度越强。</li>
-</ol>
-<h3 id="封锁粒度"><a href="#封锁粒度" class="headerlink" title="封锁粒度"></a>封锁粒度</h3><p>封锁粒度指的是封锁对象的大小。<br>封锁粒度与系统的并发度和并发控制的开销有关：封锁粒度越大，数据库能封锁的数据单元越少，并发度越小，系统开销也变小。<br>一般来说，处理个别元组的事务以元组为封锁粒度；处理某个关系的大量元组的事务以关系为封锁粒度；处理多个关系的大量元组的事务以数据库为封锁粒度。</p>
-<p>在一个系统中，提供多种封锁粒度给不同的事务选择，这种封锁方法称为<strong>多粒度封锁（ multiple granularity locking）</strong>。</p>
-<ul>
-<li>封锁在实现上，由一棵多粒度树组织，根结点是整个数据库，表示最大的封锁粒度，叶结点是最小的封锁粒度，如元组、属性值等。</li>
-<li>封锁协议中的给一个节点加锁的同时，<strong>该结点的所有后裔结点也会被加上同样的锁</strong>。对于该结点来说，这种加锁方式为<strong>显式封锁</strong>，而对于其后裔结点来说，这样的方式为<strong>隐式封锁</strong>。<br>显然，这样的检查方法效率很低。为此人们引进了一种新型锁，称为<strong>意向锁（intention lock）</strong>。</li>
-</ul>
-<h3 id="意向锁"><a href="#意向锁" class="headerlink" title="意向锁"></a>意向锁</h3><p>在具有意向锁的多粒度封锁方法中，对任何一个结点加锁时，必须先对它的上层结点加意向锁。<br>申请封锁时应按自上而下的次序进行，释放封锁时则应按自下而上的次序进行。（栈）</p>
-<ol>
-<li>意向共享锁（IS锁）：<br>对一个数据对象加IS锁，表示它的后裔结点拟（意向）加S锁。<br>事务T1对数据对象A加上IS锁后，事务T2可以继续加除X锁以外的锁。</li>
-<li>意向排他锁（IX锁）：<br>对一个数据对象加IX锁，表示它的后裔结点拟（意向）加X锁。<br>事务T1对数据对象A加上IX锁后，事务T2只能继续加IS或IX锁。</li>
-<li>共享意向排他锁（SIX &#x3D; S+IX锁）：<br>对一个数据对象先加S锁，再加IX锁。例如对某个表加SIX锁，则表示该事务要读（S）整个表，同时会更新（IX）个别元组。<br>事务T1对数据对象A加上SIX锁后，事务T2只能加IS锁。</li>
-</ol>
-<h3 id="活锁和死锁"><a href="#活锁和死锁" class="headerlink" title="活锁和死锁"></a>活锁和死锁</h3><p>封锁可能引起活锁和死锁问题。</p>
-<h4 id="活锁"><a href="#活锁" class="headerlink" title="活锁"></a>活锁</h4><p>根据事务的优先级顺序，可能会出现某个事务永远在等待封锁的情况，即事务T1封锁了数据对象A后，T2、T3陆续请求封锁，但是T1释放锁后，系统优先批准了T3的请求，T2仍然在等待。<br>最简单的解决方法就是先来先服务（FCFS），不考虑事务的优先级。</p>
-<h4 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h4><p>事务T1封锁了数据A，事务T2封锁了数据B，然后T1请求封锁B，与此同时T2也请求封锁A，但因为两个事务的请求都需要等待对方释放锁，这样就出现了永远在等待对方的死锁。<br>在数据库中，解决死锁问题主要有两类方法：预防和诊断解除。</p>
-<h4 id="死锁预防"><a href="#死锁预防" class="headerlink" title="死锁预防"></a>死锁预防</h4><ol>
-<li>一次封锁法：每个事务一次将所有要使用的数据加锁，否则事务不继续执行<br>一次性获取所有锁，锁粒度比较大，降低系统的并发度。</li>
-<li>顺序封锁法：预先对数据规定一个封锁顺序，所有事务都按照这个顺序加锁<br>需要预处理的信息太多，开销大，成本高。</li>
-</ol>
-<h4 id="死锁诊断和解除"><a href="#死锁诊断和解除" class="headerlink" title="死锁诊断和解除"></a>死锁诊断和解除</h4><ol>
-<li>超时法<br>时间过短可能误判死锁，时间过长可能无法及时发现死锁</li>
-<li>等待图法<br>一般是撤销一个处理代价最小的事务，下面MySQL中的死锁解除算法也是基于这种方法。</li>
-</ol>
-<h2 id="两段锁协议"><a href="#两段锁协议" class="headerlink" title="两段锁协议"></a>两段锁协议</h2><h3 id="可串行化调度"><a href="#可串行化调度" class="headerlink" title="可串行化调度"></a>可串行化调度</h3><p>可串行性是并发事务正确调度的准则。<br>当且仅当多个事务的并发执行结果，与按某一次序的串行执行结果相同，这种并发调度策略才是<strong>可串行化调度</strong>，即具有可串行性。<br>在一个调度策略中，交换两个事务的不冲突操作的次序，得到另一个调度策略，如果另一个调度策略的执行结果与原来的调度相同，则称原来的调度为<strong>冲突可串行化调度</strong>，<strong>冲突可串行化调度是可串行化调度的充分条件，但不是必要条件</strong>。<br><strong>冲突操作</strong>是指不同事务对同一个数据的读写和写写操作，其他操作都属于不冲突操作。</p>
-<h3 id="两段锁协议-1"><a href="#两段锁协议-1" class="headerlink" title="两段锁协议"></a>两段锁协议</h3><p>为了保证并发调度的正确性，DBMS的并发控制机制必须提供一定的手段来保证调度是可串行化的。<br>目前DBMS普遍采用两段锁协议（TwoPhase Locking，2PL）来实现，所有事务遵守两段锁协议是可串行化调度的充分条件，但不是必要条件。<br>两段锁的两个阶段：</p>
-<ul>
-<li>第一阶段（扩展阶段）：所有事务对数据加锁，但不能解锁；</li>
-<li>第二阶段（收缩阶段）：所有事务对数据解锁，但不能加锁。</li>
-</ul>
-<p>预防死锁的<strong>一次封锁法</strong>遵守两段锁协议；但是两段锁协议并不要求事务必须一次将所有要使用的数据全部加锁，因此遵守两段锁协议的事务可能发生死锁。</p>
-<p>由于两阶段锁协议的存在，如果我们的事务中需要锁住多个行，最好把最可能造成锁冲突、最可能影响并发度的锁尽量往后放。</p>
-<h2 id="MySQL-如何保证并发安全"><a href="#MySQL-如何保证并发安全" class="headerlink" title="MySQL 如何保证并发安全"></a>MySQL 如何保证并发安全</h2><h3 id="latch-和-lock"><a href="#latch-和-lock" class="headerlink" title="latch 和 lock"></a>latch 和 lock</h3><p>MySQL 中的锁主要分为<strong>闩锁（latch）</strong>和<strong>锁（lock）</strong>。<br>latch对象是除了数据库对象外的其他对象，包括操作缓冲池汇总的LRU列表、删除、添加、移动LRU列表中的元素，为了保证一致性必须要有锁介入，因此引入了latch锁。latch是轻量级的锁，因为它要求锁定的时间必须非常短，主要用于保护临界资源的线程安全。<br>lock对象是事务，用来锁定数据库中的对象，如表、行、页。一般lock的对象仅在事务commit或rollback后进行释放。lock有死锁机制。</p>
-<table>
-<thead>
-<tr>
-<th>-</th>
-<th>lock</th>
-<th>latch</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>对象</td>
-<td>事务</td>
-<td>线程</td>
-</tr>
-<tr>
-<td>保护</td>
-<td>数据库内容</td>
-<td>内存数据结构</td>
-</tr>
-<tr>
-<td>持续时间</td>
-<td>整个事务过程</td>
-<td>临界资源</td>
-</tr>
-<tr>
-<td>模式</td>
-<td>行锁、表锁、意向锁</td>
-<td>读写锁、互斥量</td>
-</tr>
-<tr>
-<td>死锁</td>
-<td>通过 waits-for graph、time out 等机制进行死锁检测与处理</td>
-<td>无死锁检测与处理机制，仅通过控制应用程序加锁顺序（lock leveling）来保证无死锁发生</td>
-</tr>
-<tr>
-<td>存在位置</td>
-<td>Lock Manager 的哈希表中</td>
-<td>每个数据结构的对象中</td>
-</tr>
-</tbody></table>
-<p>latch 不能显式添加，而是线程在获取行锁时前，先对行所在的页面添加 latch，然后再对行添加 lock，添加完行 lock 后再释放页面的 latch。<br>如果行被其他线程占有，则线程会先释放页面 latch，等待行锁，待获取行锁后会再次对页面添加 latch，查看页面数据是否有改动，再次获取改动后的行。<br>这种机制主要是为了保证线程获取的行数据的一致性和完整性。</p>
-<h3 id="MVCC"><a href="#MVCC" class="headerlink" title="MVCC"></a>MVCC</h3><p>MySQL 的特色之一是提供了 <strong>MVCC（多版本并发控制）</strong>机制，MVCC 给每行数据增加了版本号，事务在执行读操作时只能读到数据的历史版本，因此可以避免脏读等问题。<br>MVCC 与事务紧密关联，因此我放到<a href="https://tallate.github.io/86b66af2.html">事务小节</a>中去论述了。</p>
-<h4 id="封锁与-MVCC-之间的关系"><a href="#封锁与-MVCC-之间的关系" class="headerlink" title="封锁与 MVCC 之间的关系"></a>封锁与 MVCC 之间的关系</h4><p>封锁与 MVCC 并不是互斥的，MySQL 实现隔离级别时结合了这二者，比如：</p>
-<ul>
-<li>读已提交：二级封锁协议+MVCC，二级封锁协议在读之前加 S 锁，读完之后就释放 S 锁，所以不能保证不可重复读与幻读；</li>
-<li>可重复读：三级封锁协议+MVCC，读完之后不会立刻释放 S 锁，直到事务提交时才会释放，可以解决可重复读。</li>
-</ul>
-<p>封锁协议+MVCC 并不能解决幻读问题，在 MVCC 中是通过 <strong>Next-Key Lock</strong> 解决的。</p>
-<h3 id="Record-Locks（行锁）"><a href="#Record-Locks（行锁）" class="headerlink" title="Record Locks（行锁）"></a>Record Locks（行锁）</h3><p>该锁的官方类型名为 LOCK_REC_NOT_GAP。<br>和前面提到的表锁一样，分 S 锁和 X 锁，只是作用粒度精确到行了。</p>
-<h3 id="Gap-Locks（间隙锁）"><a href="#Gap-Locks（间隙锁）" class="headerlink" title="Gap Locks（间隙锁）"></a>Gap Locks（间隙锁）</h3><p>该锁的官方类型名为 LOCK_GAP。<br>MySQL 解决幻读问题有两种方案：<br>第一种是 MVCC，因为新插入的数据事务 ID 必然不在 ReadView 内，因此读取这些记录后会被直接忽略，但是快照读只在普通读操作中生效，如果发生了当前读仍然会有幻读问题；<br>第二种是加锁，但是加锁有一个问题，就是事务没法给尚不存在的记录加锁。<br>如果我们希望为 number 值为 8 的记录加 gap 锁，则该记录的前后间隙都不允许别的事务立即插入记录：<br><img src="/imgs/MySQL/MySQL-gap%E9%94%81.png" alt="MySQL-gap锁" title="MySQL-gap锁"><br>如图中为 number 值为 8 的记录加了 gap 锁，意味着不允许别的事务在 number 值为 8 的记录前边的间隙插入新记录，其实就是 number 列的值(3, 8)这个区间的新记录是不允许立即插入的。比方说有另外一个事务再想插入一条 number 值为 4 的新记录，它定位到该条新记录的下一条记录的 number 值为 8，而这条记录上又有一个 gap 锁，所以就会阻塞插入操作，直到拥有这个 gap 锁的事务提交了之后，number 列的值在区间(3, 8)中的新记录才可以被插入。<br>另外，如何为(20, +∞)这个区间加 gap 锁？其实是为数据页中的 Infimum 和 Supremum 记录加上了 gap 锁。<br>比如假设此时表里有 5、25 这两条数据，则<code>SELECT c1 FROM t WHERE c1 BETWEEN 10 and 20 FOR UPDATE</code>查询 10 到 20 范围内的记录，并加上范围<code>(5, 10)</code>、<code>[10, 20]</code>、<code>(20, 25]</code>以内的 gap 锁。<br>比如假设此时表里有 102、105、107 三个值，则<code>select * from test where n = 105 for update;</code>这个语句会对<code>(102, 105)</code>、<code>(105, 107]</code>这两个区间加 gap 锁。</p>
-<p>间隙锁可以通过innodb_locks_unsafe_for_binlog参数来开启关闭：</p>
-<ul>
-<li>设置为ON，表示关闭区间锁，此时一致性会被破坏（所以是unsafe）</li>
-<li>设置为OFF，表示开启区间锁</li>
-</ul>
-<h3 id="Next-Key-Locks"><a href="#Next-Key-Locks" class="headerlink" title="Next-Key Locks"></a>Next-Key Locks</h3><p>该锁的官方类型名为 LOCK_ORDINARY。<br>Next-Key Lock 其实是<strong>Record Lock 和 Gap Lock 的组合</strong>，它既会保护该条记录，又能阻止别的事务将新记录插入被保护记录的前后间隙。</p>
-<h3 id="意向锁-1"><a href="#意向锁-1" class="headerlink" title="意向锁"></a>意向锁</h3><p>加表锁时怎么知道该表上有没有行锁？InnoDB 通过<strong>意向锁（Intention Locks）</strong>来解决这个问题：<br>1、<strong>意向共享锁</strong>，英文名：Intention Shared Lock，简称<strong>IS 锁</strong>。当事务准备在某条记录上加 S 锁时，需要先在<strong>表级别</strong>加一个 IS 锁。<br>2、<strong>意向独占锁</strong>，英文名：Intention Exclusive Lock，简称<strong>IX 锁</strong>。当事务准备在某条记录上加 X 锁时，需要先在<strong>表级别</strong>加一个 IX 锁。</p>
-<p>IS、IX 锁是表级锁，它们的提出仅仅为了在之后加表级别的 S 锁和 X 锁时可以快速判断表中的记录是否被上锁，以避免用遍历的方式来查看表中有没有上锁的记录，也就是说其实 IS 锁和 IX 锁是兼容的，IX 锁和 IX 锁是兼容的。</p>
-<table>
-<thead>
-<tr>
-<th>兼容性</th>
-<th>X</th>
-<th>IX</th>
-<th>S</th>
-<th>IS</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>X</td>
-<td>不兼容</td>
-<td>不兼容</td>
-<td>不兼容</td>
-<td>不兼容</td>
-</tr>
-<tr>
-<td>IX</td>
-<td>不兼容</td>
-<td>兼容</td>
-<td>不兼容</td>
-<td>兼容</td>
-</tr>
-<tr>
-<td>S</td>
-<td>不兼容</td>
-<td>不兼容</td>
-<td>兼容</td>
-<td>兼容</td>
-</tr>
-<tr>
-<td>IS</td>
-<td>不兼容</td>
-<td>兼容</td>
-<td>兼容</td>
-<td>兼容</td>
-</tr>
-</tbody></table>
-<h3 id="Insert-Intention-Locks（插入意向锁）"><a href="#Insert-Intention-Locks（插入意向锁）" class="headerlink" title="Insert Intention Locks（插入意向锁）"></a>Insert Intention Locks（插入意向锁）</h3><p>该锁的官方类型名为 LOCK_INSERT_INTENTION。<br>InnoDB 中事务在等待<strong>gap 锁</strong>的释放时，还需要在内存里生成一个锁结构，表示事务现在正想往某个间隙中插入记录，但是现在正在等待。<br><img src="https://user-gold-cdn.xitu.io/2019/5/1/16a72bf8133eb1dc?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"><br>如上图所示，有 3 个事务，其中 T1 持有 gap 锁，所以 T2 和 T3 需要生成一个插入意向锁的锁结构，等待 T1 释放后才能获取到插入意向锁（本质上是将 is_waiting 属性改成了 false），然后再继续执行插入操作。</p>
-<h3 id="隐式锁"><a href="#隐式锁" class="headerlink" title="隐式锁"></a>隐式锁</h3><p>一般来说间隙锁可以避免 gap 锁锁住的区间被其他事务修改（当要插入的记录所在的区间有 gap 锁，事务会先再该间隙上加一个插入意向锁），但是还有一种情况正好是反过来的：如果一个事务首先插入了一条记录，别的记录如果直接读（SELECT … LOCK IN SHARE MODE 或 SELECT … FOR UPDATE）则会产生脏读问题，如果直接修改则又会产生脏写问题。<br>这个问题在 InnoDB 中是通过事务 ID 解决的：</p>
-<ul>
-<li>聚簇索引中有一个隐藏列 trx_id，存储的是最后改动该记录的事务 ID，新插入记录的 trx_id 当然就是当前事务的事务 ID，如果别的事务想对该记录添加 S 锁或 X 锁，<strong>会首先看一下该记录 trx_id 是否是当前正活跃的事务</strong>，如果是的话就会创建一个 X 锁然后进入等待状态；</li>
-<li>二级索引本身没有 trx_id 列，但是在二级索引页面的 Page Header 部分有一个 PAGE_MAX_TRX_ID 属性，该属性代表对该页面做改动的最大的事务 id，如果 PAGE_MAX_TRX_ID 属性值小于当前最小的活跃事务 id，那么说明对该页面做修改的事务都已经提交了，否则就需要在页面中定位到对应的二级索引记录，然后回表找到它对应的聚簇索引记录，然后再重复聚簇索引的做法。</li>
-</ul>
-<h3 id="表锁"><a href="#表锁" class="headerlink" title="表锁"></a>表锁</h3><h4 id="表锁种类"><a href="#表锁种类" class="headerlink" title="表锁种类"></a>表锁种类</h4><ol>
-<li>lock tables …… read&#x2F;write<br>锁住整个表会对数据库效率产生比较大的影响。</li>
-<li>MDL（metadata lock)<br>MDL 不需要显式使用，在访问一个表的时候会被自动加上，表结构变更操作之间、表结构变更操作与读表操作之间都是互斥的，保证表结构变更的正确性。<br>MDL 可能会导致表的锁死，比如一个 alter 语句正在等待一个长事务（该事务中有 select 语句）释放读 MDL，这时 alter 会加上写 MDL，因此之后的所有事务都需要等待该写 MDL 释放了，因此在变更表结构时最好先将长事务终止，或者给 alter 语句设置等待时间：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE tbl_name NOWAIT add column ...</span><br><span class="line">ALTER TABLE tbl_name WAIT N add column ... </span><br></pre></td></tr></table></figure></li>
-</ol>
-<h4 id="不会加表锁的情况"><a href="#不会加表锁的情况" class="headerlink" title="不会加表锁的情况"></a>不会加表锁的情况</h4><p>1、在对某个表执行 SELECT、INSERT、DELETE、UPDATE 语句时，InnoDB 存储引擎是不会为这个表添加表级别的 S 锁或者 X 锁的；<br>2、执行 DDL 语句时（ALTER TABLE、DROP TABLE）时，使用的是 Server 层的<strong>元数据锁（Metadata Locks）</strong>。</p>
-<p>手动获取表级 S 锁和 X 锁的方式：<br>1、LOCK TABLES t READ：InnoDB 存储引擎会对表 t 加表级别的 S 锁。<br>2、LOCK TABLES t WRITE：InnoDB 存储引擎会对表 t 加表级别的 X 锁。</p>
-<p>不过一般表锁不会用到，只会在崩溃恢复之类的场景下会用到。</p>
-<p>表级 IS 锁、IX 锁，和之前的描述一致。</p>
-<p>如果实现自增列：<br>1、表级别 AUTO-INC 锁：当表中某列设置了 auto_increment 属性，那么该列的值是会自动生成的，插入时会在表级加一个 AUTO-INC 锁，保证这个字段是严格递增的；当插入语句执行完毕后，该锁会自动释放，而不是在事务结束后再释放。<br>2、一个轻量级锁：生成 auto_increment 列的值后马上释放。</p>
-<blockquote>
-<p>InnoDB 提供了一个称之为 innodb_autoinc_lock_mode 的系统变量来控制到底使用上述两种方式中的哪种来为 AUTO_INCREMENT 修饰的列进行赋值，当 innodb_autoinc_lock_mode 值为 0 时，一律采用 AUTO-INC 锁；当 innodb_autoinc_lock_mode 值为 2 时，一律采用轻量级锁；当 innodb_autoinc_lock_mode 值为 1 时，两种方式混着来（也就是在插入记录数量确定时采用轻量级锁，不确定时使用 AUTO-INC 锁）。不过当 innodb_autoinc_lock_mode 值为 2 时，可能会造成不同事务中的插入语句为 AUTO_INCREMENT 修饰的列生成的值是交叉的，在有主从复制的场景中是不安全的。</p>
-</blockquote>
-<h3 id="MySQL-全局锁"><a href="#MySQL-全局锁" class="headerlink" title="MySQL 全局锁"></a>MySQL 全局锁</h3><p>一般只有全库逻辑备份时才会使用到全局锁</p>
-<ol>
-<li>Flush tables with read lock（FTWRL）<br>这个命令不保证备份时数据库是否处于一个一致性视图，可能有的事务刚执行一半。</li>
-<li>mysqldump<br>在导数据前会启动事务，确保可以拿到一致性视图，前提是数据库中所有表都使用了支持事务的引擎，否则就只能使用<code>FTWRL</code>来备份了。</li>
-</ol>
-<h3 id="其他存储引擎中的锁"><a href="#其他存储引擎中的锁" class="headerlink" title="其他存储引擎中的锁"></a>其他存储引擎中的锁</h3><p>MyISAM、MEMORY、MERGE 这些引擎不支持事务，因此加锁一般都是针对当前会话来说的，比如 Session1 先对表加 S 锁，之后 Session2 再对该表执行 UPDATE 操作时，获取 X 锁的过程就会被阻塞了。<br>相当于这些存储引擎同一时刻只允许一个会话对表执行写操作，因此这些存储引擎最好用于读多写少的场景下。</p>
-<h2 id="常见操作利用锁方式"><a href="#常见操作利用锁方式" class="headerlink" title="常见操作利用锁方式"></a>常见操作利用锁方式</h2><p>有以下几种方式：<br>1、一致性读 - 读操作利用 MVCC（多版本并发控制）<br>读操作只能读取记录的历史版本：读操作时生成一个 ReadView，记录当时正在执行的事务 ID，记录的每个版本都有事务 ID，查询数据时只能读到在生成 ReadView 之前已提交事务所做的修改，在生成 ReadView 之前未提交的事务或之前才开启的事务所做的修改都看不到。<br>2、锁定读 - 显式加锁<br>利用 MVCC 的方式，读写操作彼此并不冲突，性能更高。而加锁的方式读写操作之间都是互斥的，需要排队执行，比较影响性能。<br>3、当前读 - 隐式加锁<br>写操作只能针对最新版本的记录，因此写操作前需要加锁。</p>
-<h3 id="一致性读（Consistent-Reads、一致性无锁读、快照读）"><a href="#一致性读（Consistent-Reads、一致性无锁读、快照读）" class="headerlink" title="一致性读（Consistent Reads、一致性无锁读、快照读）"></a>一致性读（Consistent Reads、一致性无锁读、快照读）</h3><p>事务利用 MVCC 进行的读取操作称之为一致性读，所有普通的 SELECT 语句在 READ COMMITTED、REPEATABLE READ 隔离级别下都算是一致性读。<br>也就是上面提到的“读操作利用 MVCC”。</p>
-<h3 id="锁定读（Locking-Reads）"><a href="#锁定读（Locking-Reads）" class="headerlink" title="锁定读（Locking Reads）"></a>锁定读（Locking Reads）</h3><p>读-读的情况并不会引起并发冲突，我们不希望对这种情况造成影响，因此 MySQL 给锁分了几个类：<br>1、共享锁（Shared Locks、S 锁）：在事务要读取一条记录时，需要先获取该记录的 S 锁。<br>2、独占锁（排他锁、Exclusive Locks、X 锁）：在事务要改动一条记录时，需要先获取该记录的 X 锁。</p>
-<table>
-<thead>
-<tr>
-<th>兼容性</th>
-<th>X</th>
-<th>S</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>X</td>
-<td>不兼容</td>
-<td>不兼容</td>
-</tr>
-<tr>
-<td>S</td>
-<td>不兼容</td>
-<td>兼容</td>
-</tr>
-</tbody></table>
-<p>一般读取一条记录时我们会获取这条记录的 S 锁，但是如果我们想在读取记录时就获取记录的 X 锁，来禁止别的事务读写该记录，则需要使用一些特殊的 SELECT 语句格式：<br>1、对读取的记录加 S 锁</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT ... LOCK IN SHARE MODE;</span><br></pre></td></tr></table></figure>
-<p>上面语句为记录加 S 锁，允许多个事务同时发起读请求，但是当别的事务尝试获取 X 锁（SELECT … FOR UPDATE 或修改这些记录）则会阻塞，直到当前事务提交之后将这些记录上的 S 锁释放掉。<br>2、对读取的记录加 X 锁</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT ... FOR UPDATE;</span><br></pre></td></tr></table></figure>
-<p>上面语句为记录加 X 锁，之后别的事务来获取该记录的 S 锁或 X 锁时都会被阻塞，直到当前事务提交之后将这些记录上的 X 锁释放掉。</p>
-<h3 id="写操作（write）如何利用锁"><a href="#写操作（write）如何利用锁" class="headerlink" title="写操作（write）如何利用锁"></a>写操作（write）如何利用锁</h3><h4 id="DELETE"><a href="#DELETE" class="headerlink" title="DELETE"></a>DELETE</h4><p>DELETE 操作会先在 B+树中定位到这条记录，然后获取这条记录的 X 锁，并执行 delete mark 操作（逻辑删除）。</p>
-<h4 id="UPDATE"><a href="#UPDATE" class="headerlink" title="UPDATE"></a>UPDATE</h4><p>如果未修改该记录的键值并且被更新的列占用的存储空间在修改前后未发生变化，则先在 B+树种定位到这条记录然后获取该记录的 X 锁，最后在原记录的位置执行修改操作。<br>如果未修改该记录的键值并且至少有一个被更新的列占用的存储空间在修改前后发生变化，则先在 B+树种定位到这条记录后获取 X 锁，将这条记录彻底删除（移入垃圾链表），最后插入一条记录。<br>如果修改了该记录的键值，则相当于在原记录上 DELETE 后 INSERT。</p>
-<h4 id="INSERT"><a href="#INSERT" class="headerlink" title="INSERT"></a>INSERT</h4><p>一般 INSERT 操作并不加锁，MySQL 引入了一种称为<strong>隐式锁</strong>的技术来保护这条新插入的记录在本事务提交之前不被其他事务访问。</p>
-<blockquote>
-<p>显式锁即 select .. for update 语句，从语法上就能看出这个语句加了锁。</p>
-</blockquote>
-<p>让我们分几种情况来分析 insert 语句的锁。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `t` (</span><br><span class="line">  `id` int(11) NOT NULL AUTO_INCREMENT,</span><br><span class="line">  `c` int(11) DEFAULT NULL,</span><br><span class="line">  `d` int(11) DEFAULT NULL,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  UNIQUE KEY `c` (`c`)</span><br><span class="line">) ENGINE=InnoDB;</span><br><span class="line"></span><br><span class="line">insert into t values(null, 1,1);</span><br><span class="line">insert into t values(null, 2,2);</span><br><span class="line">insert into t values(null, 3,3);</span><br><span class="line">insert into t values(null, 4,4);</span><br><span class="line"></span><br><span class="line">create table t2 like t</span><br></pre></td></tr></table></figure>
-<h4 id="insert-…-select-语句"><a href="#insert-…-select-语句" class="headerlink" title="insert … select 语句"></a>insert … select 语句</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into t2(c,d) select c,d from t;</span><br></pre></td></tr></table></figure>
-<p>上面Session A语句需要对表 t 的所有行和间隙加锁。原因见下面的例子：</p>
-<table>
-<thead>
-<tr>
-<th>session A</th>
-<th>session B</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>insert into t values(-1, -1, -1);</code></td>
-<td><code>insert into t2(c, d) select c, d from t;</code></td>
-</tr>
-</tbody></table>
-<p>上面的两个session，如果过session B先执行，由于对表t的主键索引加了<code>(-∞, 1]</code>这个next-key lock，会在语句执行完毕后，才允许session A的insert语句执行。<br>但如果没有锁，就有可能出现session B的insert语句先执行，但是后写入binlog的情况，于是，在 binlog_format&#x3D;statement 的情况下，binlog 里面就记录了这样的语句序列：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">insert into t values(-1,-1,-1);</span><br><span class="line">insert into t2(c,d) select c,d from t;</span><br></pre></td></tr></table></figure>
-<p>这个语句到了备库执行，就会把 id&#x3D;-1 这一行也写到表 t2 中，出现主备不一致。</p>
-<h4 id="insert-唯一键冲突"><a href="#insert-唯一键冲突" class="headerlink" title="insert 唯一键冲突"></a>insert 唯一键冲突</h4><p>insert 发生唯一键冲突时可能引起死锁，例：</p>
-<table>
-<thead>
-<tr>
-<th>T</th>
-<th>session A</th>
-<th>session B</th>
-<th>session C</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>T1</td>
-<td><code>begin; insert into t values(null, 5, 5)</code></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>T2</td>
-<td></td>
-<td><code>insert into t values(null, 5, 5)</code></td>
-<td><code>insert into t values(null, 5, 5)</code></td>
-</tr>
-<tr>
-<td>T3</td>
-<td><code>rollback;</code></td>
-<td></td>
-<td>(Deadlock fount)</td>
-</tr>
-</tbody></table>
-<ul>
-<li>正如前面的《加锁规则》所述，session A执行insert语句时，会在所以c的c&#x3D;5这行上加记录锁，由于这个索引是唯一索引，因此会退化为记录锁；</li>
-<li>session B要执行相同的insert语句，发现了唯一键冲突，加上<strong>读锁</strong>，同时session C也会在同一个记录上加上读锁；<blockquote>
-<p>为什么加读锁？应该是为了保证不被删掉的同时，可以不影响读操作。</p>
-</blockquote>
-</li>
-<li>T3时刻，session A 回滚。这时候，session B 和 session C 都试图继续执行插入操作，都要加上写锁。两个 session 都要等待对方的行锁，所以就出现了死锁。</li>
-</ul>
-<h4 id="insert-into-…-on-duplicate-key-update"><a href="#insert-into-…-on-duplicate-key-update" class="headerlink" title="insert into … on duplicate key update"></a>insert into … on duplicate key update</h4><p>上面的例子是主键冲突后直接报错，如果写成如下形式：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into t values(11,10,10) on duplicate key update d=100;</span><br></pre></td></tr></table></figure>
-<p>则会给索引c上<code>(5, 10]</code>加一个排他的next-key lock（写锁）。</p>
-<h2 id="加锁场景例举（InnoDB）"><a href="#加锁场景例举（InnoDB）" class="headerlink" title="加锁场景例举（InnoDB）"></a>加锁场景例举（InnoDB）</h2><ol>
-<li>原则 1：加锁的基本单位是 next-key lock。<blockquote>
-<p>next-key lock 是前开后闭区间。</p>
-</blockquote>
-</li>
-<li>原则 2：查找过程中访问到的对象才会加锁。</li>
-<li>原则 3：只有明确指定主键时 InnoDB 才会使用行锁，否则会使用表锁</li>
-<li><strong>原则 4</strong>：命中一个索引并加锁后，执行更新删除操作时还需要对其他索引中对应记录加X锁。<br>这个规则涉及加锁顺序，可能引起死锁。</li>
-<li>优化 1：索引上的等值查询，给唯一索引加锁的时候，next-key lock 退化为行锁。</li>
-<li>优化 2：索引上的等值查询，向右遍历时且最后一个值不满足等值条件的时候，next-key lock 退化为间隙锁。</li>
-<li>一个 bug：唯一索引上的范围查询会访问到不满足条件的第一个值为止。</li>
-</ol>
-<h3 id="例-1、等值查询间隙锁"><a href="#例-1、等值查询间隙锁" class="headerlink" title="例 1、等值查询间隙锁"></a>例 1、等值查询间隙锁</h3><ol>
-<li>根据原则 1，通过 next-key lock 加锁范围<code>(5, 10]</code>；</li>
-<li>因为第一个查询是等值查询（id &#x3D; 7），而 id &#x3D; 10 不满足查询条件，因此 next-key lock 退化为间隙锁，因此最终加锁范围是<code>(5, 10)</code>。</li>
-</ol>
-<p>因此 Session B 要往这个间隙中插入 id &#x3D; 8 会被锁住，但是 Session C 修改 id &#x3D; 10 这行是可以的。</p>
-<h3 id="例-2、主键不明确导致锁表"><a href="#例-2、主键不明确导致锁表" class="headerlink" title="例 2、主键不明确导致锁表"></a>例 2、主键不明确导致锁表</h3><p>下面的情况不会锁表：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">明确指定主键，并且有此行数据，row lock</span><br><span class="line">SELECT * FROM products WHERE id = &#x27;3&#x27; FOR UPDATE;</span><br><span class="line">SELECT * FROM products WHERE id = &#x27;3&#x27; and type = 1 FOR UPDATE;</span><br><span class="line">明确指定主键，若查无此行数据，无lock</span><br><span class="line">SELECT * FROM products WHERE id = &#x27;-1&#x27; FOR UPDATE;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>下面的情况会锁表：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">非索引字段，table lock</span><br><span class="line">SELECT * FROM products WHERE name = &#x27;Mouse&#x27; FOR UPDATE;</span><br><span class="line">主键不明确，table lock</span><br><span class="line">SELECT * FROM products WHERE id &lt;&gt; &#x27;3&#x27; FOR UPDATE;</span><br><span class="line">主键不明确，table lock</span><br><span class="line">SELECT * FROM products WHERE id LIKE &#x27;3&#x27; FOR UPDATE;</span><br></pre></td></tr></table></figure>
-
-<h3 id="例-3、update未命中行触发间隙锁"><a href="#例-3、update未命中行触发间隙锁" class="headerlink" title="例 3、update未命中行触发间隙锁"></a>例 3、update未命中行触发间隙锁</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `hgc_test` (</span><br><span class="line">  `a` int(11) DEFAULT NULL,</span><br><span class="line">  `b` int(11) DEFAULT NULL</span><br><span class="line">) ENGINE=InnoDB;</span><br><span class="line">insert into hgc_test values(1, 0), (5, 0), (10, 0);</span><br></pre></td></tr></table></figure>
-<p>事务S1执行：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">begin;</span><br><span class="line">update hgc_test set b = 10 where a = 7;</span><br></pre></td></tr></table></figure>
-<p>事务S2执行：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">begin;</span><br><span class="line">insert into hgc_test values(8, 1);</span><br></pre></td></tr></table></figure>
-<p>由于事务S1已经锁住了<code>(5, 10]</code>这个区间，因此S2执行插入时会被阻塞。</p>
-<h3 id="例-4、自增长与锁"><a href="#例-4、自增长与锁" class="headerlink" title="例 4、自增长与锁"></a>例 4、自增长与锁</h3><p>InnoDB 中，对每个含有自增长值的表都有一个自增长计数器。</p>
-<ul>
-<li>初始化：当对这样的表进行插入操作时，这个计数器会被初始化。</li>
-<li>更新：插入操作根据这个自增长计数器值加 1 赋予自增长列，对该计数器的更新需要保证线程安全，这可以通过设置使用<strong>表锁</strong>还是<strong>互斥量</strong>来实现。</li>
-</ul>
-<h2 id="活锁、死锁与死锁检测"><a href="#活锁、死锁与死锁检测" class="headerlink" title="活锁、死锁与死锁检测"></a>活锁、死锁与死锁检测</h2><h3 id="活锁-1"><a href="#活锁-1" class="headerlink" title="活锁"></a>活锁</h3><p>活锁：如果事务 T1 封锁了数据 R，事务 T2 又请求封锁 R，于是 T2 等待。T3 也请求封锁 R，当 T1 释放了 R 上的锁之后系统首先批准了 T3 的请求，T2 继续等待；然后 T4 又请求封锁 R，T3 在释放 R 上的锁之后系统又批准了 T4 的请求，T2 有可能永远等待，这就是活锁的情形。<br>避免活锁的简单方法就是采用先来先服务的策略。当多个事务请求封锁同一数据对象时，封锁子系统按请求锁的先后次序对事务进行排队，数据对象上的锁一旦释放就批准批准申请队列中第一个事务获得锁。</p>
-<h3 id="死锁-1"><a href="#死锁-1" class="headerlink" title="死锁"></a>死锁</h3><p><a href="#refer-anchor"><sup>1</sup></a><br>死锁在许多操作系统书中都有描述，简而言之，就是多个线程出现循环资源依赖，涉及的线程都在等待别的线程释放资源时，都会导致这些线程都进入无限等待的状态，称为死锁。<br>在 InnoDB 中，也会出现两个事务互相等待对方释放某条记录的行锁的情况，从而导致进入死锁状态。死锁可以预防，也可以等发生死锁后再作处理。</p>
-<h4 id="如何处理死锁"><a href="#如何处理死锁" class="headerlink" title="如何处理死锁"></a>如何处理死锁</h4><p>MySQL 有两种死锁处理方式：</p>
-<ol>
-<li>等待直到超时（<code>show variables like &#39;innodb_lock_wait_timeout&#39;</code>）</li>
-<li>发起死锁检测，主动回滚一条事务，让其他事务继续执行（<code>show variables like &#39;innodb_deadlock_detect&#39;</code>）</li>
-</ol>
-<h4 id="死锁预防-1"><a href="#死锁预防-1" class="headerlink" title="死锁预防"></a>死锁预防</h4><p>在数据库中，产生死锁的原因是两个或多个事务都已经封锁了一些数据对象，然后又都请求对已被事务封锁的对象加锁，从而出现死锁。防止死锁的发生其实就是要破坏产生死锁的条件。预防死锁发生通常有以下两种方法。</p>
-<ul>
-<li><strong>一次封锁法</strong>：一次封锁法要求每个事务必须一次将所有要使用的数据全部加锁，否则就不能继续执行下去。一次封锁法虽然可以有效防止死锁的发生，但是<strong>增加了锁的粒度，从而降低了系统的并发性</strong>。并且数据库是不断变化的，所以事先很难精确地确定每个事务所需进行加锁的对象，为此只能扩大封锁范围，将事务在执行过程中可能需要封锁的数据对象全部加锁，这就进一步降低了并发度；</li>
-<li><strong>顺序封锁法</strong>：顺序封锁法是预先对数据对象规定一个封锁顺序，所有事务都按这个顺序实施封锁。例如在 B 树结构的索引中，可规定封锁的顺序必须是从根节点开始，然后是下一级的子节点，逐级封锁。顺序封锁法可以有效地避免死锁，但是要实现顺序封锁法十分的困难，因为<strong>很难事先确定每一个事务要封锁哪些对象，因此也就很难按规定的顺序去实施加锁</strong>。</li>
-</ul>
-<p>由此可见数据库中不适合预防死锁，只适合进行死锁的诊断与解除。</p>
-<h4 id="死锁检测与解除"><a href="#死锁检测与解除" class="headerlink" title="死锁检测与解除"></a>死锁检测与解除</h4><ul>
-<li>设置最大等待时间，等待超过目标时间后自动释放之前获取到的锁，让别的事务先执行；<br>可以通过参数<code>innodb_lock_wait_timeout</code>来设置<br>超时法实现简单，但其不足也十分明显，一是有可能误判了死锁，如事务因为其他原因而使等待时间超过时限，系统就会误认为发生了死锁；二是若时限设置得太长，则不能及时发现死锁。</li>
-<li>发起死锁检测，发现死锁后，主动回滚死锁链条中的某个事务，让其他事务得以继续执行<br>将参数 <code>innodb_deadlock_detect</code> 设置为 on 即表示开启死锁检测。<br>死锁检测是一个耗时操作，因为每当一个事务被锁的时候，都要看看它所依赖的线程有没有被别人锁住，如此循环，最后判断是否出现了循环等待，也就是死锁。<br>死锁检测的基础是<strong>事务等待图</strong>，事务等待图是一个有向图 G&#x3D;(T,U),T 为结点的集合，每个结点表示正在运行的事务；U 为边的集合，每条边表示事务等待的情况。若 T1 等待 T2，则在 T1,T2 之间画一条有向边，从 T1 指向 T2。事务等待图动态地反应了所有事务的等待情况。并发控制子系统周期性(比如每隔数秒)生成事务等待图，并进行检测。如果发现图中存在回路，则表示系统中出现了死锁。</li>
-</ul>
-<p>数据库管理系统的并发控制系统一旦检测到系统中存在死锁，就要设法<strong>解除死锁</strong>。通常采用的方法是选择一个处理死锁代价最小的事务，将其撤销，释放此事务持有的所有的锁，使其他事务得以继续运行下去。当然，对撤销的事务所进行的数据修改必须加以恢复。</p>
-<p>死锁的检测会产生一定的性能损耗，因此解决热点行更新导致的性能问题需要结合业务来进行权衡：</p>
-<ol>
-<li>如果能确保业务一定不会出现死锁，可以临时把死锁检测关掉。<br>但是需要注意的是，死锁检测可以保证出现死锁后可以通过业务回滚然后重试来解决，这是业务无损的，而关掉死锁检测意味着可能会出现大量的超时，这是业务有损的。</li>
-<li>控制并发度<br>保证对于相同行的更新，在进入引擎之前排队，这样就可以避免大量的死锁检测工作了。</li>
-<li>将对同一行的操作改成多行<br>比如，将库存分成多份，减库存时随机取出一份来操作，这样冲突的概率就会变成原本的 1&#x2F;10 了，既减少了锁等待个数，又减少了死锁检测的 CPU 消耗。</li>
-</ol>
-<h4 id="可能发生死锁的情况"><a href="#可能发生死锁的情况" class="headerlink" title="可能发生死锁的情况"></a>可能发生死锁的情况</h4><ol>
-<li>注意加锁顺序<br>比如下面语句查3行数据，而且由于<code>desc</code>，该查询语句是<strong>倒序</strong>在索引树上遍历的，遍历过程中会给查到的记录和区间加行锁和间隙锁。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select id from t where c in(5,20,10) order by c desc for update;</span><br></pre></td></tr></table></figure>
-在上面这条语句执行期间，如果有另外一条语句是正序遍历并加锁的，就很有可能会导致死锁，比如如下语句：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select id from t where c in(5,20,10) lock in share mode;</span><br></pre></td></tr></table></figure>
-因此对同一组咨询，要<strong>尽量按照相同的顺序访问</strong>。</li>
-</ol>
-<h4 id="如何查看死锁"><a href="#如何查看死锁" class="headerlink" title="如何查看死锁"></a>如何查看死锁</h4><p>出现死锁后，执行 <code>show engine innodb status</code> 命令，这个命令会输出很多信息，有一节 <code>LATESTDETECTED DEADLOCK</code>。</p>
-<h4 id="死锁示例1-间隙锁互斥"><a href="#死锁示例1-间隙锁互斥" class="headerlink" title="死锁示例1 - 间隙锁互斥"></a>死锁示例1 - 间隙锁互斥</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">-- 设置使用区间锁（默认使用，因此不需要设置）</span><br><span class="line">-- 设置事务隔离级别为RR（默认为RR，因此不需要设置）</span><br><span class="line">-- 设置需要手动提交</span><br><span class="line">set session autocommit=0;</span><br><span class="line"></span><br><span class="line">create table t (</span><br><span class="line">  id int(10) primary key</span><br><span class="line">) engine = innodb;</span><br><span class="line"></span><br><span class="line">start transaction;</span><br><span class="line">insert into t values(1);</span><br><span class="line">insert into t values(3);</span><br><span class="line">insert into t values(10);</span><br><span class="line">commit;</span><br></pre></td></tr></table></figure>
-<p>在开启区间锁且RR隔离级别的情况下，插入上面数据后会出现以下4个区间：</p>
-<ul>
-<li>(-infinity, 1)</li>
-<li>(1, 3)</li>
-<li>(3, 10)</li>
-<li>(10, infinity)</li>
-</ul>
-<p>线程A：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">set session autocommit=0;</span><br><span class="line">start transaction;</span><br><span class="line">delete from t where id=5;</span><br></pre></td></tr></table></figure>
-<p>线程B：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">set session autocommit=0;</span><br><span class="line">start transaction;</span><br><span class="line">insert into t values(0);</span><br><span class="line">insert into t values(2);</span><br><span class="line">insert into t values(12);</span><br><span class="line">insert into t values(7);</span><br></pre></td></tr></table></figure>
-<p>事务A删除某个区间内的一条不存在记录，获取到共享间隙锁，会阻止其他事务B在相应的区间插入数据，因为插入需要获取排他间隙锁，也就是在插入7的时候会发生阻塞。</p>
-<p>使用<code>show engine innodb status;</code>命令可以查看锁的情况：<br><img src="/imgs/MySQL/%E6%AD%BB%E9%94%81%E7%A4%BA%E4%BE%8B1_%E9%97%B4%E9%9A%99%E9%94%81%E4%BA%92%E6%96%A5.png" alt="死锁示例1_间隙锁互斥" title="死锁示例1_间隙锁互斥"><br>如果事务A一直不提交或回滚，则事务B会一直等待直到超时，并显示：<br><code>Error Code: 1205. Lock wait timeout exceeded; try restarting transaction</code></p>
-<h4 id="死锁示例2-共享排他锁死锁"><a href="#死锁示例2-共享排他锁死锁" class="headerlink" title="死锁示例2 - 共享排他锁死锁"></a>死锁示例2 - 共享排他锁死锁</h4><p>线程A、B、C均执行以下SQL：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">set session autocommit=0;</span><br><span class="line">start transaction;</span><br><span class="line">insert into t values(7);</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p>A先执行，插入成功并获取到id&#x3D;7的排他锁</p>
-</li>
-<li><p>B、C在执行时，需要进行PK校验，需要先获取id&#x3D;7的共享锁，因此阻塞。</p>
-</li>
-<li><p>如果此时A执行<code>rollback;</code>回滚了，此时会释放掉id&#x3D;7的排他锁。</p>
-</li>
-<li><p>B、C继续进行主键校验，并同时获取到id&#x3D;7的共享锁；</p>
-</li>
-<li><p>如果B、C想要插入成功，必须获得id&#x3D;7的排他锁，但由于双方都已经获取到共享锁，因此它们都无法获取到排他锁，死锁就出现了。</p>
-</li>
-<li><p>MySQL有死锁检测机制，因此B和C中有一个会插入成功，而另一个事务会自动放弃，并报错：<code>Error Code: 1213. Deadlock found when trying to get lock; try restarting transaction</code></p>
-</li>
-</ul>
-<h4 id="死锁示例3-并发间隙锁的死锁"><a href="#死锁示例3-并发间隙锁的死锁" class="headerlink" title="死锁示例3 - 并发间隙锁的死锁"></a>死锁示例3 - 并发间隙锁的死锁</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">A：set session autocommit=0;</span><br><span class="line">A：start transaction;</span><br><span class="line">A：delete from t where id=6;</span><br><span class="line">         B：set session autocommit=0;</span><br><span class="line">         B：start transaction;</span><br><span class="line">         B：delete from t where id=7;</span><br><span class="line">A：insert into t values(5);</span><br><span class="line">         B：insert into t values(8);</span><br></pre></td></tr></table></figure>
-<ul>
-<li>A、B线程都会在执行删除语句后获取到(3, 10)的共享间隙锁</li>
-<li>A、B在执行insert语句时希望获得(3, 10)的排他间隙锁，于是出现死锁。<br>可以使用<code>show engine innodb status;</code>命令来查看死锁情况。<br><img src="/imgs/MySQL/%E6%AD%BB%E9%94%81%E7%A4%BA%E4%BE%8B3_%E5%B9%B6%E5%8F%91%E9%97%B4%E9%9A%99%E9%94%81%E7%9A%84%E6%AD%BB%E9%94%81.png" alt="死锁示例3_并发间隙锁的死锁" title="死锁示例3_并发间隙锁的死锁"></li>
-<li>检测到死锁后，事务2自动回滚了，报错：<code>insert into t values(8)	Error Code: 1213. Deadlock found when trying to get lock; try restarting transaction</code><br>同时，事务1将执行成功。</li>
-</ul>
-<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><h3 id="如何安全地给表加字段"><a href="#如何安全地给表加字段" class="headerlink" title="如何安全地给表加字段"></a>如何安全地给表加字段</h3><p>首先需要处理掉长事务，因为长事务不提交的话会一直占用 MDL 锁。</p>
-<blockquote>
-<p>information_schema 库的 innodb_trx 表中可以看到当前执行中的长事务。<br>但是如果这样的事务比较多，kill 掉并不一定管用，因为新的请求总是会源源不断地到来，所以最好的方法是在 alter table 语句里面设定等待时间，如果在这个指定的等待时间里面能够拿到 MDL 写锁最好，拿不到也不要阻塞后面的业务语句，先放弃：</p>
-</blockquote>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE tbl_name NOWAIT add column ...</span><br><span class="line">ALTER TABLE tbl_name WAIT N add column ... </span><br></pre></td></tr></table></figure>
-
-<h3 id="MySQL-连接池被打满怎么办"><a href="#MySQL-连接池被打满怎么办" class="headerlink" title="MySQL 连接池被打满怎么办"></a>MySQL 连接池被打满怎么办</h3><p>这里的连接池指的是应用服务器里访问 MySQL 服务的连接池，比如 Druid，</p>
-<h3 id="以下哪些场景会导致语句Q1-select-from-t1-limit-1被堵住？"><a href="#以下哪些场景会导致语句Q1-select-from-t1-limit-1被堵住？" class="headerlink" title="以下哪些场景会导致语句Q1: select * from t1 limit 1被堵住？"></a>以下哪些场景会导致语句<code>Q1: select * from t1 limit 1</code>被堵住？</h3><ol>
-<li>另一个线程在Q1执行前，执行了<code>alter table t1 add index(f1)</code>，当前正处于拷贝数据到临时表阶段。</li>
-</ol>
-<h3 id="以下什么情况会发生”等待行锁”的状态？"><a href="#以下什么情况会发生”等待行锁”的状态？" class="headerlink" title="以下什么情况会发生”等待行锁”的状态？"></a>以下什么情况会发生”等待行锁”的状态？</h3><p>RR隔离级别下，表t的建表结构和初始化数据如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">create table t (id int primary key, c int) engine = innoDB;</span><br><span class="line">insert into t values (1, 1), (11, 11), (21, 21);</span><br></pre></td></tr></table></figure>
-<p>在会话1中执行如下语句：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">begin;</span><br><span class="line">select * from t lock in share mode;</span><br></pre></td></tr></table></figure>
-<p>可见这条语句希望对表t加一个表级的读锁。</p>
-<ol>
-<li>会进入”等待行锁”的情况1<br><code>insert into t values (15, 15);</code><br>插入时会先给表加IX意向锁，IX意向锁是和会话1中对表t加上的读锁互斥的，因此会导致阻塞。</li>
-<li>不会进入”等待行锁”的情况1<br><code>update t set c = c + 1 where id = 15;</code><br>因为id &#x3D; 15这条数据不存在，因此这条语句实际上不会加锁。</li>
-<li>不会进入”等待行锁”的情况2<br><code>delete from t where id = 15;</code><br>因为找不到id &#x3D; 15这条数据，因此也不会加锁。</li>
-<li>不会进入”等待行锁”的情况3<br><code>alter table t add d int;</code><br>alter table 会加MDL，这并不是行锁。</li>
-</ol>
-<div id="refer-anchor"></div>
-
-<h3 id="DB的CPU打满怎么排查？"><a href="#DB的CPU打满怎么排查？" class="headerlink" title="DB的CPU打满怎么排查？"></a>DB的CPU打满怎么排查？</h3><p>有很多情况都可能引起DB的CPU打满</p>
-<ol>
-<li>业务量上涨了<br>现象：如果是突发的业务上涨，业务监控（接口、API）应该会有报警，其次就是看有没有执行次数特别多的SQL<br>解决：临时可以对SQL进行限流，后续可以对具体业务做下限流、或DB做扩容</li>
-<li>慢SQL<br>现象：有SQL执行速度特别慢，慢SQL一般只是表象，引起慢SQL背后的原因可能有很多，比如死锁、扫描行数过多&#x2F;读取数据过多（没命中索引）等<br>解决：如果有SQL一直在运行中，可以先把对应的线程kill掉，排查这个sql产生的原因，进行优化。</li>
-<li>热点行更新导致行锁过多<br>现象：用相关工具查看DB中的行锁数量是否出现异常上涨，行锁过多是有可能把CPU打满的<br>解决：排查是否有具体业务场景会导致多线程同时更新同一行数据。</li>
-</ol>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li>[1] <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/437140380">Mysql造成死锁的原因有哪些呢？如何避免？</a></li>
-<li>[2] <a target="_blank" rel="noopener" href="https://www.cnblogs.com/jay-huaxiao/p/11456921.html">Mysql 死锁如何排查：insert on duplicate 死锁一次排查分析过程</a></li>
 </ol>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       

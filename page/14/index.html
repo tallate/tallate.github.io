@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">187</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">189</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">187</span>
+          <span class="site-state-item-count">189</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -158,7 +158,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-count">83</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -175,6 +175,226 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/7f45c5bf.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/7f45c5bf.html" class="post-title-link" itemprop="url">ES1_3映射</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-08-21 09:03:54" itemprop="dateCreated datePublished" datetime="2019-08-21T09:03:54+08:00">2019-08-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="常用操作-映射（Mapping）"><a href="#常用操作-映射（Mapping）" class="headerlink" title="常用操作 - 映射（Mapping）"></a>常用操作 - 映射（Mapping）</h1><h2 id="映射的定义"><a href="#映射的定义" class="headerlink" title="映射的定义"></a>映射的定义</h2><p><strong>映射</strong>就像数据库中的 schema ，描述了数据在每个字段内如何存储，包括文档可能具有的字段或 属性 、 每个字段的数据类型—比如 string, integer 或 date —以及 Lucene 是如何索引和存储这些字段的。<br>Lucene 也没有映射的概念，映射是 Elasticsearch 将复杂 JSON 文档 映射 成 Lucene 需要的扁平化数据的方式。</p>
+<ul>
+<li>比如下面的索引名叫 data，其中定义了 people 和 transactions 类型：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">   &quot;data&quot;: &#123;</span><br><span class="line">      &quot;mappings&quot;: &#123;</span><br><span class="line">         &quot;people&quot;: &#123;</span><br><span class="line">            &quot;properties&quot;: &#123;</span><br><span class="line">               &quot;name&quot;: &#123;</span><br><span class="line">                  &quot;type&quot;: &quot;string&quot;,</span><br><span class="line">               &#125;,</span><br><span class="line">               &quot;address&quot;: &#123;</span><br><span class="line">                  &quot;type&quot;: &quot;string&quot;</span><br><span class="line">               &#125;</span><br><span class="line">            &#125;</span><br><span class="line">         &#125;,</span><br><span class="line">         &quot;transactions&quot;: &#123;</span><br><span class="line">            &quot;properties&quot;: &#123;</span><br><span class="line">               &quot;timestamp&quot;: &#123;</span><br><span class="line">                  &quot;type&quot;: &quot;date&quot;,</span><br><span class="line">                  &quot;format&quot;: &quot;strict_date_optional_time&quot;</span><br><span class="line">               &#125;,</span><br><span class="line">               &quot;message&quot;: &#123;</span><br><span class="line">                  &quot;type&quot;: &quot;string&quot;</span><br><span class="line">               &#125;</span><br><span class="line">            &#125;</span><br><span class="line">         &#125;</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+会被转换为类似下面的映射保存：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">   &quot;data&quot;: &#123;</span><br><span class="line">      &quot;mappings&quot;: &#123;</span><br><span class="line">        &quot;_type&quot;: &#123;</span><br><span class="line">          &quot;type&quot;: &quot;string&quot;,</span><br><span class="line">          &quot;index&quot;: &quot;not_analyzed&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;name&quot;: &#123;</span><br><span class="line">          &quot;type&quot;: &quot;string&quot;</span><br><span class="line">        &#125;</span><br><span class="line">        &quot;address&quot;: &#123;</span><br><span class="line">          &quot;type&quot;: &quot;string&quot;</span><br><span class="line">        &#125;</span><br><span class="line">        &quot;timestamp&quot;: &#123;</span><br><span class="line">          &quot;type&quot;: &quot;long&quot;</span><br><span class="line">        &#125;</span><br><span class="line">        &quot;message&quot;: &#123;</span><br><span class="line">          &quot;type&quot;: &quot;string&quot;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+所以<strong>虽然创建一个文档后其类型就确定了，但是实际上这个文档所占用的空间是该索引内所有字段的总和</strong>。<br>所以有一条建议：一个索引中的类型应当都是相似的，他们有类似的字段，比如 man 和 woman 共享 name 属性；如果两个类型的字段集互不相同，创建一个 类型的文档后将浪费很多空间，而是应该将他们分到不同的索引中。</li>
+</ul>
+<h2 id="动态映射机制"><a href="#动态映射机制" class="headerlink" title="动态映射机制"></a>动态映射机制</h2><p>在索引一个新的文档时，es 会自动为每个字段推断类型，这个过程称为<strong>动态映射</strong>。这意味着如果你通过引号( “123” )索引一个数字，它会被映射为 string 类型，而不是 long 。但是，如果这个域已经映射为 long ，那么 Elasticsearch 会尝试将这个字符串转化为 long ，如果无法转化，则抛出一个异常。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">PUT movies</span><br><span class="line">&#123;</span><br><span class="line">  &quot;mappings&quot;: &#123;</span><br><span class="line">    &quot;_doc&quot;: &#123;</span><br><span class="line">      &quot;dynamic&quot;: &quot;false&quot; // true, false, strict</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果是新增字段</p>
+<ul>
+<li>如果Dynamic设置为true，一旦有新增字段的文档写入，Mapping会被同时更新</li>
+<li>如果Dynamic设置为false，Mapping不会被更新，新增字段的数据无法被索引，但是信息会出现在_source中</li>
+<li>如果Dynamic被设置为strict，则文档写入失败</li>
+</ul>
+<p>如果是更新字段</p>
+<ul>
+<li>对已有字段，一旦有数据写入，就不再支持修改字段定义</li>
+<li>如果希望改变字段类型，必须reindex重建索引</li>
+</ul>
+<h2 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h2><p>ES不提供专门的数组类型，但是每个字段都可以包含多个相同类型的数值，所以ES天然是支持数组类型的。</p>
+<h2 id="多字段类型"><a href="#多字段类型" class="headerlink" title="多字段类型"></a>多字段类型</h2><p>有时候我们希望一个字段可以被多种方式检索，比如：</p>
+<ul>
+<li>通过不同语言检索</li>
+<li>pinyin字段的搜索</li>
+<li>还支持为搜索和索引指定不同的analyzer</li>
+</ul>
+<h2 id="一些默认的映射"><a href="#一些默认的映射" class="headerlink" title="一些默认的映射"></a>一些默认的映射</h2><p>布尔型: true 或者 false | boolean<br>整数: 123 | long<br>浮点数: 123.45 | double<br>字符串，有效日期: 2014-09-15 | date<br>字符串: foo bar | string<br>整数 : byte, short, integer<br>浮点数: float</p>
+<h2 id="自定义映射"><a href="#自定义映射" class="headerlink" title="自定义映射"></a>自定义映射</h2><p>TODO<br>全文字符串域和精确值字符串域的区别<br>使用特定语言分析器<br>优化域以适应部分匹配<br>指定自定义数据格式</p>
+<h2 id="查看映射"><a href="#查看映射" class="headerlink" title="查看映射"></a>查看映射</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET /megacrp/_mapping</span><br><span class="line">GET /megacrp/employee/_mapping</span><br></pre></td></tr></table></figure>
+<p>返回属性包括：</p>
+<ul>
+<li>index 属性控制怎样索引字符串<ul>
+<li>analyzed 分析字符串再索引（全文索引），字符串且只有字符串可以取这个属性</li>
+<li>not_analyzed 不分析、直接索引精确值</li>
+<li>no 不索引、不能被搜索到</li>
+</ul>
+</li>
+<li>analyzer 对于 analyzed 字符串域，用 analyzer 属性指定在搜索和索引时使用的分析器，默认时 standard</li>
+</ul>
+<h2 id="更新映射"><a href="#更新映射" class="headerlink" title="更新映射"></a>更新映射</h2><ul>
+<li>可以通过更新一个映射来添加一个新域，并为其设置映射（<a target="_blank" rel="noopener" href="https://discuss.elastic.co/t/elasticsearch-5-not-analyzed/68411">后来版本取消了 string 类型，改成了<strong>text</strong>，要注意</a>）</li>
+<li>不能将一个存在的域从 analyzed 改为 not_analyzed。因为如果一个域的映射已经存在，那么该域的数据可能已经被索引。如果你意图修改这个域的映射，索引的数据可能会出错，不能被正常的搜索。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">PUT /gb</span><br><span class="line">&#123;</span><br><span class="line">  &quot;mappings&quot;: &#123;</span><br><span class="line">    &quot;testmapping&quot; : &#123;</span><br><span class="line">      &quot;properties&quot; : &#123;</span><br><span class="line">        &quot;tweetgjghjggh&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;text&quot;,</span><br><span class="line">          &quot;analyzer&quot;: &quot;english&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;date&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;date&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;user_id&quot; : &#123;</span><br><span class="line">          &quot;type&quot; : &quot;long&quot;</span><br><span class="line">        &#125;&#125;&#125;&#125;&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e0007243.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/e0007243.html" class="post-title-link" itemprop="url">ES1_2索引</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-08-21 09:03:54" itemprop="dateCreated datePublished" datetime="2019-08-21T09:03:54+08:00">2019-08-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>这篇文档总结ES中的基础数据结构，并介绍如何操作它们。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/e0007243.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -367,98 +587,6 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/7c45b6f9.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/7c45b6f9.html" class="post-title-link" itemprop="url">ES2_2分布式文档存储</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-08-21 09:03:54" itemprop="dateCreated datePublished" datetime="2019-08-21T09:03:54+08:00">2019-08-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>[x] ES如何保证断电时数据也不会丢失</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/7c45b6f9.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://tallate.github.io/bf6ba1a3.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -625,7 +753,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/8772904b.html">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/7c45b6f9.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -643,7 +771,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/8772904b.html" class="post-title-link" itemprop="url">ES3_2分析</a>
+          <a href="/7c45b6f9.html" class="post-title-link" itemprop="url">ES2_2分布式文档存储</a>
         </h2>
 
         <div class="post-meta-container">
@@ -683,10 +811,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>搜索的前提是分析文档和搜索词。</p>
+          <p>[x] ES如何保证断电时数据也不会丢失</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/8772904b.html#more" rel="contents">
+              <a class="btn" href="/7c45b6f9.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -901,6 +1029,98 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/8772904b.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/8772904b.html" class="post-title-link" itemprop="url">ES3_2分析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-08-21 09:03:54" itemprop="dateCreated datePublished" datetime="2019-08-21T09:03:54+08:00">2019-08-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>搜索的前提是分析文档和搜索词。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/8772904b.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://tallate.github.io/adab32da.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1055,197 +1275,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/a26aff96.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/8ede5db1.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/8ede5db1.html" class="post-title-link" itemprop="url">ES3_7搜索源码分析</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-08-21 09:03:54" itemprop="dateCreated datePublished" datetime="2019-08-21T09:03:54+08:00">2019-08-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ElasticSearch/" itemprop="url" rel="index"><span itemprop="name">ElasticSearch</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>搜索源码分析。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/8ede5db1.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e43d540f.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/e43d540f.html" class="post-title-link" itemprop="url">使用 Arthas 排查线上问题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-08-17 21:37:14" itemprop="dateCreated datePublished" datetime="2019-08-17T21:37:14+08:00">2019-08-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>一般来说，查问题有以下几个层次：</p>
-<ul>
-<li>看服务器指标</li>
-<li>看日志</li>
-<li>review 代码</li>
-<li>debug</li>
-</ul>
-<p>debug 可以说是撒手锏了，一般不到万不得已的情况不会 debug，费时费力，而且上线后谁还能在服务器上开个 debug 端口？印象中，遇到非常棘手的问题时，只能 review 代码然后在关键位置加日志，究其根本原因，是没法看到进程运行时的内存状况。Arthas 就是为了解决这种问题而诞生的。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/e43d540f.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>

@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">80</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">187</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">189</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">187</span>
+          <span class="site-state-item-count">189</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -158,7 +158,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-count">83</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -175,6 +175,223 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/58b05574.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/58b05574.html" class="post-title-link" itemprop="url">Lettuce和Jedis</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-25 13:21:48" itemprop="dateCreated datePublished" datetime="2019-10-25T13:21:48+08:00">2019-10-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BC%93%E5%AD%98/" itemprop="url" rel="index"><span itemprop="name">缓存</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Lettuce"><a href="#Lettuce" class="headerlink" title="Lettuce"></a>Lettuce</h1><h2 id="Sentinel"><a href="#Sentinel" class="headerlink" title="Sentinel"></a>Sentinel</h2><p>com.lambdaworks.redis.RedisClient#connectSentinel(com.lambdaworks.redis.codec.RedisCodec&lt;K,V&gt;, com.lambdaworks.redis.RedisURI, com.lambdaworks.redis.RedisClient.Timeout)</p>
+<h1 id="Jedis"><a href="#Jedis" class="headerlink" title="Jedis"></a>Jedis</h1><h2 id="配置-Jedis"><a href="#配置-Jedis" class="headerlink" title="配置 Jedis"></a>配置 Jedis</h2><p>1.添加 Jedis 的 Maven 依赖<br>2.设置服务端<br>设置服务器防火墙关闭或放行 6379 端口（redis 占用）<br>然后关闭服务器的保护模式，因为保护模式下不能写入数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CONFIG SET protected-mode no</span><br><span class="line">config rewrite</span><br></pre></td></tr></table></figure>
+<p>（或直接修改 redis.conf 中 protected-mode<br>或在运行服务器的配置中加上–protected-mode no<br>或 Setup a bind address or an authentication password）<br>然后注释掉 redis.conf 中的 bind 127.0.0.1，或者在后面添上本机的 ip</p>
+<ol>
+<li>普通单例连接<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Jedis jedis = new Jedis(host, 6379);</span><br><span class="line">jedis.set(&quot;name&quot;, &quot;bar&quot;);</span><br><span class="line">String name = jedis.get(&quot;name&quot;);</span><br><span class="line">System.out.println(name);</span><br><span class="line">jedis.close();</span><br></pre></td></tr></table></figure></li>
+<li>使用连接池连接<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// 配置连接池</span><br><span class="line">JedisPoolConfig config = new JedisPoolConfig();</span><br><span class="line">config.setMaxTotal(30); // 最大连接数</span><br><span class="line">config.setMaxIdle(2); // 最大连接空闲数</span><br><span class="line">JedisPool pool =</span><br><span class="line">        new JedisPool(config, host, 6379);</span><br><span class="line">// 从连接池中获取连接</span><br><span class="line">Jedis jedis = pool.getResource();</span><br><span class="line">jedis.set(&quot;name&quot;, &quot;李四&quot;);</span><br><span class="line">String name = jedis.get(&quot;name&quot;);</span><br><span class="line">System.out.println(name);</span><br><span class="line">// 关闭，返回到连接池</span><br><span class="line">jedis.close();</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="并发安全问题"><a href="#并发安全问题" class="headerlink" title="并发安全问题"></a>并发安全问题</h2><p>Jedis 不是并发安全的，如果有并发安全的需求，可以考虑采用 apache 的 commons-pool 对象池进行包装，或者，换用一个更先进的 Redis 客户端 Lettuce</p>
+<h1 id="spring-data-redis"><a href="#spring-data-redis" class="headerlink" title="spring-data-redis"></a>spring-data-redis</h1><p>1.引入依赖 spring-data-redis<br>2.创建 redis 缓冲配置类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">// 配置头部用于被Spring识别</span><br><span class="line">@Configuration</span><br><span class="line">@EnableCaching</span><br><span class="line">public class RedisCacheConfig &#123;</span><br><span class="line">    private volatile JedisConnectionFactory mJedisConnectionFactory;</span><br><span class="line">    private volatile RedisTemplate&lt;String, String&gt; mRedisTemplate;</span><br><span class="line">    private volatile RedisCacheManager mRedisCacheManager;</span><br><span class="line">    public RedisCacheConfig() &#123;</span><br><span class="line">        super();</span><br><span class="line">    &#125;</span><br><span class="line">    public RedisCacheConfig(JedisConnectionFactory mJedisConnectionFactory, RedisTemplate&lt;String,String&gt; mRedisTemplate,</span><br><span class="line">                            RedisCacheManager mRedisCacheManager) &#123;</span><br><span class="line">        super();</span><br><span class="line">        this.mJedisConnectionFactory = mJedisConnectionFactory;</span><br><span class="line">        this.mRedisTemplate = mRedisTemplate;</span><br><span class="line">        this.mRedisCacheManager = mRedisCacheManager;</span><br><span class="line">    &#125;</span><br><span class="line">    public JedisConnectionFactory redisConnectionFactory() &#123;</span><br><span class="line">        return mJedisConnectionFactory;</span><br><span class="line">    &#125;</span><br><span class="line">    public RedisTemplate&lt;String, String&gt; redisTemplate(RedisConnectionFactory cf) &#123;</span><br><span class="line">        return mRedisTemplate;</span><br><span class="line">    &#125;</span><br><span class="line">    public CacheManager cacheManager(RedisTemplate&lt;?, ?&gt; redisTemplate) &#123;</span><br><span class="line">        return mRedisCacheManager;</span><br><span class="line">    &#125;</span><br><span class="line">    // 用于生成主键</span><br><span class="line">    @Bean</span><br><span class="line">    public KeyGenerator customKeyGenerator() &#123;</span><br><span class="line">        return new KeyGenerator() &#123;</span><br><span class="line">            public Object generate(Object o, Method method, Object... objects) &#123;</span><br><span class="line">                StringBuilder sb = new StringBuilder();</span><br><span class="line">                sb.append(o.getClass().getName());</span><br><span class="line">                sb.append(method.getName());</span><br><span class="line">                for (Object obj : objects) &#123;</span><br><span class="line">                    sb.append(obj.toString());</span><br><span class="line">                &#125;</span><br><span class="line">                return sb.toString();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.创建 redis 属性文件 redis.properties</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">redis.host=192.168.157.128</span><br><span class="line">redis.port=6379</span><br><span class="line">redis.pass=1234</span><br><span class="line">redis.maxIdle=300</span><br><span class="line">redis.maxActive=600</span><br><span class="line">redis.maxWait=1000</span><br><span class="line">#借出连接时不要测试,否则很影响性能</span><br><span class="line">redis.testOnBorrow=true</span><br><span class="line">redis.dbIndex=0</span><br><span class="line">redis.expiration=30</span><br></pre></td></tr></table></figure>
+<p>当然必须在 Spring 配置文件中引入属性文件扫描标签<br>4.在 Spring 配置文件中引入 redis<br>问题<br>ERR Client sent AUTH, but no password is set<br>因为 redis 没有配置密码而建立连接时却发送了密码，所以出错，解决办法是在下面 jedisConnectionFactory 标签中去掉 password 属性</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 配置JedisPoolConfig实例 --&gt;</span><br><span class="line">&lt;bean id=&quot;poolConfig&quot; class=&quot;redis.clients.jedis.JedisPoolConfig&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;maxIdle&quot; value=&quot;$&#123;redis.maxIdle&#125;&quot; /&gt;</span><br><span class="line">    &lt;property name=&quot;maxTotal&quot; value=&quot;$&#123;redis.maxActive&#125;&quot; /&gt;</span><br><span class="line">    &lt;property name=&quot;maxWaitMillis&quot; value=&quot;$&#123;redis.maxWait&#125;&quot; /&gt;</span><br><span class="line">    &lt;property name=&quot;testOnBorrow&quot; value=&quot;$&#123;redis.testOnBorrow&#125;&quot; /&gt;</span><br><span class="line">&lt;/bean&gt;</span><br><span class="line">&lt;!-- 配置JedisConnectionFactory --&gt;</span><br><span class="line">&lt;bean id=&quot;jedisConnectionFactory&quot; class=&quot;org.springframework.data.redis.connection.jedis.JedisConnectionFactory&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;hostName&quot; value=&quot;$&#123;redis.host&#125;&quot;/&gt;</span><br><span class="line">    &lt;property name=&quot;port&quot; value=&quot;$&#123;redis.port&#125;&quot;/&gt;</span><br><span class="line">    &lt;property name=&quot;password&quot; value=&quot;$&#123;redis.pass&#125;&quot;/&gt;</span><br><span class="line">    &lt;property name=&quot;database&quot; value=&quot;$&#123;redis.dbIndex&#125;&quot;/&gt;</span><br><span class="line">    &lt;property name=&quot;poolConfig&quot; ref=&quot;poolConfig&quot;/&gt;</span><br><span class="line">&lt;/bean&gt;</span><br><span class="line">&lt;!-- 配置RedisTemplate --&gt;</span><br><span class="line">&lt;bean id=&quot;redisTemplate&quot; class=&quot;org.springframework.data.redis.core.RedisTemplate&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;connectionFactory&quot; ref=&quot;jedisConnectionFactory&quot;/&gt;</span><br><span class="line">&lt;/bean&gt;</span><br><span class="line">&lt;!-- 配置RedisCacheManager --&gt;</span><br><span class="line">&lt;bean id=&quot;redisCacheManager&quot; class=&quot;org.springframework.data.redis.cache.RedisCacheManager&quot;&gt;</span><br><span class="line">    &lt;constructor-arg name=&quot;redisOperations&quot; ref=&quot;redisTemplate&quot; /&gt;</span><br><span class="line">    &lt;property name=&quot;defaultExpiration&quot; value=&quot;$&#123;redis.expiration&#125;&quot;/&gt;</span><br><span class="line">&lt;/bean&gt;</span><br><span class="line">&lt;!-- 配置RedisCacheConfig --&gt;</span><br><span class="line">&lt;bean id=&quot;redisCacheConfig&quot; class=&quot;com.ebuy.util.RedisCacheConfig&quot;&gt;</span><br><span class="line">    &lt;constructor-arg ref=&quot;jedisConnectionFactory&quot; /&gt;</span><br><span class="line">    &lt;constructor-arg ref=&quot;redisTemplate&quot; /&gt;</span><br><span class="line">    &lt;constructor-arg ref=&quot;redisCacheManager&quot; /&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<p>5.测试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">/* 缓存</span><br><span class="line"> @Cacheable 缓存返回值，下次调用时会优先使用缓存数据</span><br><span class="line">    value 缓存将被存到的地方</span><br><span class="line"> @CacgeEvict 清除缓存</span><br><span class="line"> */</span><br><span class="line">@CacheEvict(value = &#123;&quot;save&quot;&#125;, allEntries = true)</span><br><span class="line">public void save(TbContent content) &#123;</span><br><span class="line">    contentDao.insert(content);</span><br><span class="line">&#125;</span><br><span class="line">@Cacheable(&quot;findall&quot;)</span><br><span class="line">public TbContent findall() &#123;</span><br><span class="line">    TbContent content = new TbContent();</span><br><span class="line">    content.setCategoryId((long) 1);</span><br><span class="line">    return content;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试时可以在 findall 中设置打印语句，连续调用 findall 两次，若第二次没有输出东西则说明使用了缓存。<br>6.配置连接池</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 连接池配置 --&gt;</span><br><span class="line">&lt;bean id=&quot;jedisPoolConfig&quot; class=&quot;redis.clients.jedis.JedisPoolConfig&quot;&gt;</span><br><span class="line">    &lt;!-- 最大连接数 --&gt;</span><br><span class="line">    &lt;property name=&quot;maxTotal&quot; value=&quot;30&quot; /&gt;</span><br><span class="line">    &lt;!-- 最大空闲连接数 --&gt;</span><br><span class="line">    &lt;property name=&quot;maxIdle&quot; value=&quot;10&quot; /&gt;</span><br><span class="line">    &lt;!-- 每次释放连接的最大数目 --&gt;</span><br><span class="line">    &lt;property name=&quot;numTestsPerEvictionRun&quot; value=&quot;1024&quot; /&gt;</span><br><span class="line">    &lt;!-- 释放连接的扫描间隔（毫秒） --&gt;</span><br><span class="line">    &lt;property name=&quot;timeBetweenEvictionRunsMillis&quot; value=&quot;30000&quot; /&gt;</span><br><span class="line">    &lt;!-- 连接最小空闲时间 --&gt;</span><br><span class="line">    &lt;property name=&quot;minEvictableIdleTimeMillis&quot; value=&quot;1800000&quot; /&gt;</span><br><span class="line">    &lt;!-- 连接空闲多久后释放, 当空闲时间&gt;该值 且 空闲连接&gt;最大空闲连接数 时直接释放 --&gt;</span><br><span class="line">    &lt;property name=&quot;softMinEvictableIdleTimeMillis&quot; value=&quot;10000&quot; /&gt;</span><br><span class="line">    &lt;!-- 获取连接时的最大等待毫秒数,小于零:阻塞不确定的时间,默认-1 --&gt;</span><br><span class="line">    &lt;property name=&quot;maxWaitMillis&quot; value=&quot;1500&quot; /&gt;</span><br><span class="line">    &lt;!-- 在获取连接的时候检查有效性, 默认false --&gt;</span><br><span class="line">    &lt;property name=&quot;testOnBorrow&quot; value=&quot;true&quot; /&gt;</span><br><span class="line">    &lt;!-- 在空闲时检查有效性, 默认false --&gt;</span><br><span class="line">    &lt;property name=&quot;testWhileIdle&quot; value=&quot;true&quot; /&gt;</span><br><span class="line">    &lt;!-- 连接耗尽时是否阻塞, false报异常,ture阻塞直到超时, 默认true --&gt;</span><br><span class="line">    &lt;property name=&quot;blockWhenExhausted&quot; value=&quot;false&quot; /&gt;</span><br><span class="line">&lt;/bean&gt;</span><br><span class="line">&lt;!-- redis单机 通过连接池 --&gt;</span><br><span class="line">&lt;bean id=&quot;jedisPool&quot; class=&quot;redis.clients.jedis.JedisPool&quot; destroy-method=&quot;close&quot;&gt;</span><br><span class="line">    &lt;constructor-arg name=&quot;poolConfig&quot; ref=&quot;jedisPoolConfig&quot;/&gt;</span><br><span class="line">    &lt;constructor-arg name=&quot;host&quot; value=&quot;172.16.205.141&quot;/&gt;</span><br><span class="line">    &lt;constructor-arg name=&quot;port&quot; value=&quot;6379&quot;/&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<p>7.测试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">JedisPool pool =</span><br><span class="line">        (JedisPool) applicationContext.getBean(&quot;jedisPool&quot;);</span><br><span class="line">Jedis jedis = pool.getResource();</span><br><span class="line">jedis.set(&quot;name&quot;, &quot;李四&quot;);</span><br><span class="line">String name = jedis.get(&quot;name&quot;);</span><br><span class="line">System.out.println(name);</span><br><span class="line">jedis.close();</span><br></pre></td></tr></table></figure>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/5961a39a.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/5961a39a.html" class="post-title-link" itemprop="url">MySQL5_2分库分表和Sharding</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-19 12:21:48" itemprop="dateCreated datePublished" datetime="2019-10-19T12:21:48+08:00">2019-10-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+<h1 id="分库分表"><a href="#分库分表" class="headerlink" title="分库分表"></a>分库分表</h1><h2 id="为什么需要分库分表"><a href="#为什么需要分库分表" class="headerlink" title="为什么需要分库分表"></a>为什么需要分库分表</h2><ul>
+<li>MySQL单表超过容量上限<br>这一上限的推荐值是2kw行，但实际情况需要综合考虑单库的CPU、磁盘、内存压力、具体业务，如果硬件无法继续垂直扩容了、且业务也无法优化了，就会选择分库分表、或者在原来分库分表基础上水平伸缩。</li>
+</ul>
+<h2 id="以什么维度分库分表？"><a href="#以什么维度分库分表？" class="headerlink" title="以什么维度分库分表？"></a>以什么维度分库分表？</h2><p>分表键需要考虑实际的业务场景，比如TO C的业务一般可以uid作为分表键，TO B业务常用orgId。<br>还有一些场景需要支持多种方式查询，可以采用叫“基因法”的方式来分表[1]。</p>
+<h1 id="ShardingJDBC"><a href="#ShardingJDBC" class="headerlink" title="ShardingJDBC"></a>ShardingJDBC</h1><h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><h3 id="柔性事务"><a href="#柔性事务" class="headerlink" title="柔性事务"></a>柔性事务</h3><p>2.0 后提供柔性事务支持，执行事务前先发消息给一个 EventBus，失败后由 EventBus 负责重试。</p>
+<h3 id="TCC-模式"><a href="#TCC-模式" class="headerlink" title="TCC 模式"></a>TCC 模式</h3><p>3.0 后借助 Seata 提供 TCC 模式的分布式事务。</p>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><ol>
+<li>数据源元数据信息和表元数据信息的收集</li>
+<li>表分库分表策略和算法的配置信息收集</li>
+</ol>
+<p>ShardingDataSourceFactory#createDataSource 创建数据源 ShardingDataSource 实例<br>-&gt; ShardingDataSource#ShardingDataSource 创建 ShardingContext，其持有<strong>ShardingRule</strong>、<strong>ShardingMetaData</strong>两个属性，根据一个表以及这个表的列可以从 ShardingRule 中获取这个表的分库分表策略和算法，ShardingMetaData 则维护了数据源和表的元数据信息</p>
+<h3 id="ShardingJDBC-如何嵌入-MyBatis"><a href="#ShardingJDBC-如何嵌入-MyBatis" class="headerlink" title="ShardingJDBC 如何嵌入 MyBatis"></a>ShardingJDBC 如何嵌入 MyBatis</h3><p>ShardingJDBC 接入 MyBatis 的原理是 DataSource 的替换，调用链如下：<br>org.apache.ibatis.executor.SimpleExecutor#prepareStatement<br>-&gt; SimpleExecutor#getConnection 从 transaction 获取连接<br>-&gt; SpringManagedTransaction#getConnection 可以看到成员变量 dataSource 是 ShardingDataSource<br>-&gt; ShardingDataSource#getConnection 得到 ShardingConnection<br>-&gt; ShardingConnection#prepareStatment 得到 ShardingPreparedStatement</p>
+<h3 id="路由及改写引擎"><a href="#路由及改写引擎" class="headerlink" title="路由及改写引擎"></a>路由及改写引擎</h3><p>ShardingPreparedStatement#executeQuery、executeUpdate、execute<br>-&gt; ShardingPreparedStatement#shard<br>-&gt; BaseShardingEngine#shard<br>    -&gt; PreparedQueryShardingEngine#route<br>    -&gt; PreparedStatementRoutingEngine#route ParsingSQLRouter 使用<strong>四个引擎</strong>对 sql 进行解析和重写<br>        -&gt; ParsingSQLRouter#parse<br>            -&gt; SQLParsingEngine#parse 使用<strong>SQLParsingEngine</strong>解析 sql，返回 SQLStatement 作为解析的结果<br>            -&gt; SQLParserFactory#newInstance 获取 SQLParser 实例，如果是在 MySQL 中执行一个 DML 语句会匹配到 AntlrParsingEngine（Antlr 是一个开源语法分析器）<br>            -&gt; AntlrParsingEngine.parse 分析 SQL，返回 SQLStatement<br>                -&gt; <strong>SQLParserEngine</strong>#parse 解析 SQL 语法，生成 AST（抽象语法树）<br>                -&gt; <strong>SQLSegmentsExtractorEngine</strong>#extract<br>                -&gt; <strong>SQLStatementFillerEngine</strong>#fill<br>                -&gt; <strong>SQLStatementOptimizerEngine</strong>#optimize<br>        -&gt; ParsingSQLRouter#route<br>            -&gt; OptimizeEngine#optimize 使用<strong>OptimizeEngine</strong>对 SQLStatement 进行优化，返回 ShardingConditions 对象<br>            -&gt; RoutingEngine#route 使用<strong>RoutingEngine</strong>根据库表分片配置以及 ShardingConditions 找到目标库表，返回 RoutingResult 对象<br>        -&gt; ShardingMasterSlaveRouter#route(SQLRouteResult sqlRouteResult)<br>    -&gt; BaseShardingEngine#rewriteAndConvert<br>        -&gt; SQLRewriteEngine#rewrite 使用<strong>SQLRewriteEngine</strong>根据路由结果重写 sql</p>
+<h3 id="执行引擎"><a href="#执行引擎" class="headerlink" title="执行引擎"></a>执行引擎</h3><p>ShardingPreparedStatement#executeQuery、executeUpdate、execute<br>-&gt; …<br>-&gt; ShardingPreparedStatement#initPreparedStatementExecutor<br>-&gt; PreparedStatementExecutor#init 把 SQLRouteResult 中的 RouteUnit 对象转换为 ShardingExecuteGroup<StatementExecuteUnit>对象集合并从数据源获取连接和 PreparedStatement<br>    -&gt; PreparedStatementExecutor#obtainExecuteGroups 根据路由的结果 SQLRouteResult 中的 RouteUnit 集合创建 StatementExecuteUnit 集合对象<br>    -&gt; AbstractConnectionAdapter#getConnections 获取数据源连接<br>        -&gt; getDataSourceMap().get(dataSourceName) 根据逻辑数据源名称获取真实数据源 DataSource<br>        -&gt; AbstractConnectionAdapter#createConnections 从数据源获取连接 Connection<br>    -&gt; getExecuteGroups().addAll() 将 StatementExecuteUnit 集合保存在 AbstractStatementExecutor 的属性 executeGroups 中<br>    -&gt; AbstractStatementExecutor#cacheStatements 从连接获取 Statement 并缓存<br>-&gt; PreparedStatementExecutor#executeQuery、executeUpdate、execute<br>    -&gt; AbstractStatementExecutor#executeCallback<br>    -&gt; SQLExecuteTemplate#executeGroup<br>    -&gt; ShardingExecuteEngine#groupExecute 使用<strong>ShardingExecuteEngine</strong>执行，执行 ShardingExecuteGroup<br>    -&gt; ShardingExecuteEngine#parallelExecute 异步执行，如果 inputGroups 集合不止一个，则第一个同步执行、其他的异步执行</p>
+<h3 id="归并引擎"><a href="#归并引擎" class="headerlink" title="归并引擎"></a>归并引擎</h3><p>ShardingPreparedStatement#executeQuery、executeUpdate、execute<br>-&gt; …<br>-&gt; ShardingPreparedStatement#getResultSet(MergeEngine mergeEngine)<br>    -&gt; AbstractStatementExecutor#getResultSets<br>    -&gt; ShardingPreparedStatement#getCurrentResultSet 合并结果，返回 ShardingResultSet<br>        -&gt; MergeEngine#merge 使用<strong>MergeEngine</strong>对结果进行合并，executeQuery()返回的是一个 List<QueryResult>集合，此时需要对 QueryResult 集合进行合并，MergeEngine 接口有两个实现类 DQLMergeEngine 和 DALMergeEngine，这两个实现类分别负责数据查询 sql 的合并和数据库管理 sql 的合并</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><h2 id="分库分表-1"><a href="#分库分表-1" class="headerlink" title="分库分表"></a>分库分表</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/40uJBsgFWhcrJ3Xvkraulg">帖子中心，1亿数据，架构如何设计？</a><br>提到给帖子中心设计数据库结构时将tid（帖子ID）还是uid（用户ID）作为分表key，因为实际业务中既包含根据tid查询的场景又包含根据uid查询的场景，因此最终方案是采用所谓的“基因法”。</li>
+</ol>
+<h2 id="ShardingJDBC-1"><a href="#ShardingJDBC-1" class="headerlink" title="ShardingJDBC"></a>ShardingJDBC</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://yq.aliyun.com/articles/658786">张亮：Sharding-Sphere 成长记</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/sharding-sphere/ShardingSphereDemo">sharding-sphere&#x2F;ShardingSphereDemo</a></li>
+<li><a target="_blank" rel="noopener" href="https://shardingsphere.apache.org/document/current/en/overview/">Document</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/4cb5b2b68f8e">Sharding-JDBC 源码解析</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/25028169">antlr 解析语法树的使用</a></li>
+</ol>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1915,438 +2132,6 @@ jdk1.6 及之前版本，因为 HotSpot 实行“永久代”（PermGen），方
 <li><a target="_blank" rel="noopener" href="https://www.programcreek.com/2011/11/what-do-java-objects-look-like-in-memory/">What do Java objects look like in memory during run-time?</a></li>
 <li><a target="_blank" rel="noopener" href="https://www.programcreek.com/2013/04/what-does-a-java-array-look-like-in-memory/">What does a Java array look like in memory?</a></li>
 </ol>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/6ead94ff.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/6ead94ff.html" class="post-title-link" itemprop="url">JVM 与执行引擎</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-09-26 15:26:49" itemprop="dateCreated datePublished" datetime="2019-09-26T15:26:49+08:00">2019-09-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-
-
-<h2 id="栈帧结构"><a href="#栈帧结构" class="headerlink" title="栈帧结构"></a>栈帧结构</h2><p>栈帧主要包括了局部变量表、操作数栈、动态连接、方法返回地址等信息，在内存结构章节中我们已经探讨过栈结构，但是还未从实现层面来讨论过。</p>
-<ol>
-<li>局部变量表<br>用于存放方法参数和方法内部的局部变量。局部变量表的大小在方法的 Code 属性中就已经定义好了，为<strong>max_locals</strong>的值，局部变量表的单位为<strong>slot</strong>，32位以内的类型只占用一个<strong>slot</strong>（包括 returnAddress 类型），64 位的类型占用两个 slot。<ul>
-<li>对于实例方法而言，索引为 0 的 slot 存放的是 this 引用，之后再依次存放方法参数、局部变量；</li>
-<li>slot 可以被重用，当局部变量已经超出了作用域时，在作用域外再定义局部变量时，可以重用之前的 slot 空间。</li>
-<li>同时，局部变量没有赋值是不能够使用的——会产生编译错误，这和类变量和实例变量是有不同的，如下面代码： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public void test() &#123;</span><br><span class="line">    int i;</span><br><span class="line">    System.out.println(i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li>操作数栈<br>执行方法时，存放操作数的栈，栈的深度在方法的 Code 属性中已经定义好了，为<strong>max_stack</strong>的值，32 位以内的类型占用一个栈单位，64 位的类型占用两个栈单位。操作数栈可以与其他栈的局部变量表共享区域，这样可以共用一部分数据。</li>
-<li>动态连接<br>动态连接是为了支持在运行期间将符号引用转化为直接引用的操作。我们知道，每一个方法对应一个栈帧，而每一个栈帧，都包含指向对应方法的引用，这个引用就是为了支持动态连接，如 invokedynamic 指令。动态连接与静态解析对应，静态解析是在类加载（解析阶段）或者第一次使用时将符号引用转化为直接引用，动态连接则是每一次运行的时候都需要进行转化(invokedynamic 指令)。</li>
-<li>方法返回地址<br>正常方法返回，返回地址为到调用该方法的指令的下一条指令的地址；异常返回，返回地址由异常表确定。方法返回时，需要恢复上层方法的局部变量表、操作数栈、将返回值压入调用者栈帧的操作数栈、设置 PC 值。</li>
-</ol>
-<h2 id="方法的调用和执行"><a href="#方法的调用和执行" class="headerlink" title="方法的调用和执行"></a>方法的调用和执行</h2><p>方法<strong>调用</strong>决定了调用哪个方法，并创建对应的栈帧，接下来会开始方法的<strong>执行</strong>。</p>
-<h3 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h3><p>在程序执行前就已经确定了方法调用的<strong>版本</strong>，即编译期就确定了调用方法版本，这个版本在运行时是不可变的。</p>
-<ul>
-<li><strong>静态方法</strong>、<strong>私有方法</strong>、<strong>final方法</strong>在编译时就可以确定具体的调用版本，静态方法直接与类型相关、私有方法在外部不可访问、final 不可被继承，也可唯一确定，这些方法称为<strong>非虚方法</strong>，翻译成字节码是 invokestatic(调用静态方法)、invokespecial(调用实例构造器<init>方法、私有方法、父类方法)，在类加载的解析阶段就可以进行解析，如下方法调用在编译期就可以确定方法调用的版本。  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">class Father &#123;</span><br><span class="line">    public static void print(String str) &#123;</span><br><span class="line">        System.out.println(&quot;father &quot; + str);</span><br><span class="line">    &#125;</span><br><span class="line">    private void show(String str) &#123;</span><br><span class="line">        System.out.println(&quot;father &quot; + str);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">class Son extends Father &#123;</span><br><span class="line">&#125;</span><br><span class="line">public class Test &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Son.print(&quot;coder&quot;); // 调用的是Father的print()方法</span><br><span class="line">        //Father fa = new Father();</span><br><span class="line">        //fa.show(&quot;cooooder&quot;); // 私有方法无法调用</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>其他方法称为<strong>虚方法</strong>。</li>
-</ul>
-<h3 id="分派"><a href="#分派" class="headerlink" title="分派"></a>分派</h3><p>分派调用与多态密切相关，分为<strong>静态分派</strong>、<strong>动态分派</strong>、<strong>单分派</strong>、<strong>多分派</strong>。</p>
-<h4 id="静态分派"><a href="#静态分派" class="headerlink" title="静态分派"></a>静态分派</h4><p>与静态分派相关的就是方法的<strong>重载</strong>，重载时根据参数的静态类型引用类型而非实际类型决定调用哪个版本。<br>选取的过程共分为三个阶段：</p>
-<ol>
-<li>在不考虑对基本类型自动装拆箱（auto-boxing，auto-unboxing），以及可变长参数的情况下选取重载方法；</li>
-<li>如果在第 1 个阶段中没有找到适配的方法，那么在允许自动装拆箱，但不允许可变长参数的情况下选取重载方法；</li>
-<li>如果在第 2 个阶段中没有找到适配的方法，那么在允许自动装拆箱以及可变长参数的情况下选取重载方法。</li>
-</ol>
-<p>如果 Java 编译器在同一个阶段中找到了多个适配的方法，那么它会在其中选择一个最为贴切的，而决定贴切程度的一个关键就是形式参数类型的继承关系。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 重载方法在编译器就可以进行确定，不需要等到运行期间</span><br><span class="line"> */</span><br><span class="line">public class StaticDispatch &#123;</span><br><span class="line">    static class Human &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    static class Women extends Human &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    static class Men extends Human &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void sayHello(Human human) &#123;</span><br><span class="line">        System.out.println(&quot;say human&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    public void sayHello(Women women) &#123;</span><br><span class="line">        System.out.println(&quot;say women&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    public void sayHello(Men men) &#123;</span><br><span class="line">        System.out.println(&quot;say men&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        StaticDispatch ds = new StaticDispatch();</span><br><span class="line">        Human women = new Women();</span><br><span class="line">        Human men = new Men();</span><br><span class="line">        // 编译时确定方法的调用版本是以Human作为参数的方法</span><br><span class="line">        ds.sayHello(women);</span><br><span class="line">        ds.sayHello(men);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="动态分派"><a href="#动态分派" class="headerlink" title="动态分派"></a>动态分派</h4><p>与动态分派相关的就是方法的<strong>重写</strong>，在子类中我们会重写父类的方法，而在调用的时候根据实际类型来选择适合的调用版本。<br>    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public class DynamicDispatch &#123;</span><br><span class="line">    abstract static class Human &#123;</span><br><span class="line">        abstract public void sayHello();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    static class Women extends Human &#123;</span><br><span class="line">        @Override</span><br><span class="line">        public void sayHello() &#123;</span><br><span class="line">            System.out.println(&quot;say women&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    static class Men extends Human &#123;</span><br><span class="line">        @Override</span><br><span class="line">        public void sayHello() &#123;</span><br><span class="line">            System.out.println(&quot;say men&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Human women = new Women();</span><br><span class="line">        Human men = new Men();</span><br><span class="line">        women.sayHello(); // 实际类型是Women</span><br><span class="line">        men.sayHello(); // 实际类型是Men</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<h4 id="单分派与多分派"><a href="#单分派与多分派" class="headerlink" title="单分派与多分派"></a>单分派与多分派</h4><p>方法的接收者(方法的所有者)与方法的参数统称为方法的<strong>宗量</strong>，根据分派基于多少种宗量，可以将分派划分为<strong>单分派</strong>和<strong>多分派</strong>。<br>单分派根据一个宗量确定调用方法的版本；多分派根据多个宗量确定调用方法的版本。<br>    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">public class Dispatch &#123;</span><br><span class="line">    static class QQ &#123;&#125;;</span><br><span class="line">    static class _360&#123;&#125;;</span><br><span class="line"></span><br><span class="line">    public static class Father &#123;</span><br><span class="line">        public void hardChoice(QQ arg) &#123;</span><br><span class="line">            System.out.println(&quot;father choose qq&quot;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public void hardChoice(_360 arg) &#123;</span><br><span class="line">            System.out.println(&quot;father choose 360&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static class Son extends Father &#123;</span><br><span class="line">        public void hardChoice(QQ arg) &#123;</span><br><span class="line">            System.out.println(&quot;son choose qq&quot;);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public void hardChoice(_360 arg) &#123;</span><br><span class="line">            System.out.println(&quot;son choose 360&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Father father = new Father();</span><br><span class="line">        Father son = new Son();</span><br><span class="line">        father.hardChoice(new _360());</span><br><span class="line">        son.hardChoice(new QQ());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
-<p>静态分派过程如下，在编译期阶段，会根据静态类型与参数类型确定调用版本，产生两条分别指向 Father.hardChoice(QQ)和 Father.hardChoice(_360)的指令，可以知道，在编译期，是由多个宗量确定调用版本，是静态多分派。<br>动态分派过程如下，在运行期，在执行 hardChoice(QQ)或者 hardChoice(_360)时，已经确定了参数必须为 QQ、_360，方法签名确定，静态类型和实际类型此时都不会对方法本身产生任何影响，而虚拟机会根据实际类型来确定调用版本，只根据一个宗量进行确定，因此，在运行时，是动态单分派。<br>在面向对象编程中我们会很频繁地使用到动态分配，虚拟机采用在类的方法区建立一个<strong>虚方法表（非虚方法不会出现在表中）</strong>来实现。<br><img src="/imgs/JVM/%E5%8A%A8%E6%80%81%E5%88%86%E6%B4%BE%E7%9A%84%E5%AE%9E%E7%8E%B0.png" alt="动态分派的实现" title="动态分派的实现"></p>
-<ul>
-<li>只有<strong>虚方法</strong>才会出现在虚方法表中，也就是说<strong>静态方法</strong>、<strong>私有方法</strong>、<strong>final 方法</strong>是不会出现在这张表中的。</li>
-<li>从 Object 类继承的方法都会指向 Object 类型数据中各方法的实际入口地址。</li>
-<li>类自身的方法会指向类的数据类型中方法的实际入口地址。</li>
-<li>父类的没有被重写的方法在虚方法表中的索引与子类方法表中的索引相同，这样，当类型变化时，只需要改变方法表就行，索引还是相同。</li>
-<li>方法表一般在类加载的连接阶段进行初始化，准备了类变量的初始值后，方法表也初始化完毕。</li>
-</ul>
-<h3 id="方法退出"><a href="#方法退出" class="headerlink" title="方法退出"></a>方法退出</h3><p>当一个方法开始执行后，只有两种方式可以退出：</p>
-<ol>
-<li>第一种方式是执行引擎遇到任意一个方法返回的字节码指令，这种方式称为<strong>正常完成出口</strong>；</li>
-<li>另外一种退出方式是，在方法执行过程中遇到异常，且该异常没有被被捕获，称为<strong>异常完成出口</strong>。</li>
-</ol>
-<p>无论是哪种退出方式，在方法退出后，都需要返回到该方法被调用的位置（地址），让程序继续执行。一般来说，方法执行前，会保存调用者当前的 PC 计数器中的值，当方法正常退出时，将该 PC 计数器的值会作为返回地址，返回给调用者。在方法异常退出时，返回地址是通过<strong>异常处理器表</strong>来确定的。</p>
-<p>方法退出的过程实际上就等于把当前栈帧出栈，一般过程为：</p>
-<ol>
-<li>恢复上层方法的局部变量表和操作数栈</li>
-<li>把返回值压入调用者栈帧的操作数栈中</li>
-<li>调整 PC 计数器的值，以指向方法调用指令后面的一条指令</li>
-</ol>
-<h3 id="动态类型语言支持"><a href="#动态类型语言支持" class="headerlink" title="动态类型语言支持"></a>动态类型语言支持</h3><p>Java 是一种静态类型语言，它与 Python、JavaScript 等动态类型语言的主要区别是：</p>
-<ul>
-<li>静态类型语言的类型检查主要过程是在编译期进行而不是运行期。</li>
-</ul>
-<p>静态类型语言与动态类型语言的比较如下：</p>
-<ul>
-<li>静态类型语言在编译期确定类型，最显著的好处是编译器可以提供严谨的类型检查，这样与类型相关的问题能在编码的时候就及时发现，利于稳定性及代码达到更大规模。</li>
-<li>动态类型语言在运行期确定类型，这可以为开发人员提供更大的灵活性，某些在静态类型语言中需用大量“臃肿”代码来实现的功能，由动态类型语言来实现可能会更加清晰和简洁，从而提升开发效率。</li>
-</ul>
-<p>在 JDK1.7 以前的字节码指令集中，4 条方法调用指令（invokevirtual、invokespecial、invokestatic、invokeinterface）的第一个参数都是被调用的方法的符号引用（CONSTANT_Methodref_info 或者 CONSTANT_InterfaceMethodref_info 常量），前面已经提到过，方法的符号引用在编译时产生，而动态类型语言只有在运行期才能确定接收者类型。<br>Java 不像 C&#x2F;C++那样有 Function Pointer 或者 C#里的 Delegate。在 Java 中要实现类似的功能可以有以下两种方式：</p>
-<ol>
-<li>实现一个函数接口，比如 Comparator</li>
-<li>MethodHandle，它的实现原理是第 5 条方法调用的字节码指令 invokedynamic，与其他 invoke*指令的最大差别是它的分派逻辑不是由虚拟机决定的，而是由程序员决定的。</li>
-</ol>
-<p>MethodHandle 的例子：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">import java.lang.invoke.MethodHandle;</span><br><span class="line">import java.lang.invoke.MethodType;</span><br><span class="line"></span><br><span class="line">import static java.lang.invoke.MethodHandles.lookup;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * @author hgc</span><br><span class="line"> * @date 2/16/20</span><br><span class="line"> */</span><br><span class="line">public class MethodHandleTest &#123;</span><br><span class="line"></span><br><span class="line">    static class ClassA &#123;</span><br><span class="line">        public void println(String s) &#123;</span><br><span class="line">            System.out.println(s);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static MethodHandle getPrintlnMH(Object reveiver) throws NoSuchMethodException, IllegalAccessException &#123;</span><br><span class="line">        // MethodType代表方法类型，包含了方法的返回值（methodType()的第一个参数）和具体参数（methodType()第二个及之后的参数）</span><br><span class="line">        MethodType mt = MethodType.methodType(void.class, String.class);</span><br><span class="line">        // lookup()方法来自于MethodHandles.lookup，这句的作用是在指定类中查找符合给定方法名称、方法类型，并且符合调用权限的方法句柄</span><br><span class="line">        // 因为这里调用的是一个虚方法，按照Java语言的规则，方法第一个参数是隐式的，代表该方法的接收者，也即是this指向的对象，这个参数以前是放在参数列表中进行传递的，而现在提供了bindTo()方法来完成这件事</span><br><span class="line">        return lookup().findVirtual(reveiver.getClass(), &quot;println&quot;, mt).bindTo(reveiver);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws Throwable &#123;</span><br><span class="line">        Object obj = System.currentTimeMillis() % 2 == 0 ? System.out : new ClassA();</span><br><span class="line">        getPrintlnMH(obj).invokeExact(&quot;icyfenix&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>MethodHandle 与反射（Reflection）的区别是：</p>
-<ul>
-<li>Reflection API 的设计初衷是只为 Java 服务，而 MethodHandle 则设计为可服务于所有 Java 虚拟机之上的语言，当然也包括 Java 语言。</li>
-<li>MethodHandle 与 Reflection 机制都是在模拟方法调用，但 Reflection 是在模拟代码层次的方法调用，而 MethodHandle 则是在模拟字节码层次的方法调用。<br>MethodHandles.lookup 中的 3 个方法——findStatic()、findVirtual()、findSpecial()对应了 invokestatic、invokevirtual + invokeinterface 和 invokespecial 这几条字节码指令的执行权限校验行为，而这些底层细节在使用 Reflection API 时无需考虑。</li>
-<li>Reflection 中的 Method 比 MethodHandle 对象包含的信息多，Reflection 是重量级的，MethodHandle 是轻量级的。</li>
-<li>MethodHandle 模拟了字节码的方法指令调用，所以理论上虚拟机在这方面做的各种优化（如方法内联）在 MethodHandle 上也可以采用类似思路来支持，而通过反射去调用方法则不行。</li>
-</ul>
-<p>至于 MethodHandle 是如何实现的，可以参考《深入理解 Java 虚拟机》，大致上就是运行期去常量表里根据用户指定的参数找方法。</p>
-<p>###基于栈的字节码解释执行引擎<br>JVM 的指令都是基于栈的，比如<code>iadd</code>表示弹出栈顶的两个元素，然后求出二者的和后重新压入栈中。<br>基于栈的指令集与基于寄存器的指令集各有优势：</p>
-<ul>
-<li>基于栈的指令集的主要优点就是可移植。<br>寄存器是由硬件直接提供的，基于寄存器的指令集由于直接依赖这些硬件寄存器则不可避免地要受到硬件的约束。<br>如果使用栈架构的指令集，用户程序不会直接使用这些寄存器，就可以由虚拟机实现来自行决定把一些访问最频繁的数据（程序计数器、栈顶缓存等）放到寄存器中以获取尽量好的性能，这样实现起来也更加简单一些。</li>
-<li>栈架构的指令集还有一些其他优点，比如代码相对来说更加紧凑（字节码中每个字节就对应一条指令，而多地址指令集中还需要存放参数）、编译器实现更加简单（不需要考虑空间分配的问题，所需空间都在栈上操作）等。</li>
-<li>栈架构指令集的主要缺点是执行速度相对来说会稍慢一些。所有主流物理机的指令集都是寄存器架构也从侧面印证了这一点。<br>一方面，虽然栈架构指令集的代码非常紧凑，但是完成相同功能所需的指令数量一般会比寄存器架构多。比如出栈入栈操作本身就产生了相当多的指令数量。<br>另一方面，栈实现在内存之中，频繁的栈访问也就意味着频繁的内存访问，相对于处理器来说，内存始终是执行速度的瓶颈。尽管虚拟机可以采取栈顶缓存的手段，把最常用的操作映射到寄存器中避免直接内存访问，但这也只能是优化措施而不是解决本质问题的方法。</li>
-</ul>
-<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><ol>
-<li>哪个方法会被调用？<br>重载会触发静态分派，会根据传参的静态类型来决定调用哪个方法，因此会调用 print(Father)，但输出时调用了 Child 类的 toString 方法，因为方法被重写了，会触发方法的动态分派，根据传参的实际类型来决定调用哪个方法。  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public class DynamicDispatchTest &#123;</span><br><span class="line"></span><br><span class="line">    public void print(Father father) &#123;</span><br><span class="line">        System.out.println(father);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void print(Child child) &#123;</span><br><span class="line">        System.out.println(child);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static class Father &#123;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        public String toString() &#123;</span><br><span class="line">            return &quot;Father&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static class Child extends Father &#123;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        public String toString() &#123;</span><br><span class="line">            return &quot;Child&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Father father = new Child();</span><br><span class="line">        DynamicDispatchTest dynamicDispatchTest = new DynamicDispatchTest();</span><br><span class="line">        dynamicDispatchTest.print(father);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ol>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e94a0a.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/e94a0a.html" class="post-title-link" itemprop="url">Redis 应用</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-09-25 13:21:48" itemprop="dateCreated datePublished" datetime="2019-09-25T13:21:48+08:00">2019-09-25</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BC%93%E5%AD%98/" itemprop="url" rel="index"><span itemprop="name">缓存</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-
-<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><h3 id="搭建环境"><a href="#搭建环境" class="headerlink" title="搭建环境"></a>搭建环境</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker run --name myredis -d -p6379:6379 redis</span><br><span class="line">docker exec -it myredis redis-cli</span><br></pre></td></tr></table></figure>
-<h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"># exists 查看某个key是否存在</span><br><span class="line">exists aa</span><br><span class="line">SET 创建一个key；</span><br><span class="line">GET 获取一个key的值；</span><br><span class="line">DEL ***一个key；</span><br><span class="line">TYPE 获取一个key的类型；</span><br><span class="line">EXISTS 判断一个key是否存在，0：存在，1，不存在；</span><br><span class="line"># KEYS 获取给定模糊匹配的key，但要谨慎使用，因为线上的key一般非常多</span><br><span class="line">keys *</span><br><span class="line">keys a?</span><br><span class="line">EXPIRE 设置一个key过期的秒数；</span><br><span class="line">PERSTST ***一个key过期的秒数；</span><br><span class="line">PEXPIRE 设置一个key过期的毫秒数；</span><br><span class="line">RENAME 将一个key重命名；</span><br><span class="line">RENAMENX 将一个key重命名，且新的key必须是不存在的可以；</span><br><span class="line">TTL 获取key的有效时间，以秒为单位，-1表示永不过期，-2表示已过期、已转移</span><br><span class="line"># dbsize 查看当前库中key数量</span><br><span class="line">dbsize</span><br><span class="line"># flushdb 清除数据库（内存）</span><br><span class="line">flushdb</span><br><span class="line"># move 移动key到另一个库</span><br><span class="line">move aa 2</span><br></pre></td></tr></table></figure>
-<h3 id="容量预估"><a href="#容量预估" class="headerlink" title="容量预估"></a>容量预估</h3><p>在实际部署前一般都会先对所需容量进行一个评估，这样可以尽量避免在上线后容量不够还要扩容、或者容量过大造成浪费。<br>官方提供了一个<a target="_blank" rel="noopener" href="http://www.redis.cn/redis_memory/">容量预估工具</a>，一些博客比如<a target="_blank" rel="noopener" href="https://gameinstitute.qq.com/community/detail/114987">Redis 容量评估模型</a>贴近 Redis 底层数据结构给出了容量的评估分析，可以作为一个参考，但是业务架构一直在变，实际的容量监控还是必须的，我们下面还会谈到这方面的工具。</p>
-<h2 id="使用Redis-Cluster"><a href="#使用Redis-Cluster" class="headerlink" title="使用Redis Cluster"></a>使用Redis Cluster</h2><h3 id="搭建Redis-Cluster集群"><a href="#搭建Redis-Cluster集群" class="headerlink" title="搭建Redis Cluster集群"></a>搭建Redis Cluster集群</h3><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42815754/article/details/82912130">redis集群搭建</a></p>
-<p>1、安装<br>到官网找到：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget http://download.redis.io/releases/redis-4.0.8.tar.gz</span><br><span class="line">make &amp;&amp; make install # 默认安装目录为/usr/local/bin</span><br></pre></td></tr></table></figure>
-<p>ruby</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install ruby</span><br><span class="line">yum install rubygems</span><br></pre></td></tr></table></figure>
-<p>还有gem文件在<a target="_blank" rel="noopener" href="https://rubygems.org/gems/redis/versions/4.0.1">此处下载</a>，安装：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gem install /usr/local/redis-3.0.0.gem</span><br></pre></td></tr></table></figure>
-<p>2、创建 redis 节点<br>在一个目录（比如编译目录）下创建 redis_cluster 目录，再在这个目录下创建 7001、7002、7003、7004、7005、7006 的子目录，拷贝配置文件 redis.conf 到各个这些子目录中，并编辑以下内容</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">port 7001 //端口7001,7002,7003        </span><br><span class="line">bind 本机ip //默认ip为127.0.0.1 需要改为其他节点机器可访问的ip 否则创建集群时无法访问对应的端口，无法创建集群</span><br><span class="line">daemonize yes //redis后台运行</span><br><span class="line">pidfile /var/run/redis_7001.pid //pidfile文件对应7001,7002,7003</span><br><span class="line">logfile /tmp/redis_7001.log // 日志文件</span><br><span class="line">cluster-enabled yes //开启集群 把注释#去掉</span><br><span class="line">cluster-config-file nodes_7001.conf //集群的配置 配置文件首次启动自动生成 7001,7002,7003</span><br><span class="line">cluster-node-timeout 15000 //请求超时 默认15秒，可自行设置</span><br><span class="line">appendonly yes //aof日志开启 有需要就开启，它会每次写操作都记录一条日志</span><br></pre></td></tr></table></figure>
-<p>3、创建集群<br>先安装 ruby，因为 redis 的集群协调程序是用 ruby 写的</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install ruby ruby-devel rubygems rpm-build</span><br></pre></td></tr></table></figure>
-<p>再安装gem，在编译目录下执行</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gem install redis</span><br></pre></td></tr></table></figure>
-<p>运行每个redis实例：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-server redis.conf</span><br></pre></td></tr></table></figure>
-<p>复制编译目录下的src目录中的redis-trib.rb到&#x2F;usr&#x2F;local&#x2F;bin，然后运行<br>在编译目录的src子目录下执行，其中host为各redis节点的绑定ip（如果绑定的ip是0.0.0.0则必须指定为对外开放的ip，否则会默认绑定127.0.0.1，在slot重定向时会报错），设置每个主分片有一个副本分片</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./redis-trib.rb create --replicas 1 host1:port1 host2:port2 ...</span><br></pre></td></tr></table></figure>
-<p>4、测试<br>为了连到集群上，需要在 redis-cli 请求后加上-c 参数，比如</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -h 192.168.31.245 -c -p 7002</span><br></pre></td></tr></table></figure>
-<p>在普通set和get时，redis会自动计算出目标地址。<br>5、Java客户端连接</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">public class RedissonTest &#123;</span><br><span class="line"></span><br><span class="line">    private static final Random random = new Random();</span><br><span class="line"></span><br><span class="line">    static int succeed = 0;</span><br><span class="line"></span><br><span class="line">    static int failed = 0;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws InterruptedException &#123;</span><br><span class="line">        Config config = new Config();</span><br><span class="line">        config.useClusterServers()</span><br><span class="line">                .setScanInterval(2000)</span><br><span class="line">                .addNodeAddress(&quot;redis://127.0.0.1:7001&quot;, &quot;redis://127.0.0.1:7002&quot;, &quot;127.0.0.1:7003&quot;)</span><br><span class="line">                .addNodeAddress(&quot;redis://127.0.0.1:7004&quot;, &quot;redis://127.0.0.1:7005&quot;, &quot;127.0.0.1:7006&quot;);</span><br><span class="line">        RedissonClient redissonClient = Redisson.create(config);</span><br><span class="line">        while (true) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                RBucket&lt;Object&gt; bucket = redissonClient.getBucket(Integer.toString(random.nextInt()));</span><br><span class="line">                bucket.get();</span><br><span class="line">                succeed++;</span><br><span class="line">                log.info(&quot;调用成功, 当前 succeed:&#123;&#125;, failed:&#123;&#125;&quot;, succeed, failed);</span><br><span class="line">            &#125; catch (Exception e) &#123;</span><br><span class="line">                failed++;</span><br><span class="line">                log.info(&quot;调用失败, 当前 succeed:&#123;&#125;, failed:&#123;&#125;&quot;, succeed, failed, e.getMessage());</span><br><span class="line">            &#125;</span><br><span class="line">            Thread.sleep(500);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="info-命令中涉及集群部署的部分"><a href="#info-命令中涉及集群部署的部分" class="headerlink" title="info 命令中涉及集群部署的部分"></a>info 命令中涉及集群部署的部分</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># Replication</span><br><span class="line"># 当前副本角色，如果实例不是任何节点的从节点，则该值是“master”，如果实例从某个节点同步数据，则是“slave”</span><br><span class="line">role:master</span><br><span class="line"># 已连接的从节点数</span><br><span class="line">connected_slaves:2</span><br><span class="line"># 每个从节点的信息，包括ID、地址、端口号、状态</span><br><span class="line">slave0:ip=10.32.140.18,port=6222,state=online,offset=1745391794554,lag=0</span><br><span class="line">slave1:ip=10.32.140.15,port=6212,state=online,offset=1745391807778,lag=0</span><br><span class="line">master_replid:6a64bcbbcae91324e72e24745392275e2f1382ea</span><br><span class="line">master_replid2:0000000000000000000000000000000000000000</span><br><span class="line">master_repl_offset:1745391878919</span><br><span class="line">second_repl_offset:-1</span><br><span class="line">repl_backlog_active:1</span><br><span class="line">repl_backlog_size:16777216</span><br><span class="line">repl_backlog_first_byte_offset:1745375101704</span><br><span class="line">repl_backlog_histlen:16777216</span><br></pre></td></tr></table></figure>
-
-<h3 id="cluster-info-命令"><a href="#cluster-info-命令" class="headerlink" title="cluster info 命令"></a>cluster info 命令</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">10.32.140.15:6212&gt; cluster info</span><br><span class="line"># ok状态表示集群可以正常接受查询请求。fail 状态表示，至少有一个哈希槽没有被绑定（说明有哈希槽没有被绑定到任意一个节点），或者在错误的状态（节点可以提供服务但是带有FAIL 标记），或者该节点无法联系到多数master节点。</span><br><span class="line">cluster_state:ok</span><br><span class="line"># 已分配到集群节点的哈希槽数量（不是没有被绑定的数量）。16384个哈希槽全部被分配到集群节点是集群正常运行的必要条件.</span><br><span class="line">cluster_slots_assigned:16384</span><br><span class="line"># 哈希槽状态不是FAIL 和 PFAIL 的数量</span><br><span class="line">cluster_slots_ok:16384</span><br><span class="line"># 哈希槽状态是 PFAIL的数量。只要哈希槽状态没有被升级到FAIL状态，这些哈希槽仍然可以被正常处理。PFAIL状态表示我们当前不能和节点进行交互，但这种状态只是临时的错误状态</span><br><span class="line">cluster_slots_pfail:0</span><br><span class="line"># 哈希槽状态是FAIL的数量。如果值不是0，那么集群节点将无法提供查询服务，除非cluster-require-full-coverage被设置为no</span><br><span class="line">cluster_slots_fail:0</span><br><span class="line"># 集群中节点数量，包括处于握手状态还没有成为集群正式成员的节点</span><br><span class="line">cluster_known_nodes:9</span><br><span class="line"># 至少包含一个哈希槽且能够提供服务的master节点数量</span><br><span class="line">cluster_size:3</span><br><span class="line"># 集群本地Current Epoch变量的值。这个值在节点故障转移过程时有用，它总是递增和唯一的</span><br><span class="line">cluster_current_epoch:3</span><br><span class="line"># 当前正在使用的节点的Config Epoch值. 这个是关联在本节点的版本值</span><br><span class="line">cluster_my_epoch:2</span><br><span class="line">cluster_stats_messages_ping_sent:27870482</span><br><span class="line">cluster_stats_messages_pong_sent:27072640</span><br><span class="line">cluster_stats_messages_meet_sent:4</span><br><span class="line">cluster_stats_messages_sent:54943126</span><br><span class="line">cluster_stats_messages_ping_received:27072636</span><br><span class="line">cluster_stats_messages_pong_received:27865273</span><br><span class="line">cluster_stats_messages_meet_received:4</span><br><span class="line">cluster_stats_messages_fail_received:4</span><br><span class="line">cluster_stats_messages_publish_received:7514286</span><br><span class="line">cluster_stats_messages_received:62452203</span><br></pre></td></tr></table></figure>
-
-<h3 id="cluster-nodes"><a href="#cluster-nodes" class="headerlink" title="cluster nodes"></a>cluster nodes</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 节点ID，IP地址：端口号，标识，上一次发送 ping 包的时间，上一次收到 pong 包的时间，连接状态，节点使用的哈希槽</span><br><span class="line">127.0.0.1:7001&gt; cluster nodes</span><br><span class="line">fcdcafe5482daa80d0a382f675e8caced2d6ce63 127.0.0.1:7001@17001 myself,slave b2d0be87492d75bce14d3e50f687ce8a7872ef73 0 1603765953000 7 connected</span><br><span class="line">75d6d1e3d4d64eb6fb85d1ac7d883ecef4ac5e7e 127.0.0.1:7002@17002 master - 0 1603765955026 2 connected 5461-10922</span><br><span class="line">b2d0be87492d75bce14d3e50f687ce8a7872ef73 127.0.0.1:7004@17004 master - 0 1603765952012 7 connected 0-5460</span><br><span class="line">8bf573a595a3955293e37f2e34e20c4cfb469060 127.0.0.1:7003@17003 master - 0 1603765954021 3 connected 10923-16383</span><br><span class="line">5d599dea56108003633cd27d13abf87a9ef07d52 127.0.0.1:7005@17005 slave 75d6d1e3d4d64eb6fb85d1ac7d883ecef4ac5e7e 0 1603765953000 2 connected</span><br><span class="line">68e6ddbf689bc6d51ebfadd24064fc6cc8204210 127.0.0.1:7006@17006 slave 8bf573a595a3955293e37f2e34e20c4cfb469060 0 1603765954000 3 connected</span><br></pre></td></tr></table></figure>
-
-<h3 id="测试结果预期"><a href="#测试结果预期" class="headerlink" title="测试结果预期"></a>测试结果预期</h3><p>测试一些Cluster宕机的情况，预期会有以下结论：</p>
-<ol>
-<li>关闭任意一主，会导致部分写操作失败，是由于从节点不能执行写操作，在Slave升级为Master期间会有少量的失败。</li>
-<li>关闭从节点对于整个集群没有影响。</li>
-<li>如果半数以上 Master 处于关闭状态那么整个集群处于不可用状态。<br>原因：Redis Cluster的选举需要有Master参与，如果多半的Master都挂掉了，也就不能再支持选举新Master了。</li>
-<li>关闭任意一对主从节点会导致部分（大约为整个集群的1&#x2F;3）失败。<br>Master宕机了，且没有替补的Slave，则分配给这个Master的slot就不可用了。</li>
-</ol>
-<h3 id="测试-压测"><a href="#测试-压测" class="headerlink" title="测试 - 压测"></a>测试 - 压测</h3><h3 id="测试-宕机1台Master"><a href="#测试-宕机1台Master" class="headerlink" title="测试 - 宕机1台Master"></a>测试 - 宕机1台Master</h3><p>下面的命令将7001干掉后测试集群的主从迁移情况。<br>刚开始集群7001、7002、7003是Master：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:7001&gt; cluster nodes</span><br><span class="line">5d599dea56108003633cd27d13abf87a9ef07d52 127.0.0.1:7005@17005 slave 75d6d1e3d4d64eb6fb85d1ac7d883ecef4ac5e7e 0 1603615592617 2 connected</span><br><span class="line">fcdcafe5482daa80d0a382f675e8caced2d6ce63 127.0.0.1:7001@17001 myself,master - 0 1603615591000 1 connected 0-5460</span><br><span class="line">b2d0be87492d75bce14d3e50f687ce8a7872ef73 127.0.0.1:7004@17004 slave fcdcafe5482daa80d0a382f675e8caced2d6ce63 0 1603615591614 1 connected</span><br><span class="line">8bf573a595a3955293e37f2e34e20c4cfb469060 127.0.0.1:7003@17003 master - 0 1603615591000 3 connected 10923-16383</span><br><span class="line">75d6d1e3d4d64eb6fb85d1ac7d883ecef4ac5e7e 127.0.0.1:7002@17002 master - 0 1603615592000 2 connected 5461-10922</span><br><span class="line">68e6ddbf689bc6d51ebfadd24064fc6cc8204210 127.0.0.1:7006@17006 slave 8bf573a595a3955293e37f2e34e20c4cfb469060 0 1603615593620 3 connected</span><br></pre></td></tr></table></figure>
-<p>将7001 kill掉后，请求7001服务器的请求都会失败，大约20秒后请求恢复，且观察日志可以发现，原来7001的Slave-7004现在替补上来成为了Master：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">18:29:28.186 [main] INFO  c.t.l.r.RedissonTest - 调用成功, 当前 succeed:15, failed:0</span><br><span class="line">18:29:33.475 [main] INFO  c.t.l.r.RedissonTest - 调用失败, 当前 succeed:15, failed:1</span><br><span class="line">18:29:38.750 [main] INFO  c.t.l.r.RedissonTest - 调用失败, 当前 succeed:15, failed:2</span><br><span class="line">18:29:39.253 [main] INFO  c.t.l.r.RedissonTest - 调用成功, 当前 succeed:16, failed:2</span><br><span class="line">18:29:39.756 [main] INFO  c.t.l.r.RedissonTest - 调用成功, 当前 succeed:17, failed:2</span><br><span class="line">18:29:40.259 [main] INFO  c.t.l.r.RedissonTest - 调用成功, 当前 succeed:18, failed:2</span><br><span class="line">18:29:40.763 [main] INFO  c.t.l.r.RedissonTest - 调用成功, 当前 succeed:19, failed:2</span><br><span class="line">18:29:45.271 [redisson-netty-2-4] INFO  o.r.c.MasterSlaveEntry - master 127.0.0.1/127.0.0.1:7004 used as slave</span><br><span class="line">18:29:45.274 [redisson-netty-2-14] INFO  o.r.c.p.PubSubConnectionPool - 1 connections initialized for 127.0.0.1/127.0.0.1:7004</span><br><span class="line">18:29:45.280 [redisson-netty-2-4] WARN  o.r.c.ClusterConnectionManager - slave: redis://127.0.0.1:7001 has down for slot ranges: [[0-5460]]</span><br><span class="line">18:29:45.285 [redisson-netty-2-28] INFO  o.r.c.p.SlaveConnectionPool - 24 connections initialized for 127.0.0.1/127.0.0.1:7004</span><br></pre></td></tr></table></figure>
-<p>之后重启7001后，发现7001重新加入到了集群中：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">18:34:18.539 [redisson-netty-2-29] INFO  o.r.c.p.PubSubConnectionPool - 1 connections initialized for 127.0.0.1/127.0.0.1:7001</span><br><span class="line">18:34:18.542 [redisson-netty-2-4] INFO  o.r.c.MasterSlaveEntry - master 127.0.0.1/127.0.0.1:7004 excluded from slaves</span><br><span class="line">18:34:18.542 [redisson-netty-2-4] INFO  o.r.c.ClusterConnectionManager - slave: redis://127.0.0.1:7001 has up for slot ranges: [[0-5460]]</span><br><span class="line">18:34:18.544 [redisson-netty-2-6] INFO  o.r.c.p.SlaveConnectionPool - 24 connections initialized for 127.0.0.1/127.0.0.1:7001</span><br></pre></td></tr></table></figure>
-
-<h3 id="测试-宕机2台Master"><a href="#测试-宕机2台Master" class="headerlink" title="测试 - 宕机2台Master"></a>测试 - 宕机2台Master</h3><p>把两台Master干掉后，两个Master均进入fail状态，这时集群也会进入fail状态，选举不会成功。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">localhost:7001&gt; cluster nodes</span><br><span class="line">fcdcafe5482daa80d0a382f675e8caced2d6ce63 127.0.0.1:7001@17001 myself,slave b2d0be87492d75bce14d3e50f687ce8a7872ef73 0 1603622378000 7 connected</span><br><span class="line">75d6d1e3d4d64eb6fb85d1ac7d883ecef4ac5e7e 127.0.0.1:7002@17002 master - 0 1603622381510 2 connected 5461-10922</span><br><span class="line">b2d0be87492d75bce14d3e50f687ce8a7872ef73 127.0.0.1:7004@17004 master - 0 1603622379504 7 connected 0-5460</span><br><span class="line">8bf573a595a3955293e37f2e34e20c4cfb469060 127.0.0.1:7003@17003 master - 0 1603622380507 3 connected 10923-16383</span><br><span class="line">5d599dea56108003633cd27d13abf87a9ef07d52 127.0.0.1:7005@17005 slave 75d6d1e3d4d64eb6fb85d1ac7d883ecef4ac5e7e 0 1603622378498 2 connected</span><br><span class="line">68e6ddbf689bc6d51ebfadd24064fc6cc8204210 127.0.0.1:7006@17006 slave 8bf573a595a3955293e37f2e34e20c4cfb469060 0 1603622380000 3 connected</span><br></pre></td></tr></table></figure>
-<p>集群fail后，客户端之后的请求也都失败了。</p>
-<h2 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">set key value ex nx</span><br><span class="line">do sth...</span><br><span class="line">del key</span><br></pre></td></tr></table></figure>
-<ol>
-<li>为什么要加过期时间？<br>怕中间遇到异常退出，del 没有执行，导致陷入死锁。<br>set 命令现在支持加 ex 和 nx 参数，既保证原子性，又支持加过期时间。</li>
-<li>过早过期释放别人的锁<br>业务执行时间过长，锁过期了，可能导致其他线程先获取到了锁，这样当前线程 del 的时候相当于将别人的锁释放掉了。<br>可以给 value 设置一个随机数，释放前检查一下，这是个“读后写”的过程，为了保证其原子性，一般会使用 Lua 脚本来实现（类似 Redisson 中的实现）。<br>Redisson 中的解决方案是加一个“看门狗”，定时刷新过期时间。</li>
-<li>重入性<br>为了实现可重入性，一般是在客户端使用 ThreadLocal 存储当前持有锁的计数。<br>在 Redisson 中，可重入锁是通过在 Lua 脚本中对客户端线程 ID 进行计数来实现的。</li>
-</ol>
-<h2 id="延时队列"><a href="#延时队列" class="headerlink" title="延时队列"></a>延时队列</h2><h3 id="异步消息队列"><a href="#异步消息队列" class="headerlink" title="异步消息队列"></a>异步消息队列</h3><p>可以使用 list 数据结构来实现异步消息队列，使用 rpush&#x2F;lpush 操作入队列，使用 lpop 和 rpop 来出队列。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">rpush notify-queue a b</span><br><span class="line">llen notify-queue</span><br><span class="line">lpop notify-queue</span><br><span class="line">llen notify-queue</span><br><span class="line">lpop notify-queue</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
-<ol>
-<li>如果队列空了怎么办？<br>客户端通过轮询队列 pop 获取消息处理，如果队列空了，那么就会陷入 pop 的死循环。<br>一般的解决办法是<code>sleep</code>，每次 pop 后可以暂停个 1 秒。<br>但是<code>sleep</code>同样会带来延迟增大的问题，因此，更好的解决办法是<code>blpop / brpop</code>，即阻塞读： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 等待一秒若还没有数据则直接返回</span><br><span class="line">blpop notify-queue 1</span><br></pre></td></tr></table></figure></li>
-<li>空闲连接<br>如果线程一直阻塞，则 Redis 的客户端连接将成为闲置连接，闲置过久，服务器一般会主动断开连接，减少闲置资源占用。这个时候 blpop&#x2F;brpop 会抛出异常来，这时要<strong>注意对异常的捕获和重试</strong>。</li>
-<li>锁冲突处理<br>加锁失败一般有 3 种处理方式：<ul>
-<li>直接抛出异常，由用户稍后重试；<br> 适合由用户直接发起的请求，比如商城下单，下单失败后由用户决定是否重新请求。</li>
-<li>sleep<br> sleep 会阻塞消息处理线程，会导致后续消息处理出现延迟，不适合高并发（锁冲突频繁）或队列消息较多的情况，并且，如果是由于死锁导致的加锁不成功，sleep 将导致线程一直处于阻塞状态、后续的消息永远得不到处理。</li>
-<li>延时队列<br> 将当前冲突的请求扔到另一个队列延后处理以避开冲突，适合异步消息处理的场景。</li>
-</ul>
-</li>
-</ol>
-<p>下面的实现例子来自《Redis 深度历险》：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line">public class RedisDelayingQueue&lt;T&gt; &#123;</span><br><span class="line"></span><br><span class="line">  static class TaskItem&lt;T&gt; &#123;</span><br><span class="line">    public String id;</span><br><span class="line">    public T msg;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  // fastjson 序列化对象中存在 generic 类型时，需要使用 TypeReference</span><br><span class="line">  private Type TaskType = new TypeReference&lt;TaskItem&lt;T&gt;&gt;() &#123;</span><br><span class="line">  &#125;.getType();</span><br><span class="line"></span><br><span class="line">  private Jedis jedis;</span><br><span class="line">  private String queueKey;</span><br><span class="line"></span><br><span class="line">  public RedisDelayingQueue(Jedis jedis, String queueKey) &#123;</span><br><span class="line">    this.jedis = jedis;</span><br><span class="line">    this.queueKey = queueKey;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  public void delay(T msg) &#123;</span><br><span class="line">    TaskItem&lt;T&gt; task = new TaskItem&lt;T&gt;();</span><br><span class="line">    task.id = UUID.randomUUID().toString();</span><br><span class="line">    task.msg = msg;</span><br><span class="line">    String s = JSON.toJSONString(task);</span><br><span class="line">    // key是当前时间</span><br><span class="line">    jedis.zadd(queueKey, System.currentTimeMillis() + 5000, s); // 塞入延时队列 ,5s 后再试</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  public void loop() &#123;</span><br><span class="line">    while (!Thread.interrupted()) &#123;</span><br><span class="line">      // 取时间范围是0到当前时间内的一条记录</span><br><span class="line">      // 第3个参数0表示不记分数，</span><br><span class="line">      Set&lt;String&gt; values = jedis.zrangeByScore(queueKey, 0, System.currentTimeMillis(), 0, 1);</span><br><span class="line">      if (values.isEmpty()) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">          // 暂停一会，避免浪费CPU</span><br><span class="line">          Thread.sleep(500);</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">          break;</span><br><span class="line">        &#125;</span><br><span class="line">        continue;</span><br><span class="line">      &#125;</span><br><span class="line">      String s = values.iterator().next();</span><br><span class="line">      // 说明抢到了</span><br><span class="line">      if (jedis.zrem(queueKey, s) &gt; 0) &#123;</span><br><span class="line">        TaskItem&lt;T&gt; task = JSON.parseObject(s, TaskType);</span><br><span class="line">        this.handleMsg(task.msg);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  public void handleMsg(T msg) &#123;</span><br><span class="line">    System.out.println(msg);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  public static void main(String[] args) &#123;</span><br><span class="line">    Jedis jedis = new Jedis();</span><br><span class="line">    RedisDelayingQueue&lt;String&gt; queue = new RedisDelayingQueue&lt;&gt;(jedis, &quot;q-demo&quot;);</span><br><span class="line">    Thread producer = new Thread() &#123;</span><br><span class="line"></span><br><span class="line">      public void run() &#123;</span><br><span class="line">        for (int i = 0; i &lt; 10; i++) &#123;</span><br><span class="line">          queue.delay(&quot;codehole&quot; + i);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">    &#125;;</span><br><span class="line">    Thread consumer = new Thread() &#123;</span><br><span class="line"></span><br><span class="line">      public void run() &#123;</span><br><span class="line">        queue.loop();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">    &#125;;</span><br><span class="line">    producer.start();</span><br><span class="line">    consumer.start();</span><br><span class="line">    try &#123;</span><br><span class="line">      producer.join();</span><br><span class="line">      Thread.sleep(6000);</span><br><span class="line">      consumer.interrupt();</span><br><span class="line">      consumer.join();</span><br><span class="line">    &#125; catch (InterruptedException e) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>一些优化点：</p>
-<ol>
-<li>注意<code>zrangeByScore</code>和<code>zrem</code>不是一个原子操作，可能会有多个线程争抢同一个 key，这可以通过 lua 脚本来优化。</li>
-<li>使用 Redis 作为消息队列并不能保证 100%的可靠性，因为 rem 执行后如果客户端崩溃了消息就丢失了，或者 Redis 崩溃了消息也有可能丢失（这个可以通过主备来避免）。</li>
-</ol>
-<h2 id="阻塞队列"><a href="#阻塞队列" class="headerlink" title="阻塞队列"></a>阻塞队列</h2><p>使用Redis实现队列可以利用lpop&#x2F;rpush或rpop&#x2F;lpush，但是这两组命令在遇到队列为空或满时还是会直接返回，如果要实现阻塞队列的阻塞等待能力，可以：<br>1、使用lua脚本轮询<br>lua脚本中先检测队列是否为空&#x2F;满，在不空&#x2F;不满的情况下才执行后续的操作。<br>如果为空&#x2F;满，则客户端先等待一会再执行一次该lua脚本。<br>缺点是会有很多空轮询。<br>2、使用blpop命令<br>在list结构尚不存在元素的情况下，blpop命令会先将客户端挂起，等待：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">void blockForKeys(redisClient *c, robj **keys, int numkeys, mstime_t timeout, robj *target) &#123;</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    // 关联阻塞客户端和键的相关信息</span><br><span class="line">    for (j = 0; j &lt; numkeys; j++) &#123;</span><br><span class="line"></span><br><span class="line">        /* If the key already exists in the dict ignore it. */</span><br><span class="line">        // c-&gt;bpop.keys 是一个集合（值为 NULL 的字典）</span><br><span class="line">        // 它记录所有造成客户端阻塞的键</span><br><span class="line">        // 以下语句在键不存在于集合的时候，将它添加到集合</span><br><span class="line">        if (dictAdd(c-&gt;bpop.keys,keys[j],NULL) != DICT_OK) continue;</span><br><span class="line"></span><br><span class="line">        incrRefCount(keys[j]);</span><br><span class="line"></span><br><span class="line">        /* And in the other &quot;side&quot;, to map keys -&gt; clients */</span><br><span class="line">        // c-&gt;db-&gt;blocking_keys 字典的键为造成客户端阻塞的键</span><br><span class="line">        // 而值则是一个链表，链表中包含了所有被阻塞的客户端</span><br><span class="line">        // 以下程序将阻塞键和被阻塞客户端关联起来</span><br><span class="line">        de = dictFind(c-&gt;db-&gt;blocking_keys,keys[j]);</span><br><span class="line">        if (de == NULL) &#123;</span><br><span class="line">            // 链表不存在，新创建一个，并将它关联到字典中</span><br><span class="line">            int retval;</span><br><span class="line"></span><br><span class="line">            /* For every key we take a list of clients blocked for it */</span><br><span class="line">            l = listCreate();</span><br><span class="line">            retval = dictAdd(c-&gt;db-&gt;blocking_keys,keys[j],l);</span><br><span class="line">            incrRefCount(keys[j]);</span><br><span class="line">            redisAssertWithInfo(c,keys[j],retval == DICT_OK);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            l = dictGetVal(de);</span><br><span class="line">        &#125;</span><br><span class="line">        // 将客户端填接到被阻塞客户端的链表中</span><br><span class="line">        listAddNodeTail(l,c);</span><br><span class="line">    &#125;</span><br><span class="line">    blockClient(c,REDIS_BLOCKED_LIST);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>执行指令结束后，处理解除了阻塞的键。<br><code>redis.c</code>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">int processCommand(redisClient *c) &#123;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    /* Exec the command */</span><br><span class="line">    if (c-&gt;flags &amp; REDIS_MULTI &amp;&amp;</span><br><span class="line">        c-&gt;cmd-&gt;proc != execCommand &amp;&amp; c-&gt;cmd-&gt;proc != discardCommand &amp;&amp;</span><br><span class="line">        c-&gt;cmd-&gt;proc != multiCommand &amp;&amp; c-&gt;cmd-&gt;proc != watchCommand)</span><br><span class="line">    &#123;</span><br><span class="line">        // 在事务上下文中</span><br><span class="line">        // 除 EXEC 、 DISCARD 、 MULTI 和 WATCH 命令之外</span><br><span class="line">        // 其他所有命令都会被入队到事务队列中</span><br><span class="line">        queueMultiCommand(c);</span><br><span class="line">        addReply(c,shared.queued);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        // 执行命令</span><br><span class="line">        call(c,REDIS_CALL_FULL);</span><br><span class="line"></span><br><span class="line">        c-&gt;woff = server.master_repl_offset;</span><br><span class="line">        // 处理那些解除了阻塞的键</span><br><span class="line">        if (listLength(server.ready_keys))</span><br><span class="line">            handleClientsBlockedOnLists();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return REDIS_OK;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以看到，执行命令的末尾需要处理解除了阻塞的键，遍历这些键然后唤醒等待的客户端。<br><code>t_list.c</code>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br></pre></td><td class="code"><pre><span class="line">/* 这个函数会在 Redis 每次执行完单个命令、事务块或 Lua 脚本之后调用。</span><br><span class="line"> *</span><br><span class="line"> * 对所有被阻塞在某个客户端的 key 来说，只要这个 key 被执行了某种 PUSH 操作</span><br><span class="line"> * 那么这个 key 就会被放到 serve.ready_keys 去。</span><br><span class="line"> * </span><br><span class="line"> * 这个函数会遍历整个 serve.ready_keys 链表，</span><br><span class="line"> * 并将里面的 key 的元素弹出给被阻塞客户端，</span><br><span class="line"> * 从而解除客户端的阻塞状态。</span><br><span class="line"> *</span><br><span class="line"> * 函数会一次又一次地进行迭代，</span><br><span class="line"> * 因此它在执行 BRPOPLPUSH 命令的情况下也可以正常获取到正确的新被阻塞客户端。</span><br><span class="line"> */</span><br><span class="line">void handleClientsBlockedOnLists(void) &#123;</span><br><span class="line"></span><br><span class="line">    // 遍历整个 ready_keys 链表</span><br><span class="line">    while(listLength(server.ready_keys) != 0) &#123;</span><br><span class="line">        list *l;</span><br><span class="line"></span><br><span class="line">        /* Point server.ready_keys to a fresh list and save the current one</span><br><span class="line">         * locally. This way as we run the old list we are free to call</span><br><span class="line">         * signalListAsReady() that may push new elements in server.ready_keys</span><br><span class="line">         * when handling clients blocked into BRPOPLPUSH. */</span><br><span class="line">        // 备份旧的 ready_keys ，再给服务器端赋值一个新的</span><br><span class="line">        l = server.ready_keys;</span><br><span class="line">        server.ready_keys = listCreate();</span><br><span class="line"></span><br><span class="line">        while(listLength(l) != 0) &#123;</span><br><span class="line"></span><br><span class="line">            // 取出 ready_keys 中的首个链表节点</span><br><span class="line">            listNode *ln = listFirst(l);</span><br><span class="line"></span><br><span class="line">            // 指向 readyList 结构</span><br><span class="line">            readyList *rl = ln-&gt;value;</span><br><span class="line"></span><br><span class="line">            /* First of all remove this key from db-&gt;ready_keys so that</span><br><span class="line">             * we can safely call signalListAsReady() against this key. */</span><br><span class="line">            // 从 ready_keys 中移除就绪的 key</span><br><span class="line">            dictDelete(rl-&gt;db-&gt;ready_keys,rl-&gt;key);</span><br><span class="line"></span><br><span class="line">            /* If the key exists and it&#x27;s a list, serve blocked clients</span><br><span class="line">             * with data. */</span><br><span class="line">            // 获取键对象，这个对象应该是非空的，并且是列表</span><br><span class="line">            robj *o = lookupKeyWrite(rl-&gt;db,rl-&gt;key);</span><br><span class="line">            if (o != NULL &amp;&amp; o-&gt;type == REDIS_LIST) &#123;</span><br><span class="line">                dictEntry *de;</span><br><span class="line"></span><br><span class="line">                /* We serve clients in the same order they blocked for</span><br><span class="line">                 * this key, from the first blocked to the last. */</span><br><span class="line">                // 取出所有被这个 key 阻塞的客户端</span><br><span class="line">                de = dictFind(rl-&gt;db-&gt;blocking_keys,rl-&gt;key);</span><br><span class="line">                if (de) &#123;</span><br><span class="line">                    list *clients = dictGetVal(de);</span><br><span class="line">                    int numclients = listLength(clients);</span><br><span class="line"></span><br><span class="line">                    while(numclients--) &#123;</span><br><span class="line">                        // 取出客户端</span><br><span class="line">                        listNode *clientnode = listFirst(clients);</span><br><span class="line">                        redisClient *receiver = clientnode-&gt;value;</span><br><span class="line"></span><br><span class="line">                        // 设置弹出的目标对象（只在 BRPOPLPUSH 时使用）</span><br><span class="line">                        robj *dstkey = receiver-&gt;bpop.target;</span><br><span class="line"></span><br><span class="line">                        // 从列表中弹出元素</span><br><span class="line">                        // 弹出的位置取决于是执行 BLPOP 还是 BRPOP 或者 BRPOPLPUSH</span><br><span class="line">                        int where = (receiver-&gt;lastcmd &amp;&amp;</span><br><span class="line">                                     receiver-&gt;lastcmd-&gt;proc == blpopCommand) ?</span><br><span class="line">                                    REDIS_HEAD : REDIS_TAIL;</span><br><span class="line">                        robj *value = listTypePop(o,where);</span><br><span class="line"></span><br><span class="line">                        // 还有元素可弹出（非 NULL）</span><br><span class="line">                        if (value) &#123;</span><br><span class="line">                            /* Protect receiver-&gt;bpop.target, that will be</span><br><span class="line">                             * freed by the next unblockClient()</span><br><span class="line">                             * call. */</span><br><span class="line">                            if (dstkey) incrRefCount(dstkey);</span><br><span class="line"></span><br><span class="line">                            // 取消客户端的阻塞状态</span><br><span class="line">                            unblockClient(receiver);</span><br><span class="line"></span><br><span class="line">                            // 将值 value 推入到造成客户端 receiver 阻塞的 key 上</span><br><span class="line">                            if (serveClientBlockedOnList(receiver,</span><br><span class="line">                                rl-&gt;key,dstkey,rl-&gt;db,value,</span><br><span class="line">                                where) == REDIS_ERR)</span><br><span class="line">                            &#123;</span><br><span class="line">                                /* If we failed serving the client we need</span><br><span class="line">                                 * to also undo the POP operation. */</span><br><span class="line">                                    listTypePush(o,value,where);</span><br><span class="line">                            &#125;</span><br><span class="line"></span><br><span class="line">                            if (dstkey) decrRefCount(dstkey);</span><br><span class="line">                            decrRefCount(value);</span><br><span class="line">                        &#125; else &#123;</span><br><span class="line">                            // 如果执行到这里，表示还有至少一个客户端被键所阻塞</span><br><span class="line">                            // 这些客户端要等待对键的下次 PUSH</span><br><span class="line">                            break;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                // 如果列表元素已经为空，那么从数据库中将它删除</span><br><span class="line">                if (listTypeLength(o) == 0) dbDelete(rl-&gt;db,rl-&gt;key);</span><br><span class="line">                /* We don&#x27;t call signalModifiedKey() as it was already called</span><br><span class="line">                 * when an element was pushed on the list. */</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            /* Free this item. */</span><br><span class="line">            decrRefCount(rl-&gt;key);</span><br><span class="line">            zfree(rl);</span><br><span class="line">            listDelNode(l,ln);</span><br><span class="line">        &#125;</span><br><span class="line">        listRelease(l); /* We have the new list on place at this point. */</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="位图"><a href="#位图" class="headerlink" title="位图"></a>位图</h2><h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3><p>位图数据结构与 java 中的 Set 类似，占用空间小，但是并不能防止冲突，适合数据离散性比较大且对数据准确性不高的场景。</p>
-<ol>
-<li>统计月活<br>统计月活的时候我们需要对 userId 进行去重，每个用户就可以定位到这个位图上的一个确定的位置上，0 表示不活跃，1 表示活跃，遍历一次就可以知道月活用户数有多少。</li>
-</ol>
-<h3 id="使用-1"><a href="#使用-1" class="headerlink" title="使用"></a>使用</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">set s a</span><br><span class="line">getbit s 2</span><br><span class="line">setbit s 6 1</span><br><span class="line">get s</span><br></pre></td></tr></table></figure>
-<p>注意下标并不是从低位到高位递增的，而是反过来的，a 的 ASCII 码值是<code>01100001</code>，<code>setbit s 6 1</code>设置第 7 位为 1 后值就变成了 c。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 指定范围内1的个数</span><br><span class="line">bitcount s 0 7</span><br><span class="line">// 第一个1的位置</span><br><span class="line">bitpos s 1</span><br><span class="line">// 下标0到7范围内第一个1的位置</span><br><span class="line">bitpos s 1 0 7</span><br></pre></td></tr></table></figure>
-<p>比如用位数组记录用户登录的日期，bitcount 可以用于统计用户一共签到了多少天，bitpos 可以用于查找用户从哪一天开始第一次签到。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 从第一个位（0）开始取4个位，结果是无符号数（u）</span><br><span class="line">bitfield s get u4 0</span><br><span class="line">// 从第三个位（2）开始取3个位，结果是有符号数（i）</span><br><span class="line">bitfield s get i3 2</span><br><span class="line">// 一次性执行多个子命令</span><br><span class="line">bitfield s get u4 0 get u3 2 get i4 0 get i3 2</span><br></pre></td></tr></table></figure>
-<p>如果 s 的值是 c，二进制值是<code>0110 0011</code>，取前 4 位结果是 6（0110）。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// +1，结果为0，因为溢出了</span><br><span class="line">bitfield s incrby u2 1 1</span><br><span class="line">// 不执行，返回nil</span><br><span class="line">bitfield s overflow fail incrby u2 1 1</span><br><span class="line">// 结果为3</span><br><span class="line">bitfield s overflow sat incrby u2 1 1</span><br></pre></td></tr></table></figure>
-<p>位的增加操作有 3 种策略：</p>
-<ol>
-<li>默认的 wrap：</li>
-<li>fail：失败报错不执行</li>
-<li>sat：饱和截断，如果有溢出就停留在最大最小值。</li>
-</ol>
-<h2 id="HyperLogLog"><a href="#HyperLogLog" class="headerlink" title="HyperLogLog"></a>HyperLogLog</h2><p>HyperLogLog 主要用于大数据量的计数，比如访问频繁的页面需要统计 UV（一天内访问的用户数），不同于 PV，UV 需要去重。<br>HyperLogLog 只能粗略统计，理论上会有不到 1%的误差。</p>
-<h3 id="使用-2"><a href="#使用-2" class="headerlink" title="使用"></a>使用</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">pfadd s user1</span><br><span class="line">pfcount s</span><br><span class="line">pfadd s user1</span><br><span class="line">pfadd s user2</span><br><span class="line">// 结果仍然为2</span><br><span class="line">pfcount s</span><br><span class="line">// 将两个计数器累加</span><br><span class="line">pfmerge s b</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="布隆过滤器"><a href="#布隆过滤器" class="headerlink" title="布隆过滤器"></a>布隆过滤器</h2><p>HyperLogLog 可以用于计数，但是不能用于判断一个值是否存在于该结构里，这时最好使用布隆过滤器（Bloom Filter）：</p>
-<ol>
-<li>去重；</li>
-<li>支持 contains 判断；</li>
-<li>节省空间；</li>
-<li>不精确，存在误判的可能（当布隆过滤器说某个值存在时，这个值可能不存在，当它说不存在时，那就肯定不存在，这个问题是由 hash 函数的冲突引起的）；</li>
-<li>不支持计数。</li>
-</ol>
-<h3 id="使用-3"><a href="#使用-3" class="headerlink" title="使用"></a>使用</h3><p>插入值并且判断该值是否存在于 bf 对象内：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bf.add s user1</span><br><span class="line">bf.add s user2</span><br><span class="line">bf.madd s user3 user4</span><br><span class="line">bf.exists s user1</span><br><span class="line">bf.mexists s user1 user5</span><br></pre></td></tr></table></figure>
-<p>第一次 bf.add 会创建一个默认参数的布隆过滤器，也可以显式创建：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 创建一个名为key的布隆过滤器，错误率0.1，预计放入的元素数量为10</span><br><span class="line">bf.reserve key 0.1 10</span><br></pre></td></tr></table></figure>
-<ul>
-<li>错误率越低，需要的空间越大，默认值为 0.01<br>对于不需要非常精确的场合，错误率设置得稍大一点也无伤大雅。</li>
-<li>当实际数量超出预计放入数量时，误判率会上升，默认值为 100<br>该值设置得过大，会浪费存储空间，估计得过小，就会影响准确率，最理想的情况下是略大于实际元素数量。</li>
-</ul>
-<p>当实际元素数超出初始化大小时，应该对布隆过滤器进行重建，重新分配一个 size 更大的过滤器，再将所有的历史元素批量 add 进去（比如如果布隆过滤器保存的是 userId，那么就需要把历史 userId 重新保存到一个新的布隆过滤器中）。</p>
-<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>布隆过滤器本身是一个大型的位数组和几个不同的无偏 hash 函数。</p>
-<blockquote>
-<p>无偏指的是该 hash 函数能把值分布得比较均匀。</p>
-</blockquote>
-<ul>
-<li>add：使用这些 hash 函数计算 hash(key)%length(bit_arr)，每个 hash 函数都可以得到一个位置，将这些位置置为 1；</li>
-<li>exists：同样用这些 hash 函数计算位置，如果有一个不为 1 说明 key 不存在，如果都为 1 也不一定说明 key 一定存在，因为这些位置可能会被其他 key 设置到。</li>
-</ul>
-<h2 id="GeoHash"><a href="#GeoHash" class="headerlink" title="GeoHash"></a>GeoHash</h2><h3 id="一种简单的方法"><a href="#一种简单的方法" class="headerlink" title="一种简单的方法"></a>一种简单的方法</h3><p>找一个节点附近的所有节点，可以近似看做以该节点为中心的一个矩形范围内有哪些节点，可以用类似下面的 SQL 来查询：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select id from positions where x0-r &lt; x &lt; x0+r and y0-r &lt; y &lt; y0+r</span><br></pre></td></tr></table></figure>
-<p>对 x 和 y 字段加索引后该 SQL 的性能也不会太差。</p>
-<h3 id="GeoHash-1"><a href="#GeoHash-1" class="headerlink" title="GeoHash"></a>GeoHash</h3><p>GeoHash 的基本思想是“降维”，将二维坐标映射到直线上的一个点，要寻找二维平面上的“附近的人”就相当于在直线上找相邻的点。<br>GeoHash 本质是一个 zset（带 score 的 set），底层结构是 skiplist：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">geoadd company 116.489033 40.007669 meituan</span><br><span class="line">geoadd company 116.562108 39.787602 jd 116.334255 40.027400 xiaomi</span><br><span class="line">// geoadd指令添加一个节点，因为geo存储结构上使用的是zset，因此可以使用zset相关的指令来操作，比如可以使用zrem指令来删除</span><br><span class="line">zrem company jd</span><br><span class="line">geoadd company 116.562108 39.787602 jd</span><br><span class="line">// 计算两个节点之间的距离</span><br><span class="line">geodist company meituan jd</span><br><span class="line">// 单位km</span><br><span class="line">geodist company meituan jd km</span><br><span class="line">// 获取节点位置</span><br><span class="line">geopos company meituan jd</span><br><span class="line">// 获取元素的hash值</span><br><span class="line">geohash company meituan</span><br><span class="line">// 查询指定元素附近的其他元素</span><br><span class="line">// 范围20公里内最多3个元素按距离正序排列，</span><br><span class="line">georadiusbymember company meituan 20 km count 3 asc</span><br></pre></td></tr></table></figure>
-
-<p>GeoHash 算法的执行流程如下：</p>
-<ol>
-<li>将坐标编码为一个 52 位整数，这个整数也可以还原为原坐标；</li>
-<li>zset 的 value 是元素的 key（即上面的 meituan、jd 等），score 是 GeoHash 的 52 位整数值，通过 zset 的 score 排序即可得到坐标附近的其它元素。</li>
-</ol>
-<p>其中主要问题是坐标是如何编码的，编码后为什么可以通过比较大小来判断是否相邻？<br>GeoHash 算法的原理是按经纬度区间对半分来进行编码，比如，维度的区间是<code>(-90, 90)</code>，如果坐标的维度值大于 0，则记 1，否则记 0，进一步的，如果坐标维度大于 45，则记 1，否则记 0，以此类推，对于<code>39.918118</code>来说，最后的编码值就是<code>10111000110001011011</code>。</p>
-<blockquote>
-<p>一般实现中还会进行 BASE64 编码，本质是一样的，只是编码后占用的空间更小了。</p>
-</blockquote>
-<h2 id="Scan"><a href="#Scan" class="headerlink" title="Scan"></a>Scan</h2><p>扫描大量 key 找到目标 key 的需求有两种实现方法：</p>
-<ol>
-<li>keys 命令<br>不支持分页，一次性吐出所有满足条件的 key，如果数据量过大、耗时过长，可能导致服务端卡顿。<blockquote>
-<p>因为 Redis 是单线程模型。</p>
-</blockquote>
-</li>
-<li>scan<br>和 keys 命令一样提供模式匹配，但它是通过游标扫描的，每次只扫描指定数量的数据，并将其中匹配的结果返回。</li>
-</ol>
-<h3 id="使用-4"><a href="#使用-4" class="headerlink" title="使用"></a>使用</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"># 从cursor=0开始，匹配&quot;key99*&quot;，共扫描1000条</span><br><span class="line">scan 0 match key99* count 1000</span><br><span class="line">1) &quot;11928&quot;</span><br><span class="line">2)  1) &quot;key9956&quot;</span><br><span class="line">    2) &quot;key9993&quot;</span><br><span class="line">    3) &quot;key9911&quot;</span><br><span class="line">    4) &quot;key996&quot;</span><br><span class="line">    5) &quot;key9933&quot;</span><br><span class="line">    6) &quot;key9962&quot;</span><br><span class="line">    7) &quot;key991&quot;</span><br><span class="line">    8) &quot;key9981&quot;</span><br><span class="line">    9) &quot;key9990&quot;</span><br><span class="line">   10) &quot;key9946&quot;</span><br><span class="line">   11) &quot;key9971&quot;</span><br><span class="line">   12) &quot;key99&quot;</span><br><span class="line">   13) &quot;key9951&quot;</span><br></pre></td></tr></table></figure>
-<p>返回值中，第一个”11928”是结果中最后一条的 cursor，下一次遍历时可以使用该值作为初始 cursor。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">scan 11928 match key99* count 10</span><br><span class="line">1) &quot;3480&quot;</span><br><span class="line">2) (empty list or set)</span><br></pre></td></tr></table></figure>
-<p>结果为空集合并不意味着遍历结束了，只有 cursor&#x3D;0 才是遍历结束的标识。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">scan 11928 match key99* count 10000</span><br><span class="line">1) &quot;0&quot;</span><br><span class="line">2)  1) &quot;key9952&quot;</span><br><span class="line">    2) &quot;key9961&quot;</span><br><span class="line">    3) &quot;key9988&quot;</span><br><span class="line">    4) &quot;key9931&quot;</span><br><span class="line">    5) &quot;key9998&quot;</span><br><span class="line">    ...忽略更多的</span><br></pre></td></tr></table></figure>
-<h3 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h3><p>Redis 中所有 key 都存储在一个非常大的字典中，这个字典的结构和 Java 的 HashMap 类似：<br><img src="/imgs/Redis/Redis-%E5%AD%97%E5%85%B8.png" alt="Redis-字典" title="Redis-字典"></p>
-<ol>
-<li>一维数组大小为 2^n（n &gt;&#x3D; 0），扩容一次大小翻倍，保存的是所有 key 的下标，或者称为槽（slot）；</li>
-<li>二维链表保存的是所有的 key，不同 key 是有可能被 hash 到同一个槽上的，这时这个槽里所有元素都会被模式匹配过滤后一次性返回。</li>
-</ol>
-<p>scan 的遍历并不是从 0 开始递增，而是通过二进制高位进位加法来遍历，比如遍历顺序：</p>
-<ol>
-<li>0000 -&gt; 0</li>
-<li>1000 -&gt; 8</li>
-<li>0100 -&gt; 4</li>
-<li>1100 -&gt; 12</li>
-<li>以此类推</li>
-</ol>
-<p><img src="/imgs/Redis/Redis-%E9%AB%98%E4%BD%8D%E9%80%92%E5%A2%9E%E9%81%8D%E5%8E%86.png" alt="Redis-高位递增遍历" title="Redis-高位递增遍历"><br>这种遍历方式的好处是可以避免扩容缩容后相同元素被反复遍历到。<br>因为槽数组的长度总是 2 的 n 次方，因此取模运算等价于位与操作，比如原来数组长度为 8，15（1111）会被 hash 到 7 号槽，而扩容后数组长度变成 16，增加了一个高位的 1，15（1111）会被 hash 到 15 号槽。<br>因此从低到高的遍历方式可能会导致重复遍历，而从高到低的方式则可以避免。</p>
-<p>Redis 的 rehash 是渐进式的，在 rehash 的过程中，操作需要同时访问新旧的两个数组结构，如果旧的找不到就需要再到新的下面去找，scan 同理。</p>
-<h3 id="大-key-问题"><a href="#大-key-问题" class="headerlink" title="大 key 问题"></a>大 key 问题</h3><p>大 key 会导致数据迁移和扩容时需要分配更大的一块内存空间，导致卡顿，删除时，同样需要一次性回收大 key，卡顿会再一次产生。<br>为了定位大 key，可以使用 redis-cli 的扫描功能</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -h 127.0.0.1 -p 7001 –-bigkeys</span><br><span class="line"># 如果担心这个指令会大幅抬升 Redis 的 ops 导致线上报警，还可以增加一个休眠参数</span><br><span class="line"># 每隔100条scan指令就会休眠0.1s</span><br><span class="line">redis-cli -h 127.0.0.1 -p 7001 –-bigkeys -i 0.1</span><br></pre></td></tr></table></figure>
-
-
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>

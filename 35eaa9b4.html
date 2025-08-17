@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="这篇文档，记录了当前对上下文工程的最佳实践，后续我也希望多做一些实践。 Context Engineering为什么需要Context Engineering文章强调”Communication is all you need”的理念  与LLM的沟通很困难，且经常被低估 许多智能体错误的根本原因在于沟通问题 Context Engineering正是解决这些沟通问题的关键AI在应用中的表现，除了">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Context Engineering">
+<meta property="og:url" content="https://tallate.github.io/35eaa9b4.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="这篇文档，记录了当前对上下文工程的最佳实践，后续我也希望多做一些实践。 Context Engineering为什么需要Context Engineering文章强调”Communication is all you need”的理念  与LLM的沟通很困难，且经常被低估 许多智能体错误的根本原因在于沟通问题 Context Engineering正是解决这些沟通问题的关键AI在应用中的表现，除了">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/AI/rise_of_context_engineering.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/AI/context_engineering_4_strategy.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/AI/context_engineering_compress.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/AI/context_engineering_isolate.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/AI/context_engineering_env.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/AI/rag_mcp.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/AI/use_file_system_as_context.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/AI/tools_as_prompt_prefix.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/AI/context_mcp.png">
+<meta property="article:published_time" content="2025-07-27T16:22:48.000Z">
+<meta property="article:modified_time" content="2025-08-16T14:07:35.198Z">
+<meta property="article:author" content="tallate">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/AI/rise_of_context_engineering.png">
+
+
+<link rel="canonical" href="https://tallate.github.io/35eaa9b4.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/35eaa9b4.html","path":"/35eaa9b4.html","title":"Context Engineering"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Context Engineering | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">189</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Context-Engineering"><span class="nav-number">1.</span> <span class="nav-text">Context Engineering</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81Context-Engineering"><span class="nav-number">1.1.</span> <span class="nav-text">为什么需要Context Engineering</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E6%88%90"><span class="nav-number">1.2.</span> <span class="nav-text">构成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%95%BF%E4%B8%8A%E4%B8%8B%E6%96%87%E6%8C%91%E6%88%98"><span class="nav-number">1.3.</span> <span class="nav-text">长上下文挑战</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%95%BF%E4%B8%8A%E4%B8%8B%E6%96%87%E8%A7%A3%E5%86%B3%E7%AD%96%E7%95%A5"><span class="nav-number">1.4.</span> <span class="nav-text">长上下文解决策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Write-Context%EF%BC%88%E5%86%99%E5%85%A5%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%89"><span class="nav-number">1.4.1.</span> <span class="nav-text">1. Write Context（写入上下文）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Select-Context%EF%BC%88%E9%80%89%E6%8B%A9%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%89"><span class="nav-number">1.4.2.</span> <span class="nav-text">2. Select Context（选择上下文）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Compress-Context%EF%BC%88%E5%8E%8B%E7%BC%A9%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%89"><span class="nav-number">1.4.3.</span> <span class="nav-text">3. Compress Context（压缩上下文）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-Isolate-Context%EF%BC%88%E9%9A%94%E7%A6%BB%E4%B8%8A%E4%B8%8B%E6%96%87%EF%BC%89"><span class="nav-number">1.4.4.</span> <span class="nav-text">4. Isolate Context（隔离上下文）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Context-Schema-%E6%A1%88%E4%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">Context Schema 案例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Langgraph"><span class="nav-number">2.1.</span> <span class="nav-text">Langgraph</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Context-Engineering-1"><span class="nav-number">2.2.</span> <span class="nav-text">Context-Engineering</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ADK"><span class="nav-number">2.3.</span> <span class="nav-text">ADK</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="nav-number">2.3.1.</span> <span class="nav-text">上下文层次结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E5%8A%9F%E8%83%BD%E7%89%B9%E6%80%A7"><span class="nav-number">2.3.2.</span> <span class="nav-text">核心功能特性</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Context-Read-Write-%E6%A1%88%E4%BE%8B"><span class="nav-number">3.</span> <span class="nav-text">Context Read &amp; Write 案例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BAMemory%E5%BB%BA%E7%AB%8B%E7%B4%A2%E5%BC%95%E5%92%8C%E6%A3%80%E7%B4%A2"><span class="nav-number">3.1.</span> <span class="nav-text">为Memory建立索引和检索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%E7%9A%84%E7%B4%A2%E5%BC%95%E5%92%8C%E6%A3%80%E7%B4%A2"><span class="nav-number">3.2.</span> <span class="nav-text">工具的索引和检索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%9D%A5%E4%BD%9C%E4%B8%BA%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="nav-number">3.3.</span> <span class="nav-text">使用文件系统来作为上下文</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Context-Compress-%E6%A1%88%E4%BE%8B"><span class="nav-number">4.</span> <span class="nav-text">Context Compress 案例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Context-Isolate-%E6%A1%88%E4%BE%8B"><span class="nav-number">5.</span> <span class="nav-text">Context Isolate 案例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Context-and-Inference"><span class="nav-number">6.</span> <span class="nav-text">Context and Inference</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Context-as-MCP"><span class="nav-number">7.</span> <span class="nav-text">Context as MCP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E5%8A%A8%E6%A3%80%E7%B4%A2%E6%9C%BA%E5%88%B6"><span class="nav-number">7.1.</span> <span class="nav-text">主动检索机制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">189</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/35eaa9b4.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Context Engineering | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Context Engineering
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-07-28 00:22:48" itemprop="dateCreated datePublished" datetime="2025-07-28T00:22:48+08:00">2025-07-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-16 22:07:35" itemprop="dateModified" datetime="2025-08-16T22:07:35+08:00">2025-08-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>这篇文档，记录了当前对上下文工程的最佳实践，后续我也希望多做一些实践。</p>
+<h2 id="Context-Engineering"><a href="#Context-Engineering" class="headerlink" title="Context Engineering"></a>Context Engineering</h2><h3 id="为什么需要Context-Engineering"><a href="#为什么需要Context-Engineering" class="headerlink" title="为什么需要Context Engineering"></a>为什么需要Context Engineering</h3><p>文章强调”Communication is all you need”的理念</p>
+<ul>
+<li>与LLM的沟通很困难，且经常被低估</li>
+<li>许多智能体错误的根本原因在于沟通问题</li>
+<li>Context Engineering正是解决这些沟通问题的关键<br>AI在应用中的表现，除了模型本身能力，更关键的是能否获取“有效且准确的context”。这里的context，不只是上下文，而是模型在特定任务下能获得的真实、相关的信息。<br>Context Engineering 是为Agent在执行任务的每个步骤中，精确地向上下文窗口填充恰当信息</li>
+</ul>
+<h3 id="构成"><a href="#构成" class="headerlink" title="构成"></a>构成</h3><p>主要包含数据源的RAG、state History和Memory，然后通过Prompt Engineering来组织数据，构造模版渲染输出<br><img src="/imgs/AI/rise_of_context_engineering.png" alt="rise_of_context_engineering.png"></p>
+<ul>
+<li>Prompt Engineering: Instructions for how an agent should behave are clearly enumerated in the prompt，提示词、记忆、少样本示例、工具描述.</li>
+<li>Tool use: Making sure that if an agent needs access to external information, it has tools that can access it. When tools return information, they are formatted in a way that is maximally digestable for LLMs</li>
+<li>Short term memory: If a conversation is going on for a while, creating a summary of the conversation and using that in the future.</li>
+<li>Long term memory: If a user has expressed preferences in a previous conversation, being able to fetch that information.</li>
+<li>Retrieval: Fetching information dynamically and inserting it into the prompt before calling the LLM.</li>
+</ul>
+<span id="more"></span>
+
+<h3 id="长上下文挑战"><a href="#长上下文挑战" class="headerlink" title="长上下文挑战"></a>长上下文挑战</h3><ol>
+<li>上下文中毒<br>比如当一次模型虚构了工具调用状态信息，被写入上下文时，在多轮循环中，模型可能会把错误信息误认为是事实反复引用，并执着于实现不可能或无关的目标，以至于后续每一步决策都在错误基础上前行，越走越偏。</li>
+<li>上下文过长，情境干扰<br>当上下文过长，会导致模型注意力资源被稀释，过度关注上下文，忽略了原本通过训练获得的内容，输出质量下降。<br>虽然现在的大模型都已经支持百万级别的 token 上下文输入，但是 Gemini 2.5 的一份技术报告中指出，随着上下文超过10万个 token，大模型倾向于多步骤生成推理的长上下文，而非用于检索的长上下文。</li>
+<li>多余信息过多，语境混淆<br>上下文中多余的内容也会干扰大模型的响应。以MCP工具调用为例，用过的朋友都知道，如果配置了数十个五花八门的MCP函数给大模型，每次调用时大模型要对数十个MCP做判断，调用工具决策的准确性会大幅下降。<br>伯克利今年6月发布的报告，显示大模型在引入函数调用或使用工具的时候，几乎所有大语言模型的性能都会比原始文本生成任务中有所下降，在多函数调用场景中，准确率显著低于单函数调用。</li>
+<li>多个信息源，语境冲突<br>语境冲突常出现在多个Agent协作时，比如导航subAgentA说中山路往东，导航subAgentB说中山路要往西，大模型做决策时到底听谁的？</li>
+</ol>
+<h3 id="长上下文解决策略"><a href="#长上下文解决策略" class="headerlink" title="长上下文解决策略"></a>长上下文解决策略</h3><p><img src="/imgs/AI/context_engineering_4_strategy.png" alt="context_engineering_4_strategy.png"></p>
+<h4 id="1-Write-Context（写入上下文）"><a href="#1-Write-Context（写入上下文）" class="headerlink" title="1. Write Context（写入上下文）"></a>1. Write Context（写入上下文）</h4><p>将上下文保存在上下文窗口外部以帮助Agent执行任务</p>
+<p><strong>Scratchpads（草稿本）</strong></p>
+<ul>
+<li>Agent可以做笔记并记住未来相关任务的信息</li>
+<li>可以通过工具调用写入文件或保存在运行时状态对象中</li>
+<li>例如：Anthropic的多Agent研究员将计划保存到Memory中</li>
+</ul>
+<p><strong>Memories（记忆）</strong></p>
+<ul>
+<li>跨多个会话记住信息</li>
+<li>Reflexion引入了每轮反思和重用自生成记忆的概念</li>
+<li>ChatGPT、Cursor、Windsurf都有基于用户-Agent交互自动生成长期记忆的机制</li>
+</ul>
+<h4 id="2-Select-Context（选择上下文）"><a href="#2-Select-Context（选择上下文）" class="headerlink" title="2. Select Context（选择上下文）"></a>2. Select Context（选择上下文）</h4><p>将上下文拉入上下文窗口以帮助Agent执行任务</p>
+<p><strong>从Scratchpad选择</strong></p>
+<ul>
+<li>通过工具调用读取或从运行时状态中选择性暴露</li>
+</ul>
+<p><strong>记忆memory选择</strong></p>
+<ul>
+<li>选择与当前任务相关的记忆</li>
+<li>可以是少样本示例、指令或事实</li>
+<li>使用嵌入或知识图谱进行记忆索引</li>
+</ul>
+<p><strong>工具选择</strong></p>
+<ul>
+<li>使用RAG对工具描述进行检索，获取最相关的工具</li>
+<li>可以将工具选择准确率提高3倍</li>
+</ul>
+<p><strong>知识检索</strong></p>
+<ul>
+<li>代码Agent是大规模生产RAG的最佳例子</li>
+<li>需要结合多种技术：grep&#x2F;文件搜索、知识图谱检索、重排序等</li>
+</ul>
+<h4 id="3-Compress-Context（压缩上下文）"><a href="#3-Compress-Context（压缩上下文）" class="headerlink" title="3. Compress Context（压缩上下文）"></a>3. Compress Context（压缩上下文）</h4><p>仅保留执行任务所需的token</p>
+<p><strong>上下文总结</strong></p>
+<ul>
+<li>Agent交互可能跨越数百轮对话</li>
+<li>Claude Code在超过95%上下文窗口时运行”auto-compact”</li>
+<li>可以使用递归或分层总结策略</li>
+</ul>
+<p><strong>上下文修剪</strong></p>
+<ul>
+<li>使用硬编码启发式方法过滤上下文</li>
+<li>例如从消息列表中删除较旧的消息</li>
+</ul>
+<p><img src="/imgs/AI/context_engineering_compress.png" alt="context_engineering_compress.png"></p>
+<h4 id="4-Isolate-Context（隔离上下文）"><a href="#4-Isolate-Context（隔离上下文）" class="headerlink" title="4. Isolate Context（隔离上下文）"></a>4. Isolate Context（隔离上下文）</h4><p>将上下文分割以帮助Agent执行任务</p>
+<p><strong>多Agent</strong></p>
+<ul>
+<li>将上下文分散到子Agent中</li>
+<li>每个Agent有特定的工具、指令和独立的上下文窗口</li>
+<li>OpenAI Swarm库的动机就是”关注点分离”</li>
+</ul>
+<p><img src="/imgs/AI/context_engineering_isolate.png" alt="context_engineering_isolate.png"></p>
+<p><strong>环境隔离</strong></p>
+<ul>
+<li>HuggingFace的CodeAgent在沙箱中运行代码</li>
+<li>将token密集的对象隔离在环境中</li>
+</ul>
+<p><img src="/imgs/AI/context_engineering_env.png" alt="context_engineering_env.png"></p>
+<p><strong>状态隔离</strong></p>
+<ul>
+<li>使用运行时状态对象隔离上下文</li>
+<li>可以设计具有模式的状态对象（如Pydantic模型）</li>
+</ul>
+<h2 id="Context-Schema-案例"><a href="#Context-Schema-案例" class="headerlink" title="Context Schema 案例"></a>Context Schema 案例</h2><h3 id="Langgraph"><a href="#Langgraph" class="headerlink" title="Langgraph"></a>Langgraph</h3><ol>
+<li>将上下文划分为静态、动态和会存储的动态数据<br><a target="_blank" rel="noopener" href="https://langchain-ai.github.io/langgraph/agents/context/">https://langchain-ai.github.io/langgraph/agents/context/</a></li>
+<li>自定义state结构，state由框架控制在node之间传递<br><a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langgraph/blob/main/docs/docs/tutorials/get-started/5-customize-state.md">https://github.com/langchain-ai/langgraph/blob/main/docs/docs/tutorials/get-started/5-customize-state.md</a></li>
+<li>将长期记忆添加到state中<br><a target="_blank" rel="noopener" href="https://langchain-ai.github.io/langgraph/how-tos/memory/add-memory/">https://langchain-ai.github.io/langgraph/how-tos/memory/add-memory/</a></li>
+</ol>
+<h3 id="Context-Engineering-1"><a href="#Context-Engineering-1" class="headerlink" title="Context-Engineering"></a>Context-Engineering</h3><ol>
+<li>将上下文划分为短期、长期和工作记忆，工作记忆比较特殊，是一些任务变量，我理解为一些kv<br><a target="_blank" rel="noopener" href="https://github.com/davidkimai/Context-Engineering/blob/main/00_foundations/03_cells_memory.md#advanced-techniques-memory-orchestration">https://github.com/davidkimai/Context-Engineering/blob/main/00_foundations/03_cells_memory.md#advanced-techniques-memory-orchestration</a></li>
+</ol>
+<h3 id="ADK"><a href="#ADK" class="headerlink" title="ADK"></a>ADK</h3><p><strong>官方文档</strong>: <a target="_blank" rel="noopener" href="https://google.github.io/adk-docs/context/">https://google.github.io/adk-docs/context/</a></p>
+<h4 id="上下文层次结构"><a href="#上下文层次结构" class="headerlink" title="上下文层次结构"></a>上下文层次结构</h4><p><strong>🌟 Invocation (调用)</strong> - 最高级别包含多个agent的任务 - <code>InvocationContext</code>（根Context）</p>
+<ul>
+<li><strong>开始</strong>: 用户发送消息时创建</li>
+<li><strong>结束</strong>: 生成最终响应或Agent转移完成</li>
+<li><strong>管理</strong>: 由 <code>runner.run_async()</code> 处理</li>
+<li><strong>状态共享</strong>: <code>session.state</code></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">├── Agent Call (Agent调用) - 中间级别 - InvocationContext（从父InvocationContext拷贝状态）</span><br><span class="line">    ├── Callback - 子级别 - CallbackContext</span><br><span class="line">    │   开始：Agent执行前后回调 base_agent.py#__handle_before_agent_callback</span><br><span class="line">    │   LLM调用前后回调 base_llm_flow.py#_handle_before_model_callback</span><br><span class="line">    │   包含：invocation_context, event_actions</span><br><span class="line">    └── Tool Call - 子级别 - ToolContext</span><br><span class="line">        开始：函数或工具调用时 function_tool.py</span><br><span class="line">        包含：invocation_context, function_call_id</span><br></pre></td></tr></table></figure>
+
+<h4 id="核心功能特性"><a href="#核心功能特性" class="headerlink" title="核心功能特性"></a>核心功能特性</h4><p><strong>1. Maintaining State（状态维护）</strong></p>
+<blockquote>
+<p>用于在对话的多个步骤中记住详细信息，用于存储用户偏好、之前的计算结果、购物车项目等</p>
+</blockquote>
+<ul>
+<li><code>session: Session</code> - 当前会话对象（只读）<ul>
+<li>包含 <code>session.state</code>：会话状态数据</li>
+<li>包含 <code>session.events</code>：历史事件记录</li>
+</ul>
+</li>
+</ul>
+<p><strong>2. Passing Data（数据传递）</strong></p>
+<blockquote>
+<p>在步骤间共享发现或生成的信息</p>
+</blockquote>
+<ul>
+<li><code>session: Session</code> - 通过会话状态在步骤间传递数据</li>
+<li><code>user_content: Optional[types.Content]</code> - 启动此次调用的用户内容（只读）</li>
+<li><code>end_invocation: bool</code> - 控制是否结束当前调用的标志位</li>
+</ul>
+<p><strong>3. Accessing Services（访问服务）</strong></p>
+<blockquote>
+<p>与框架能力交互</p>
+</blockquote>
+<p><strong>3.1 Artifact Storage（工件存储）</strong></p>
+<ul>
+<li><code>artifact_service: Optional[BaseArtifactService]</code> - 工件服务</li>
+<li>用于保存或加载与会话相关的文件或数据块（PDF、图像、配置文件等）</li>
+</ul>
+<p><strong>3.2 Memory（内存服务）</strong></p>
+<ul>
+<li><code>memory_service: Optional[BaseMemoryService]</code> - 内存服务</li>
+<li>用于从过去的交互或连接到用户的外部知识源中搜索相关信息</li>
+</ul>
+<p><strong>3.3 Authentication（认证）</strong></p>
+<ul>
+<li><code>session_service: BaseSessionService</code> - 会话服务</li>
+<li>管理认证状态和凭据</li>
+<li>工具可以通过此服务请求和检索访问外部 API 所需的安全凭据</li>
+</ul>
+<p><strong>4. Identity and Tracking（身份和跟踪）</strong></p>
+<blockquote>
+<p>识别当前运行的代理和唯一标识请求-响应周期</p>
+</blockquote>
+<ul>
+<li><code>invocation_id: str</code> - 调用上下文的唯一ID（只读）<ul>
+<li>用于日志记录和调试的唯一标识符</li>
+</ul>
+</li>
+<li><code>agent: BaseAgent</code> - 当前代理（只读）<ul>
+<li>通过 <code>agent.name</code> 知道当前运行的代理</li>
+</ul>
+</li>
+<li><code>branch: Optional[str]</code> - 调用上下文的分支<ul>
+<li>格式如 <code>agent_1.agent_2.agent_3</code>，用于多代理场景的追踪</li>
+</ul>
+</li>
+</ul>
+<p><strong>5. Tool-Specific Actions（工具特定操作）</strong></p>
+<blockquote>
+<p>在工具内启用专门操作</p>
+</blockquote>
+<ul>
+<li><code>live_request_queue: Optional[LiveRequestQueue]</code> - 接收实时请求的队列</li>
+<li><code>active_streaming_tools: Optional[dict[str, ActiveStreamingTool]]</code> - 当前调用的运行流式工具</li>
+<li><code>transcription_cache: Optional[list[TranscriptionEntry]]</code> - 转录所需的缓存数据</li>
+<li><code>run_config: Optional[RunConfig]</code> - 此次调用下实时代理的运行配置</li>
+<li><code>_invocation_cost_manager: _InvocationCostManager</code> - 跟踪此次调用产生的各种成本的容器</li>
+</ul>
+<h2 id="Context-Read-Write-案例"><a href="#Context-Read-Write-案例" class="headerlink" title="Context Read &amp; Write 案例"></a>Context Read &amp; Write 案例</h2><h3 id="为Memory建立索引和检索"><a href="#为Memory建立索引和检索" class="headerlink" title="为Memory建立索引和检索"></a>为Memory建立索引和检索</h3><p><a target="_blank" rel="noopener" href="https://blog.langchain.com/semantic-search-for-langgraph-memory/">https://blog.langchain.com/semantic-search-for-langgraph-memory/</a><br><a target="_blank" rel="noopener" href="https://github.com/langchain-ai/memory-template?ref=blog.langchain.com">https://github.com/langchain-ai/memory-template?ref=blog.langchain.com</a></p>
+<h3 id="工具的索引和检索"><a href="#工具的索引和检索" class="headerlink" title="工具的索引和检索"></a>工具的索引和检索</h3><p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2506.01056">https://arxiv.org/pdf/2506.01056</a><br><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2505.03275">https://arxiv.org/pdf/2505.03275</a></p>
+<p>使用mcp来查询可用的工具列表，进行一次过滤，而不是一次性将所有工具都传给大模型来判断使用哪个工具<br><img src="/imgs/AI/rag_mcp.png" alt="rag_mcp.png" title="rag_mcp"></p>
+<h3 id="使用文件系统来作为上下文"><a href="#使用文件系统来作为上下文" class="headerlink" title="使用文件系统来作为上下文"></a>使用文件系统来作为上下文</h3><p>使用文件来作为观察结果（如网页搜索工具的结果）的存储，而不是将所有内容都存储于内存上下文，模型需要按需读取加载到上下文，好处是可恢复的，因为文件系统中存储的是完整的内容而不是压缩后的内容<br><img src="/imgs/AI/use_file_system_as_context.png" alt="use_file_system_as_context.png" title="use_file_system_as_context"></p>
+<h2 id="Context-Compress-案例"><a href="#Context-Compress-案例" class="headerlink" title="Context Compress 案例"></a>Context Compress 案例</h2><h2 id="Context-Isolate-案例"><a href="#Context-Isolate-案例" class="headerlink" title="Context Isolate 案例"></a>Context Isolate 案例</h2><h2 id="Context-and-Inference"><a href="#Context-and-Inference" class="headerlink" title="Context and Inference"></a>Context and Inference</h2><p>构建上下文提升推理效率（Prompt 与 KV Cache）<br>manus: <a target="_blank" rel="noopener" href="https://manus.im/zh-cn/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus">https://manus.im/zh-cn/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus</a>, <a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/A0D4wF1yv3nC3wye5Hcb4g">https://mp.weixin.qq.com/s/A0D4wF1yv3nC3wye5Hcb4g</a></p>
+<ul>
+<li>围绕KV Cache构建上下文：提示词前缀稳定、只追加</li>
+<li>相同前缀带来kv cache命中率提升，所以把工具都拼到prompt前面<br><img src="/imgs/AI/tools_as_prompt_prefix.png" alt="tools_as_prompt_prefix.png" title="tools_as_prompt_prefix"></li>
+</ul>
+<blockquote>
+<p>KV Cache原理：<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2312.07104">https://arxiv.org/pdf/2312.07104</a></p>
+</blockquote>
+<p>使用掩码来屏蔽不使用的工具: <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/619266782">https://zhuanlan.zhihu.com/p/619266782</a></p>
+<h2 id="Context-as-MCP"><a href="#Context-as-MCP" class="headerlink" title="Context as MCP"></a>Context as MCP</h2><p><strong>论文</strong>: <a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2507.07957">https://arxiv.org/pdf/2507.07957</a></p>
+<p>将滑动窗口等记忆模块也放到MCP里操作，实现主动检索机制。<br><img src="/imgs/AI/context_mcp.png" alt="context_mcp.png"></p>
+<h3 id="主动检索机制"><a href="#主动检索机制" class="headerlink" title="主动检索机制"></a>主动检索机制</h3><p><strong>问题背景</strong></p>
+<ul>
+<li>传统内存增强系统（如Mem0、MemGPT）需要显式触发内存检索</li>
+<li>语言模型默认使用参数化知识，可能过时或不正确</li>
+<li>例如：用户之前说”Twitter的CEO是Linda Yaccarino”，几天后问”谁是Twitter的CEO？”</li>
+<li>模型可能错误回答”Elon Musk”，因为对话历史中已无此信息</li>
+</ul>
+<p><strong>解决方案</strong><br>系统分两个阶段运行：</p>
+<ol>
+<li><strong>主题生成</strong>: 代理根据输入生成当前主题</li>
+<li><strong>记忆检索</strong>: 利用主题从每个记忆组件中检索相关记忆</li>
+<li><strong>结果注入</strong>: 将检索结果注入系统提示符</li>
+</ol>
+<p><strong>检索策略</strong><br>支持多种检索函数：</p>
+<ul>
+<li><code>embedding_match</code> - 嵌入匹配</li>
+<li><code>bm25match</code> - BM25匹配  </li>
+<li><code>string_match</code> - 字符串匹配</li>
+</ul>
+<p><strong>优势</strong></p>
+<ul>
+<li>自动检索管道，无需显式用户提示</li>
+<li>确保模型使用最新、个性化、上下文相关的信息</li>
+<li>支持多样化和专门化的检索策略</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>Context Engineering<br><a target="_blank" rel="noopener" href="https://github.com/davidkimai/Context-Engineering/blob/75b74e9d2e8528777dd6b072ae5c33e22df4fa17/00_COURSE/01_context_retrieval_generation/01_prompt_engineering.md?plain=1#L2671">https://github.com/davidkimai/Context-Engineering/blob/75b74e9d2e8528777dd6b072ae5c33e22df4fa17/00_COURSE/01_context_retrieval_generation/01_prompt_engineering.md?plain=1#L2671</a></p>
+<p><a target="_blank" rel="noopener" href="https://rlancemartin.github.io/2025/06/23/context_engineering/">https://rlancemartin.github.io/2025/06/23/context_engineering/</a><br><a target="_blank" rel="noopener" href="https://blog.langchain.com/the-rise-of-context-engineering/">https://blog.langchain.com/the-rise-of-context-engineering/</a><br><a target="_blank" rel="noopener" href="https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html">https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html</a><br><a target="_blank" rel="noopener" href="https://github.com/langchain-ai/how_to_fix_your_context">https://github.com/langchain-ai/how_to_fix_your_context</a></p>
+<p>一个面向PM的Context Engineering说明<br><a target="_blank" rel="noopener" href="https://x.com/PawelHuryn/status/1950126237562671313">https://x.com/PawelHuryn/status/1950126237562671313</a><br><a target="_blank" rel="noopener" href="https://www.productcompass.pm/p/context-engineering?utm_source=publication-search">https://www.productcompass.pm/p/context-engineering?utm_source=publication-search</a></p>
+<p>claude是如何做上下文工程的：<a target="_blank" rel="noopener" href="https://www.xiaohongshu.com/explore/6882005d000000001d00d53a?app_platform=android&ignoreEngage=true&app_version=8.92.0&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBIAt7FwVT3rmjUCxeIUs-9z3euUYE-PTih9HgqFRJcJE=&author_share=1&xhsshare=CopyLink&shareRedId=ODc4Rjc2PDs2NzUyOTgwNjY1OTk4Rj1C&apptime=1753439829&share_id=c6e6707db94640ef8bd24b59ea1b466e&share_channel=copy_link">https://www.xiaohongshu.com/explore/6882005d000000001d00d53a?app_platform=android&amp;ignoreEngage=true&amp;app_version=8.92.0&amp;share_from_user_hidden=true&amp;xsec_source=app_share&amp;type=normal&amp;xsec_token=CBIAt7FwVT3rmjUCxeIUs-9z3euUYE-PTih9HgqFRJcJE=&amp;author_share=1&amp;xhsshare=CopyLink&amp;shareRedId=ODc4Rjc2PDs2NzUyOTgwNjY1OTk4Rj1C&amp;apptime=1753439829&amp;share_id=c6e6707db94640ef8bd24b59ea1b466e&amp;share_channel=copy_link</a><br><a target="_blank" rel="noopener" href="https://github.com/zilliztech/claude-context/blob/master/packages/core/src/context.ts">https://github.com/zilliztech/claude-context/blob/master/packages/core/src/context.ts</a><br><a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/analysis_claude_code/blob/main/claude_code_v_1.0.33/stage1_analysis_workspace/docs/ana_docs/task_agent_analysis.md">https://github.com/shareAI-lab/analysis_claude_code/blob/main/claude_code_v_1.0.33/stage1_analysis_workspace/docs/ana_docs/task_agent_analysis.md</a></p>
+<p>langgraph是如何做上下文工程的：<a target="_blank" rel="noopener" href="https://blog.csdn.net/bugyinyin/article/details/149195239">https://blog.csdn.net/bugyinyin/article/details/149195239</a></p>
+<p>manus是怎么做上下文工程的：<a target="_blank" rel="noopener" href="https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus">https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus</a></p>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/b176ef56.html" rel="prev" title="LangGraph - Open Deep Research">
+                  <i class="fa fa-angle-left"></i> LangGraph - Open Deep Research
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/7d3d1e2.html" rel="next" title="多智能体运行模式">
+                  多智能体运行模式 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

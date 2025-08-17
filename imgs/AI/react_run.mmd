@@ -1,0 +1,31 @@
+
+flowchart TD
+    A[用户查询] --> B[初始化 Agent]
+    B --> C[生成系统提示词]
+    C --> D[初始化上下文]
+    
+    D --> E[开始多轮循环]
+    E --> N{达到最大轮数?}
+    N -->|是| O[返回错误消息]
+    O --> P
+
+    E --> F[调用 LLM 获取响应]
+    F --> G[解析 LLM 响应]
+    
+    G --> H{包含 Final Answer?}
+    H -->|是| I[返回最终答案]
+    I --> P[结束]
+
+    H -->|否| J[解析 Thought 和 Action]
+    J --> K[提取工具名称和参数]
+    K --> L[执行工具调用]
+    L --> M[将工具结果添加到历史]
+    M --> E
+
+
+
+
+    style A fill:#e1f5fe
+    style I fill:#c8e6c9
+    style O fill:#ffcdd2
+    style P fill:#f3e5f5
