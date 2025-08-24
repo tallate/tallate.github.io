@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">189</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">191</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">189</span>
+          <span class="site-state-item-count">191</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -175,6 +175,204 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/a62ec0c9.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/a62ec0c9.html" class="post-title-link" itemprop="url">JVM调优-内存泄露排查</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-25 20:11:54" itemprop="dateCreated datePublished" datetime="2020-08-25T20:11:54+08:00">2020-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+
+<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>在pinpoint上观察到一些服务器频繁发生长时间FULL GC，直接影响业务执行效率。<br><img src="/imgs/JVM/%E4%B8%80%E6%AC%A1FullGC%E7%9A%84%E8%AE%B0%E5%BD%95.png" alt="一次FullGC的记录" title="一次FullGC的记录"><br>观察gc日志发现，老年代几乎已经耗尽，也没有发生<strong>Promotion Failed</strong>、<strong>Concurrent Mode Failure</strong>，最有可能的情况是年轻代正常晋升时发现老年代的空间已经达到了<code>-XX:CMSInitiatingOccupancyFraction</code>，所以触发老年代回收以释放更多空间。<br>为此，可以采用的解决方式几乎只有2个：</p>
+<ol>
+<li>物理增大老年代，可以直接把年轻代空间割让给老年代，实际上上图中年轻代:老年代≈2:1不大合理，一般根据实际情况，年轻代:老年代的比值是1:1.5到1:3都是可以的，但是不会出现年轻代比老年代大的情况，除非绝大多数对象都是朝生夕死的。</li>
+<li>排查内存泄露，常见于一些错误配置、或者本地缓存（一个大Map）之类的。</li>
+</ol>
+<h1 id="排查方式"><a href="#排查方式" class="headerlink" title="排查方式"></a>排查方式</h1><h2 id="一、直连VisualVM"><a href="#一、直连VisualVM" class="headerlink" title="一、直连VisualVM"></a>一、直连VisualVM</h2><p>1、配置jmx启动参数，表示允许远程连接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">-Dcom.sun.management.jmxremote</span><br><span class="line">-Dcom.sun.management.jmxremote.port=9988</span><br><span class="line">-Dcom.sun.management.jmxremote.ssl=false</span><br><span class="line">-Dcom.sun.management.jmxremote.authenticate=false</span><br></pre></td></tr></table></figure>
+<p>2、使用VisualVM连接<br><img src="/imgs/JVM/%E4%BD%BF%E7%94%A8VisualVM%E7%9B%B4%E8%BF%9E.png" alt="使用VisualVM直连" title="使用VisualVM直连"></p>
+<p>直连有两个缺点：</p>
+<ul>
+<li>实时性差，问题发生可能就那么几分钟，不可能让人一直等着服务器出问题；</li>
+<li>安全性差，暴露一个端口就意味着暴露整个项目及其连接的数据库，是一个隐患。</li>
+</ul>
+<h2 id="二、配置参数实时导出"><a href="#二、配置参数实时导出" class="headerlink" title="二、配置参数实时导出"></a>二、配置参数实时导出</h2><p>1、导出位置<br><code>-XX:HeapDumpPath=$CATALINA_BASE/logs/</code><br>2、FULL GC前DUMP<br><code>-XX:+HeapDumpBeforeFullGC</code><br>3、FULL GC后DUMP<br><code>-XX:+HeapDumpAfterFullGC</code><br>4、OOM<br><code>-XX:+HeapDumpOnOutOfMemoryError</code><br>配完这个参数后，FULL GC后内存仍不足才会DUMP，单纯System.gc或FULL GC不会引起DUMP。</p>
+<h2 id="三、手动dump分析"><a href="#三、手动dump分析" class="headerlink" title="三、手动dump分析"></a>三、手动dump分析</h2><p>到服务器上找到JVM进程PID后执行jmap：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jmap -dump:format=b,file=&lt;文件名&gt; [pid]</span><br><span class="line">gzip &lt;文件名&gt;</span><br></pre></td></tr></table></figure>
+<p>下载到本地，因为线上服务器没有开启下载端口，因此下载文件必须要中转一下，先上传到一台暴露到公网的服务器，再从该服务器上下载，如果没有这样的服务器也可以用github代替。<br>在本地使用eclipse MAT分析。</p>
+<h1 id="问题排查记录"><a href="#问题排查记录" class="headerlink" title="问题排查记录"></a>问题排查记录</h1><p>手动导出内存dump文件：<br><img src="/imgs/JVM/robin%E7%9A%84%E5%86%85%E5%AD%98dump%E6%96%87%E4%BB%B6.png" alt="robin的内存dump文件" title="robin的内存dump文件"><br>仔细观察其中对象占用的内存空间，发现一个大对象占用了接近1&#x2F;3的内存空间，发现是<code>com.alibaba.druid.stat.JdbcDataSourceStat</code>中有个LinkedHashMap类型的成员变量占用了大量空间没有释放，在源码中对应一个sqlStatMap。<br><img src="/imgs/JVM/%E5%8D%A0%E7%94%A8%E5%A4%A7%E9%87%8F%E5%86%85%E5%AD%98%E7%A9%BA%E9%97%B4%E7%9A%84%E5%A4%A7%E5%AF%B9%E8%B1%A1.png" alt="占用大量内存空间的大对象" title="占用大量内存空间的大对象"><br><img src="/imgs/JVM/Druid%E4%B8%AD%E7%9A%84sqlStatMap.png" alt="Druid中的sqlStatMap" title="Druid中的sqlStatMap"><br>从源码可知，打开开关之后，每次执行SQL前后都会把SQL记到这个sqlStatMap里，<strong>在JVM实例运行期间会一直存在（基本都在老年代）</strong>，这个开关主要用于监控SQL执行情况，<strong>对SQL语句的执行本身没有影响，且我们这边统计SQL（包括慢查询等）都是基于MySQL本身的功能、并没有用到这个配置。</strong><br>可以把这个开关关掉，因为我们根本没有使用Druid内置的SQL监控功能，<strong>关闭后预计可以释放25%左右的堆空间。</strong><br>另外附：<br>1、配置_StatFilter：<a target="_blank" rel="noopener" href="https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE_StatFilter">https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE_StatFilter</a><br>2、每个sql语句都会长期持有引用，加快FullGC频率 #1664：<a target="_blank" rel="noopener" href="https://github.com/alibaba/druid/issues/1664">https://github.com/alibaba/druid/issues/1664</a></p>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/92a2fe93.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/92a2fe93.html" class="post-title-link" itemprop="url">Lab_1_MapReduce</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-08-23 15:26:49" itemprop="dateCreated datePublished" datetime="2020-08-23T15:26:49+08:00">2020-08-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/6-824/" itemprop="url" rel="index"><span itemprop="name">6.824</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>开个头，之后慢慢补。</p>
+<h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p><a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.824/">6.824</a><br><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/MapReduce">MapReduce 介绍</a></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/92a2fe93.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1516,266 +1714,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/91c9d48a.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/91c9d48a.html" class="post-title-link" itemprop="url">RocketMQ 消息发送流程</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-08-12 12:23:48" itemprop="dateCreated datePublished" datetime="2020-08-12T12:23:48+08:00">2020-08-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>先介绍RocketMQ有哪些服务，然后介绍消息如何从Producer发送到Consumer。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/91c9d48a.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/7c98402b.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/7c98402b.html" class="post-title-link" itemprop="url">RocketMQ 消息重试和幂等</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-08-12 12:23:48" itemprop="dateCreated datePublished" datetime="2020-08-12T12:23:48+08:00">2020-08-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" itemprop="url" rel="index"><span itemprop="name">消息队列</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="重试和幂等"><a href="#重试和幂等" class="headerlink" title="重试和幂等"></a>重试和幂等</h2><h3 id="Retry队列和offset"><a href="#Retry队列和offset" class="headerlink" title="Retry队列和offset"></a>Retry队列和offset</h3><p>在RocketMQ启动时，每个group层面都会再定义一个专用的重试topic，重试消息被插入了重试topic队列。<br><strong>重试队列存在的意义就是快速推进offset</strong>，重试topic的名字是<code>%RETRY%+consumerGroup</code>，因此重试topic是group维度的，所以默认情况下一个group的consumer会有2个订阅topic，2个topic同时进行队列的rebalance。<br><strong>offset是按照MessageQueue的维度进行维护的</strong>。<br>消息重试有2种反馈方式：</p>
-<ol>
-<li>重试队列：客户端先通过Netty API发送消息到Broker，如果这时调用Netty发送异常则调用Producer发送到RetryTopic中。</li>
-<li>死信队列：如果重试次数过多（默认16次）则会进入死信队列，死信队列的逻辑在Broker，Client不会将消息发送至死信队列Topic。</li>
-</ol>
-<h3 id="Producer端重试"><a href="#Producer端重试" class="headerlink" title="Producer端重试"></a>Producer端重试</h3><p>下面的代码同步发送消息，如果5秒内没有发送成功，则重试5次</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">DefaultMQProducer producer = new DefaultMQProducer(&quot;DefaultProducer&quot;);</span><br><span class="line">producer.setRetryTimesWhenSendFailed(5);</span><br><span class="line">producer.send(msg,5000L);</span><br></pre></td></tr></table></figure>
-<p>Producer 的 send 方法本身支持<strong>内部重试</strong>：<br>同步发送代码：<code>org.apache.rocketmq.client.impl.producer.DefaultMQProducerImpl#send(Message)</code>，注意传超时参数时取的<code>defaultMQProducer.getSendMsgTimeout()</code>。<br>异步发送：<code>org.apache.rocketmq.client.impl.producer.DefaultMQProducerImpl#send(Message, SendCallback)</code><br>实际发送消息的代码位置（注意对sendResult的处理）：<code>org.apache.rocketmq.client.impl.producer.DefaultMQProducerImpl#sendDefaultImpl</code><br>从源码中可以得到以下结论：</p>
-<ul>
-<li>至多重试 2 次。<br>同步发送为 2 次，异步发送为 0 次，也就是说，异步发送是不会重试的。</li>
-<li>如果发送失败，则轮转到下一个 Broker。这个方法的总耗时时间不超过 sendMsgTimeout 设置的值，默认 10s。</li>
-<li>如果本身向 broker 发送消息产生超时异常，就不会再重试。</li>
-</ul>
-<p>除了Producer客户端的自动重试外，应用程序在接收到SendResult后也可以自己尝试去重试。</p>
-<h3 id="Consumer重试"><a href="#Consumer重试" class="headerlink" title="Consumer重试"></a>Consumer重试</h3><p>消费者消费消息后需要给Broker返回消费状态，比如并发消费者<code>MessageListenerConcurrently</code>会返回<code>ConsumeConcurrentlyStatus</code>：</p>
-<ul>
-<li>如果消费成功，返回<code>CONSUME_SUCCESS</code>；</li>
-<li>如果消费出错，返回<code>RECONSUME_LATER</code>，一段时间后重试。</li>
-</ul>
-<p>状态的返回是由用户线程控制的，但还有第三种可能，就是超时了，因此Consumer端的重试包含以下两种情况：</p>
-<ol>
-<li>异常重试：Consumer端主动返回<code>RECONSUME_LATER</code>状态，Broker会在一段时间后重试；</li>
-<li>超时重试：Consumer端处理时间过长，或者由于某些原因线程挂起，导致迟迟没有返回消费状态，Broker就会认为Consumer消费超时，此时会发起超时重试。</li>
-</ol>
-<p>如果Consumer端因为各种类型异常导致本次消费失败（如上所述的两种情况），为防止该消息丢失而需要将其重新回发给Broker端保存，保存这种因为异常无法正常消费而回发给MQ的消息队列称之为<strong>重试队列</strong>。RocketMQ会为每个消费组都设置一个Topic名称为<code>%RETRY%+consumerGroup</code>的重试队列（这里需要注意的是，这个Topic的重试队列是针对消费组，而不是针对每个Topic设置的）。</p>
-<blockquote>
-<p>不能保证消息消费失败加入重试队列后还能被同一消费者消费，可能会破坏消息的顺序性。</p>
-</blockquote>
-<p>由于有些原因导致Consumer端长时间的无法正常消费从Broker端Pull过来的业务消息，为了确保消息不会被无故的丢弃，那么超过配置的“最大重试消费次数”后就会移入到这个<strong>死信队列</strong>中，RocketMQ会为每个消费组都设置一个Topic命名为“%DLQ%+consumerGroup”的死信队列。一般在实际应用中，移入至死信队列的消息，<strong>需要人工干预处理</strong>；</p>
-<p>另外还有两种需要注意的情况：</p>
-<ul>
-<li>只有消息模式为<code>MessageModel.CLUSTERING</code>集群模式时，Broker才会自动进行重试，而广播消息是不会重试的。</li>
-<li>事务消息中的半事务消息通过 Broker 的回查机制重试，具体流程见下面的<strong>事务消息</strong>。</li>
-</ul>
-<h3 id="消费进度和-offset"><a href="#消费进度和-offset" class="headerlink" title="消费进度和 offset"></a>消费进度和 offset</h3><p><img src="/imgs/RocketMQ/offset%E7%9A%84%E6%9B%B4%E6%96%B0.png" alt="offset的更新" title="offset的更新"><br>消息消费完成后，需要将消费进度存储起来，即前面提到的offset。<br>consumerQueue类似一个无限长的数组，可以利用offset来直接定位。<br>offset的存储分为本地模式和远程模式：</p>
-<ul>
-<li>本地模式：广播模式下，同消费组的消费者相互独立，消费进度要单独存储，对应的数据结构是<code>LocalFileOffsetStore</code>；</li>
-<li>远程模式：集群模式下，同一条消息只会被同一个消费组消费一次，消费进度会参与到负载均衡中，故消费进度是需要共享的，对应的数据结构是<code>RemoteBrokerOffsetStore</code>，下面对offset的讨论集中于远程模式。</li>
-</ul>
-<h3 id="Consumer更新offset到Broker"><a href="#Consumer更新offset到Broker" class="headerlink" title="Consumer更新offset到Broker"></a>Consumer更新offset到Broker</h3><ol>
-<li>消费消息维护offset<br><code>org.apache.rocketmq.client.impl.consumer.ConsumeMessageConcurrentlyService#processConsumeResult</code><br>处理失败的消息会反馈给Consumer，然后发送到topic对应的RetryTopic，这样能快速令offset前进。</li>
-<li>定时任务<br>每隔一段时间将各个队列的消费进度存储到对应的broker上，该时间由<code>DefaultMQPushConsumer</code>的<code>persistConsumerOffsetInterval</code>属性控制，默认为5秒。<br><code>MQClientInstance#startScheduledTask</code> -&gt; <code>MQClientInstance#persistAllConsumerOffset</code><br>启动一个定时任务提交offset。<br><code>RemoteBrokerOffsetStore#updateConsumeOffsetToBroker</code><br>将offset发送到Broker。</li>
-</ol>
-<h3 id="Broker端offset的存储"><a href="#Broker端offset的存储" class="headerlink" title="Broker端offset的存储"></a>Broker端offset的存储</h3><p><code>org.apache.rocketmq.broker.processor.ConsumerManageProcessor#updateConsumerOffset</code><br>Broker会将offset存储在内存的一个<code>offsetTable</code>中，即<code>RemoteBrokerOffsetStore</code>。</p>
-<h3 id="Consumer从Broker拉取offset"><a href="#Consumer从Broker拉取offset" class="headerlink" title="Consumer从Broker拉取offset"></a>Consumer从Broker拉取offset</h3><p><code>DefaultMQPushConsumerImpl#pullMessage</code><br>拉消息后触发offset的更新。<br><code>RemoteBrokerOffsetStore#readOffset</code><br>将offset保存到缓存<code>offsetTable</code>中。</p>
-<h3 id="消息幂等"><a href="#消息幂等" class="headerlink" title="消息幂等"></a>消息幂等</h3><p>RocketMQ提供<strong>At least once</strong>的消息服务质量标准，表示一条消息至少被送达一次，也就是说，不允许丢消息，但允许有少量重复消息出现。</p>
-<blockquote>
-<p>另外两种服务质量标准是<strong>At most once</strong>和<strong>Exactly once</strong>。</p>
-</blockquote>
-<p>比如Producer发出了10个消息，如果Consumer接收中间两条消息时出错了，返回<code>RECONSUME_LATER</code>，则该两条消息会被加入到<code>RETRY</code>队列中重新消费。</p>
-<p>解决消息重复消费问题的主要方法是<strong>幂等</strong>，一个幂等操作的特点是，<strong>其任意多次执行仅会产生一次影响</strong>，因此从对系统的影响结果来说：<strong>At least once + 幂等消费 &#x3D; Exactly once</strong>。<br>实现幂等的方式有很多种，不过这些方案与消息队列本身已经没有多大关系了，因此这里仅仅简单描述一下这些实现方式：</p>
-<ol>
-<li>利用数据库的唯一约束实现幂等<br>为一个操作设置一个唯一键，比如一个账单每个用户只允许变更一次，则可以给转账流水表中的账单ID和账户ID创建一个唯一约束。</li>
-<li>加上前置条件<br>限制数据更新前的状态，比如只有在余额为500的时候才允许更新。<br>也可以单独加上一个唯一ID，每次发消息时生成一个全局唯一ID，消费时检查这个唯一ID是否有被消费过。</li>
-</ol>
-<h3 id="重试源码"><a href="#重试源码" class="headerlink" title="重试源码"></a>重试源码</h3><p>1、Consumer端初始化重试队列信息<br>1.1、Consumer端启动后，创建重试队列的订阅group</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// Consumer自动创建一个group=%RETRY%+ConsumerGroup，用于后续的消费重试</span><br><span class="line">switch (this.defaultMQPushConsumer.getMessageModel()) &#123;</span><br><span class="line">    case BROADCASTING:</span><br><span class="line">        break;</span><br><span class="line">    case CLUSTERING:</span><br><span class="line">        final String retryTopic = MixAll.getRetryTopic(this.defaultMQPushConsumer.getConsumerGroup());</span><br><span class="line">        SubscriptionData subscriptionData = FilterAPI.buildSubscriptionData(this.defaultMQPushConsumer.getConsumerGroup(),</span><br><span class="line">            retryTopic, SubscriptionData.SUB_ALL);</span><br><span class="line">        this.rebalanceImpl.getSubscriptionInner().put(retryTopic, subscriptionData);</span><br><span class="line">        break;</span><br><span class="line">    default:</span><br><span class="line">        break;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>2、Consumer端处理消费结果<code>ConsumeMessageConcurrentlyService#processConsumeResult</code><br>2.1、设置ack<br>如果ConsumeRequest封装的消息全消费成功，则设置ackIndex的值为消息总条数-1，反之ackIndex-&#x3D;1</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">switch (status) &#123;</span><br><span class="line">    // 消费成功</span><br><span class="line">    case CONSUME_SUCCESS:</span><br><span class="line">        if (ackIndex &gt;= consumeRequest.getMsgs().size()) &#123;</span><br><span class="line">            ackIndex = consumeRequest.getMsgs().size() - 1;</span><br><span class="line">        &#125;</span><br><span class="line">        int ok = ackIndex + 1;</span><br><span class="line">        int failed = consumeRequest.getMsgs().size() - ok;</span><br><span class="line">        this.getConsumerStatsManager().incConsumeOKTPS(consumerGroup, consumeRequest.getMessageQueue().getTopic(), ok);</span><br><span class="line">        this.getConsumerStatsManager().incConsumeFailedTPS(consumerGroup, consumeRequest.getMessageQueue().getTopic(), failed);</span><br><span class="line">        break;</span><br><span class="line">    // 消费失败、重试</span><br><span class="line">    case RECONSUME_LATER:</span><br><span class="line">        ackIndex = -1;</span><br><span class="line">        this.getConsumerStatsManager().incConsumeFailedTPS(consumerGroup, consumeRequest.getMessageQueue().getTopic(),</span><br><span class="line">            consumeRequest.getMsgs().size());</span><br><span class="line">        break;</span><br><span class="line">    default:</span><br><span class="line">        break;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>2.2、消费失败的消息触发重试<br>sendMessageBack将消费失败的msg发回broker，如果sendMessageBack也失败则保存到msgBackFailed</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">switch (this.defaultMQPushConsumer.getMessageModel()) &#123;</span><br><span class="line">    ...</span><br><span class="line">    case CLUSTERING:</span><br><span class="line">        List&lt;MessageExt&gt; msgBackFailed = new ArrayList&lt;MessageExt&gt;(consumeRequest.getMsgs().size());</span><br><span class="line">        // ackIndex+1开始的是未成功消费的</span><br><span class="line">        for (int i = ackIndex + 1; i &lt; consumeRequest.getMsgs().size(); i++) &#123;</span><br><span class="line">            MessageExt msg = consumeRequest.getMsgs().get(i);</span><br><span class="line">            boolean result = this.sendMessageBack(msg, context);</span><br><span class="line">            // 如果发送失败，则保存到msgBackFailed</span><br><span class="line">            if (!result) &#123;</span><br><span class="line">                msg.setReconsumeTimes(msg.getReconsumeTimes() + 1);</span><br><span class="line">                msgBackFailed.add(msg);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 将sendMessageBack失败的消息从consumeRequest移除，并包装起来5s后转发给消费线程池继续消费</span><br><span class="line">        if (!msgBackFailed.isEmpty()) &#123;</span><br><span class="line">            consumeRequest.getMsgs().removeAll(msgBackFailed);</span><br><span class="line"></span><br><span class="line">            this.submitConsumeRequestLater(msgBackFailed, consumeRequest.getProcessQueue(), consumeRequest.getMessageQueue());</span><br><span class="line">        &#125;</span><br><span class="line">        break;</span><br><span class="line">    default:</span><br><span class="line">        break;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>2.3、更新offset<br>本地消费成功后会将消费进度同步到本地的processQueue<br>sendMessageBack成功的消息会从本地processQueue中移除，并更新进度，这条消息的消费会交由消费集群中的一个节点去继续消费，取决于负载均衡将此消息对应的topic对应的重试队列retryQueue分配给哪个节点。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 这里开始更新offset</span><br><span class="line">// 先从队列在consumer端的视图（一个treeMap）中移除</span><br><span class="line">// 这里返回的offset是经过删除后最小的偏移量</span><br><span class="line">long offset = consumeRequest.getProcessQueue().removeMessage(consumeRequest.getMsgs());</span><br><span class="line">if (offset &gt;= 0 &amp;&amp; !consumeRequest.getProcessQueue().isDropped()) &#123;</span><br><span class="line">    this.defaultMQPushConsumerImpl.getOffsetStore().updateOffset(consumeRequest.getMessageQueue(), offset, true);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>3、Broker端接收sendMessageBack消息<br>Broker端的处理主要是重试和延迟<br>3.1、设置topic<br>设置此条消息新的topic为%RETRY%消费组的名称，并且选择新topic的队列（默认为0，默认情况下RetryQueueNum为1）</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String newTopic = MixAll.getRetryTopic(requestHeader.getGroup());</span><br><span class="line">int queueIdInt = Math.abs(this.random.nextInt() % 99999999) % subscriptionGroupConfig.getRetryQueueNums();</span><br><span class="line">int topicSysFlag = 0;</span><br><span class="line">if (requestHeader.isUnitMode()) &#123;</span><br><span class="line">    topicSysFlag = TopicSysFlag.buildSysFlag(false, true);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>3.2、将消息topic设置为重试topic<br>通过物理偏移量找到消息体</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">MessageExt msgExt = this.brokerController.getMessageStore().lookMessageByOffset(requestHeader.getOffset());</span><br><span class="line">if (null == msgExt) &#123;</span><br><span class="line">    response.setCode(ResponseCode.SYSTEM_ERROR);</span><br><span class="line">    response.setRemark(&quot;look message by offset failed, &quot; + requestHeader.getOffset());</span><br><span class="line">    return CompletableFuture.completedFuture(response);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>给原始消息新增属性，key为RETRY_TOPIC，value为原始消息的实际topic<br>和Consumer端消费消息时的resetRetryTopic(msgs)相呼应</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">final String retryTopic = msgExt.getProperty(MessageConst.PROPERTY_RETRY_TOPIC);</span><br><span class="line">if (null == retryTopic) &#123;</span><br><span class="line">    MessageAccessor.putProperty(msgExt, MessageConst.PROPERTY_RETRY_TOPIC, msgExt.getTopic());</span><br><span class="line">&#125;</span><br><span class="line">msgExt.setWaitStoreMsgOK(false);</span><br></pre></td></tr></table></figure>
-<p>3.3、获取延迟并判断是否进入死信队列<br>获取消息的延迟级别，默认此时的值为0</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">int delayLevel = requestHeader.getDelayLevel();</span><br><span class="line"></span><br><span class="line">int maxReconsumeTimes = subscriptionGroupConfig.getRetryMaxTimes();</span><br><span class="line">if (request.getVersion() &gt;= MQVersion.Version.V3_4_9.ordinal()) &#123;</span><br><span class="line">    maxReconsumeTimes = requestHeader.getMaxReconsumeTimes();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>消息每消费失败一次都会增加ReconsumeTimes的值，当这个值达到了maxReconsumeTimes（默认为16），则将此消息送入死信队列，且此死信队列不可读，也就是说这条消息在没有人工干预的情况下再也不能被消费了。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">if (msgExt.getReconsumeTimes() &gt;= maxReconsumeTimes </span><br><span class="line">    || delayLevel &lt; 0) &#123;</span><br><span class="line">    newTopic = MixAll.getDLQTopic(requestHeader.getGroup());</span><br><span class="line">    queueIdInt = Math.abs(this.random.nextInt() % 99999999) % DLQ_NUMS_PER_GROUP;</span><br><span class="line"></span><br><span class="line">    topicConfig = this.brokerController.getTopicConfigManager().createTopicInSendMessageBackMethod(newTopic,</span><br><span class="line">            DLQ_NUMS_PER_GROUP,</span><br><span class="line">            PermName.PERM_WRITE, 0);</span><br><span class="line">    if (null == topicConfig) &#123;</span><br><span class="line">        response.setCode(ResponseCode.SYSTEM_ERROR);</span><br><span class="line">        response.setRemark(&quot;topic[&quot; + newTopic + &quot;] not exist&quot;);</span><br><span class="line">        return CompletableFuture.completedFuture(response);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    // 设置延迟级别为3，意味着要延迟10s再消费这条消息，消息重复消费需要借助延迟消费的功能实现</span><br><span class="line">    if (0 == delayLevel) &#123;</span><br><span class="line">        delayLevel = 3 + msgExt.getReconsumeTimes();</span><br><span class="line">    &#125;</span><br><span class="line">    msgExt.setDelayTimeLevel(delayLevel);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>3.4、存储新创建的消息<br>这里有延迟消息的实现：如果delayLevel大于0，会将此消息的topic和queueID再进行一次转换，将此消息的newTopic、queueID存入到属性中（real_topic, real_qid），新的topic为SCHEDULE_TOPIC_XXXX，新的queue为根据delayLevel的等级去本地<code>delayTimeLevel</code>找到对应的队列；后续会有<code>ScheduleMessageService</code>做后续的逻辑。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">CompletableFuture&lt;PutMessageResult&gt; putMessageResult = this.brokerController.getMessageStore().asyncPutMessage(msgInner);</span><br><span class="line">return putMessageResult.thenApply((r) -&gt; &#123;</span><br><span class="line">    if (r != null) &#123;</span><br><span class="line">        switch (r.getPutMessageStatus()) &#123;</span><br><span class="line">            case PUT_OK:</span><br><span class="line">                String backTopic = msgExt.getTopic();</span><br><span class="line">                String correctTopic = msgExt.getProperty(MessageConst.PROPERTY_RETRY_TOPIC);</span><br><span class="line">                if (correctTopic != null) &#123;</span><br><span class="line">                    backTopic = correctTopic;</span><br><span class="line">                &#125;</span><br><span class="line">                this.brokerController.getBrokerStatsManager().incSendBackNums(requestHeader.getGroup(), backTopic);</span><br><span class="line">                response.setCode(ResponseCode.SUCCESS);</span><br><span class="line">                response.setRemark(null);</span><br><span class="line">                return response;</span><br><span class="line">            default:</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">        response.setCode(ResponseCode.SYSTEM_ERROR);</span><br><span class="line">        response.setRemark(r.getPutMessageStatus().name());</span><br><span class="line">        return response;</span><br><span class="line">    &#125;</span><br><span class="line">    response.setCode(ResponseCode.SYSTEM_ERROR);</span><br><span class="line">    response.setRemark(&quot;putMessageResult is null&quot;);</span><br><span class="line">    return response;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>4、Broker端重试<br><code>ScheduleMessageService</code>服务是来处理延迟消息的服务组件，<code>delayLevelTable</code>存储了不同的延迟级别的延迟时间，可配置。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private String messageDelayLevel = &quot;1s 5s 10s 30s 1m 2m 3m 4m 5m 6m 7m 8m 9m 10m 20m 30m 1h 2h&quot;;</span><br></pre></td></tr></table></figure>
-<p>4.1、遍历消费队列</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">// 遍历delayLevelTable里所有级别队列</span><br><span class="line">for (Map.Entry&lt;Integer, Long&gt; entry : this.delayLevelTable.entrySet()) &#123;</span><br><span class="line">    Integer level = entry.getKey();</span><br><span class="line">    Long timeDelay = entry.getValue();</span><br><span class="line">    Long offset = this.offsetTable.get(level);</span><br><span class="line">    if (null == offset) &#123;</span><br><span class="line">        offset = 0L;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (timeDelay != null) &#123;</span><br><span class="line">        // 由一个timer来处理</span><br><span class="line">        this.timer.schedule(new DeliverDelayedMessageTimerTask(level, offset), FIRST_DELAY_TIME);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>4.2、重置延时消息<br>判断时间是否达到了延迟时间，达到了再将这些消息的原始topic和原始队列取出转发存储起来，待消费者消费。<br>4.3、设置重试消息<br>重试消息会被转变2次topic和queueID，导致在<code>ScheduleMessageService</code>转发存储的时候会将第一次转变的topic和queueID取出转发到<code>topic=%RETRY%+consumerGroup</code>、queueId&#x3D;0的消息队列。<br>这个消息会被consumerGroup这个消费组消费，至于哪个节点消费则由负载均衡来决定。</p>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/7/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/5/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/7/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

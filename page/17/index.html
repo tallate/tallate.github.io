@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">189</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">191</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">189</span>
+          <span class="site-state-item-count">191</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -175,6 +175,256 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/9acacb00.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/9acacb00.html" class="post-title-link" itemprop="url">Kubernetes入门</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-07-20 20:34:48" itemprop="dateCreated datePublished" datetime="2019-07-20T20:34:48+08:00">2019-07-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+
+<h2 id="kubectl-的安装"><a href="#kubectl-的安装" class="headerlink" title="kubectl 的安装"></a>kubectl 的安装</h2><p><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tasks/tools/install-kubectl/#install-kubectl-on-macos">Install and Set Up kubectl</a></p>
+<h2 id="kubernetes-含义"><a href="#kubernetes-含义" class="headerlink" title="kubernetes 含义"></a>kubernetes 含义</h2><h3 id="Kubernetes-Master"><a href="#Kubernetes-Master" class="headerlink" title="Kubernetes Master"></a>Kubernetes Master</h3><p>Kubernetes Master 主要负责管理集群，它会协调集群内的所有活动，包括：scheduling applications, maintaining applications’ desired state, scaling applications, and rolling out new updates。<br>Master 实际上是三个进程的集合，它们运行在集群的一个 Master Node 上，这三个进程包括：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/">kube-apiserver</a>：提供<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/overview/kubernetes-api/">REST-API</a>来操作 Kubernetes Objects，包括 pods、services、replicationcontrollers 等，并可用于控制集群状态。</li>
+<li><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/">kube-controller-manager</a>：通过 apiserver 监听集群状态并做状态转移操作。</li>
+<li><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-scheduler/">kube-scheduler</a>：scheduler 可以根据集群的拓扑结构、性能、容量等动态分配资源。</li>
+</ul>
+<h3 id="Node"><a href="#Node" class="headerlink" title="Node"></a>Node</h3><p>Node 是一台虚拟机或物理电脑，在集群中作为 Worker。Master 管理 Cluster，而 Node 则管理应用。<br>每个 Node 都有一个 Kubelet，是管理 Node 的媒介，且负责与 Kubernetes Master 进行交互。<br>每个 Node 还需要有工具来处理容器操作，比如 Docker 或 rkt。<br>一个生产环境的 cluster 必须由至少 3 个 Node 组成。</p>
+<h4 id="kubelet"><a href="#kubelet" class="headerlink" title="kubelet"></a><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/">kubelet</a></h4><p>节点代理，负责和 Kubernetes Master 交互：</p>
+<ul>
+<li>向 apiserver 注册节点</li>
+<li>其他云计算指定逻辑。</li>
+</ul>
+<h4 id="kube-proxy"><a href="#kube-proxy" class="headerlink" title="kube-proxy"></a><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/">kube-proxy</a></h4><p>运行于每个 Node 上的一个网络代理，可以执行简单的 TCP、UDP、SCTP 流转发或提供多后端进程的负载均衡。<br>相当于在主机和 Cluster 之间创建了一个连接，让我们能直接访问 API。</p>
+<h3 id="Pod"><a href="#Pod" class="headerlink" title="Pod"></a><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/workloads/pods/pod-overview/">Pod</a></h3><p>一个或多个应用容器集合的抽象，并且包含一些共享资源，包括：</p>
+<ul>
+<li>共享存储，如 Volumes；</li>
+<li>网络连接，每个 Pod 具有 Cluster 中唯一的一个 IP 地址；</li>
+<li>运行每个容器所必须的信息，比如容器镜像的版本、端口等。</li>
+</ul>
+<p>Pod 建模了一种“logical host”，可以同时运行多种不同的容器。<br>当 Pod 所处的 Node 挂了，<code>ReplicaSet</code>会动态地创建新 Pod 来使得 Cluster 回到原来的状态。</p>
+<h3 id="Service"><a href="#Service" class="headerlink" title="Service"></a><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/services-networking/service/">Service</a></h3><p>Service 定义了 Pod 的逻辑集合及其访问规则，虽然每个 Pod 都有一个唯一的 IP 地址（Cluster 范围内），但是如果没有 Service 的话这些 IP 也是没法暴露到 Cluster 外的，可以通过指定 ServiceSpec 中的<code>type</code>来指定暴露服务的方式：</p>
+<ul>
+<li>ClusterIP (default) - Exposes the Service on an internal IP in the cluster. This type makes the Service only reachable from within the cluster.</li>
+<li>NodePort - Exposes the Service on the same port of each selected Node in the cluster using NAT. Makes a Service accessible from outside the cluster using <code>&lt;NodeIP&gt;:&lt;NodePort&gt;</code>. Superset of ClusterIP.</li>
+<li>LoadBalancer - Creates an external load balancer in the current cloud (if supported) and assigns a fixed, external IP to the Service. Superset of NodePort.</li>
+<li>ExternalName - Exposes the Service using an arbitrary name (specified by <code>externalName</code> in the spec) by returning a CNAME record with the name. No proxy is used. This type requires v1.7 or higher of <code>kube-dns</code>.</li>
+</ul>
+<h3 id="Volumes"><a href="#Volumes" class="headerlink" title="Volumes"></a><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/storage/volumes/">Volumes</a></h3><h3 id="Namespaces"><a href="#Namespaces" class="headerlink" title="Namespaces"></a><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/">Namespaces</a></h3><h3 id="Deployments"><a href="#Deployments" class="headerlink" title="Deployments"></a><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/">Deployments</a></h3><p>负责创建和更新应用实例，创建 Deployment 后，Master 会持续监听并在各 Node 中调度应用实例，一旦有实例挂掉或被删掉，Deployment controller 就会用 Cluster 中另一 Node 上的实例取代之。</p>
+<ul>
+<li>searched for a suitable node where an instance of the application could be run (we have only 1 available node)</li>
+<li>scheduled the application to run on that Node</li>
+<li>configured the cluster to reschedule the instance on a new Node when needed</li>
+</ul>
+<h3 id="DaemonSet"><a href="#DaemonSet" class="headerlink" title="DaemonSet"></a><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/">DaemonSet</a></h3><h3 id="StatefulSets"><a href="#StatefulSets" class="headerlink" title="StatefulSets"></a><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/">StatefulSets</a></h3><h3 id="ReplicaSet"><a href="#ReplicaSet" class="headerlink" title="ReplicaSet"></a><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/">ReplicaSet</a></h3><h3 id="Jobs"><a href="#Jobs" class="headerlink" title="Jobs"></a><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/">Jobs</a></h3><h2 id="kubernetes-使用"><a href="#kubernetes-使用" class="headerlink" title="kubernetes 使用"></a>kubernetes 使用</h2><p>可以采用<code>kubectl</code>命令来和 Cluster 交互，<code>kubectl</code>最常用的操作只有如下 4 种：</p>
+<ul>
+<li>kubectl get - list resources</li>
+<li>kubectl describe - show detailed information about a resource</li>
+<li>kubectl logs - print the logs from a container in a pod</li>
+<li>kubectl exec - execute a command on a container in a pod</li>
+</ul>
+<h3 id="创建Cluster"><a href="#创建Cluster" class="headerlink" title="创建Cluster"></a>创建Cluster</h3><p>例子中使用<code>minikube</code>创建 Cluster，然后使用<code>kubectl</code>来和创建的 Cluster 交互：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">minikube version</span><br><span class="line"># 启动一个Cluster</span><br><span class="line">minikube start</span><br><span class="line"># 查看客户端（kubectl的版本）和服务端（Kubernetes的版本）的版本</span><br><span class="line">kubectl version</span><br><span class="line"># Cluster的详细信息</span><br><span class="line">kubectl cluster-info</span><br><span class="line"># 获取Cluster内的Node列表</span><br><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>
+<ol>
+<li>创建部署单元（Deployment）<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 创建Deploymnet</span><br><span class="line">kubectl create deployment kubernetes-bootcamp --image=gcr.io/google-samples/kubernetes-bootcamp:v1</span><br><span class="line"># 查看Deployment</span><br><span class="line">kubectl get deployments</span><br><span class="line"></span><br><span class="line"># 查看Pod</span><br><span class="line">kubectl get pods</span><br><span class="line"># 查看Pod内Container的属性，比如使用的是什么镜像</span><br><span class="line">kubectl describe pods</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="访问"><a href="#访问" class="headerlink" title="访问"></a>访问</h3><ol>
+<li>使用 proxy 访问 Service 和 Pod<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 创建proxy实例</span><br><span class="line">kubectl proxy</span><br><span class="line"># 创建proxy后可以在另一个终端调用REST API来查看Cluster信息</span><br><span class="line">curl http://localhost:8001/version</span><br><span class="line"># 查看Pod的名字</span><br><span class="line">export POD_NAME=$(kubectl get pods -o go-template --template &#x27;&#123;&#123;range .items&#125;&#125;&#123;&#123;.metadata.name&#125;&#125;&#123;&#123;&quot;\n&quot;&#125;&#125;&#123;&#123;end&#125;&#125;&#x27;)</span><br><span class="line">echo Name of the Pod: $POD_NAME</span><br><span class="line"># 可以通过proxy直接访问Pod</span><br><span class="line">curl http://localhost:8001/api/v1/namespaces/default/pods/$POD_NAME/proxy/</span><br></pre></td></tr></table></figure></li>
+<li>查看日志<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 所有应用发送给STDOUT的信息都会成为Pod容器的日志</span><br><span class="line">kubectl logs $POD_NAME</span><br></pre></td></tr></table></figure></li>
+<li>使用 exec 命令访问 Pod<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 查看Pod内的环境变量</span><br><span class="line">kubectl exec $POD_NAME env</span><br><span class="line"># 在Pod中一个容器内启动一个bash会话，相当于登入了该容器</span><br><span class="line">kubectl exec -ti $POD_NAME bash</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="Service-1"><a href="#Service-1" class="headerlink" title="Service"></a>Service</h3><ol>
+<li>创建 Service<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 查看Service</span><br><span class="line">kubectl get services</span><br><span class="line"># 创建一个新的Service并暴露端口（type=NodePort可以用于占用一个Node上的端口来暴露服务）</span><br><span class="line">kubectl expose deployment/kubernetes-bootcamp --type=&quot;NodePort&quot; --port 8080</span><br><span class="line"># 查看Service信息</span><br><span class="line">kubectl describe services/kubernetes-bootcamp</span><br></pre></td></tr></table></figure></li>
+<li>Deployment 与 Service<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 8080其实是集群内的一个逻辑端口，可以通过以下命令获取Node上暴露的端口</span><br><span class="line">export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template=&#x27;&#123;&#123;(index .spec.ports 0).nodePort&#125;&#125;&#x27;)</span><br><span class="line"># 然后我们可以通过curl访问Node上的端口来确认Service已经被暴露到了Cluster外</span><br><span class="line">echo NODE_PORT=$NODE_PORT</span><br><span class="line"></span><br><span class="line"># Deployment会自动为Pod创建一个label，可以通过如下命令来查看</span><br><span class="line">kubectl describe deployment</span><br><span class="line"># 通过label查看Pod列表和Service列表</span><br><span class="line">kubectl get pods -l run=kubernetes-bootcamp</span><br><span class="line">kubectl get services -l run=kubernetes-bootcamp</span><br></pre></td></tr></table></figure></li>
+<li>Service 中的 Pod<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 先获取Pod的名字</span><br><span class="line">export POD_NAME=$(kubectl get pods -o go-template --template &#x27;&#123;&#123;range .items&#125;&#125;&#123;&#123;.metadata.name&#125;&#125;&#123;&#123;&quot;\n&quot;&#125;&#125;&#123;&#123;end&#125;&#125;&#x27;)</span><br><span class="line">echo Name of the Pod: $POD_NAME</span><br><span class="line"># 通过label命令可以设置一个新的label</span><br><span class="line">kubectl label pod $POD_NAME app=v1</span><br><span class="line"># 之后可以使用describe 命令来查看这些label，也可以使用label来查询Pod</span><br><span class="line">kubectl describe pods $POD_NAME</span><br><span class="line">kubectl get pods -l app=v1</span><br></pre></td></tr></table></figure></li>
+<li>删除 Service<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 删除一个Service</span><br><span class="line">kubectl delete service -l run=kubernetes-bootcamp</span><br><span class="line"># 查看服务列表，该服务已经被删除</span><br><span class="line">kubectl get services</span><br><span class="line"># curl端口确认不再暴露服务</span><br><span class="line">curl $(minikube ip):$NODE_PORT</span><br><span class="line"># 我们可以在Pod中运行curl来确定应用仍运行于Pod中</span><br><span class="line">kubectl exec -ti $POD_NAME curl localhost:8080</span><br><span class="line"># 如果需要终止应用，则需要同时删除Deployment</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="app-扩展"><a href="#app-扩展" class="headerlink" title="app 扩展"></a>app 扩展</h3><p><img src="/imgs/Kubernetes/scaling.svg" alt="scaling" title="scaling"><br>上图来自<a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/kubernetes-basics/scale/scale-intro/">官网教程</a>，Scaling 即修改 Deployment 中的 Pod 数。</p>
+<ol>
+<li>扩展 ReplicaSet（Scale Up）<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 先看下部署了几个Pod</span><br><span class="line">kubectl get deployments</span><br><span class="line"># 查看Deployment创建的ReplicaSet，ReplicaSet名的格式为[DEPLOYMENT-NAME]-[RANDOM-STRING]</span><br><span class="line">kubectl get rs</span><br><span class="line"># 将Deployment扩展为4个复制</span><br><span class="line">kubectl scale deployments/kubernetes-bootcamp --replicas=4</span><br><span class="line"># 查看Deployment及其中的Pod</span><br><span class="line">kubectl get deployments</span><br><span class="line">kubectl get pods -o wide</span><br><span class="line"># 查看Deployment的时间日志</span><br><span class="line">kubectl describe deployments/kubernetes-bootcamp</span><br></pre></td></tr></table></figure></li>
+<li>Load Balancing<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 使用一个NODE_PORT环境变量来保存Node暴露的端口</span><br><span class="line">export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template=&#x27;&#123;&#123;(index .spec.ports 0).nodePort&#125;&#125;&#x27;)</span><br><span class="line">echo NODE_PORT=$NODE_PORT</span><br><span class="line"># curl访问多次，会发现请求被负载均衡到了不同的Pod上</span><br><span class="line">curl $(minikube ip):$NODE_PORT</span><br></pre></td></tr></table></figure></li>
+<li>缩小（Scale Down）<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 再运行一次scale命令来缩小ReplicaSet</span><br><span class="line">kubectl scale deployments/kubernetes-bootcamp --replicas=2</span><br><span class="line"># 查看伸缩结果</span><br><span class="line">kubectl get deployments</span><br><span class="line">kubectl get pods -o wide</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="滚动更新（Rolling-Update）"><a href="#滚动更新（Rolling-Update）" class="headerlink" title="滚动更新（Rolling Update）"></a>滚动更新（Rolling Update）</h3><ol>
+<li>更新应用版本<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 先看看Cluster里有啥</span><br><span class="line">kubectl get deployments</span><br><span class="line">kubectl get pods</span><br><span class="line"># 查看应用当前使用的镜像版本</span><br><span class="line">kubectl describe pods</span><br><span class="line"># 使用set image命令设置应用的镜像版本</span><br><span class="line">kubectl set image deployments/kubernetes-bootcamp kubernetes-bootcamp=jocatalin/kubernetes-bootcamp:v2</span><br><span class="line"># 可以通过Pod查看应用的更新过程</span><br><span class="line">kubectl get pods</span><br></pre></td></tr></table></figure></li>
+<li>验证更新<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 确认应用正在运行中</span><br><span class="line">kubectl describe services/kubernetes-bootcamp</span><br><span class="line"># 用一个NODE_PORT环境变量保存Node暴露的端口，然后用curl确认暴露的服务可以使用</span><br><span class="line">export NODE_PORT=$(kubectl get services/kubernetes-bootcamp -o go-template=&#x27;&#123;&#123;(index .spec.ports 0).nodePort&#125;&#125;&#x27;)</span><br><span class="line">echo NODE_PORT=$NODE_PORT</span><br><span class="line">curl $(minikube ip):$NODE_PORT</span><br><span class="line"># 更新同样可以使用rollout status命令来确认</span><br><span class="line">kubectl rollout status deployments/kubernetes-bootcamp</span><br><span class="line"># 查看应用当前使用的镜像的版本</span><br><span class="line">kubectl describe pods</span><br></pre></td></tr></table></figure></li>
+<li>回滚（Rollback）<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 设置镜像进行更新，但是这个镜像的v10版本是不存在的，因此会引起更新失败</span><br><span class="line">kubectl set image deployments/kubernetes-bootcamp kubernetes-bootcamp=gcr.io/google-samples/kubernetes-bootcamp:v10</span><br><span class="line"># 查看Deployment的当前状态，会发现某些Pod运行不正常</span><br><span class="line">kubectl get deployments</span><br><span class="line"># 查看Pod状态，describe能提供更多信息</span><br><span class="line">kubectl get pods</span><br><span class="line">kubectl describe pods</span><br><span class="line"># 发现问题，可以使用rollout undo命令来回滚，rollout命令会复原deployment到上一已知状态。实际上所有更新操作都是版本化的，并且每次更新都可以回滚到之前的任意版本</span><br><span class="line">kubectl rollout undo deployments/kubernetes-bootcamp</span><br><span class="line"># 接下来再查看Pod的状态可以发现所有的Pod都已经恢复运行了</span><br><span class="line">kubectl get pods</span><br><span class="line">kubectl describe pods</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/">Tutorials</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/kubernetes-basics/">Learn Kubernetes Basics</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/configuration/configure-redis-using-configmap/">Configuring Redis using a ConfigMap</a><br>使用 k8s 搭建 Redis 集群<br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/stateless-application/expose-external-ip-address/">Exposing an External IP Address to Access an Application in a Cluster</a><br>如何使用 k8s 搭建一个无状态服务<br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/">StatefulSet Basics</a><br>如何使用 k8s 搭建一个有状态服务<br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/clusters/apparmor/">AppArmor</a><br><a target="_blank" rel="noopener" href="https://kubernetes.io/docs/tutorials/services/source-ip/">Using Source IP</a><br><a href="linux.com/tutorials/set-cicd-pipeline-kubernetes-part-1-overview/">CICD</a><br><a target="_blank" rel="noopener" href="https://www.linux.com/tutorials/set-cicd-pipeline-jenkins-pod-kubernetes-part-2/">https://www.linux.com/tutorials/set-cicd-pipeline-jenkins-pod-kubernetes-part-2/</a><br><a target="_blank" rel="noopener" href="https://www.linux.com/tutorials/run-and-scale-distributed-crossword-puzzle-app-cicd-kubernetes-part-3/">https://www.linux.com/tutorials/run-and-scale-distributed-crossword-puzzle-app-cicd-kubernetes-part-3/</a><br><a target="_blank" rel="noopener" href="https://www.linux.com/tutorials/set-cicd-distributed-crossword-puzzle-app-kubernetes-part-4/">https://www.linux.com/tutorials/set-cicd-distributed-crossword-puzzle-app-kubernetes-part-4/</a></li>
+</ol>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/59c58f8f.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/59c58f8f.html" class="post-title-link" itemprop="url">cut、awk 使用总结</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-07-20 20:34:48" itemprop="dateCreated datePublished" datetime="2019-07-20T20:34:48+08:00">2019-07-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>在 awk、sed、cut 三个命令中，awk 是功能最强大的，基本能实现所有字符串操作，平时常用于较复杂的日志分析，不过比起别的命令来也会相对复杂一点。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/59c58f8f.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1400,459 +1650,8 @@ flag可以有以下取值：<ul>
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/cac7b0a4.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/cac7b0a4.html" class="post-title-link" itemprop="url">多级缓存原理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-04-10 23:13:20" itemprop="dateCreated datePublished" datetime="2019-04-10T23:13:20+08:00">2019-04-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p> </p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/cac7b0a4.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/5ac9459.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/5ac9459.html" class="post-title-link" itemprop="url">多级缓存原理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-04-10 23:13:20" itemprop="dateCreated datePublished" datetime="2019-04-10T23:13:20+08:00">2019-04-10</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BC%93%E5%AD%98/" itemprop="url" rel="index"><span itemprop="name">缓存</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<h2 id="本地缓存"><a href="#本地缓存" class="headerlink" title="本地缓存"></a>本地缓存</h2><h3 id="由线上缓存-bug-引起的对本地缓存的思考"><a href="#由线上缓存-bug-引起的对本地缓存的思考" class="headerlink" title="由线上缓存 bug 引起的对本地缓存的思考"></a>由线上缓存 bug 引起的对本地缓存的思考</h3><p>LoadingCache 是 Guava 提供的一个本地缓存组件，但是我对它是又爱又恨，一方面因为 LoadingCache 比较完善，免去很多应用层缓存的细节问题（如何写出 GC 友好的缓存？），而另一方面如果对 LoadingCache 了解不够深入又容易出现奇奇怪怪的问题。下面就来描述一下之前碰到过的两个 LoadingCache 的坑，首先给出最简单的缓存配置：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">LoadingCache&lt;String, Object&gt; cache = CacheBuilder.newBuilder()</span><br><span class="line">        .expireAfterAccess(60 * 1000, MILLISECONDS) // 1</span><br><span class="line">        .maximumSize(500)</span><br><span class="line">        .build(new CacheLoader&lt;String, Object&gt;() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public Object load(String id) throws Exception &#123;</span><br><span class="line">                return query(id); // 2</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
-<ol>
-<li>在构建 LoadingCache 的时候可以配置缓存的过期策略，LoadingCache 其实有三种常用的过期策略：<ul>
-<li>expireAfterAccess：在最后一次访问后空闲一段时间才过期；</li>
-<li>expireAfterWrite：在最后一次写后空闲一段时间才过期；</li>
-<li>refreshAfterWrite：同样是写后空闲一段时间过期，和上一个的区别是不会阻塞过期时到达的请求，因为刷新一般需要请求远程服务来获取数据，会有比较长的延迟，refreshAfterWrite 会先返回旧数据，而 expireAfterWrite 会先阻塞这些请求。<br>如果是为了吞吐量起见，一般使用 refreshAfterWrite 更多，如果是为了保证同步性，则是使用 expireAfterWrite 更多。<br>因为我们使用缓存的场景是“读多写少的场景”，读端是提供给用户的，而写端由甲方客户控制，当它们更新了某个 id 的数据后，希望能够马上展示到用户眼前，换句话说，缓存应当能够被马上刷新，但是前面的配置中使用的是 expireAfterAccess，因为用户的访问非常频繁，所以缓存一直不能过期，上线的数据不能及时地生效，导致甲方爸爸非常生气。</li>
-</ul>
-</li>
-<li>缓存更新的时候一般会从远程服务或数据库查询数据，这里没有考虑返回值为空的情况，为了保险起见，一般都是需要进行空值校验的，而且如果这里返回了空值，LoadingCache 会直接抛出异常。</li>
-</ol>
-<p>所以更合理的配置方式应该是下面这样的：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">LoadingCache&lt;String, Object&gt; cache = CacheBuilder.newBuilder()</span><br><span class="line">        .refreshAfterWrite(60 * 1000, MILLISECONDS) // 1</span><br><span class="line">        .maximumSize(500)</span><br><span class="line">        .build(new CacheLoader&lt;String, Object&gt;() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public Object load(String id) throws Exception &#123;</span><br><span class="line">                Object res = query(id); // 2</span><br><span class="line">                return res == null ? DEFAULT_OBJ : res;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
-
-<p>所以，当我们在使用缓存时，一般是事先考虑：</p>
-<ul>
-<li>dataSource：当没有命中时，从哪里获取数据？一般请求下会调用其他服务的远程接口，也可以直接从数据库、缓存中间件查询，但是要注意数据隔离性，比如权限服务就不适合直接到缓存或数据库中查询订单数据，因为这样不利于后期扩容，而且入口越多越不安全；</li>
-<li>expire：定义淘汰策略，比如有一段时间没有访问就淘汰，比如容量限制，当超出容量的时候如何淘汰一般有 LRU（Least Recently Used）、LFU（Least Frequently Used），可以使用 weigher 设置每个 key 的权重；</li>
-</ul>
-<p>如果是一些要求不高的内部信息管理系统，这些属性不需要太关注，但是如果是对并发量有一定要求的系统，对自己所使用的工具知根知底是最低的要求。</p>
-<h3 id="本地缓存是什么"><a href="#本地缓存是什么" class="headerlink" title="本地缓存是什么"></a>本地缓存是什么</h3><p>本地缓存的英文是 Local Cache，Cache、Buffer、Pool 是经常出现但又容易混淆的一组概念，它们都能存取数据，但是有本质上的区别：</p>
-<ul>
-<li>Cache 的主要功能是“将东西放到更容易拿到的地方”、从而加快速度，具有随机存取的功能，一般为了不导致内存溢出会设置数据的过期回收策略，比如计算机体系结构中的 L1、L2、L3 缓存；</li>
-<li>Buffer 是为了缓冲、减少对脆弱系统的冲击，具有顺序访问的特点，比如每个 TCP Socket 都有的接收发送缓存区；</li>
-<li>Pool 是为了缓存资源，它和 Cache 的主要区别是 Pool 中缓存的对象往往是同构而没有特殊价值的数据，比如连接池中存储的数据库连接，所以 Pool 不需要随机存取功能、随取随用即可。</li>
-</ul>
-<h3 id="本地缓存的优点"><a href="#本地缓存的优点" class="headerlink" title="本地缓存的优点"></a>本地缓存的优点</h3><ul>
-<li>节省了了内⽹带宽。</li>
-<li>响应时延会更低。</li>
-</ul>
-<h3 id="本地缓存的缺点"><a href="#本地缓存的缺点" class="headerlink" title="本地缓存的缺点"></a>本地缓存的缺点</h3><p>⽆法保证⼀致性，解决办法是：</p>
-<ol>
-<li>单节点通知其他节点，但是会导致同⼀服务的多个节点相互耦合；</li>
-<li>利用 mq 通知其他节点，但系统会变得更复杂；</li>
-<li>使用 timer 定时从后端拉取更新内存缓存，但在更新数据后、访问其他节点会得到脏数据，直到其他节点 timer 拉取数据。</li>
-</ol>
-<h3 id="本地缓存如何保证一致性"><a href="#本地缓存如何保证一致性" class="headerlink" title="本地缓存如何保证一致性"></a>本地缓存如何保证一致性</h3><p>现在基本没有对外应用会是单机部署的，本地缓存是将数据保存到实例本身的内存中，所以一致性问题就是：我们怎么保证同一时间从每台实例上获取到的数据都是相同的？</p>
-<ul>
-<li>集群广播：当数据源变更时，发消息通知所有实例<br>优点：实现一致性<br>缺点：不适合更新特别频繁的场景，可能产生消息堆积。</li>
-<li>定时拉取：每台实例定时从数据源拉取数据更新本地缓存<br>优点：实现简单，使用Guava就可以实现；<br>缺点：无法控制每台实例同时去拉取，可能有的拉到了，有的还没有到定时拉取的时间。</li>
-<li>zk同步：将机器注册到zk，所有机器都注册一个watcher，当有数据变更时通知所有实例。<br>优点：类似消息同步的方式实现一致性。<br>缺点：引入zk提升复杂度，zk并不保证高可用（CP）。</li>
-</ul>
-<h3 id="什么时候需要本地缓存"><a href="#什么时候需要本地缓存" class="headerlink" title="什么时候需要本地缓存"></a>什么时候需要本地缓存</h3><p>分层架构设计，有⼀条准则：站点层、服务层要做到<strong>⽆数据</strong>、<strong>⽆状态</strong>，这样才能任意的加节点⽔平扩展，数据和状态尽量存储到后端的数据存储服务，例如数据库服务或者缓存服务。<br>可以看到，站点与服务的进程内缓存，实际上违背了分层架构设计的⽆状态准则，故<strong>一般情况下并不推荐使用</strong>。<br>在分布式缓存存在的情况下，一般本地缓存都是不必要的，一方面本地缓存会占用大量的堆空间，容易引起频繁的 GC；另一方面，因为是在局域网内，所以访问分布式缓存的网络开销不会太大。</p>
-<p>那么，什么时候可以使⽤进程内缓存？以下情况，可以考虑使用进程内缓存，并且应该注意对过期策略、并发安全等的定义。</p>
-<ol>
-<li>只读数据，可以考虑在进程启动时加载到内存。<blockquote>
-<p>当然此时也可以把数据加载到 redis &#x2F; memcache 等缓存中间件，进程外缓存同样能解决这个问题。</p>
-</blockquote>
-</li>
-<li>性能敏感、极其⾼并发的、如果透传对后端压力极大的场景，可以考虑使用进程内缓存。例如，首页列表、秒杀业务，并发量极高，需要站点层挡住流量，可以使⽤内存缓存。</li>
-<li>一定程度上允许数据不一致的业务。<br>例如，有一些计数场景，运营场景，⻚面对数据⼀致性要求较低，可以考虑使⽤进程内⻚面缓存。</li>
-</ol>
-<h3 id="避免过早优化"><a href="#避免过早优化" class="headerlink" title="避免过早优化"></a>避免过早优化</h3><p>后端开发基本都是完美主义者（粗心导致留下 Bug 可是会被产品、测试鄙视的），但是完美主义也有一个缺点——容易过早优化。<br>比如，项目早期使用者不多、订单只有 10W～100W 的量级，但是开发刚上来在对行业知识、产品使用场景都没有深刻理解的情况下，直接决定对 id 散列来进行分表，这个对我们来说当然是无可厚非的，但是随着业务扩大、订单量增加到 100W～1000W，发现线上数据库中近期的订单被使用得更多（即热数据）、而老订单一般不被问津，所以原来那种新老混杂的分表就不合适了，但是现在再重构成按时间分表的方式就费事了。因此，更好的方式是刚开始仅用单表存就足够了，之后时刻关注线上使用的反馈，即时地进行优化。</p>
-<h3 id="Java-引用"><a href="#Java-引用" class="headerlink" title="Java 引用"></a>Java 引用</h3><p>Java 中除了基本类型外所有对象都是通过引用来使用的，引用分为强引用、软引用、弱引用和虚引用。<br>对于一般的缓存场景来说，软引用是更好的选择，因为软引用可以避免内存用完而 GC 又回收不了内存进而导致的服务宕机，又不会像弱引用那样每次 GC 都会被回收掉、连带导致缓存被击穿。</p>
-<h3 id="应用-失败次数统计"><a href="#应用-失败次数统计" class="headerlink" title="应用 - 失败次数统计"></a>应用 - 失败次数统计</h3><p>一般调用 RPC 接口都会有重试逻辑，最简单的重试可以用一个局部变量记录失败次数：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">int failedCount = 0;</span><br><span class="line">while(failedCount &lt; 3) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        rpcService.hello();</span><br><span class="line">        break;</span><br><span class="line">    &#125; catch (Exception e) &#123;</span><br><span class="line">        logger.warn(&quot;调用失败 &quot; + failedCount + &quot; 次&quot;, e);</span><br><span class="line">        failedCount++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果不是需要实时响应的功能，可以用一个队列缓存请求，然后用一个线程轮询，因为失败后需要重新丢进队列中等待，这时就不能单纯使用局部变量来保存失败次数了，可以使用一个 Cache&lt;string, AtomicInteger&gt;<strong>软引用</strong>缓存失败调用记录，成功后再使其失效。这种方式能控制失败重试次数，而且当内存不足时，缓存数据可以被 GC 回收以腾出一些空间。<br>以 Guava 中的 LoadingCache 为例：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">private LoadingCache&lt;String, AtomicInteger&gt; failedCache = </span><br><span class="line">    CacheBuilder.newBuilder()</span><br><span class="line">        .softValues()</span><br><span class="line">        .maximumSize(10000)</span><br><span class="line">        .build(new CacheLoader&lt;String, AtomicInteger&gt;() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public AtomicInteger load(String id) throws Exception &#123;</span><br><span class="line">                return new AtomicInteger(0);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br></pre></td></tr></table></figure>
-<ul>
-<li>当失败时，调用 failedCache.getUnchecked(id).incrementAndGet()增加失败次数。</li>
-<li>当成功时，调用 failedCache.invalidate(id)使缓存失效。</li>
-</ul>
-<h3 id="GC-友好的缓存"><a href="#GC-友好的缓存" class="headerlink" title="GC 友好的缓存"></a>GC 友好的缓存</h3><p>diff（在不等的情况下才 put 或直接修改已有对象，提高内存利用率，不然每次刷新缓存都要放到年轻代。不能用分离链接法实现，因为老的会引用年轻的(每次 put 到头部不就可以了？)，导致年轻代不能转移到老年代）</p>
-<p>如何避免 OOM（弱引用）</p>
-<p>缓存淘汰机制<br>过期策略</p>
-<h3 id="如何实现一个本地缓存-ConcurrentHashMap"><a href="#如何实现一个本地缓存-ConcurrentHashMap" class="headerlink" title="如何实现一个本地缓存 - ConcurrentHashMap"></a>如何实现一个本地缓存 - ConcurrentHashMap</h3><ol>
-<li>线程安全的 Map</li>
-<li>回收机制<br>如 LRU</li>
-<li>软引用</li>
-</ol>
-<h2 id="分布式缓存"><a href="#分布式缓存" class="headerlink" title="分布式缓存"></a>分布式缓存</h2><h3 id="本地缓存和分布式缓存"><a href="#本地缓存和分布式缓存" class="headerlink" title="本地缓存和分布式缓存"></a>本地缓存和分布式缓存</h3><p>缓存一般分为本地缓存和分布式缓存两种。本地缓存指的是将数据存储在本机内存中，操作缓存数据的速度很快，但是缺点也很明显：第一，缓存数据的数量与大小受限于本地内存；第二，如果有多台应用服务器，可能所有应用服务器都要维护一份缓存，这样就占用了很多的内存。<br>分布式缓存正好解决了这两个问题。首先，数据存储在了另外的机器上，理论上由于可以不断添加缓存机器，所以缓存的数据的数量是无限的；其次，缓存集中设置在远程的缓存服务器上，应用服务器不需要耗费空间来维护缓存。但是，分布式缓存也是有缺点的，比如由于是远程操作，所以操作缓存数据的速度相较于本地缓存慢很多。<br>当前用得最多的本地缓存是 GoogleGuavache，用得最多的分布式缓存是 Memcached 和 Redis</p>
-<h3 id="缓存穿透"><a href="#缓存穿透" class="headerlink" title="缓存穿透"></a>缓存穿透</h3><p>概念及场景：缓存穿透是指查询一个一定不存在的数据，由于缓存是不命中时被动写的，并且出于容错考虑，如果从存储层查不到数据则不写入缓存，这将导致这个不存在的数据每次请求都要到存储层去查询，失去了缓存的意义。在流量大时，可能 DB 就挂掉了，要是有人利用不存在的 key 频繁攻击我们的应用，这就是漏洞。<br>解决方案：有很多种方法可以有效地解决缓存穿透问题，最常见的则是采用<strong>布隆过滤器</strong>，将所有可能存在的数据哈希到一个足够大的<strong>bitmap</strong>中，一个一定不存在的数据会被这个 bitmap 拦截掉，从而避免了对底层存储系统的查询压力。另外也有一个更为简单粗暴的方法，如果一个查询返回的数据为空（不管是数据不存在，还是系统故障），我们仍然把这个空结果进行缓存，但它的过期时间会很短，最长不超过五分钟。<br>总而言之，当通过一个 key 去数据库查询出来的数据结果为 null,缓存系统就不会缓存该数据,每次该 key 查询都会经过数据库层,造成没有必要的 DB 开销。这种情况下，我们可以将该 key 缓存至缓存系统中,value 为一个特殊值(^^,&amp;&amp;…)。</p>
-<h3 id="缓存雪崩"><a href="#缓存雪崩" class="headerlink" title="缓存雪崩"></a>缓存雪崩</h3><h4 id="概念及场景"><a href="#概念及场景" class="headerlink" title="概念及场景"></a>概念及场景</h4><p>缓存雪崩是指在我们设置缓存时采用了相同的过期时间，导致缓存在某一时刻同时失效，请求全部转发到 DB，DB 瞬时压力过重雪崩。<br>key 缓存过期失效而新缓存未到期间,该 key 的查询所有请求都会去查询数据，造成 DB 压力上升，产生不必要的 DB 开销 </p>
-<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><p>缓存失效时的雪崩效应对底层系统的冲击非常可怕。大多数系统设计者考虑用加锁或者队列的方式保证缓存的单线程（进程）写，从而避免失效时大量的并发请求落到底层存储系统上。这里分享一个简单方案就是将缓存失效时间分散开，比如我们可以在原有的失效时间基础上增加一个随机值，比如 1-5 分钟随机，这样每一个缓存的过期时间的重复率就会降低，就很难引发集体失效的事件。<br>解决方案总结：</p>
-<ol>
-<li>加锁排队重建,使请求可以串行化,而不用全部的请求都去查询数据库</li>
-<li>假设 key 的过期时间是 A,创建一个 key_sign,它的过期时间比 A 小,查询 key 的时候检查 key_sign 是否已经过期,如果过期则加锁后台起一个线程异步去更新 key 的值,而实际的缓存没有过期(如果实际缓存已经过期,需要加锁排队重建),但是会浪费双份缓存</li>
-<li>在原有的 value 中存一个过期值 B,B 比 A 小,取值的时候根据 B 判断 value 是否过期,如果过期,解决方案同上</li>
-<li>牺牲用户体验,当发现缓存中没有对应的数据直接返回失败,并且把需要的数据放入一个分布式队列,后台通过异步线程更新队列中需要更新的缓存</li>
-</ol>
-<h3 id="缓存污染"><a href="#缓存污染" class="headerlink" title="缓存污染"></a>缓存污染</h3><h4 id="概念和场景"><a href="#概念和场景" class="headerlink" title="概念和场景"></a>概念和场景</h4><p>一些非正常操作（比如导出 excel 文件、运营偶发性访问）而导致内存中出现很多冷数据 </p>
-<h4 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h4><p>选取合适的缓存算法(LUR-N 算法)。</p>
-<h3 id="缓存首次上线"><a href="#缓存首次上线" class="headerlink" title="缓存首次上线"></a>缓存首次上线</h3><h4 id="概念及场景-1"><a href="#概念及场景-1" class="headerlink" title="概念及场景"></a>概念及场景</h4><p>缓存首次上线,如果网站的访问量很大,所有的请求都经过数据库(如果访问量比较少,可以由用户访问自行缓存) </p>
-<h4 id="解决方案-2"><a href="#解决方案-2" class="headerlink" title="解决方案"></a>解决方案</h4><p>缓存预热,在系统上线之前,所有的缓存都预先加载完毕(增加一个刷新缓存程序,上线后手动刷新或发布时自动调用刷用)</p>
-<h3 id="缓存击穿"><a href="#缓存击穿" class="headerlink" title="缓存击穿"></a>缓存击穿</h3><p>概念及场景：对于一些设置了过期时间的 key，如果这些 key 可能会在某些时间点被超高并发地访问，是一种非常“热点”的数据。这个时候，需要考虑一个问题：缓存被“击穿”的问题，这个和缓存雪崩的区别在于这里针对某一 key 缓存，前者则是很多 key。缓存在某个时间点过期的时候，恰好在这个时间点对这个 Key 有大量的并发请求过来，这些请求发现缓存过期一般都会从后端 DB 加载数据并回设到缓存，这个时候大并发的请求可能会瞬间把后端 DB 压垮。</p>
-<h4 id="解决方案-3"><a href="#解决方案-3" class="headerlink" title="解决方案"></a>解决方案</h4><p>1.使用互斥锁(mutex key)<br>业界比较常用的做法，是使用 mutex。简单地来说，就是在缓存失效的时候（判断拿出来的值为空），不是立即去 load db，而是先使用缓存工具的某些带成功操作返回值的操作（比如 Redis 的 SETNX 或者 Memcache 的 ADD）去 set 一个 mutex key，当操作返回成功时，再进行 load db 的操作并回设缓存；否则，就重试整个 get 缓存的方法。<br>SETNX，是「SET if Not eXists」的缩写，也就是只有不存在的时候才设置，可以利用它来实现锁的效果。在 redis2.6.1 之前版本未实现 setnx 的过期时间，所以这里给出两种版本代码参考：<br>&#x2F;&#x2F;2.6.1 前单机版本锁<br>String get(String key) {<br>   String value &#x3D; redis.get(key);<br>   if (value &#x3D;&#x3D; null) {<br>    if (redis.setnx(key_mutex, “1”)) {<br>        &#x2F;&#x2F; 3 min timeout to avoid mutex holder crash<br>        redis.expire(key_mutex, 3 * 60)<br>        value &#x3D; db.get(key);<br>        redis.set(key, value);<br>        redis.delete(key_mutex);<br>    } else {<br>        &#x2F;&#x2F;其他线程休息 50 毫秒后重试<br>        Thread.sleep(50);<br>        get(key);<br>    }<br>  }<br>}<br>最新版本代码：<br>public String get(key) {<br>      String value &#x3D; redis.get(key);<br>      if (value &#x3D;&#x3D; null) { &#x2F;&#x2F;代表缓存值过期<br>          &#x2F;&#x2F;设置 3min 的超时，防止 del 操作失败的时候，下次缓存过期一直不能 load db<br>          if (redis.setnx(key_mutex, 1, 3 * 60) &#x3D;&#x3D; 1) { &#x2F;&#x2F;代表设置成功<br>               value &#x3D; db.get(key);<br>                      redis.set(key, value, expire_secs);<br>                      redis.del(key_mutex);<br>              } else { &#x2F;&#x2F;这个时候代表同时候的其他线程已经 load db 并回设到缓存了，这时候重试获取缓存值即可<br>                      sleep(50);<br>                      get(key); &#x2F;&#x2F;重试<br>              }<br>          } else {<br>              return value;<br>          }<br> }<br>memcache 代码：<br>if (memcache.get(key) &#x3D;&#x3D; null) {<br>    &#x2F;&#x2F; 3 min timeout to avoid mutex holder crash<br>    if (memcache.add(key_mutex, 3 * 60 * 1000) &#x3D;&#x3D; true) {<br>        value &#x3D; db.get(key);<br>        memcache.set(key, value);<br>        memcache.delete(key_mutex);<br>    } else {<br>        sleep(50);<br>        retry();<br>    }<br>}</p>
-<p>除了使用Redis加锁，zk也是常见的分布式锁实现方案：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">try &#123;</span><br><span class="line">    value = redis.get(key);</span><br><span class="line">    if (Objects.isNull(value)) &#123;</span><br><span class="line">        long start = System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">        InterProcessLock lock = ZKSpringFactory.get().opsForLock(key.toString());</span><br><span class="line">        try &#123;</span><br><span class="line">            // 获取zk分布式锁</span><br><span class="line">            acquire(lock, key);</span><br><span class="line">            if (Objects.isNull(value = redis.get(key))) &#123;</span><br><span class="line">                // 利用客户端传入的callback回源，一般是查数据库</span><br><span class="line">                value = callback.call();</span><br><span class="line">                redis.setnx(key,value.toString(),expireTime,timeUnit);</span><br><span class="line">                return value;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (Throwable throwable) &#123;</span><br><span class="line">            logger.error(&quot;加载redisson key异常,key=&#123;&#125;&quot;, key, throwable);</span><br><span class="line">            // TODO 报警</span><br><span class="line">            throw UnsafeUtil.throwException(throwable);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                lock.release();</span><br><span class="line">                M.zk_lock_time.timer().get().update(System.currentTimeMillis() - start, TimeUnit.MILLISECONDS);</span><br><span class="line">            &#125; catch (Throwable throwable) &#123;</span><br><span class="line">                logger.error(&quot;释放lock异常&quot;, throwable);</span><br><span class="line">                // TODO 报警</span><br><span class="line">                try &#123;</span><br><span class="line">                    lock.release();</span><br><span class="line">                &#125; catch (Exception e) &#123;</span><br><span class="line">                    logger.error(&quot;释放lock异常&quot;, throwable);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; catch (Exception ex) &#123;</span><br><span class="line">    logger.error(&quot;redisson 获取值异常,key:&quot;+key,ex);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private static void acquire(InterProcessLock lock, String key) throws Exception &#123;</span><br><span class="line">    if (!lock.acquire(LOCK_EXPIRE_SECOND, TimeUnit.SECONDS)) &#123;</span><br><span class="line">        logger.error(&quot;获取lock超时,key=&#123;&#125;&quot;, key);</span><br><span class="line">        // 报警</span><br><span class="line">        throw new BizException(&quot;网络繁忙,请您稍后再试&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>2.”提前”使用互斥锁(mutex key)：<br>在 value 内部设置 1 个超时值(timeout1), timeout1 比实际的 memcache timeout(timeout2)小。当从 cache 读取到 timeout1 发现它已经过期时候，马上延长 timeout1 并重新设置到 cache。然后再从数据库加载数据并设置到 cache 中。伪代码如下：<br>v &#x3D; memcache.get(key);<br>if (v &#x3D;&#x3D; null) {<br>    if (memcache.add(key_mutex, 3 * 60 * 1000) &#x3D;&#x3D; true) {<br>        value &#x3D; db.get(key);<br>        memcache.set(key, value);<br>        memcache.delete(key_mutex);<br>    } else {<br>        sleep(50);<br>        retry();<br>    }<br>} else {<br>    if (v.timeout &lt;&#x3D; now()) {<br>        if (memcache.add(key_mutex, 3 * 60 * 1000) &#x3D;&#x3D; true) {<br>            &#x2F;&#x2F; extend the timeout for other threads<br>            v.timeout +&#x3D; 3 * 60 * 1000;<br>            memcache.set(key, v, KEY_TIMEOUT * 2);    </p>
-<pre><code>        // load the latest value from dbplainplainplainplainplainplainplainplainplainplainplainplainplainplainplainplainplain
-        v = db.get(key);    
-        v.timeout = KEY_TIMEOUT;    
-        memcache.set(key, value, KEY_TIMEOUT * 2);    
-        memcache.delete(key_mutex);    
-    &#125; else &#123;    
-        sleep(50);    
-        retry();    
-    &#125;    
-&#125;    
-</code></pre>
-<p>}</p>
-<p>3.”永远不过期”：<br>这里的“永远不过期”包含两层意思：<br>(1) 从 redis 上看，确实没有设置过期时间，这就保证了，不会出现热点 key 过期问题，也就是“物理”不过期。<br>(2) 从功能上看，如果不过期，那不就成静态的了吗？所以我们把过期时间存在 key 对应的 value 里，如果发现要过期了，通过一个后台的异步线程进行缓存的构建，也就是“逻辑”过期<br>        从实战看，这种方法对于性能非常友好，唯一不足的就是构建缓存时候，其余线程(非构建缓存的线程)可能访问的是老数据，但是对于一般的互联网功能来说这个还是可以忍受。<br>String get(final String key) {<br>        V v &#x3D; redis.get(key);<br>        String value &#x3D; v.getValue();<br>        long timeout &#x3D; v.getTimeout();<br>        if (v.timeout &lt;&#x3D; System.currentTimeMillis()) {<br>            &#x2F;&#x2F; 异步更新后台异常执行<br>            threadPool.execute(new Runnable() {<br>                public void run() {<br>                    String keyMutex &#x3D; “mutex:” + key;<br>                    if (redis.setnx(keyMutex, “1”)) {<br>                        &#x2F;&#x2F; 3 min timeout to avoid mutex holder crash<br>                        redis.expire(keyMutex, 3 * 60);<br>                        String dbValue &#x3D; db.get(key);<br>                        redis.set(key, dbValue);<br>                        redis.delete(keyMutex);<br>                    }<br>                }<br>            });<br>        }<br>        return value;<br>}</p>
-<ol start="4">
-<li>资源保护：<br>采用 netflix 的 hystrix，可以做资源的隔离保护主线程池，如果把这个应用到缓存的构建也未尝不可。</li>
-</ol>
-<table>
-<thead>
-<tr>
-<th>解决方案</th>
-<th>优点</th>
-<th>缺点</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>简单分布式互斥锁（mutex key）</td>
-<td>1. 思路简单；2. 保证一致性</td>
-<td>1. 代码复杂度增大；2. 存在死锁的风险；3. 存在线程池阻塞的风险</td>
-</tr>
-<tr>
-<td>“提前”使用互斥锁</td>
-<td>1. 保证一致性</td>
-<td>同上</td>
-</tr>
-<tr>
-<td>不过期(本文)</td>
-<td>1. 异步构建缓存，不会阻塞线程池</td>
-<td>1. 不保证一致性；2. 代码复杂度增大(每个 value 都要维护一个 timekey)；3. 占用一定的内存空间(每个 value 都要维护一个 timekey)。</td>
-</tr>
-<tr>
-<td>资源隔离组件 hystrix(本文)</td>
-<td>1. hystrix 技术成熟，有效保证后端；2. hystrix 监控强大。</td>
-<td>1. 部分访问存在降级策略。</td>
-</tr>
-</tbody></table>
-<h3 id="设计总结"><a href="#设计总结" class="headerlink" title="设计总结"></a>设计总结</h3><p>针对业务系统，永远都是具体情况具体分析，没有最好，只有最合适。<br>最后，对于缓存系统常见的缓存满了和数据丢失问题，需要根据具体业务分析，通常我们采用 LRU 策略处理溢出，Redis 的 RDB 和 AOF 持久化策略来保证一定情况下的数据安全。</p>
-<ol>
-<li>缓存失效策略<br>添加 key 的时候要设置一个过期时间,采用惰性删除和定时删除相结合的策略删除过期键</li>
-<li>多级缓存<br>线程级-&gt;内存级-&gt;进程级-&gt;文件(静态资源)-&gt;分布式(redis)-&gt;Db 结果.</li>
-<li>二级缓存<br>二级缓存更多的解决是,缓存穿透与程序的健壮性,当集中式缓存出现问题的时候,我们的应用能够继续运行;一些热点数据做成内存缓存,这些数据是在上线之前是已知的(比如说秒杀,大促商品),通过配置定时任务定时刷新内存缓存,完成和分布式缓存的数据置换;更加自动化的方案,可以根据上游自动发现热点数据,广播消息替换现在集群中内存缓存的数据(但在整个集群中广播,成本比较高,并且二级缓存的管理的成本也很大);</li>
-</ol>
-<h2 id="实现一个简单的多级缓存"><a href="#实现一个简单的多级缓存" class="headerlink" title="实现一个简单的多级缓存"></a>实现一个简单的多级缓存</h2><p><img src="/imgs/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/%E5%A4%9A%E7%BA%A7%E6%95%B0%E6%8D%AE%E6%9D%A5%E6%BA%90.png" alt="多级数据来源" title="多级数据来源示意图"></p>
-<ul>
-<li>本地缓存<br>在并发量不大的系统内，本地缓存的意义不大，反而增加维护的困难。但在高并发系统中，本地缓存可以大大节约带宽。但是要注意本地缓存不是银弹，它会引起多个副本间数据的不一致，还会占据大量的内存，所以不适合保存特别大的数据，而且需要严格考虑刷新机制。</li>
-<li>缓存 &#x2F; 搜索服务器<br>TODO: </li>
-<li>数据库服务器<br>TODO：</li>
-<li>同机房的其他业务服务器<br>TODO：</li>
-<li>不同机房的其他业务服务器<br>TODO：</li>
-</ul>
-<p><img src="/imgs/%E5%A4%9A%E7%BA%A7%E7%BC%93%E5%AD%98/cache-drawer-core.png" alt="多级缓存组件的主要执行流程" title="cache-drawer-core 的主要执行流程"><br>详细描述 TODO：</p>
-<h3 id="缓存时机"><a href="#缓存时机" class="headerlink" title="缓存时机"></a>缓存时机</h3><ul>
-<li>5 分钟法则<br>5 分钟法则即：如果一个数据的访问周期在 5 分钟以内则存放在内存中，否则应该存放在硬盘中。<br>引申到缓存中，可以表述为：如果一个数据访问吞吐率大于 1 次 &#x2F; 5 分钟，就可以考虑放到缓存中。</li>
-<li>局部性原理<br>局部性原理原指 CPU 访问存储器时，无论是存取指令还是存取数据，所访问的存储单元都趋于聚集在一个较小的连续区域中。<br>反过来说，如果访问存在热点，就完全可以把这些热点数据放到缓存里。</li>
-</ul>
-<h3 id="算法-FIFO"><a href="#算法-FIFO" class="headerlink" title="算法 - FIFO"></a>算法 - FIFO</h3><h3 id="算法-LRU"><a href="#算法-LRU" class="headerlink" title="算法 - LRU"></a>算法 - LRU</h3><h3 id="算法-LFU"><a href="#算法-LFU" class="headerlink" title="算法 - LFU"></a>算法 - LFU</h3><h3 id="回收策略"><a href="#回收策略" class="headerlink" title="回收策略"></a>回收策略</h3><ul>
-<li>空间</li>
-<li>容量<br>条⽬数</li>
-<li>时间<br>存活期活太久淘汰<br>空闲期太久没访问淘汰</li>
-</ul>
-<h3 id="缓存监控"><a href="#缓存监控" class="headerlink" title="缓存监控"></a>缓存监控</h3><p>命中率 &#x3D; 缓存读取次数 &#x2F; (缓存读取次数 + 慢速设备读取次数)</p>
-<h3 id="过期时间"><a href="#过期时间" class="headerlink" title="过期时间"></a>过期时间</h3><p>本地缓存过期时间比分布式缓存小至少一半，以防止本地缓存太久造成多实例数据不一致。</p>
-<ul>
-<li>不过期缓存<br>场景：长尾访问的数据、访问频率⾼、缓存空间⾜够<br>使⽤Cache-Aside 模式<br>不要放事务⾥，因为⽹络抖动可能导致写缓存响应时间慢，阻塞数据库事务。但是同样存在事务成功但缓存失败⽆法回滚的情况。解决办法是使用 canal 实现缓存同步。<br>若对⼀致性要求不高且数据量不⼤可改成定期全量同步</li>
-<li>过期缓存<br>场景：热点数据、来⾃自其他系统的数据、空间有限、访问频率低</li>
-</ul>
-<h3 id="SoR（Source-of-Resource）"><a href="#SoR（Source-of-Resource）" class="headerlink" title="SoR（Source-of-Resource）"></a>SoR（Source-of-Resource）</h3><p>数据的来源，一般称为记录系统或<strong>数据源</strong>。<br><strong>回源</strong>即回到源头获取数据，Cache 没有命中时，需要从 SoR 获取数据，即回源。</p>
-<h3 id="大-Value"><a href="#大-Value" class="headerlink" title="大 Value"></a>大 Value</h3><p>如果有⼤Value 最好切换到多线程实现的缓存如 MC，或者拆成多个小 Value 由客户端聚合。</p>
-<h3 id="热点缓存"><a href="#热点缓存" class="headerlink" title="热点缓存"></a>热点缓存</h3><p>频繁访问的热点数据，如果每次都要从缓存服务器获取，可能导致缓存服务器负载过高、或者带宽过⾼。<br>解决办法是加缓存服务器，或者加本地缓存。</p>
-<h3 id="缓存更新"><a href="#缓存更新" class="headerlink" title="缓存更新"></a>缓存更新</h3><p>原⼦更新：</p>
-<ul>
-<li>版本号</li>
-<li>如果是 redis，因为单线程机制本身就是⽀持原⼦更新的</li>
-<li>使用 canal 订阅数据库 binlog 将更新请求按规则路由到多个队列，每个队列进⾏单线程的更新</li>
-<li>加分布式锁</li>
-</ul>
-<h3 id="异步写"><a href="#异步写" class="headerlink" title="异步写"></a>异步写</h3><p>写本地缓存后异步更新分布式缓存，尽快返回用户请求，最好不要同步写分布式缓存。</p>
-<h3 id="维度化与增量缓存"><a href="#维度化与增量缓存" class="headerlink" title="维度化与增量缓存"></a>维度化与增量缓存</h3><p>场景：一个商品包含多个属性，其中部分属性如上下架这种可能频繁更新的，最好做维度化并增量更新。</p>
-<h3 id="缓存策略-分区读"><a href="#缓存策略-分区读" class="headerlink" title="缓存策略 - 分区读"></a>缓存策略 - 分区读</h3><p>读缓存时划分分区异步批量读：</p>
-<ul>
-<li>分区可以防⽌出现慢查询；</li>
-<li>异步可以把各批 key 并⾏化。</li>
-</ul>
-<h3 id="缓存策略-nullobj-防缓存击穿"><a href="#缓存策略-nullobj-防缓存击穿" class="headerlink" title="缓存策略 - nullobj 防缓存击穿"></a>缓存策略 - nullobj 防缓存击穿</h3><p>当 db 中本身就没有该数据时，会产生每次请求都击穿的现象，解决办法是引入一个 <strong>nullobj</strong>。<br>db 不不存在时写一个 <strong>nullobj</strong> 到缓存，下次读到 null 对象 就不去 db 读了。</p>
-<h3 id="缓存策略-Cache-aside-模式"><a href="#缓存策略-Cache-aside-模式" class="headerlink" title="缓存策略 - Cache-aside 模式"></a>缓存策略 - Cache-aside 模式</h3><p>Cache-Aside 即业务代码围绕着 Cache 写，是由业务代码直接维护缓存。</p>
-<h4 id="什么时候使用"><a href="#什么时候使用" class="headerlink" title="什么时候使用"></a>什么时候使用</h4><ul>
-<li>当 Cache不提供原⽣的 Read-Through 和 Write-Through 操作的时候</li>
-<li>资源的需求是不可预测的时候。Cache-Aside 模式令应用可以根据需求来加载数据，对于应⽤需求什么数据，不需要提前做出假设。</li>
-</ul>
-<h3 id="Read-模式"><a href="#Read-模式" class="headerlink" title="Read 模式"></a>Read 模式</h3><p>先从缓存获取数据，如果没有命中，则回源到 SoR 并将源数据放入缓存供下次读取使用。</p>
-<h3 id="Write-模式"><a href="#Write-模式" class="headerlink" title="Write 模式"></a>Write 模式</h3><p>类似 Write-Through 策略。</p>
-<ol>
-<li>先将数据写入 SoR，写入成功后立即将数据同步写入缓存；</li>
-<li>或先将数据写入 SoR，写入成功后将缓存数据过期，下次读取时再加载缓存。</li>
-</ol>
-<h4 id="读优化-一致性哈希"><a href="#读优化-一致性哈希" class="headerlink" title="读优化 - 一致性哈希"></a>读优化 - 一致性哈希</h4><p>读可以⽤⼀致性哈希减少并发。</p>
-<h4 id="写优化-使用-Canal-订阅更新"><a href="#写优化-使用-Canal-订阅更新" class="headerlink" title="写优化 - 使用 Canal 订阅更新"></a>写优化 - 使用 Canal 订阅更新</h4><p>更新可以⽤Canal 订阅 binlog。</p>
-<h4 id="缓存数据的⽣存时间"><a href="#缓存数据的⽣存时间" class="headerlink" title="缓存数据的⽣存时间"></a>缓存数据的⽣存时间</h4><p>很多 Cache 实现了过期的策略的，这些过期的策略可以实现数据的更新，将旧数据失效化，同时也令⼀定时间没有访问的数据失效。<br>为了让 Cache-Aside 模式能够⽣效，开发者必须确保过期策略能够正确匹配应用所访问的数据。同时，注意不能让过期时间太短，因为太短的过期时间会令应⽤频繁地从数据仓库中获取数据来添加到 Cache 之中。当然，也不要配置超时的时间太⻓，过⻓的超时时间会让缓存的数据冗余。Cache 的性能是跟其相关的数据的读取周期等信息⾼度相关的。</p>
-<h4 id="去除数据"><a href="#去除数据" class="headerlink" title="去除数据"></a>去除数据</h4><p>绝⼤多数的缓存跟数据仓库⽐起来，容量是很有限的，所以，如果可以的话，Cache 会移除数据。<br>多数的 Cache 会采用 LRU 的策略来移除缓存中的数据，当然，移除的策略也是可以⾃定义的。配置全局的过期属性和缓存的其他属性，可以确保 Cache 消耗的内存资源是高效的。当然，通常不会只配置⼀个全局的过期策略。比如，某些特别昂贵、访问特别频繁而又不常更新的数据，完全可以延长其过期时间。</p>
-<h4 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h4><p>实现 Cache-Aside 模式并不能保证 Cache 和数据仓库之间的数据⼀致性。因为数据仓库中的数据可能在任何时候被其他程序所修改，⽽这个修改不会及时的反映到 Cache 上，直到下一次 Cache 被刷新为止。如果数据仓库中数据频繁由⾮Cahce 程序更新的话，这种一致性问题会变得更加明显。</p>
-<h4 id="本地（内存）缓存"><a href="#本地（内存）缓存" class="headerlink" title="本地（内存）缓存"></a>本地（内存）缓存</h4><p>Cache 也是可以做到应⽤本身里⾯的。Cache-Aside 模式在⼀些应⽤频繁访问相同的数据的时候尤其有效。然⽽，本地 Cache 都是应⽤私有 的，是属于每个应用中独有的额外的拷⻉。所以这个数据可能很快在不同的应⽤中就不一致了，所以刷新的频率最好更快些以保证⼀致性。在 有些情况下可以使⽤共享的缓存，有的时候也可以使⽤本地 Cache，具体使⽤哪⼀种就需要根据实际的场景来判断了。</p>
-<h3 id="缓存策略-Cache-as-SoR-模式"><a href="#缓存策略-Cache-as-SoR-模式" class="headerlink" title="缓存策略 - Cache-as-SoR 模式"></a>缓存策略 - Cache-as-SoR 模式</h3><p>由 Cache 委托给 SoR 进⾏真实的读写</p>
-<h3 id="缓存策略-Read-Through"><a href="#缓存策略-Read-Through" class="headerlink" title="缓存策略 - Read-Through"></a>缓存策略 - Read-Through</h3><p>读 miss 则由 cache 回源到 SoR(需要防⽌dog-pile effect 即 miss 时只允许⼀个请求回源而不是所有请求都回源)。</p>
-<h3 id="缓存策略-Write-Through"><a href="#缓存策略-Write-Through" class="headerlink" title="缓存策略 - Write-Through"></a>缓存策略 - Write-Through</h3><p>由 cache 组件负责写缓存和 SoR(一般是先 SoR 再缓存)</p>
-<h3 id="缓存策略-Write-Behind"><a href="#缓存策略-Write-Behind" class="headerlink" title="缓存策略 - Write-Behind"></a>缓存策略 - Write-Behind</h3><p>异步(队列+线程池)写 SoR</p>
-<h3 id="缓存策略-Copy-Pattern"><a href="#缓存策略-Copy-Pattern" class="headerlink" title="缓存策略 - Copy-Pattern"></a>缓存策略 - Copy-Pattern</h3><p>Copy-On-Read<br>Copy-On-Write<br>本地缓存的是引⽤，被擅⾃修改可能引起不可预测的问题</p>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>所有参考文献的归档，集中管理，方便随时查阅。</p>
-<h3 id="多级缓存架构"><a href="#多级缓存架构" class="headerlink" title="多级缓存架构"></a>多级缓存架构</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://juejin.im/post/5d86cf7f6fb9a06b211724e7">一篇文章让你明白你多级缓存的分层架构</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/zlc3323/article/details/89984961">一个牛逼的多级缓存实现方案</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.sohu.com/a/250055167_673711">日访问量百亿级的微博如何做缓存架构设计</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/eeaa62dfaf72">分布式内存缓存系统设计</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/mushroom/p/4199701.html#wechat_redirect">那些年我们一起追过的缓存写法(一)</a></li>
-</ol>
-<h3 id="内存池"><a href="#内存池" class="headerlink" title="内存池"></a>内存池</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45583158/article/details/102618077">设计模式之争：新分配内存还是内存池？（含评测）</a></li>
-</ol>
-<h3 id="本地缓存-1"><a href="#本地缓存-1" class="headerlink" title="本地缓存"></a>本地缓存</h3><p>不得不承认本地缓存不比分布式缓存更简单，当我们讨论分布式缓存时，更多的是在讨论如何节省带宽、如何平滑扩容，但在本地缓存的范畴内，我们更多的需要关注所使用语言的内存管理机制、甚至需要向下探索到硬件层面（其实分布式缓存的基础一般也是本地缓存）。</p>
-<ol>
-<li><a target="_blank" rel="noopener" href="https://leetcode.com/problems/lru-cache/">146. LRU Cache</a><br><a target="_blank" rel="noopener" href="https://leetcode.com/problems/lfu-cache/">460. LFU Cache</a><br>LeetCode 上有几道缓存相关的问题，可以拿来作热身。</li>
-<li>Java 内存模型<br>Java 中的垃圾回收技术已经比较完善了，开发人员能做的除了给出合理的配置外，就是要做到对自己使用的垃圾回收技术知根知底、能写出 GC 友好的代码。<br><a target="_blank" rel="noopener" href="http://www.cs.umd.edu/~pugh/java/memoryModel/">The Java Memory Model - William Pugh</a><br><a target="_blank" rel="noopener" href="http://www.cs.umd.edu/~pugh/java/memoryModel/jsr-133-faq.html">JSR 133 (Java Memory Model) FAQ</a><br><a target="_blank" rel="noopener" href="http://ifeve.com/jmm-faq/">Java 内存模型 FAQ</a><br>上面这篇的中文翻译，适合我这种英语渣对照阅读。<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/youyou1543724847/article/details/52728301">GC(GC 友好编程)</a><br><a target="_blank" rel="noopener" href="http://gee.cs.oswego.edu/">Doug Lea’s Home Page</a><br><a target="_blank" rel="noopener" href="http://ifeve.com/doug-lea/">Doug Lea 并发编程文章全部译文</a></li>
-<li>NonBlocking HashTable<br>HashTable 是实现缓存的常用数据结构，而在操作时进行普通的加锁又非常影响性能，所以一般会做一些 NonBlocking 的优化。除了 JUC 的 ConcurrentHashMap，还有其他的一些相似实现。<br><a target="_blank" rel="noopener" href="https://github.com/stephenc/high-scale-lib">stephenc&#x2F;high-scale-lib</a><br><a target="_blank" rel="noopener" href="https://github.com/JCTools/JCTools">JCTools&#x2F;JCTools</a></li>
-<li>guava - cache<br><a target="_blank" rel="noopener" href="https://github.com/google/guava/wiki/CachesExplained">github - google&#x2F;guava - Caches</a></li>
-<li>ehcache<br><a target="_blank" rel="noopener" href="https://github.com/ehcache">github - ehcache3</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/5a0669d6305e">玩转 EhCache 之最简单的缓存框架</a></li>
-<li>J2Cache<br>J2Cache 是一个国产的本地缓存框架，同时也提供了二级缓存、多机同步等特性。<br><a target="_blank" rel="noopener" href="https://gitee.com/ld/J2Cache">红薯 &#x2F; J2Cache</a></li>
-<li>Netty 中的对象池<br><a target="_blank" rel="noopener" href="https://github.com/netty/netty/wiki/Reference-counted-objects">netty&#x2F;netty - Reference counted objects</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/levena/article/details/78144924">Netty 源码 Recycler 对象池全面解析</a><br><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/854b855bd198">netty 源码分析 4 - Recycler 对象池的设计</a><br>Netty 为了提高性能，IO 时直接使用非堆内存来缓存收发的内容（Buf 对象），在非堆内存中 GC 效率会比 JVM 的堆内存效率低（只能通过 FullGC 回收或 CMS GC），所以 Netty 内部维护了一个对象池（Recycler），使用引用计数法来回收不用的对象到对象池中，而不是直接回收，减少了 GC 的频率。</li>
-<li>C &#x2F; C++ 内存模型<br>C &#x2F; C++ 只保证最基本的内存管理（malloc &#x2F; free），因为其贴近操作系统的特性，很多框架都会封装一套自己的内存管理库（包括 memcached、MySQL、Cocos2d-x 等），甚至是 GC。<br>《C 语言接口与实现》 - 第 2、4、5、6 章<br><a href="ftp://g.oswego.edu/pub/misc/malloc.c">dlmalloc - Doug Lea</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/xushiweizh/article/category/265099">内存管理（Memory） - 许式伟</a><br><a target="_blank" rel="noopener" href="http://xushiwei.com/gc-allocator">C++ Memory Management Innovation: GC Allocator</a><br>《STL 源码剖析》 - 第 2 章<br>《深入探索 C++对象模型》</li>
-<li><a target="_blank" rel="noopener" href="https://github.com/bangerlee/mempool">bangerlee&#x2F;mempool</a></li>
-<li>应用层内存管理<br><a target="_blank" rel="noopener" href="https://www.memorymanagement.org/index.html">Memory Management Reference</a><br>一个神奇的网站，内存管理相关的概念、综述、深入参考文献基本都能在这里找到，而且偏应用层，讲解方式友好、适合扫盲。</li>
-<li>操作系统层内存管理<br><a target="_blank" rel="noopener" href="http://en.tldp.org/HOWTO/Unix-and-Internet-Fundamentals-HOWTO/">The Unix and Internet Fundamentals HOWTO</a><br>非常精炼地解释了 Unix 系统和网络的基本原理。</li>
-<li>硬件层内存管理</li>
-</ol>
-<h3 id="分布式缓存-1"><a href="#分布式缓存-1" class="headerlink" title="分布式缓存"></a>分布式缓存</h3><ol>
-<li>分布式缓存设计及解决方案（后端）<br><a target="_blank" rel="noopener" href="http://www.cnblogs.com/itfly8/category/756114.html">大型分布式网站架构</a><br><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000006007338">浅谈缓存(一)</a><br><a target="_blank" rel="noopener" href="http://www.cnblogs.com/mushroom/p/4199701.html">那些年我们一起追过的缓存写法(一)</a><br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzIwMzg1ODcwMw==&mid=2247486493&amp;idx=1&amp;sn=2d159e329b3e579d6b844754df0dd265&source=41#wechat_redirect">缓存穿透、并发和失效，来自一线架构师的解决方案</a></li>
-<li>《分布式缓存——原理、架构及 Go 语言实现》</li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/F8qG7f9YD02Pe/article/details/78937081">荐书：《深入分布式缓存》</a></li>
-<li>Redis 教程及手册<br>《Redis 设计与实现》<br>《Redis 深度历险：核心原理与应用实践》<br><a target="_blank" rel="noopener" href="http://redisdoc.com/index.html">Redis 命令参考</a><br><a target="_blank" rel="noopener" href="https://redis.io/commands">Redis Command Reference</a><br><a target="_blank" rel="noopener" href="https://redis.io/documentation">Redis Documentation</a></li>
-<li>Redis 及客户端源码<br><a target="_blank" rel="noopener" href="https://github.com/antirez/redis">github - antirez&#x2F;redis</a><br><a target="_blank" rel="noopener" href="https://github.com/redisson/redisson/wiki/Redisson%E9%A1%B9%E7%9B%AE%E4%BB%8B%E7%BB%8D">github - redisson&#x2F;redisson</a><br><a target="_blank" rel="noopener" href="https://github.com/xetorthio/jedis/wiki">github - xetorthio&#x2F;jedis</a><br><a target="_blank" rel="noopener" href="https://github.com/lettuce-io/lettuce-core/wiki/Redis-Command-Interfaces">github - lettuce-io&#x2F;lettuce-core</a></li>
-<li>Redis - 数据结构<br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI0MDQ4MTM5NQ==&mid=2247488450&idx=1&sn=88239e7fa2b80a9922db5fbc9629c770&chksm=e91b76dede6cffc8b8820e7730349fe83cef1cdf0ac73b7a5e13569e596c77264b92edacf4f2&token=649184257&lang=zh_CN#rd">Redis 为何这么快</a><br><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/16375188/redis-strings-vs-redis-hashes-to-represent-json-efficiency">Redis strings vs Redis hashes to represent JSON: efficiency?</a><br>如果业务里需要使用到对象的单个域则使用 hash 类型保存 JSON，否则使用 string。</li>
-<li>Redis - Sentinel<br>Sentinel 是 Redis 提供的一种高可用集群方案，它能实现自动的故障转移。<br><a target="_blank" rel="noopener" href="https://redis.io/topics/sentinel">Redis Sentinel Documentation</a><br><a target="_blank" rel="noopener" href="https://redis.io/topics/sentinel-clients">Sentinel Clients</a><br><a target="_blank" rel="noopener" href="https://aphyr.com/posts/283-call-me-maybe-redis">Jepsen: Redis</a><br><a target="_blank" rel="noopener" href="http://antirez.com/news/55"><antirez> Reply to Aphyr attack to Sentinel</a><br><a target="_blank" rel="noopener" href="https://aphyr.com/posts/287-asynchronous-replication-with-failover">Asynchronous replication with failover</a></li>
-<li>Redis - Cluster<br>Redis Cluster 不是使用<strong>一致性 hash</strong>、而是利用<strong>哈希槽</strong>的模式来分配数据，相对来说更简单，但是数据迁移的时候成本也会更大。<br><a target="_blank" rel="noopener" href="https://redis.io/topics/cluster-tutorial">Redis cluster tutorial</a><br><a target="_blank" rel="noopener" href="https://redis.io/topics/cluster-spec">Redis Cluster Specification</a></li>
-<li>在 Spring 架构后台中使用 Redis<br><a target="_blank" rel="noopener" href="https://docs.spring.io/spring/docs/5.0.3.RELEASE/spring-framework-reference/integration.html#cache">spring-framework-reference - 8. Cache Abstraction</a><br><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-data/redis/docs/2.0.3.RELEASE/reference/html/">Spring Data Redis</a><br><a target="_blank" rel="noopener" href="https://docs.spring.io/spring-boot/docs/2.1.3.RELEASE/reference/htmlsingle/">Spring Boot Reference Guide</a></li>
-<li>Redis 最佳实践<br><a target="_blank" rel="noopener" href="https://yq.aliyun.com/articles/531067">阿里云 Redis 开发规范</a><br><a target="_blank" rel="noopener" href="https://juejin.im/post/5cee39a26fb9a07ed36e8c4c">你所不知道的 Redis 热点问题以及如何发现热点</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/javaMerea/article/details/89317071">史上最全 50 道 Redis 面试题（含答案），以后面试再也不怕问 Redis 了</a></li>
-<li>Redis 应用<br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/y2HPj2ji2KLS_eTR5nBnDA">一文看透 Redis 分布式锁进化史（解读 + 缺陷分析）</a><br><a target="_blank" rel="noopener" href="http://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html">How to do distributed locking</a><br>刷新 Redis 缓存时需要加分布式锁，保证只有一个线程能够写入缓存。<br><a target="_blank" rel="noopener" href="https://redis.io/commands/incr#pattern-rate-limiter">INCR key (分布式限流器的例子)</a><br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/q-y10hMPjApWgnQacu-nsA">布隆过滤器实战【防止缓存击穿】</a><br><a target="_blank" rel="noopener" href="https://coolshell.cn/articles/7270.html">NOSQL 数据建模技术</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/memcached/memcached">github - memcached</a><br>memcached 是经常和 Redis 一并提起的一个分布式缓存中间件，了解其原理能对分布式缓存的实现模式有更好的认识。</li>
-</ol>
-<h3 id="Web-缓存"><a href="#Web-缓存" class="headerlink" title="Web 缓存"></a>Web 缓存</h3><p>Web 缓存指的是在服务器和客户端之间的缓存，不同于我们上边提到的都是服务器（本地缓存）及服务器之后的缓存（分布式缓存）。<br>Web 缓存其实不仅仅指浏览器内的缓存，在剖析从客户端发送请求到服务器接收为止的一系列链路之后，可以发现 Web 缓存主要包括浏览器缓存、代理服务器缓存、网关缓存。</p>
-<ol>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/rubylouvre/p/3139620.html">Web 开发人员需知的 Web 缓存知识</a></li>
-</ol>
-<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>测试是发现问题的手段，最好的解决问题方式是避免问题。</p>
-<ol>
-<li>《Java 并发编程实战》 - 第三部分（并发安全及性能）</li>
-<li><a target="_blank" rel="noopener" href="http://www.redis.cn/topics/benchmarks.html">Redis 有多快?</a></li>
-<li>《构建高性能 Web 站点》 - 第 3 章</li>
-<li>《Java 程序性能优化》</li>
-<li>《Web 性能权威指南》</li>
-<li>《OptimizingLinux(R)PerformanceAHands-OnGuidetoLinux(R)PerformanceTools》</li>
-<li>《性能之巅》</li>
-</ol>
-<h3 id="运维"><a href="#运维" class="headerlink" title="运维"></a>运维</h3><ol>
-<li>《The Art of Capacity Planning》</li>
-<li><a target="_blank" rel="noopener" href="http://stor.51cto.com/art/201808/580165.htm">探寻 Redis 内存诡异增长的元凶</a></li>
-</ol>
-<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><ol>
-<li><a target="_blank" rel="noopener" href="http://www.catb.org/~esr/faqs/smart-questions.html">How To Ask Questions The Smart Way</a></li>
-<li><a target="_blank" rel="noopener" href="http://en.tldp.org/HOWTO/Software-Release-Practice-HOWTO/index.html">Software Release Practice HOWTO</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/hyperoslo/Cache">github - hyperoslo&#x2F;Cache</a><br>这个项目同样在缓存上做文章，不过是用 swift 写的。</li>
-<li><a target="_blank" rel="noopener" href="https://learnxinyminutes.com/docs/lua/">Learn X in Y minutes - Where X&#x3D;Lua</a></li>
-<li>《设计模式》 - Factory, Builder, Proxy, Chain of Responsibility, Command, Iterator, template method</li>
-<li>《Spring 源码深度解析》 - 第 5、6、7 章</li>
-<li><a target="_blank" rel="noopener" href="https://app.brandmark.io/v2/">使用 AI 生成图标</a></li>
-</ol>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/16/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/">18</a><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/18/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/16/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/16/">16</a><span class="page-number current">17</span><a class="page-number" href="/page/18/">18</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/18/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

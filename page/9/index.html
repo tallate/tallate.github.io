@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">189</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">191</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">189</span>
+          <span class="site-state-item-count">191</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -175,6 +175,218 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/6ce879b3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/6ce879b3.html" class="post-title-link" itemprop="url">规则引擎</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-11-20 18:53:22" itemprop="dateCreated datePublished" datetime="2019-11-20T18:53:22+08:00">2019-11-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="规则引擎介绍"><a href="#规则引擎介绍" class="headerlink" title="规则引擎介绍"></a>规则引擎介绍</h1><h2 id="什么是规则引擎"><a href="#什么是规则引擎" class="headerlink" title="什么是规则引擎"></a>什么是规则引擎</h2><p><strong>规则引擎</strong>是<strong>专家系统</strong>的变种，它通过一组规则的集合、通过作用于事实，从而推理得到结果。当一个事实满足某条规则的条件时，就可以认为这个事实与这条规则匹配。比如，如果我的成绩达到 90 分以上就出去旅游，其中的事实是<code>我</code>，规则是<code>if(x的成绩达到90分以上)&#123;x出去玩&#125;</code></p>
+<ul>
+<li>规则<br>可以理解为类似 if-else、switch 这样的代码；</li>
+<li>事实<br>在 Java 中可以认为就是类的实例；</li>
+</ul>
+<h2 id="为什么使用规则引擎"><a href="#为什么使用规则引擎" class="headerlink" title="为什么使用规则引擎"></a>为什么使用规则引擎</h2><ol>
+<li>规则引擎实现了数据同逻辑的完全解耦。</li>
+<li>有助于规则的集中管理，但是也要注意可能发生的冲突。</li>
+<li>每个开发的习惯、水平都不一样，有些人可能会生硬地套用一些设计模式，导致业务逻辑被强行设计得很复杂，而且随着版本、人员迭代越发严重；<br>而规则引擎相当于一套实现业务逻辑的规范，它会逼迫需求和研发人员梳理业务，并建立统一的 BOM（业务对象模型）。</li>
+<li>可以使用<strong>决策表</strong>等形式来展示规则，方便业务人员浏览，减少与技术人员沟通成本。</li>
+<li>方便业务人员修改业务逻辑，甚至可以做到动态修改、实时生效，减少规则变动带来的额外开发工作。</li>
+</ol>
+<blockquote>
+<p>在复杂的大型业务场景下，规则引擎常和<strong>流程引擎</strong>搭配使用来强化对业务逻辑的管理。</p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/6ce879b3.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/58b05574.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/58b05574.html" class="post-title-link" itemprop="url">Lettuce和Jedis</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-25 13:21:48" itemprop="dateCreated datePublished" datetime="2019-10-25T13:21:48+08:00">2019-10-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BC%93%E5%AD%98/" itemprop="url" rel="index"><span itemprop="name">缓存</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Lettuce"><a href="#Lettuce" class="headerlink" title="Lettuce"></a>Lettuce</h1><h2 id="Sentinel"><a href="#Sentinel" class="headerlink" title="Sentinel"></a>Sentinel</h2><p>com.lambdaworks.redis.RedisClient#connectSentinel(com.lambdaworks.redis.codec.RedisCodec&lt;K,V&gt;, com.lambdaworks.redis.RedisURI, com.lambdaworks.redis.RedisClient.Timeout)</p>
+<h1 id="Jedis"><a href="#Jedis" class="headerlink" title="Jedis"></a>Jedis</h1><h2 id="配置-Jedis"><a href="#配置-Jedis" class="headerlink" title="配置 Jedis"></a>配置 Jedis</h2><p>1.添加 Jedis 的 Maven 依赖<br>2.设置服务端<br>设置服务器防火墙关闭或放行 6379 端口（redis 占用）<br>然后关闭服务器的保护模式，因为保护模式下不能写入数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">CONFIG SET protected-mode no</span><br><span class="line">config rewrite</span><br></pre></td></tr></table></figure>
+<p>（或直接修改 redis.conf 中 protected-mode<br>或在运行服务器的配置中加上–protected-mode no<br>或 Setup a bind address or an authentication password）<br>然后注释掉 redis.conf 中的 bind 127.0.0.1，或者在后面添上本机的 ip</p>
+<ol>
+<li>普通单例连接<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Jedis jedis = new Jedis(host, 6379);</span><br><span class="line">jedis.set(&quot;name&quot;, &quot;bar&quot;);</span><br><span class="line">String name = jedis.get(&quot;name&quot;);</span><br><span class="line">System.out.println(name);</span><br><span class="line">jedis.close();</span><br></pre></td></tr></table></figure></li>
+<li>使用连接池连接<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// 配置连接池</span><br><span class="line">JedisPoolConfig config = new JedisPoolConfig();</span><br><span class="line">config.setMaxTotal(30); // 最大连接数</span><br><span class="line">config.setMaxIdle(2); // 最大连接空闲数</span><br><span class="line">JedisPool pool =</span><br><span class="line">        new JedisPool(config, host, 6379);</span><br><span class="line">// 从连接池中获取连接</span><br><span class="line">Jedis jedis = pool.getResource();</span><br><span class="line">jedis.set(&quot;name&quot;, &quot;李四&quot;);</span><br><span class="line">String name = jedis.get(&quot;name&quot;);</span><br><span class="line">System.out.println(name);</span><br><span class="line">// 关闭，返回到连接池</span><br><span class="line">jedis.close();</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="并发安全问题"><a href="#并发安全问题" class="headerlink" title="并发安全问题"></a>并发安全问题</h2><p>Jedis 不是并发安全的，如果有并发安全的需求，可以考虑采用 apache 的 commons-pool 对象池进行包装，或者，换用一个更先进的 Redis 客户端 Lettuce</p>
+<h1 id="spring-data-redis"><a href="#spring-data-redis" class="headerlink" title="spring-data-redis"></a>spring-data-redis</h1><p>1.引入依赖 spring-data-redis<br>2.创建 redis 缓冲配置类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">// 配置头部用于被Spring识别</span><br><span class="line">@Configuration</span><br><span class="line">@EnableCaching</span><br><span class="line">public class RedisCacheConfig &#123;</span><br><span class="line">    private volatile JedisConnectionFactory mJedisConnectionFactory;</span><br><span class="line">    private volatile RedisTemplate&lt;String, String&gt; mRedisTemplate;</span><br><span class="line">    private volatile RedisCacheManager mRedisCacheManager;</span><br><span class="line">    public RedisCacheConfig() &#123;</span><br><span class="line">        super();</span><br><span class="line">    &#125;</span><br><span class="line">    public RedisCacheConfig(JedisConnectionFactory mJedisConnectionFactory, RedisTemplate&lt;String,String&gt; mRedisTemplate,</span><br><span class="line">                            RedisCacheManager mRedisCacheManager) &#123;</span><br><span class="line">        super();</span><br><span class="line">        this.mJedisConnectionFactory = mJedisConnectionFactory;</span><br><span class="line">        this.mRedisTemplate = mRedisTemplate;</span><br><span class="line">        this.mRedisCacheManager = mRedisCacheManager;</span><br><span class="line">    &#125;</span><br><span class="line">    public JedisConnectionFactory redisConnectionFactory() &#123;</span><br><span class="line">        return mJedisConnectionFactory;</span><br><span class="line">    &#125;</span><br><span class="line">    public RedisTemplate&lt;String, String&gt; redisTemplate(RedisConnectionFactory cf) &#123;</span><br><span class="line">        return mRedisTemplate;</span><br><span class="line">    &#125;</span><br><span class="line">    public CacheManager cacheManager(RedisTemplate&lt;?, ?&gt; redisTemplate) &#123;</span><br><span class="line">        return mRedisCacheManager;</span><br><span class="line">    &#125;</span><br><span class="line">    // 用于生成主键</span><br><span class="line">    @Bean</span><br><span class="line">    public KeyGenerator customKeyGenerator() &#123;</span><br><span class="line">        return new KeyGenerator() &#123;</span><br><span class="line">            public Object generate(Object o, Method method, Object... objects) &#123;</span><br><span class="line">                StringBuilder sb = new StringBuilder();</span><br><span class="line">                sb.append(o.getClass().getName());</span><br><span class="line">                sb.append(method.getName());</span><br><span class="line">                for (Object obj : objects) &#123;</span><br><span class="line">                    sb.append(obj.toString());</span><br><span class="line">                &#125;</span><br><span class="line">                return sb.toString();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>3.创建 redis 属性文件 redis.properties</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">redis.host=192.168.157.128</span><br><span class="line">redis.port=6379</span><br><span class="line">redis.pass=1234</span><br><span class="line">redis.maxIdle=300</span><br><span class="line">redis.maxActive=600</span><br><span class="line">redis.maxWait=1000</span><br><span class="line">#借出连接时不要测试,否则很影响性能</span><br><span class="line">redis.testOnBorrow=true</span><br><span class="line">redis.dbIndex=0</span><br><span class="line">redis.expiration=30</span><br></pre></td></tr></table></figure>
+<p>当然必须在 Spring 配置文件中引入属性文件扫描标签<br>4.在 Spring 配置文件中引入 redis<br>问题<br>ERR Client sent AUTH, but no password is set<br>因为 redis 没有配置密码而建立连接时却发送了密码，所以出错，解决办法是在下面 jedisConnectionFactory 标签中去掉 password 属性</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 配置JedisPoolConfig实例 --&gt;</span><br><span class="line">&lt;bean id=&quot;poolConfig&quot; class=&quot;redis.clients.jedis.JedisPoolConfig&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;maxIdle&quot; value=&quot;$&#123;redis.maxIdle&#125;&quot; /&gt;</span><br><span class="line">    &lt;property name=&quot;maxTotal&quot; value=&quot;$&#123;redis.maxActive&#125;&quot; /&gt;</span><br><span class="line">    &lt;property name=&quot;maxWaitMillis&quot; value=&quot;$&#123;redis.maxWait&#125;&quot; /&gt;</span><br><span class="line">    &lt;property name=&quot;testOnBorrow&quot; value=&quot;$&#123;redis.testOnBorrow&#125;&quot; /&gt;</span><br><span class="line">&lt;/bean&gt;</span><br><span class="line">&lt;!-- 配置JedisConnectionFactory --&gt;</span><br><span class="line">&lt;bean id=&quot;jedisConnectionFactory&quot; class=&quot;org.springframework.data.redis.connection.jedis.JedisConnectionFactory&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;hostName&quot; value=&quot;$&#123;redis.host&#125;&quot;/&gt;</span><br><span class="line">    &lt;property name=&quot;port&quot; value=&quot;$&#123;redis.port&#125;&quot;/&gt;</span><br><span class="line">    &lt;property name=&quot;password&quot; value=&quot;$&#123;redis.pass&#125;&quot;/&gt;</span><br><span class="line">    &lt;property name=&quot;database&quot; value=&quot;$&#123;redis.dbIndex&#125;&quot;/&gt;</span><br><span class="line">    &lt;property name=&quot;poolConfig&quot; ref=&quot;poolConfig&quot;/&gt;</span><br><span class="line">&lt;/bean&gt;</span><br><span class="line">&lt;!-- 配置RedisTemplate --&gt;</span><br><span class="line">&lt;bean id=&quot;redisTemplate&quot; class=&quot;org.springframework.data.redis.core.RedisTemplate&quot;&gt;</span><br><span class="line">    &lt;property name=&quot;connectionFactory&quot; ref=&quot;jedisConnectionFactory&quot;/&gt;</span><br><span class="line">&lt;/bean&gt;</span><br><span class="line">&lt;!-- 配置RedisCacheManager --&gt;</span><br><span class="line">&lt;bean id=&quot;redisCacheManager&quot; class=&quot;org.springframework.data.redis.cache.RedisCacheManager&quot;&gt;</span><br><span class="line">    &lt;constructor-arg name=&quot;redisOperations&quot; ref=&quot;redisTemplate&quot; /&gt;</span><br><span class="line">    &lt;property name=&quot;defaultExpiration&quot; value=&quot;$&#123;redis.expiration&#125;&quot;/&gt;</span><br><span class="line">&lt;/bean&gt;</span><br><span class="line">&lt;!-- 配置RedisCacheConfig --&gt;</span><br><span class="line">&lt;bean id=&quot;redisCacheConfig&quot; class=&quot;com.ebuy.util.RedisCacheConfig&quot;&gt;</span><br><span class="line">    &lt;constructor-arg ref=&quot;jedisConnectionFactory&quot; /&gt;</span><br><span class="line">    &lt;constructor-arg ref=&quot;redisTemplate&quot; /&gt;</span><br><span class="line">    &lt;constructor-arg ref=&quot;redisCacheManager&quot; /&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<p>5.测试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">/* 缓存</span><br><span class="line"> @Cacheable 缓存返回值，下次调用时会优先使用缓存数据</span><br><span class="line">    value 缓存将被存到的地方</span><br><span class="line"> @CacgeEvict 清除缓存</span><br><span class="line"> */</span><br><span class="line">@CacheEvict(value = &#123;&quot;save&quot;&#125;, allEntries = true)</span><br><span class="line">public void save(TbContent content) &#123;</span><br><span class="line">    contentDao.insert(content);</span><br><span class="line">&#125;</span><br><span class="line">@Cacheable(&quot;findall&quot;)</span><br><span class="line">public TbContent findall() &#123;</span><br><span class="line">    TbContent content = new TbContent();</span><br><span class="line">    content.setCategoryId((long) 1);</span><br><span class="line">    return content;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>测试时可以在 findall 中设置打印语句，连续调用 findall 两次，若第二次没有输出东西则说明使用了缓存。<br>6.配置连接池</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- 连接池配置 --&gt;</span><br><span class="line">&lt;bean id=&quot;jedisPoolConfig&quot; class=&quot;redis.clients.jedis.JedisPoolConfig&quot;&gt;</span><br><span class="line">    &lt;!-- 最大连接数 --&gt;</span><br><span class="line">    &lt;property name=&quot;maxTotal&quot; value=&quot;30&quot; /&gt;</span><br><span class="line">    &lt;!-- 最大空闲连接数 --&gt;</span><br><span class="line">    &lt;property name=&quot;maxIdle&quot; value=&quot;10&quot; /&gt;</span><br><span class="line">    &lt;!-- 每次释放连接的最大数目 --&gt;</span><br><span class="line">    &lt;property name=&quot;numTestsPerEvictionRun&quot; value=&quot;1024&quot; /&gt;</span><br><span class="line">    &lt;!-- 释放连接的扫描间隔（毫秒） --&gt;</span><br><span class="line">    &lt;property name=&quot;timeBetweenEvictionRunsMillis&quot; value=&quot;30000&quot; /&gt;</span><br><span class="line">    &lt;!-- 连接最小空闲时间 --&gt;</span><br><span class="line">    &lt;property name=&quot;minEvictableIdleTimeMillis&quot; value=&quot;1800000&quot; /&gt;</span><br><span class="line">    &lt;!-- 连接空闲多久后释放, 当空闲时间&gt;该值 且 空闲连接&gt;最大空闲连接数 时直接释放 --&gt;</span><br><span class="line">    &lt;property name=&quot;softMinEvictableIdleTimeMillis&quot; value=&quot;10000&quot; /&gt;</span><br><span class="line">    &lt;!-- 获取连接时的最大等待毫秒数,小于零:阻塞不确定的时间,默认-1 --&gt;</span><br><span class="line">    &lt;property name=&quot;maxWaitMillis&quot; value=&quot;1500&quot; /&gt;</span><br><span class="line">    &lt;!-- 在获取连接的时候检查有效性, 默认false --&gt;</span><br><span class="line">    &lt;property name=&quot;testOnBorrow&quot; value=&quot;true&quot; /&gt;</span><br><span class="line">    &lt;!-- 在空闲时检查有效性, 默认false --&gt;</span><br><span class="line">    &lt;property name=&quot;testWhileIdle&quot; value=&quot;true&quot; /&gt;</span><br><span class="line">    &lt;!-- 连接耗尽时是否阻塞, false报异常,ture阻塞直到超时, 默认true --&gt;</span><br><span class="line">    &lt;property name=&quot;blockWhenExhausted&quot; value=&quot;false&quot; /&gt;</span><br><span class="line">&lt;/bean&gt;</span><br><span class="line">&lt;!-- redis单机 通过连接池 --&gt;</span><br><span class="line">&lt;bean id=&quot;jedisPool&quot; class=&quot;redis.clients.jedis.JedisPool&quot; destroy-method=&quot;close&quot;&gt;</span><br><span class="line">    &lt;constructor-arg name=&quot;poolConfig&quot; ref=&quot;jedisPoolConfig&quot;/&gt;</span><br><span class="line">    &lt;constructor-arg name=&quot;host&quot; value=&quot;172.16.205.141&quot;/&gt;</span><br><span class="line">    &lt;constructor-arg name=&quot;port&quot; value=&quot;6379&quot;/&gt;</span><br><span class="line">&lt;/bean&gt;</span><br></pre></td></tr></table></figure>
+<p>7.测试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">JedisPool pool =</span><br><span class="line">        (JedisPool) applicationContext.getBean(&quot;jedisPool&quot;);</span><br><span class="line">Jedis jedis = pool.getResource();</span><br><span class="line">jedis.set(&quot;name&quot;, &quot;李四&quot;);</span><br><span class="line">String name = jedis.get(&quot;name&quot;);</span><br><span class="line">System.out.println(name);</span><br><span class="line">jedis.close();</span><br></pre></td></tr></table></figure>
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1080,121 +1292,6 @@ application-peer2.properties： <figure class="highlight plaintext"><table><tr><
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/807599f6.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/807599f6.html" class="post-title-link" itemprop="url">JVM 与编译器</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-10-05 20:56:12" itemprop="dateCreated datePublished" datetime="2019-10-05T20:56:12+08:00">2019-10-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-
-<h2 id="Java-代码编译机制"><a href="#Java-代码编译机制" class="headerlink" title="Java 代码编译机制"></a>Java 代码编译机制</h2><p>JVM 规范中定义了 class 文件的格式，但并未定义 Java 源码如何被编译为 class 文件，各厂商在实现 JDK 时通常会将符合 Java 语言规范的源码编译为 class 文件的编译器，例如在 Sun JDK 中就是 javac，javac 将 Java 源码编译为 class 文件的步骤如下图所示：<br><img src="/imgs/JVM/Java%E4%BB%A3%E7%A0%81%E7%BC%96%E8%AF%91%E6%9C%BA%E5%88%B6.png" alt="Java代码编译机制" title="Java代码编译机制"></p>
-<h2 id="分析和输入到符号表（Parse-and-Enter）"><a href="#分析和输入到符号表（Parse-and-Enter）" class="headerlink" title="分析和输入到符号表（Parse and Enter）"></a>分析和输入到符号表（Parse and Enter）</h2><p>Parse 过程所做的为此法和语法分析。此法分析（com.sun.tools.javac.parser.Scanner）要完成的是将代码字符串转变为 token 序列（例如 Token.EQ(name:&#x3D;)）；语法分析（com.sun.tools.javac.parser.Parser）要完成的是根据语法由 token 序列生成抽象语法树。<br>Enter（com.sun.tools.javac.comp.Enter）过程为将符号输入到符号表，通常包括确定类的超类型和接口、根据需要添加默认构造器、将类中出现的符号输入类自身的符号表中等。</p>
-<h2 id="注解处理（Annotation-Processing）"><a href="#注解处理（Annotation-Processing）" class="headerlink" title="注解处理（Annotation Processing）"></a>注解处理（Annotation Processing）</h2><p>该步骤主要用于处理用户自定义的 annotation，可能带来的好处是基于 annotation 来生成附加的代码或进行一些特殊的检查，从而节省一些共用的代码的编写，例如当采用 Lombok 时，可编写如下代码：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public class User &#123;</span><br><span class="line">    private @Getter String username;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>编译时引入 Lombok 对 User.java 进行编译后，再通过 javap 查看 class 文件可看到自动生成了 public String getUsername()方法。<br>此功能基于 JSR 269，在 Sun JDK 6 中提供了支持，在 Annotation Processing 进行后，再次进入 Parse and Enter 步骤。</p>
-<h2 id="语义分析和生成-class-文件（Analyse-and-Generate）"><a href="#语义分析和生成-class-文件（Analyse-and-Generate）" class="headerlink" title="语义分析和生成 class 文件（Analyse and Generate）"></a>语义分析和生成 class 文件（Analyse and Generate）</h2><p>Analyse 步骤基于抽象语法树进行一系列的语义分析，包括：</p>
-<ul>
-<li>将语法树中的名字、表达式等元素与变量、方法、类型等联系到一起；</li>
-<li>检查变量使用前是否已声明；</li>
-<li>推导泛型方法的类型参数；</li>
-<li>检查类型匹配性；</li>
-<li>进行常量折叠；</li>
-<li>检查所有语句都可到达；</li>
-<li>检查所有 checked exception 都被捕获或抛出；</li>
-<li>检查变量的确定性赋值（例如有返回值的方法必须确定有返回值）；</li>
-<li>检查变量的确定性不重复赋值（例如声明为 final 的变量等）；</li>
-<li>解除语法糖（消除 if(false) { … }形式的无用代码；将泛型 Java 转为普通 Java；将含有语法糖的语法树改为含有简单语言结构的语法树，例如 foreach 循环、自动装箱&#x2F;拆箱等）；</li>
-<li>等…</li>
-</ul>
-<p>在完成了语义分析后，开始生成 class 文件（com.sun.tools.javac.jvm.Gen），生成的步骤为：</p>
-<ul>
-<li>首先将实例成员初始化器收集到构造器中，将静态成员初始化器收集为<clinit>()；</li>
-<li>接着将抽象语法树生成字节码，采用的方法为后序遍历语法树，并进行最后的少量代码转换（例如 String 相加转变为 StringBuilder 操作）；</li>
-<li>最后从符号表生成 class 文件。</li>
-</ul>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
-<li><a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/java/j-lo-just-in-time/">深入浅出 JIT 编译器</a></li>
-</ol>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e39c963b.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1355,6 +1452,121 @@ application-peer2.properties： <figure class="highlight plaintext"><table><tr><
 <li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/23328075">java sleep 和 wait 的区别的疑惑?</a></li>
 <li><a target="_blank" rel="noopener" href="http://blog.csdn.net/raintungli/article/details/6532784">java 中的 wait 和 notify 实现的源码分析</a></li>
 <li><a target="_blank" rel="noopener" href="http://blog.csdn.net/raintungli/article/details/6553337">JVM Thread stop 的源码分析</a></li>
+</ol>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/807599f6.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/807599f6.html" class="post-title-link" itemprop="url">JVM 与编译器</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-05 20:56:12" itemprop="dateCreated datePublished" datetime="2019-10-05T20:56:12+08:00">2019-10-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+
+<h2 id="Java-代码编译机制"><a href="#Java-代码编译机制" class="headerlink" title="Java 代码编译机制"></a>Java 代码编译机制</h2><p>JVM 规范中定义了 class 文件的格式，但并未定义 Java 源码如何被编译为 class 文件，各厂商在实现 JDK 时通常会将符合 Java 语言规范的源码编译为 class 文件的编译器，例如在 Sun JDK 中就是 javac，javac 将 Java 源码编译为 class 文件的步骤如下图所示：<br><img src="/imgs/JVM/Java%E4%BB%A3%E7%A0%81%E7%BC%96%E8%AF%91%E6%9C%BA%E5%88%B6.png" alt="Java代码编译机制" title="Java代码编译机制"></p>
+<h2 id="分析和输入到符号表（Parse-and-Enter）"><a href="#分析和输入到符号表（Parse-and-Enter）" class="headerlink" title="分析和输入到符号表（Parse and Enter）"></a>分析和输入到符号表（Parse and Enter）</h2><p>Parse 过程所做的为此法和语法分析。此法分析（com.sun.tools.javac.parser.Scanner）要完成的是将代码字符串转变为 token 序列（例如 Token.EQ(name:&#x3D;)）；语法分析（com.sun.tools.javac.parser.Parser）要完成的是根据语法由 token 序列生成抽象语法树。<br>Enter（com.sun.tools.javac.comp.Enter）过程为将符号输入到符号表，通常包括确定类的超类型和接口、根据需要添加默认构造器、将类中出现的符号输入类自身的符号表中等。</p>
+<h2 id="注解处理（Annotation-Processing）"><a href="#注解处理（Annotation-Processing）" class="headerlink" title="注解处理（Annotation Processing）"></a>注解处理（Annotation Processing）</h2><p>该步骤主要用于处理用户自定义的 annotation，可能带来的好处是基于 annotation 来生成附加的代码或进行一些特殊的检查，从而节省一些共用的代码的编写，例如当采用 Lombok 时，可编写如下代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public class User &#123;</span><br><span class="line">    private @Getter String username;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编译时引入 Lombok 对 User.java 进行编译后，再通过 javap 查看 class 文件可看到自动生成了 public String getUsername()方法。<br>此功能基于 JSR 269，在 Sun JDK 6 中提供了支持，在 Annotation Processing 进行后，再次进入 Parse and Enter 步骤。</p>
+<h2 id="语义分析和生成-class-文件（Analyse-and-Generate）"><a href="#语义分析和生成-class-文件（Analyse-and-Generate）" class="headerlink" title="语义分析和生成 class 文件（Analyse and Generate）"></a>语义分析和生成 class 文件（Analyse and Generate）</h2><p>Analyse 步骤基于抽象语法树进行一系列的语义分析，包括：</p>
+<ul>
+<li>将语法树中的名字、表达式等元素与变量、方法、类型等联系到一起；</li>
+<li>检查变量使用前是否已声明；</li>
+<li>推导泛型方法的类型参数；</li>
+<li>检查类型匹配性；</li>
+<li>进行常量折叠；</li>
+<li>检查所有语句都可到达；</li>
+<li>检查所有 checked exception 都被捕获或抛出；</li>
+<li>检查变量的确定性赋值（例如有返回值的方法必须确定有返回值）；</li>
+<li>检查变量的确定性不重复赋值（例如声明为 final 的变量等）；</li>
+<li>解除语法糖（消除 if(false) { … }形式的无用代码；将泛型 Java 转为普通 Java；将含有语法糖的语法树改为含有简单语言结构的语法树，例如 foreach 循环、自动装箱&#x2F;拆箱等）；</li>
+<li>等…</li>
+</ul>
+<p>在完成了语义分析后，开始生成 class 文件（com.sun.tools.javac.jvm.Gen），生成的步骤为：</p>
+<ul>
+<li>首先将实例成员初始化器收集到构造器中，将静态成员初始化器收集为<clinit>()；</li>
+<li>接着将抽象语法树生成字节码，采用的方法为后序遍历语法树，并进行最后的少量代码转换（例如 String 相加转变为 StringBuilder 操作）；</li>
+<li>最后从符号表生成 class 文件。</li>
+</ul>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/java/j-lo-just-in-time/">深入浅出 JIT 编译器</a></li>
 </ol>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
@@ -1577,639 +1789,8 @@ application-peer2.properties： <figure class="highlight plaintext"><table><tr><
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/807599f6.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/807599f6.html" class="post-title-link" itemprop="url">JVM调优</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-10-05 20:56:12" itemprop="dateCreated datePublished" datetime="2019-10-05T20:56:12+08:00">2019-10-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-
-<p>了解 JVM 中内存管理的原理后，下一步就是如何调优了。</p>
-<h2 id="JVM参数"><a href="#JVM参数" class="headerlink" title="JVM参数"></a>JVM参数</h2><h3 id="D、-X、-XX-区别"><a href="#D、-X、-XX-区别" class="headerlink" title="-D、-X、-XX 区别"></a>-D、-X、-XX 区别</h3><p>其一是标准参数（-），所有的 JVM 实现都必须实现这些参数的功能，而且向后兼容；（包括-D 等）JVM 的标准参数都是以”-“开头，通过输入”java -help”或者”java -?”，可以查看 JVM 标准参数列表<br>其二是非标准参数（-X），默认 jvm 实现这些参数的功能，但是并不保证所有 jvm 实现都满足，且不保证向后兼容；但是列出来的都是当前可用的。<br>其三是非 Stable 参数（-XX），此类参数各个 jvm 实现会有所不同，将来可能会随时取消，需要慎重使用；</p>
-<h3 id="栈大小"><a href="#栈大小" class="headerlink" title="栈大小"></a>栈大小</h3><ul>
-<li>Xss512k：用来设置每个线程的堆栈大小；</li>
-</ul>
-<h3 id="堆空间结构调整"><a href="#堆空间结构调整" class="headerlink" title="堆空间结构调整"></a>堆空间结构调整</h3><p><img src="/imgs/JVM/%E5%A0%86%E7%A9%BA%E9%97%B4%E7%BB%93%E6%9E%84%E8%B0%83%E6%95%B4.png" alt="堆空间结构调整" title="堆空间结构调整"></p>
-<ul>
-<li>Xmx4g：JVM 最大允许分配的堆内存，按需分配；</li>
-<li>Xms4g：JVM 初始分配的堆内存，一般和 Xmx 配置成一样以避免每次 gc 后 JVM 重新分配内存；</li>
-<li>XX：MetaspaceSize&#x3D;64m 初始化元空间大小；</li>
-<li>XX：MaxMetaspaceSize&#x3D;128m 最大化元空间大小。</li>
-</ul>
-<p>Metaspace 建议不要设置，一般让 JVM 自己启动的时候动态扩容就好了，没必要自己去设置。如果不动态加载 class ，当启动起来的时候，一般是很少有变化的。<br>从这个角度我们可以认为我们的 JVM 内存的大小是堆+Metaspace+io(运行时产生的大小)。</p>
-<ul>
-<li>-Xms<heap size>[g|m|k]</li>
-<li>-Xmx<heap size>[g|m|k] 堆大小</li>
-<li>-Xmn<young size>[g|m|k]  年轻代大小</li>
-<li>-XX:NewRatio&#x3D;老年代&#x2F;新生代  比例</li>
-<li>-XX:MaxMetaspaceSize&#x3D;<metaspace size>[unit]  元空间</li>
-<li>-XX:NewSize&#x3D;<young size>[unit]  初始年轻代大小</li>
-<li>-XX:SurvivorRatio&#x3D;<ratio>  # 代表分代回收算法新生代中 Eden:Survivor 的比例，注意 Survivor 是有两块的，如果 Eden:Survivor &#x3D; 3，则新生代将被分割为 5 份，Eden 占 3 份</li>
-</ul>
-<p>堆的最大和最小限制，网上很多资料都将二者设置成一样的值，我觉得这是不好的习惯，因为 JVM 只有在内存使用量达到-Xms 的值时才会开始 gc，设置成一样的值也就是说只有在 JVM 使用完内存后才会开始 gc，这会导致最大暂停时间偏长，用户体验不好，当然设置成一样也可以减轻堆伸缩带来的压力。当然这些都是直观的看法，根据 [3] 的说法，这个调整策略和 JVM 中使用的垃圾回收算法相关，如果是 IBM JVM（采用 sweep-compact），设置不一样较好；如果是 Sun JVM（采用分代回收），设置成一样较好。</p>
-<h3 id="选择哪个-GC-收集器"><a href="#选择哪个-GC-收集器" class="headerlink" title="选择哪个 GC 收集器"></a>选择哪个 GC 收集器</h3><ul>
-<li>-XX:+UseSerialGC</li>
-<li>-XX:+UseParallelGC</li>
-<li>-XX:+USeParNewGC</li>
-<li>-XX:+UseG1GC</li>
-<li>-XX:-UseConcMarkSweepGC<br>对老生代采用并发标记交换算法进行 GC</li>
-</ul>
-<h3 id="GC-的时候生成文件"><a href="#GC-的时候生成文件" class="headerlink" title="GC 的时候生成文件"></a>GC 的时候生成文件</h3><ul>
-<li>-XX:+UseGCLogFileRotation  用文件循环策略</li>
-<li>-XX:NumberOfGCLogFiles&#x3D;10  最大文件数</li>
-<li>-XX:GCLogFileSize&#x3D;50M      文件大小</li>
-<li>-Xloggc:&#x2F;home&#x2F;user&#x2F;log&#x2F;gc.log  位置</li>
-</ul>
-<h3 id="OOM后排错"><a href="#OOM后排错" class="headerlink" title="OOM后排错"></a>OOM后排错</h3><ul>
-<li>-XX:+HeapDumpOnOutOfMemoryError  打出 dump 文件当发生 out of memory</li>
-<li>-XX:HeapDumpPath&#x3D;.&#x2F;java_pid<pid>.hprof  文件名</li>
-<li>-XX:OnOutOfMemoryError&#x3D;”&lt; cmd args &gt;;&lt; cmd args &gt;”  发生异常的时候执行的命令</li>
-<li>-XX:+UseGCOverheadLimit  在 GC 之前</li>
-</ul>
-<h3 id="Java-Management-Extensions"><a href="#Java-Management-Extensions" class="headerlink" title="Java Management Extensions"></a>Java Management Extensions</h3><p>Java 管理扩展，打开 JMX 端口，就可以用标准的端口来监控 server 端的 jvm 了。<br>-Djava.rmi.server.hostname&#x3D;<external IP><br>-Dcom.sun.management.jmxremote.port&#x3D;<port><br>-Dcom.sun.management.jmxremote.authenticate&#x3D;false<br>-Dcom.sun.management.jmxremote.ssl&#x3D;false</p>
-<h3 id="print-所有-XX-参数（Java6-后）"><a href="#print-所有-XX-参数（Java6-后）" class="headerlink" title="print 所有+XX 参数（Java6 后）"></a>print 所有+XX 参数（Java6 后）</h3><p>-XX:+PrintFlagsFinal<br>-XX:+PrintFlagsInitial</p>
-<h3 id="生产环境参数设置"><a href="#生产环境参数设置" class="headerlink" title="生产环境参数设置"></a>生产环境参数设置</h3><ol>
-<li>实际生产中很少去设置 gc 相关的详细参数，一般只要把 thread dump 处理好(及异常的时候生成 demp 文件)和 jmx 端口打开；</li>
-<li>能设置好几个分代的内存空间就不错了。这个可以通过 jvm 的监控来设置根据 cpu 和 gc 的情况；</li>
-<li>因为随着 JVM 的版本的升级，jvm 垃圾回收会也来越智能，但是我们必须要了解这些，因为面试的时候大牛为了显摆自己会问这些问题。</li>
-<li>根据我们上面介绍的就算你设置+XX 有的时候也不一定有用，说不定哪个小版本里面就失灵了。jdk1.8 关于 gc 的最多开启+XX:+UseConcMarkSweepGC。</li>
-</ol>
-<h2 id="调优工具"><a href="#调优工具" class="headerlink" title="调优工具"></a>调优工具</h2><p>对 JVM 的监控可以分为以下几个方面：</p>
-<ul>
-<li>内存状况分析（GC）</li>
-<li>线程状态分析</li>
-</ul>
-<p>关于 GC 的监控，比较重要的有三个方面：</p>
-<ul>
-<li>各个区的容量，主要是堆中新生代与老年代的内存分配。</li>
-<li>Full GC、Young GC 发生的次数，原则上尽量避免发生 Full GC，Young GC 能少则少。</li>
-<li>当前系统的内存比、CPU 使用率。</li>
-</ul>
-<h3 id="jps"><a href="#jps" class="headerlink" title="jps"></a>jps</h3><p>jps 列出正在运行的虚拟机进程<br>包括 PID、主类、jar 包等</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jps -ml</span><br></pre></td></tr></table></figure>
-
-<h3 id="jinfo"><a href="#jinfo" class="headerlink" title="jinfo"></a>jinfo</h3><p>Java 配置信息工具，并且支持运行时动态修改部分参数<br>查看某些配置值或开关是否打开：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jinfo -flag MaxTenuringThreshold 8737</span><br><span class="line">jinfo -flag PrintGCDetails 8737</span><br></pre></td></tr></table></figure>
-<p>打开开关</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jinfo -flag MaxTenuringThreshold=10 8737</span><br><span class="line">jinfo -flag +PrintGCDetails 8737</span><br></pre></td></tr></table></figure>
-<p>查看虚拟机的默认配置参数还可以在运行时打开虚拟机的 PrintFlagsFinal 开关</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+PrintFlagsFinal Test</span><br></pre></td></tr></table></figure>
-
-
-<h3 id="jstat"><a href="#jstat" class="headerlink" title="jstat"></a>jstat</h3><p>常用选项</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jstat -gcutil # 垃圾收集统计数据</span><br></pre></td></tr></table></figure>
-<p>统计数据列含义：</p>
-<table>
-<thead>
-<tr>
-<th>数据列</th>
-<th>描述</th>
-<th>支持的 jstat 选项</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>S0C</td>
-<td>Survivor0 的当前容量</td>
-<td>-gc -gccapacity -gcnew -gcnewcapacity</td>
-</tr>
-<tr>
-<td>S1C</td>
-<td>S1 的当前容量</td>
-<td>-gc -gccapacity -gcnew -gcnewcapacity</td>
-</tr>
-<tr>
-<td>S0U</td>
-<td>S0的使用量</td>
-<td>-gc-gcnew</td>
-</tr>
-<tr>
-<td>S1U</td>
-<td>S1 的使用量</td>
-<td>-gc-gcnew</td>
-</tr>
-<tr>
-<td>EC</td>
-<td>Eden 区的当前容量</td>
-<td>-gc -gccapacity -gcnew -gcnewcapacity</td>
-</tr>
-<tr>
-<td>EU</td>
-<td>Eden 区的使用量</td>
-<td>-gc -gcnew</td>
-</tr>
-<tr>
-<td>OC</td>
-<td>old 区的当前容量</td>
-<td>-gc -gccapacity -gcnew -gcnewcapacity</td>
-</tr>
-<tr>
-<td>OU</td>
-<td>old区的使用量</td>
-<td>-gc-gcnew</td>
-</tr>
-<tr>
-<td>PC</td>
-<td>方法区的当前容量</td>
-<td>-gc-gccapacity -gcold -gcoldcapacity -gcpermcapacity</td>
-</tr>
-<tr>
-<td>PU</td>
-<td>方法区的使用量</td>
-<td>-gc -gcold</td>
-</tr>
-<tr>
-<td>YGC</td>
-<td>Young GC 次数</td>
-<td>-gc -gccapacity -gcnew -gcnewcapacity -gcold -gcoldcapacity -gcpermcapacity -gcutil -gccause</td>
-</tr>
-<tr>
-<td>YGCT</td>
-<td>Young GC 累积耗时</td>
-<td>-gc -gcnew -gcutil -gccause</td>
-</tr>
-<tr>
-<td>FGC</td>
-<td>Full GC次数</td>
-<td>-gc -gccapacity -gcnew -gcnewcapacity -gcold -gcoldcapacity -gcpermcapacity -gcutil -gccause</td>
-</tr>
-<tr>
-<td>FGCT</td>
-<td>Full GC 累积耗时</td>
-<td>-gc-gcold -gcoldcapacity -gcpermcapacity -gcutil -gccause</td>
-</tr>
-<tr>
-<td>GCT</td>
-<td>GC 总的累积耗时</td>
-<td>-gc -gcold -gcoldcapacity -gccapacity -gcpermcapacity -gcutil -gccause</td>
-</tr>
-<tr>
-<td>NGCMN</td>
-<td>新生代最小容量</td>
-<td>-gccapacity -gcnewcapacity</td>
-</tr>
-<tr>
-<td>NGCMX</td>
-<td>新生代最大容量</td>
-<td>-gccapacity -gcnewcapacity</td>
-</tr>
-<tr>
-<td>NGC</td>
-<td>新生代当前容量</td>
-<td>-gccapacity -gcnewcapacity</td>
-</tr>
-<tr>
-<td>OGCMN</td>
-<td>老年代最小容量</td>
-<td>-gccapacity -gcoldcapacity</td>
-</tr>
-<tr>
-<td>OGCMX</td>
-<td>老年代最大容量</td>
-<td>-gccapacity -gcoldcapacity</td>
-</tr>
-<tr>
-<td>OGC</td>
-<td>老年代当前容量</td>
-<td>-gccapacity -gcoldcapacity</td>
-</tr>
-<tr>
-<td>PGCMN</td>
-<td>方法区最小容量</td>
-<td>-gccapacity -gcpermcapacity</td>
-</tr>
-<tr>
-<td>PGCMX</td>
-<td>方法区最大容量</td>
-<td>-gccapacity -gcpermcapacity</td>
-</tr>
-<tr>
-<td>PGC</td>
-<td>方法区当前容量</td>
-<td>-gccapacity -gcpermcapacity</td>
-</tr>
-<tr>
-<td>PC</td>
-<td>方法区的当前容量</td>
-<td>-gccapacity -gcpermcapacity</td>
-</tr>
-<tr>
-<td>PU</td>
-<td>方法区使用量</td>
-<td>-gccapacity -gcold</td>
-</tr>
-<tr>
-<td>LGCC</td>
-<td>上一次 GC 发生的原因</td>
-<td>-gccause</td>
-</tr>
-<tr>
-<td>GCC</td>
-<td>当前 GC 发生的原因</td>
-<td>-gccause</td>
-</tr>
-<tr>
-<td>TT</td>
-<td>存活阀值，如果对象在新生代移动次数超过此阀值，则会被移到老年代</td>
-<td>-gcnew</td>
-</tr>
-<tr>
-<td>MTT</td>
-<td>最大存活阀值，如果对象在新生代移动次数超过此阀值，则会被移到老年代</td>
-<td>-gcnew</td>
-</tr>
-<tr>
-<td>DSS</td>
-<td>survivor 区的理想容量</td>
-<td>-gcnew</td>
-</tr>
-</tbody></table>
-<h3 id="jmap"><a href="#jmap" class="headerlink" title="jmap"></a>jmap</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jmap -histo pid -F</span><br><span class="line">jmap -dump:format=b, file=heap.bin pid</span><br></pre></td></tr></table></figure>
-
-<h3 id="JConsole"><a href="#JConsole" class="headerlink" title="JConsole"></a>JConsole</h3><p>略</p>
-<h3 id="JVisualVM"><a href="#JVisualVM" class="headerlink" title="JVisualVM"></a>JVisualVM</h3><p>略</p>
-<h3 id="GC日志"><a href="#GC日志" class="headerlink" title="GC日志"></a>GC日志</h3><p>关于输出 GC 日志的参数有以下几种：</p>
-<ul>
-<li>-XX:+PrintGC 输出 GC 日志</li>
-<li>-XX:+PrintGCDetails 输出 GC 的详细日志</li>
-<li>-XX:+PrintGCTimeStamps 输出 GC 的时间戳（以基准时间的形式）</li>
-<li>-XX:+PrintGCDateStamps 输出 GC 的时间戳（以日期的形式，如 2013-05-04T21:53:59.234+0800）</li>
-<li>-XX:+PrintHeapAtGC 在进行 GC 的前后打印出堆的信息</li>
-<li>-Xloggc:..&#x2F;logs&#x2F;gc.log 日志文件的输出路径</li>
-</ul>
-<p>比如对 PrintGCDetails 这个参数：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class GCLogTest &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        int _1m = 1024 * 1024;</span><br><span class="line">        byte[] data = new byte[_1m];</span><br><span class="line">        // 将data置null让其可被回收</span><br><span class="line">        data = null;</span><br><span class="line">        System.gc();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在 IDE 中设置 VM 参数<code>-XX:+PrintGCDetails</code>，再运行，可以得到：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[GC (System.gc()) [PSYoungGen: 5051K-&gt;776K(38400K)] 5051K-&gt;784K(125952K), 0.0014035 secs] [Times: user=0.01 sys=0.00, real=0.00 secs] </span><br><span class="line">[Full GC (System.gc()) Disconnected from the target VM, address: &#x27;127.0.0.1:55472&#x27;, transport: &#x27;socket&#x27;</span><br><span class="line">[PSYoungGen: 776K-&gt;0K(38400K)] [ParOldGen: 8K-&gt;684K(87552K)] 784K-&gt;684K(125952K), [Metaspace: 2980K-&gt;2980K(1056768K)], 0.0040080 secs] [Times: user=0.01 sys=0.00, real=0.00 secs] </span><br><span class="line">Heap</span><br><span class="line"> PSYoungGen      total 38400K, used 333K [0x0000000795580000, 0x0000000798000000, 0x00000007c0000000)</span><br><span class="line">  eden space 33280K, 1% used [0x0000000795580000,0x00000007955d34a8,0x0000000797600000)</span><br><span class="line">  from space 5120K, 0% used [0x0000000797600000,0x0000000797600000,0x0000000797b00000)</span><br><span class="line">  to   space 5120K, 0% used [0x0000000797b00000,0x0000000797b00000,0x0000000798000000)</span><br><span class="line"> ParOldGen       total 87552K, used 684K [0x0000000740000000, 0x0000000745580000, 0x0000000795580000)</span><br><span class="line">  object space 87552K, 0% used [0x0000000740000000,0x00000007400ab0d0,0x0000000745580000)</span><br><span class="line"> Metaspace       used 2988K, capacity 4568K, committed 4864K, reserved 1056768K</span><br><span class="line">  class space    used 318K, capacity 392K, committed 512K, reserved 1048576K</span><br></pre></td></tr></table></figure>
-<p>第一行是 YoungGC，其结构如下图所示：<br><img src="/imgs/JVM/JVM-YoungGC%E6%97%A5%E5%BF%97.jpg" alt="JVM-YoungGC日志" title="JVM-YoungGC日志"><br>第二行是 FullGC，其结构如下图所示：<br><img src="/imgs/JVM/JVM-FullGC%E6%97%A5%E5%BF%97.jpg" alt="JVM-FullGC日志" title="JVM-FullGC日志"></p>
-<ul>
-<li>GC日志开头的<code>[GC</code>和<code>[Full GC</code>说明了这次垃圾收集的停顿类型，如果有<code>Full</code>，说明这次 GC 发生了<code>Stop-The-World</code>。因为是调用了<code>System.gc()</code>方法触发的收集，所以会显示<code>[Full GC (System.gc())</code>，不然是没有后面的<code>(System.gc())</code>的。 </li>
-<li><code>[PSYoungGen</code>和<code>[ParOldGen</code>是指 GC 发生的区域。</li>
-<li>在方括号中<code>PSYoungGen:</code>后面的<code>5051K-&gt;776K(38400K)</code>代表的是<code>GC前该内存区域已使用的容量-&gt;GC后该内存区域已使用的容量(该内存区域总容量)</code></li>
-<li>在方括号之外的<code>5051K-&gt;784K(125952K)</code>代表的是<code>GC前Java堆已使用容量-&gt;GC后Java堆已使用容量(Java堆总容量)</code>，注意已使用容量是减掉一个 Servivor 区、线程栈等区域后的大小。</li>
-<li>再往后的<code>0.0014035 secs</code>代表该内存区域 GC 所占用的时间，单位是秒。</li>
-<li>再后面的<code>[Times: user=0.01 sys=0.00, real=0.00 secs]</code>，user 代表进程在用户态消耗的 CPU 时间，sys 代表进程在内核态消耗的 CPU 时间、real 代表程序从开始到结束所用的时钟时间。这个时间包括其他进程使用的时间片和进程阻塞的时间（比如等待 I&#x2F;O 完成）。</li>
-<li>至于后面的<code>eden</code>代表的是 Eden 空间，还有<code>from</code>和<code>to</code>代表的是 Survivor 空间。</li>
-</ul>
-<h2 id="问题排查"><a href="#问题排查" class="headerlink" title="问题排查"></a>问题排查</h2><h3 id="OOM"><a href="#OOM" class="headerlink" title="OOM"></a>OOM</h3><p>有两种情况可能导致 OOM：</p>
-<ol>
-<li>内存泄露（Memory Leak），某些对象是需要被释放的但是却由于某些原因释放不了，查看泄露对象对 GC Roots 的引用链，再追本溯源进行分析；</li>
-<li>内存溢出（Memory Overflow），对象太多了导致堆放不下了，查看堆是否可以调大，或者某些对象活太久了。</li>
-</ol>
-<p>产生 OutOfMemoryError 错误的具体原因有以下几种：</p>
-<ul>
-<li>java.lang.OutOfMemoryError: Java heap space 表示 Java 堆空间不足。当应用程序申请更多的内存时，若 Java 堆内存已经无法满足应用程序的需要，则将抛出这种异常。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">VM Args: -Xms20m -Xmx20m -XX:+HeapDumpOnOutOfMemoryError</span><br><span class="line"> */</span><br><span class="line">public class HeapOOM &#123;</span><br><span class="line">    static class OOMObject &#123;&#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        List&lt;OOMObject&gt; list = new ArrayList&lt;&gt;();</span><br><span class="line">        while(true) &#123;</span><br><span class="line">            list.add(new OOMObject());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>java.lang.OutOfMemoryError: PermGen space，表示 Java 永久代（方法区）的空间不足。永久代用于存放类的字节码和常量池，类的字节码被加载后存放在这个区域，这和存放对象实例的堆区是不同的。大多数 JVM 的实现都不会对永久代进行垃圾回收，因此，只要类加载过多就会出现这个问题。一般的应用程序都不会产生这个错误，然而，对于 Web 服务器会产生大量的 JSP，JSP 在运行时被动态地编译为 Java Servlet 类，然后加载到方法区，因此，有很多 JSP 的 Web 工程可能会产生这个异常。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">VM Args: -XX:PermSize=10M -XX:MaxPermSize=10M</span><br><span class="line"> */</span><br><span class="line">public class RuntimeConstantPoolOOM &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        // 使用List保持对常量池的引用，避免Full GC回收常量池</span><br><span class="line">        List&lt;String&gt; list = new ArrayList&lt;String&gt;();</span><br><span class="line">        for(int i = 0;; i++) &#123;</span><br><span class="line">            list.add(String.valueOf(i).intern());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-使用 intern 测试运行时常量池是“永久代”的还是“元空间”的：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String str1 = new StringBuilder(&quot;计算机&quot;).append(&quot;软件&quot;).toString();</span><br><span class="line">System.out.println(str1.intern() == str1);</span><br><span class="line">String str2 = new StringBuilder(&quot;ja&quot;).append(&quot;va&quot;).toString();</span><br><span class="line">System.out.println(str2.intern() == str2);</span><br></pre></td></tr></table></figure>
-方法区溢出测试（使用 CGLib 动态生成类）：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">VM Args: -XX:PermSize=10M -XX:MaxPermSize=10M</span><br><span class="line">*/</span><br><span class="line">public class MethodAreaOOM &#123;</span><br><span class="line">    static class OOMObject &#123;&#125;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        while(true) &#123;</span><br><span class="line">            Enhancer enhancer = new Enhancer();</span><br><span class="line">            enhancer.setSuperclass(HeapOOM.OOMObject.class);</span><br><span class="line">            enhancer.setUseCache(false);</span><br><span class="line">            enhancer.setCallback(new MethodInterceptor() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public Object intercept(Object o, Method method,</span><br><span class="line">                                        Object[] objects, MethodProxy proxy) throws Throwable &#123;</span><br><span class="line">                    return proxy.invokeSuper(o, args);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">            enhancer.create();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-jdk1.6 及之前版本，因为 HotSpot 实行“永久代”（PermGen），方法区保存到永久代中，虽然逻辑上属于堆，但是在这块空间上并没有实行 GC。在这种情况下，上面代码发生堆溢出是必然的。<br>jdk1.7 及之后版本，因为“去永久代”，引入了“元空间”（Metaspace），这种策略使得大部分类元数据都保存在本地内存中，元空间使用一个全局空闲组块列表（一个大数组）表示，每创建一个类加载器都会从这个列表中获取一个自己的组块，用处当然是存储元信息（指针碰撞方式分配），当一个类加载器不再活动后，其所持有的组块列表也就返还给全局组块列表了，也就是说，类也是可能会被 GC 回收掉的。<br>  运行时常量池是分配于方法区的，所以可以这么认为：1.6 及之前常量是分配在一个“全局静态区”的，而 1.7 及之后则在堆中分配。<br>运行时常量池导致的溢出不常见，上面的例子感觉也有点极端。<br>方法区导致的溢出在实际应用中常见：一些框架 Spring、Hibernate 在对类进行增强时会使用到 CGLib 这类字节码技术；JVM 上的动态语言（Groovy）会持续创建类来实现语言的动态特性；拥有大量 JSP 页面或会动态生成 JSP 文件的应用（JSP 第一次运行时会被编译为 Servlet）；基于 OSGi 的应用（即使是同一个类文件，被不同的加载器加载也会视为不同的类）等。</li>
-<li>java.lang.OutOfMemoryError: unable to create new native thread，本质原因是创建了太多的线程，而系统允许创建的线程数是有限制的。</li>
-<li>java.lang.OutOfMemoryError：GC overhead limit exceeded，是并行（或者并发）垃圾回收器的 GC 回收时间过长、超过 98%的时间用来做 GC 并且回收了不到 2%的堆内存时抛出的这种异常，用来提前预警，避免内存过小导致应用不能正常工作。</li>
-<li>栈溢出<br>可以先使用-Xoss 参数设置本地方法栈大小（在 HotSpot 中无效，因为它将两个栈合并了），-Xss 参数设置栈容量大小，设得稍微小一些都没有问题。<br>实验非常简单，就是定义并调用一个无限递归的方法，在调用深度到达一定程度后就会报错，并且使用一个 stackLength 成员变量记录栈深度<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">VM Args: -Xss228k</span><br><span class="line"> */</span><br><span class="line">public class StackSOF &#123;</span><br><span class="line">    private int stackLength = 1;</span><br><span class="line"></span><br><span class="line">    public void stackLeak() &#123;</span><br><span class="line">        stackLength++;</span><br><span class="line">        stackLeak();</span><br><span class="line">    &#125;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        StackSOF oom = new StackSOF();</span><br><span class="line">        try &#123;</span><br><span class="line">            oom.stackLeak();</span><br><span class="line">        &#125; catch (Throwable e) &#123;</span><br><span class="line">            System.out.println(&quot;stack length:&quot; + oom.stackLength);</span><br><span class="line">            throw e;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">/*</span><br><span class="line">VM Args: -Xss2M</span><br><span class="line"> */</span><br><span class="line">public class StackOOM &#123;</span><br><span class="line">    private void dontstop() &#123;</span><br><span class="line">        while(true) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    public void stackLeakByThread() &#123;</span><br><span class="line">        while(true) &#123;</span><br><span class="line">            new Thread(new Runnable() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public void run() &#123;</span><br><span class="line">                    dontstop();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        new StackOOM().stackLeakByThread();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-有两种可能的错误，第一种是线程请求的栈深度超出了虚拟机的允许范围，会产生 StackOverflowError 异常，第二种是虚拟机在扩展栈时无法申请到足够空间，会产生 OutOfMemoryError 异常。<br>注意，一个 java 进程的内存容量是由操作系统决定的，Windows 下限制为 2GB，减去 Xmx（最大堆容量）、MaxPermSize（最大方法区容量）、程序计数器（很小）、虚拟机本身耗费的内存，剩下的就由虚拟机栈和本地方法栈瓜分了。<br>前者比较容易找出错误，因为会有错误堆栈可以分析；<br>后者往往是因为线程分配过多了，导致操作系统分配的内存用尽，事实上，每个线程的主要空间都被栈（虚拟机栈和本地方法栈）占用了，所以为了可以分配更多的线程，可以减少最大堆容量或者减少栈容量。</li>
-<li>本机直接内存溢出<br>这个例子比较复杂，首先-XX:MaxDirectMemorySize 指定了直接内存大小（默认是-Xmx），然后越过了 DirectByteBuffer，反射获取 Unsafe 实例进行内存分配，allocateMemory 等价于 malloc<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">VM Args: -Xmx20M -XX:MaxDirectMemorySize=10M</span><br><span class="line"> */</span><br><span class="line">public class DirectMemoryOOM &#123;</span><br><span class="line">    private static final int _1MB = 1024 * 1024;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws IllegalAccessException &#123;</span><br><span class="line">        Field unsafeField = Unsafe.class.getDeclaredFields()[0];</span><br><span class="line">        unsafeField.setAccessible(true);</span><br><span class="line">        Unsafe unsafe = (Unsafe) unsafeField.get(null);</span><br><span class="line">        while(true) &#123;</span><br><span class="line">            unsafe.allocateMemory(_1MB);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-直接内存，或者说堆外内存，不是在 java 虚拟机规范中定义的存储区域，一般是不受虚拟机控制的，但是 NIO 提供了 Native 函数库可以直接分配堆外内存。<br>由 DirectMemory 导致的内存溢出在 Heap Dump 中不会有明显的异常，如果 OOM 之后 Dump 文件很小，且程序中又直接或间接使用了 NIO，就可以考虑是这方面的问题。</li>
-</ul>
-<h3 id="分析内存"><a href="#分析内存" class="headerlink" title="分析内存"></a>分析内存</h3><p>为排查内存泄露、young gc耗时过长等问题，我们需要分析内存结构。</p>
-<h3 id="判断死锁"><a href="#判断死锁" class="headerlink" title="判断死锁"></a>判断死锁</h3><p>使用 jstack 判断死锁，下面是一段测试用的死锁代码：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">public class DeadLockTest &#123;</span><br><span class="line"></span><br><span class="line">    private static Object obj1 = new Object();</span><br><span class="line">    private static Object obj2 = new Object();</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        new Thread(new Thread1()).start();</span><br><span class="line">        new Thread(new Thread2()).start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static class Thread1 implements Runnable &#123;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        public void run() &#123;</span><br><span class="line">            synchronized (obj1) &#123;</span><br><span class="line">                System.out.println(&quot;Thread1 拿到了 obj1 的锁！&quot;);</span><br><span class="line">                try &#123;</span><br><span class="line">                    // 停顿2秒的意义在于，让Thread2线程拿到obj2的锁</span><br><span class="line">                    Thread.sleep(2000);</span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                synchronized (obj2) &#123;</span><br><span class="line">                    System.out.println(&quot;Thread1 拿到了 obj2 的锁！&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static class Thread2 implements Runnable &#123;</span><br><span class="line"></span><br><span class="line">        @Override</span><br><span class="line">        public void run() &#123;</span><br><span class="line">            synchronized (obj2) &#123;</span><br><span class="line">                System.out.println(&quot;Thread2 拿到了 obj2 的锁！&quot;);</span><br><span class="line">                try &#123;</span><br><span class="line">                    // 停顿2秒的意义在于，让Thread1线程拿到obj1的锁</span><br><span class="line">                    Thread.sleep(2000);</span><br><span class="line">                &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">                synchronized (obj1) &#123;</span><br><span class="line">                    System.out.println(&quot;Thread2 拿到了 obj1 的锁！&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>使用 jps 查看 Java 进程：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># jps</span><br><span class="line"></span><br><span class="line">4098 Jps</span><br><span class="line">2644 </span><br><span class="line">3991 Launcher</span><br><span class="line">3992 DeadLockTest</span><br><span class="line">2859 RemoteMavenServer</span><br></pre></td></tr></table></figure>
-<p>使用 jstack 查看 Java 进程中的所有线程：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># jstack 3992</span><br><span class="line"></span><br><span class="line">结果见下图</span><br></pre></td></tr></table></figure>
-<p><img src="/imgs/JVM/JVM%E6%AD%BB%E9%94%81.png" alt="JVM死锁" title="JVM死锁"></p>
-<h3 id="服务器-CPU-打满怎么排查"><a href="#服务器-CPU-打满怎么排查" class="headerlink" title="服务器 CPU 打满怎么排查"></a>服务器 CPU 打满怎么排查</h3><p>CPU 打满会导致服务器响应速度变慢甚至夯住，一般查看内存没有明显问题后我们就可以怀疑是有线程运行将 CPU 打满了。<br>1、查 CPU 占用率较高的进程<br>top 命令查进程占用 CPU<br>2、查该进程占用 CPU 最高的线程<br><code>top -H -p &lt;查出的进程号&gt;</code></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">root@app02:~# top -H -p 1153</span><br><span class="line">top - 21:04:21 up 227 days,  6:52,  1 user,  load average: 0.78, 0.75, 0.85</span><br><span class="line">Threads: 1007 total,   0 running, 1007 sleeping,   0 stopped,   0 zombie</span><br><span class="line">%Cpu(s):  3.2 us,  0.8 sy,  0.0 ni, 95.8 id,  0.1 wa,  0.0 hi,  0.0 si,  0.0 st</span><br><span class="line">KiB Mem : 49049564 total,   295072 free, 42779556 used,  5974936 buff/cache</span><br><span class="line">KiB Swap:  8191996 total,   431488 free,  7760508 used.  4009280 avail Mem</span><br><span class="line"></span><br><span class="line">   PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND</span><br><span class="line">  1487 root      20   0 19.158g 1.113g   6664 S  6.2  2.4   0:36.42 java</span><br><span class="line">  1153 root      20   0 19.158g 1.113g   6664 S  0.0  2.4   0:00.00 java</span><br><span class="line">  1155 root      20   0 19.158g 1.113g   6664 S  0.0  2.4   0:00.57 java</span><br><span class="line">  1160 root      20   0 19.158g 1.113g   6664 S  0.0  2.4   2:01.54 java</span><br></pre></td></tr></table></figure>
-<p>转成 16 进制：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hero@app02:~$ printf &quot;%x\n&quot; 1487</span><br><span class="line">5cf</span><br></pre></td></tr></table></figure>
-<p>之后我们会用到这个值，因为 jstack 输出的 log 中使用十六进制表示线程编号。<br>3、输出</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@app02:~# jstack 1153 &gt; test_jstack.txt</span><br></pre></td></tr></table></figure>
-<p>从结果中可以搜到上面给出的线程编码<code>5cf</code>：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">11179 &quot;New I/O worker #168&quot; #299 daemon prio=5 os_prio=0 tid=0x00007f3a75127000 nid=0x5cf runnable [0x00007f37278f7000]</span><br><span class="line">11180    java.lang.Thread.State: RUNNABLE</span><br><span class="line">11181     at sun.nio.ch.EPollArrayWrapper.epollWait(Native Method)</span><br><span class="line">11182     at sun.nio.ch.EPollArrayWrapper.poll(EPollArrayWrapper.java:269)</span><br><span class="line">11183     at sun.nio.ch.EPollSelectorImpl.doSelect(EPollSelectorImpl.java:79)</span><br><span class="line">11184     at sun.nio.ch.SelectorImpl.lockAndDoSelect(SelectorImpl.java:86)</span><br><span class="line">11185     - locked &lt;0x00000000e4669320&gt; (a sun.nio.ch.Util$2)</span><br><span class="line">11186     - locked &lt;0x00000000e4669310&gt; (a java.util.Collections$UnmodifiableSet)</span><br><span class="line">11187     - locked &lt;0x00000000e46691e8&gt; (a sun.nio.ch.EPollSelectorImpl)</span><br><span class="line">11188     at sun.nio.ch.SelectorImpl.select(SelectorImpl.java:97)</span><br><span class="line">11189     at org.jboss.netty.channel.socket.nio.SelectorUtil.select(SelectorUtil.java:68)</span><br><span class="line">11190     at org.jboss.netty.channel.socket.nio.AbstractNioSelector.select(AbstractNioSelector.java:434)</span><br><span class="line">11191     at org.jboss.netty.channel.socket.nio.AbstractNioSelector.run(AbstractNioSelector.java:212)</span><br><span class="line">11192     at org.jboss.netty.channel.socket.nio.AbstractNioWorker.run(AbstractNioWorker.java:89)</span><br><span class="line">11193     at org.jboss.netty.channel.socket.nio.NioWorker.run(NioWorker.java:178)</span><br><span class="line">11194     at org.jboss.netty.util.ThreadRenamingRunnable.run(ThreadRenamingRunnable.java:108)</span><br><span class="line">11195     at org.jboss.netty.util.internal.DeadLockProofWorker$1.run(DeadLockProofWorker.java:42)</span><br><span class="line">11196     at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142)</span><br><span class="line">11197     at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617)</span><br><span class="line">11198     at java.lang.Thread.run(Thread.java:745)</span><br></pre></td></tr></table></figure>
-
-<h3 id="SWAP-影响-GC"><a href="#SWAP-影响-GC" class="headerlink" title="SWAP 影响 GC"></a>SWAP 影响 GC</h3><p>SWAP 和 GC 同时发生会导致 GC 时间很长，JVM 严重卡顿，甚至导致服务崩溃。<br>JVM 进行 GC 时，需要对相应堆分区的已用内存进行遍历；假如 GC 的时候，有堆的一部分内容被交换到 SWAP 中，遍历到这部分的时候就需要将其交换回内存，同时由于内存空间不足，就需要把内存中堆的另外一部分换到 SWAP 中去；于是在遍历堆分区的过程中，(极端情况下)会把整个堆分区轮流往 SWAP 写一遍。</p>
-<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><h2 id="栈溢出和由栈引起的OOM有什么关系？"><a href="#栈溢出和由栈引起的OOM有什么关系？" class="headerlink" title="栈溢出和由栈引起的OOM有什么关系？"></a>栈溢出和由栈引起的OOM有什么关系？</h2><p>虽然都是由递归调用引起的，但是这两种异常引起的条件并不相同：</p>
-<ol>
-<li>栈溢出（StackOverflowError）<br>方法调用栈深度超出了虚拟机的允许范围。</li>
-<li>栈引起的OOM<br>虚拟机在扩展栈时无法申请到足够空间。</li>
-</ol>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/dcdf6e0b.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/dcdf6e0b.html" class="post-title-link" itemprop="url">JVM 与类加载</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-09-29 19:12:49" itemprop="dateCreated datePublished" datetime="2019-09-29T19:12:49+08:00">2019-09-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-
-<h2 id="类文件结构"><a href="#类文件结构" class="headerlink" title="类文件结构"></a>类文件结构</h2><p>类文件结构比较繁琐，我暂时没有整理的兴趣，看一下《深入理解 Java 虚拟机上》上的介绍就可以了。</p>
-<h2 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h2><p>Java 类结构是在运行时而不是在编译时确定的，而是由类加载器在运行期间加载的，因此称类的加载过程是<strong>动态加载</strong>，当调用某个类型对象的方法时，具体调用哪个方法是在运行期间决定的，因此称之为<strong>动态连接</strong>。<br><strong>类加载器（ClassLoader）</strong>不是 Java 虚拟机的组成部分，它由外部调用，执行加载过程。<br>类加载器用于加载类，任何类都需要由加载它的类加载器和这个类一同确立其在 Java 虚拟机中的唯一性，每一个类加载器，都有一个独立的类<strong>名称空间</strong>，因此由不同类加载器加载的类、就算它们真的是一个 class 出来的，也不算是同一个类型的，也不能直接进行交互（可以通过反射进行交互）。实现上，实际上 jvm 将类加载器的引用作为类型信息的一部分保存在方法区，作为判断两个类相同的依据。</p>
-<h3 id="写一个自定义的类加载器"><a href="#写一个自定义的类加载器" class="headerlink" title="写一个自定义的类加载器"></a>写一个自定义的类加载器</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">import java.io.ByteArrayOutputStream;</span><br><span class="line">import java.io.FileInputStream;</span><br><span class="line"></span><br><span class="line">public class MyClassLoader extends ClassLoader &#123;</span><br><span class="line"></span><br><span class="line">    private String rootPath;</span><br><span class="line"></span><br><span class="line">    public MyClassLoader(String rootPath) &#123;</span><br><span class="line">        this.rootPath = rootPath;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected Class&lt;?&gt; findClass(String name) &#123;</span><br><span class="line">        Class&lt;?&gt; clz = findLoadedClass(name);</span><br><span class="line">        if (clz != null) &#123;</span><br><span class="line">            return clz;</span><br><span class="line">        &#125;</span><br><span class="line">        byte[] classData = getData(name);</span><br><span class="line">        clz = defineClass(&quot;Hello&quot;, classData, 0, classData.length);</span><br><span class="line">        return clz;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private byte[] getData(String className) &#123;</span><br><span class="line">        String pathName = rootPath + className.replace(&quot;.&quot;, &quot;/&quot;) + &quot;.class&quot;;</span><br><span class="line">        System.out.println(&quot;加载的类路径: &quot; + pathName);</span><br><span class="line">        byte[] bytes = null;</span><br><span class="line">        try (FileInputStream fis = new FileInputStream(pathName);</span><br><span class="line">             ByteArrayOutputStream bos = new ByteArrayOutputStream()) &#123;</span><br><span class="line">            byte[] flush = new byte[1024 * 1024];</span><br><span class="line">            int len;</span><br><span class="line">            while (-1 != (len = fis.read(flush))) &#123;</span><br><span class="line">                bos.write(flush, 0, len);</span><br><span class="line">            &#125;</span><br><span class="line">            bytes = bos.toByteArray();</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        return bytes;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) throws IllegalAccessException, InstantiationException &#123;</span><br><span class="line">        MyClassLoader classLoader = new MyClassLoader(&quot;/tmp/&quot;);</span><br><span class="line">        Class&lt;?&gt; helloClass = classLoader.findClass(&quot;Hello&quot;);</span><br><span class="line">        Object hello = helloClass.newInstance();</span><br><span class="line">        System.out.println(hello);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这个类加载器：</p>
-<ol>
-<li><code>findClass</code>的时候，先判断之前是否已经加载过这个类，如果加载过就直接返回了（双亲委派）；</li>
-<li>从<code>/tmp</code>目录下面读类文件，对读进的二进制流数据使用<code>defineClass</code>转换为类对象。</li>
-</ol>
-<p>测试类：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">import java.util.StringJoiner;</span><br><span class="line"></span><br><span class="line">public class Hello &#123;</span><br><span class="line"></span><br><span class="line">    private int a = 10;</span><br><span class="line"></span><br><span class="line">    static &#123;</span><br><span class="line">        System.out.println(&quot;123&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String toString() &#123;</span><br><span class="line">        return new StringJoiner(&quot;, &quot;, Hello.class.getSimpleName() + &quot;[&quot;, &quot;]&quot;)</span><br><span class="line">                .add(&quot;a=&quot; + a)</span><br><span class="line">                .toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>使用<code>javac</code>命令编译后，将<code>Hello.class</code>文件移动到<code>/tmp</code>目录下。</p>
-<h3 id="类从哪里来"><a href="#类从哪里来" class="headerlink" title="类从哪里来"></a>类从哪里来</h3><p>除了从文件加载以外，Java 的类加载机制还支持从网络读取，其实只要根据自己的需要实现类加载器，就能将任何二进制数据作为字节码数据进行加载。</p>
-<ul>
-<li><p><code>-XX:+TraceClassLoading</code><br>跟踪类加载过程，结果形如：<code>[Loaded java.lang.invoke.MethodHandleImpl$Lazy from D:\programme\jdk\jdk8U74\jre\lib\rt.jar]</code></p>
-</li>
-<li><p>mvn dependency:tree &gt; ~&#x2F;dependency.txt<br>打出所有依赖</p>
-</li>
-<li><p>mvn dependency:tree -Dverbose -Dincludes&#x3D;groupId:artifactId<br>只打出指定 groupId 和 artifactId 的依赖关系</p>
-</li>
-<li><p>-XX:+TraceClassLoading<br>vm 启动脚本加入。在 tomcat 启动脚本中可见加载类的详细信息</p>
-</li>
-<li><p>-verbose<br>vm 启动脚本加入。在 tomcat 启动脚本中可见加载类的详细信息</p>
-</li>
-<li><p>greys:sc<br>greys 的 sc 命令也能清晰的看到当前类是从哪里加载过来的</p>
-</li>
-<li><p>tomcat-classloader-locate<br>通过以下 url 可以获知当前类是从哪里加载的<br>curl <a target="_blank" rel="noopener" href="http://localhost:8006/classloader/locate?class=org.apache.xerces.xs.XSObject">http://localhost:8006/classloader/locate?class=org.apache.xerces.xs.XSObject</a></p>
-</li>
-</ul>
-<h3 id="类加载器的种类"><a href="#类加载器的种类" class="headerlink" title="类加载器的种类"></a>类加载器的种类</h3><p>从虚拟机角度看，只存在两种类加载器：1. 启动类加载器。2. 其他类加载器。<br>从开发人员角度看，包括如下类加载器：1. 启动类加载器。2. 扩展类加载器。3. 应用程序类加载器。4. 自定义类加载器。</p>
-<ul>
-<li>启动类加载器，用于加载 Java API，加载<code>&lt;JAVA_HOME&gt;/lib</code> 目录下的类库。</li>
-<li>扩展类加载类，由 <code>sun.misc.Launcher$ExtClassLoader</code> 实现，用于加载<code>&lt;JAVA_HOME&gt;/lib/ext</code> 目录下或者被 <code>java.ext.dirs</code> 系统变量指定路径下的类库。</li>
-<li>应用程序类加载器，也成为系统类加载器，由 <code>sun.misc.Launcher$AppClassLoader</code> 实现，用于加载用户类路径(ClassPath)上所指定的类库。</li>
-<li>自定义类加载器，继承系统类加载器，实现用户自定义加载逻辑。</li>
-</ul>
-<h3 id="双亲委派模型"><a href="#双亲委派模型" class="headerlink" title="双亲委派模型"></a>双亲委派模型</h3><p><img src="/imgs/JVM/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.png" alt="类加载器执行过程" title="类加载器执行过程"><br>Java 设计者推荐所有自定义加载器都组合一个父加载器，加载类时先委派父加载器去尝试加载，若不成，再由自身去加载。所以一些基类总是由基加载器去加载，可以避免一个程序中有多个 java.lang.Object 类的情况<br>注意<strong>各个类加载器之间是组合关系，并非继承关系</strong>。<br>当一个类加载器收到类加载的请求，它将这个加载请求委派给父类加载器进行加载，每一层加载器都是如此，最终，所有的请求都会传送到启动类加载器中。只有当父类加载器自己无法完成加载请求时，子类加载器才会尝试自己加载。<br>双亲委派模型可以确保安全性，可以<strong>保证所有的 Java 类库都是由启动类加载器加载</strong>。如用户编写的 java.lang.Object，加载请求传递到启动类加载器，启动类加载的是系统中的 Object 对象，而用户编写的 java.lang.Object 不会被加载。如用户编写的 java.lang.virus 类，加载请求传递到启动类加载器，启动类加载器发现 virus 类并不是核心 Java 类，无法进行加载，将会由具体的子类加载器进行加载，而经过不同加载器进行加载的类是无法访问彼此的。由不同加载器加载的类处于不同的运行时包。所有的访问权限都是基于同一个运行时包而言的。</p>
-<h3 id="类的加载时机"><a href="#类的加载时机" class="headerlink" title="类的加载时机"></a>类的加载时机</h3><p>Java 虚拟机规范没有强制规定类的加载时机，但是严格规定了以下 5 种情况必须立即对类进行“初始化”（而加载、验证、准备自然需要在此之前开始）  </p>
-<ol>
-<li>遇到字节码指令 new（实例化对象时）、getstatic、putstatic（读取或设置一个类的静态字段）、invokestatic（调用一个类的静态方法）；</li>
-<li>遇到反射调用 java.lang.reflect 对类进行反射调用；</li>
-<li>初始化一个类时，其父类还未初始化，则先初始化其父类（对接口不适用，即初始化子接口并不会导致父接口初始化）；</li>
-<li>主类（main）；</li>
-<li>JDK7 的动态语言支持，java.lang.invoke.MethodHandle 实例最后的解析结果 REF_getStatic、REF_putStatic、REF_invokeStatic 方法句柄，并且这个方法句柄对应的类没有进行初始化，则需要先进行初始化。</li>
-</ol>
-<p>上边的情况统称为<strong>主动引用</strong>，其他情况都是<strong>被动引用</strong>，被动引用都<strong>不会触发类的初始化</strong>。</p>
-<ul>
-<li>被动引用的示例如下，主要是使用 <strong>类初始化块</strong> 进行验证的（即 static 块），只输出了”Super!”，原因是不满足上边的条件，子类是否被加载完全由虚拟机实现说了算    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">class SuperClass &#123;</span><br><span class="line">    public static int value = 123;</span><br><span class="line">    static &#123;</span><br><span class="line">        System.out.println(&quot;Super!&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">class SubClass &#123;</span><br><span class="line">    static &#123;</span><br><span class="line">        System.out.println(&quot;Sub!&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        System.out.println(SubClass.value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>书上举了另外一个例子说明 <strong>数组类初始化</strong> 的问题，下面代码并不会触发 SuperClass 类的初始化，而是初始化了一个对应的数组类，可以通过加-XX:+TraceClassLoading 的运行时参数来跟踪类的加载过程    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class NotInitialization &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SuperClass[] sca = new SuperClass[10];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>还有一个例子来说明 <strong>常量传播优化</strong> 会导致的混淆情况，即使用常量字段（static final）时不会触发初始化，编译时会将常量值保存到调用者的类常量池中，所以在调用时就和被调用者没关系了，下面的代码并不会触发 ConstClass 类的加载   <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">class ConstClass &#123;</span><br><span class="line">    static &#123;</span><br><span class="line">        System.out.println(&quot;ConstClass!&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    public static final String HELLOWORLD = &quot;hello world&quot;;</span><br><span class="line">&#125;</span><br><span class="line">public class NotInitialization &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        System.out.println(ConstClass.HELLOWORLD);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ul>
-<h3 id="类的加载过程"><a href="#类的加载过程" class="headerlink" title="类的加载过程"></a>类的加载过程</h3><p><img src="/imgs/JVM/%E7%B1%BB%E7%9A%84%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B.png" alt="类的加载过程" title="类的加载过程"></p>
-<h4 id="加载"><a href="#加载" class="headerlink" title="加载"></a>加载</h4><ol>
-<li>通过类的完全限定名获取表示类的二进制流；</li>
-<li>转换为方法区中的类结构；</li>
-<li>在 Java 堆中生成一个代表这个类的 java.lang.Class 对象，作为方法区这些数据的访问入口</li>
-</ol>
-<p>对于数组类而言，<strong>数组类由 java 虚拟机直接创建，不通过类加载器创建</strong>。数组类的创建过程如下：</p>
-<ol>
-<li>如果数组元素类型是引用类型，就采用双亲委派模型进行加载(之后会介绍)，数组类将在加载该元素类型的类名称空间上被标识。</li>
-<li>如果数组元素类型为基本类型，数组类被标记为与引导类加载器关联。</li>
-<li>数组类的可见性与其元素类型可见性一致，如果元素类型不是引用类型，那数组类的可见性默认为 public。</li>
-</ol>
-<h4 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h4><p>此阶段的<strong>主要目的是确保 class 文件的字节流包含的信息符合虚拟机的要求</strong>，进行一部分的语义分析，主要是防止字节码中存在一些危险操作（数组越界、错误转型、跳转过头等），后来的 Java 虚拟机规范还规定了文件格式、符号引用等的验证。<br>不同的虚拟机，对类验证的实现可能有所不同，但大致都会完成下面四个阶段的验证：</p>
-<ol>
-<li><strong>文件格式验证</strong>，是要验证字节流是否符合 Class 文件格式的规范，并且能被当前版本的虚拟机处理。如验证魔数是否为 0xCAFEBABE；主、次版本号是否正在当前虚拟机处理范围之内；常量池的常量中是否有不被支持的常量类型。<br>该验证阶段的主要目的是保证输入的字节流能正确地解析并存储于方法区中，经过这个阶段的验证后，字节流才会进入内存的方法区中存储，所以后面的三个验证阶段都是基于方法区的存储结构进行的。</li>
-<li><strong>元数据验证</strong>，对字节码描述的信息进行语义分析，以保证其描述的信息符合 Java 语言规范的要求。可能包括的验证如：这个类是否有父类；这个类的父类是否继承了不允许被继承的类；如果这个类不是抽象类，是否实现了其父类或接口中要求实现的所有方法……</li>
-<li><strong>字节码验证</strong>，主要工作是进行数据流和控制流分析，保证被校验类的方法在运行时不会做出危害虚拟机安全的行为。如果一个类方法体的字节码没有通过字节码验证，那肯定是有问题的；但如果一个方法体通过了字节码验证，也不能说明其一定就是安全的。</li>
-<li><strong>符号引用验证</strong>，发生在虚拟机将符号引用转化为直接引用的时候，这个转化动作将在“解析阶段”中发生。验证符号引用中通过字符串描述的权限定名是否能找到对应的类；在指定类中是否存在符合方法字段的描述符及简单名称所描述的方法和字段；符号引用中的类、字段和方法的访问性(private、protected、public、default)是否可被当前类访问。</li>
-</ol>
-<p>验证阶段对于虚拟机的类加载机制来说，不一定是必要的阶段。<strong>如果所运行的全部代码确认是安全的，可以使用-Xverify：none 参数来关闭大部分的类验证措施，以缩短虚拟机类加载时间</strong>。</p>
-<h4 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h4><p>为类变量（static 变量）分配内存和并初始化为默认值，它们被分配在方法区中。<br>准备阶段不分配类中的实例变量的内存，实例变量将会在对象实例化时随着对象一起分配在 Java 堆中。<br>比如<code>static int a = 1;</code>在准备阶段后 a 的值为 0，在初始化阶段后才变成 1，但是对常量字段（static final），在准备阶段会直接赋予用户设定的值。</p>
-<h4 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h4><p>将常量池内的符号引用替换为直接引用，类似于将一个字面量 hash 到一个确定的槽中。<br><strong>符号引用（Symbolic Reference）</strong>：符号引用以一组符号来描述所引用的目标，符号可以是任何形式的字面量，只要使用时能无歧义地定位到目标即可。符号引用与虚拟机实现的内存布局无关，引用的目标并不一定已经加载到内存中。<br><strong>直接引用（Direct Reference）</strong>：直接引用可以是直接指向目标的指针、相对偏移量或是一个能间接定位到目标的句柄。直接引用是与虚拟机实现的内存布局相关的，如果有了直接引用，那么引用的目标必定已经在内存中存在。指向类型、类变量、类方法的直接引用可能是指向方法区的本地指针。</p>
-<p>常见的符号引用包括类或接口的全限定名、字段名和描述符、方法名和描述符。类型的直接引用可能简单地指向保存类型数据的方法区中的与实现相关的数据结构。类变量的直接引用可以指向方法区中保存的类变量的值。类方法的直接引用可以指向方法区中的一段数据结构方法区中包含调用方法的必要数据。指向实例变量和实例方法的直接引用都是偏移量。实例变量的直接引用可能是从对象的映像开始算起到这个实例变量位置的偏移量。实例方法的直接引用可能是到方法表的偏移量。</p>
-<p>为了加快解析效率，可以对解析结果进行缓存，之后再解析符号引用时直接返回即可，但是对于 invokedynamic 则不能进行缓存。解析主要是针对 CONSTANT_Class_info、CONSTANT_Fieldref_info、CONSTANT_Methodref_info、CONSTANT_InterfaceMethodref_info、CONSTANT_MethodType_info、CONSTANT_MethodHandle_info、CONSTANT_InvokeDynamic_info 七种常量类型。</p>
-<ol>
-<li>类或接口的解析<br>将符号引用替换为直接引用包括如下几步。假设符号引用记为 S，当前类记为 C，S 对应的类或接口记为 I。<ul>
-<li>若 S 不是数组类型，则把 S 传递给当前类 C 的类加载器进行加载，这个过程可能会触发其他的加载，这个过程一旦出现异常，则解析失败。</li>
-<li>若 S 是数组类型，并且数组元素类型为对象，则 S 的描述符会形如[java&#x2F;lang&#x2F;String，按照第一条去加载该类型，如果 S 的描述符符合，则需要加载的类型就是 java.lang.String，接着有虚拟机生成一个代表此数组唯独和元素的数组对象。</li>
-<li>若以上两个步骤没有出现异常，即 I 已经存在于内存中了，但是解析完成时还需要进行符号引用验证，确认 C 是否具备对 I 的访问权限。若不具备，则抛出 java.lang.IllegalAccessError 异常。</li>
-</ul>
-</li>
-<li>字段解析<br>首先将 CONSTANT_Fieldref_info 中的 class_index 索引的 CONSTANT_Class_info 符号引用进行解析，即解析字段所在类或接口，若解析出现异常，则字段解析失败。如解析成功，则进行下面的解析步骤。假设该字段所属的类或接口标记为 C。<ul>
-<li>如果 C 包含了字段的简单名和描述符与目标相匹配的字段，则返回这个字段的直接引用，查找结束。</li>
-<li>（字段解析对接口优先搜索）否则，如果 C 实现了接口，按照继承关系从下往上递归搜索各个接口和它的父接口，看是否存在相匹配的字段。存在，则返回直接引用，查找结束。</li>
-<li>否则，如果 C 不是 Object 对象，按照继承关系从下往上递归搜索父类，看是否存在相匹配的字段。存在，则返回直接引用，查找结束。</li>
-<li>否则，查找失败，抛出 java.lang.NoSuchFieldError 异常。</li>
-</ul>
-</li>
-<li>类方法解析<br>首先将 CONSTANT_Methodref_info 中的 class_index 索引的 CONSTANT_Class_info 符号引用进行解析，即解析方法所在的类或接口，若解析出现异常，则方法解析失败；如解析成功，则进行下面解析步骤。假设该方法所属的类标记为 C。<ul>
-<li>如果在方法表中发现 CONSTANT_Class_info 中索引的 C 是一个接口而不是一个类，则抛出 java.lang.IncompatibleClassChangeError 异常。</li>
-<li>否则，如果 C 中包含了方法的简单名和描述符与目标相匹配的字段，则返回这个方法的直接引用，查找结束。</li>
-<li>（方法解析对父类优先搜索）否则，在 C 的父类中递归搜索，看是否存在相匹配的方法，存在，则返回直接引用，查找结束。</li>
-<li>否则，在 C 实现的接口列表及父接口中递归搜索，看是否存在相匹配的方法，存在，说明 C 是一个抽象类（没有实现该方法，否则，在第一步就查找成功），抛出 java.lang.AbstractMethodError 异常。</li>
-<li>否则，查找失败，抛出 java.lang.NoSuchMethodError 异常。</li>
-<li>若查找过程成功，则对方法进行权限验证，如果发现不具备对此方法的访问权限，则抛出 java.lang.lllegalAccessError 异常。</li>
-</ul>
-</li>
-<li>接口方法解析<br>首先将 CONSTANT_InterfaceMethodref_info 中的 class_index 索引的 CONSTANT_Class_info 符号引用进行解析，即解析方法所在的类或接口，若解析出现异常，则方法解析失败；如解析成功，则进行下面解析步骤。假设该方法所属的类标记为 C。<ul>
-<li>如果在方法表中发现 CONSTANT_Class_info 中索引的 C 是一个类而不是接口，则抛出 java.lang.IncompatibleClassChangeError 异常。</li>
-<li>否则，如果 C 中包含了方法的简单名和描述符与目标相匹配的字段，则返回这个方法的直接引用，查找结束。</li>
-<li>否则，在 C 的父接口中递归搜索，直到 Object 类，看是否存在相匹配的方法，存在，则返回直接引用，查找结束。</li>
-<li>否则，查找失败，抛出 java.lang.NoSuchMethodError 异常。</li>
-<li>若查找过程成功，不需要进行权限验证，因为接口方法为 public，不会抛出 java.lang.IllegalAccessError 异常。</li>
-</ul>
-</li>
-</ol>
-<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p>类初始化是类加载过程的最后一步，前面的类加载过程，除了在加载阶段用户应用程序可以通过自定义类加载器参与之外，其余动作完全由虚拟机主导和控制，到了初始化阶段，才真正开始执行类中定义的 Java 程序代码。<br>初始化是执行类构造器&lt;clinit&gt;()的过程，<clinit>()方法是由编译器自动<strong>收集类中的所有类变量的赋值动作和静态语句块(static{}块&#x2F;类初始化块)中的语句合并产生的</strong>。具体地说，应该有以下几条规则：</p>
-<ul>
-<li>由编译器收集类中的所有类变量的赋值动作（如果仅仅只是声明，不会被收集）和静态语句块中的语句合并产生的，收集顺序按照语句在源文件中出现的顺序所决定；在静态语句块中只能访问定义在静态语句之前的变量；而对于定义在静态语句块之后的变量，可以进行赋值，但是不能够访问。</li>
-<li>不需要显示调用父类构造器，虚拟机会保证在子类的<clinit>()方法执行之前，父类的<clinit>()方法已经执行完毕，所以，第一个被执行的<clinit>()方法的类肯定是 java.lang.Object。</li>
-<li>父类中定义的静态语句块优先于子类的静态语句。</li>
-<li>此方法对类和接口都不是必须的，若类中没有静态语句块和静态变量赋值操作，则不会生成<clinit>()方法。</li>
-<li>接口会生成此方法，因为对接口的字段可以进行赋值操作。执行接口的<clinit>()方法不需要先执行父接口的<clinit>()方法，只有在使用父接口的变量时，才会进行初始化；接口的实现类在初始化时也不会执行接口的<clinit>()方法。</li>
-<li>此方法在多线程环境中会被正确的加锁、同步。</li>
-</ul>
-<h4 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h4><p>完成了初始化阶段后，我们就可以使用对象了，在程序中可以随意进行访问，只要类还没有被卸载。</p>
-<h4 id="卸载"><a href="#卸载" class="headerlink" title="卸载"></a>卸载</h4><p>GC 能够对方法区内无用对象进行回收，启动类加载的类型永远是可触及的，回收的是由用户自定义加加载器加载的类，具体内容等到 GC 部分再说。</p>
-<h3 id="接口的加载过程"><a href="#接口的加载过程" class="headerlink" title="接口的加载过程"></a>接口的加载过程</h3><p>接口的加载和类的加载是类似的，只是接口要初始化时并不会连带父接口一块初始化，只有在真正用到父接口时才会执行初始化。 </p>
-<h3 id="定义类加载器和初始类加载器"><a href="#定义类加载器和初始类加载器" class="headerlink" title="定义类加载器和初始类加载器"></a>定义类加载器和初始类加载器</h3><p>我们知道不同类加载器加载的类位于不同的命名空间，它们之间是相互隔离的，这里说的隔离仅仅指它们存储位置隔离，并不是说一个自定义的类 A 使用了 java.util.List 类就会报错。<br>自定义的类 A 一般会使用系统类加载器加载，而 java.util.List 则会由启动类加载器加载，当加载类 A 时如果遇到了 java.util.List，会首先尝试通过系统类加载器加载，在它发现自己无法加载后，通过双亲委派模型交给父加载器加载。<br><img src="/imgs/JVM/%E5%88%9D%E5%A7%8B%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8%E5%92%8C%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8.png" alt="初始类加载器和定义类加载器" title="初始类加载器和定义类加载器"><br>如上图所示：</p>
-<ul>
-<li>A 是由系统类加载器加载的，因此系统类加载器是其定义类加载器兼初始类加载器；</li>
-<li>系统类加载器加载过 java.util.List，因此是其初始类加载器；</li>
-<li>启动类加载器实际加载了 java.util.List，因此是其定义类加载器。</li>
-</ul>
-<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><ol>
-<li>为什么下面的执行结果为 0？<br>说明类加载器在加载一个类时，父类的成员变量就算被覆盖，其存储空间依然还存在。  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">class A &#123;</span><br><span class="line">    int a;</span><br><span class="line">&#125;</span><br><span class="line">public class JavaTest extends A &#123;</span><br><span class="line">    int a;</span><br><span class="line">    @Test</span><br><span class="line">    public void test() &#123;</span><br><span class="line">        a = 1;</span><br><span class="line">        System.out.println(super.a);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>为什么下面的报错？<br>类的初始化阶段有一个细节：类初始化块不能访问定义在其之后的变量  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class JavaTest &#123;</span><br><span class="line">    static &#123;</span><br><span class="line">        i = 0;</span><br><span class="line">        System.out.println(i); // 报错</span><br><span class="line">    &#125;</span><br><span class="line">    static int i = 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>为什么输出两个’A’？<br>当我们 new A()时，首先为 A 分配内存空间，此时 A 已经存在了，只是还未初始化，然后调用 A 的构造函数，A 的构造函数又隐式调用了父类的构造函数。<br>在父类构造函数中使用 this 调用 draw()，this 实际上指向了 a 对象，平常调用方法时 this 也是隐含的。  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">class B &#123;</span><br><span class="line">    int a;</span><br><span class="line">    B() &#123;</span><br><span class="line">        this.draw();</span><br><span class="line">    &#125;</span><br><span class="line">    void draw() &#123;</span><br><span class="line">        System.out.println(&quot;B&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">class A extends B &#123;</span><br><span class="line">    int a;</span><br><span class="line">    A() &#123;</span><br><span class="line">        draw();</span><br><span class="line">    &#125;</span><br><span class="line">    @Override</span><br><span class="line">    void draw() &#123;</span><br><span class="line">        System.out.println(&quot;A&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        A a = new A();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>为什么最后输出的 count2 为 0？<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">class SingleTon &#123;</span><br><span class="line">    private static SingleTon singleTon = new SingleTon();</span><br><span class="line">    public static int count1;</span><br><span class="line">    public static int count2 = 0;</span><br><span class="line">    private SingleTon() &#123;</span><br><span class="line">        count1++;</span><br><span class="line">        count2++;</span><br><span class="line">    &#125;</span><br><span class="line">    public static SingleTon getInstance() &#123;</span><br><span class="line">        return singleTon;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">public class Test &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        SingleTon singleTon = SingleTon.getInstance();</span><br><span class="line">        System.out.println(&quot;count1=&quot; + singleTon.count1);</span><br><span class="line">        System.out.println(&quot;count2=&quot; + singleTon.count2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-这里有问题的应该是 static 变量的初始化和构造方法被调用的顺序，实际上构造方法是先被调用的。</li>
-<li>SingleTon singleTon &#x3D; SingleTon.getInstance();调用了类的 SingleTon 调用了类的静态方法，触发类的初始化（主动引用）</li>
-<li>类加载的时候在准备过程中为类的静态变量分配内存并初始化默认值 singleton&#x3D;null count1&#x3D;0,count2&#x3D;0（准备）</li>
-<li>类初始化，为类的静态变量赋值和执行静态代码快。singleton 赋值为 new SingleTon()调用类的构造方法（初始化）</li>
-<li>调用类的构造方法后 count&#x3D;1;count2&#x3D;1</li>
-<li>继续为 count1 与 count2 赋值,此时 count1 没有赋值操作,所有 count1 为 1,但是 count2 执行赋值操作就变为 0</li>
-<li>读下面的类加载器应用代码，为什么输出 false？<br>myLoader 加载的类和虚拟机的默认类加载器（Bootstrap ClassLoader）将加载的类保存在不同的命名空间中，它们相当于不同的类。  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public class JavaTest &#123;</span><br><span class="line">    @Test</span><br><span class="line">    public void test() throws ClassNotFoundException, IllegalAccessException, InstantiationException &#123;</span><br><span class="line">        ClassLoader myLoader = new ClassLoader() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public Class&lt;?&gt; loadClass(String name) throws ClassNotFoundException &#123;</span><br><span class="line">                String fileName = name.substring(</span><br><span class="line">                        name.lastIndexOf(&quot;.&quot;) + 1) + &quot;.class&quot;;</span><br><span class="line">                InputStream is = getClass().getResourceAsStream(fileName);</span><br><span class="line">                if(is == null) &#123; return super.loadClass(name); &#125;</span><br><span class="line">                try &#123;</span><br><span class="line">                    byte[] b = new byte[is.available()]; // 进行验证</span><br><span class="line">                    is.read(b);</span><br><span class="line">                    return defineClass(name, b, 0, b.length);</span><br><span class="line">                &#125; catch (IOException e) &#123;</span><br><span class="line">                    throw new ClassNotFoundException(name);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        Object obj = myLoader.loadClass(&quot;com.tallate.JavaTest&quot;)</span><br><span class="line">                .newInstance();</span><br><span class="line">        System.out.println(obj.getClass());</span><br><span class="line">        System.out.println(obj instanceof com.tallate.JavaTest); // false？</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>JVM 怎么知道哪些类应该委托给父加载器加载？<br>每个类装载器都有一个 URLClassPath 对象用于保存类路径，在加载时会先在这个路径下查找该类，找不到再返回 null。  </li>
-<li>不同命名空间的类为什么能互相使用？<br>双亲委派模型中，一个类装载器总是会先委托父类去进行装载，所有这些被委托的类装载器都被称为<strong>初始类装载器</strong>，而实际装载的被称为<strong>定义类装载器</strong>，所有初始装载器间的类型是共享的  </li>
-<li>可以不可以自己写个 String 类？<br>不能，因为根据类加载的双亲委派机制，会去加载父类，父类发现冲突了 String 就不再加载了。</li>
-<li>Tomcat 的应用隔离原理是什么？<br>Tomcat 实现了两种隔离技术：用于线程隔离的线程池和用于代码隔离的 WebAppClassLoader。<br>前者不必赘述，对于后者，大家比较感兴趣的是 Tomcat 中对双亲委派模型的违背，因为它不是先委托父加载器去加载目标类，因为 Tomcat 一个进程可以运行多个 web 服务器，两个 web 项目中可能会出现两个声明完全一致的类，它们必须所处的命名空间必须隔离开，不然可能会发生一个项目启动后调到另一个项目中的代码的情况，这样就乱套了。</li>
-</ol>
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><h3 id="类文件结构-1"><a href="#类文件结构-1" class="headerlink" title="类文件结构"></a>类文件结构</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/leesf456/p/5263764.html">【JVM】JVM 系列之 Class 文件（三）</a></li>
-</ol>
-<h3 id="对象分配"><a href="#对象分配" class="headerlink" title="对象分配"></a>对象分配</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://www.programcreek.com/2011/11/what-do-java-objects-look-like-in-memory/">What do Java objects look like in memory during run-time?</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.programcreek.com/2013/04/what-does-a-java-array-look-like-in-memory/">What does a Java array look like in memory?</a></li>
-</ol>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/8/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/10/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/8/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/10/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

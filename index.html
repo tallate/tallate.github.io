@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">189</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">191</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">189</span>
+          <span class="site-state-item-count">191</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -175,6 +175,353 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/2787e40f.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2787e40f.html" class="post-title-link" itemprop="url">使用task调度多agent解决复杂问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-08-22 00:22:48 / 修改时间：02:11:51" itemprop="dateCreated datePublished" datetime="2025-08-22T00:22:48+08:00">2025-08-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>基础的 ReAct 模式将action描述为 tool ，tool为沟通世界的桥梁，但tool可以有多种解释，比如mcp as tool, agent as tool, task as tool, human as tool(human in loop)等等，task是一种进阶的能力，它是一个需要多agent配合达成的目标。<br>看了几种实现，可以观察到一个规律：</p>
+<ul>
+<li>通过一个reasoning过程来产生plan，这个plan可以在内存中，也可以被保存到一个文件，如manus的todo.md 和 cline 的 Deep Planning</li>
+<li>将plan出的任务分派给agent来执行，分配给一个agent，或多个agent来解决复杂的问题，如 claude的sub task机制 和 langgraph的Hierarchical Agent Teams机制</li>
+<li>多个task之间应该会有上下文隔离和共享机制，既需要避免上下文爆炸，又需要在某些情况下多agent之间的信息共享</li>
+</ul>
+<h3 id="claude-sub-task"><a href="#claude-sub-task" class="headerlink" title="claude sub task"></a>claude sub task</h3><p><img src="/imgs/AI/claude_task.png" alt="claude_task.png"><br>某些实现会创建 Task 给一组 Agent 执行，这意味着工具实现具有很大自由度。例如 Claude Code 将子任务执行封装为 task 工具，执行结果返回给调用该工具的 agent，并合并到主 Context 中</p>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/analysis_claude_code/blob/main/claude_code_v_1.0.33/stage1_analysis_workspace/docs/ana_docs/task_agent_analysis.md">Claude Code Task工具与Agent架构完整技术实现分析</a></p>
+<h3 id="langgraph-Hierarchical-Agent-Teams"><a href="#langgraph-Hierarchical-Agent-Teams" class="headerlink" title="langgraph Hierarchical Agent Teams"></a>langgraph Hierarchical Agent Teams</h3><p><img src="/imgs/AI/hierarchical_agent_teams_process.png" alt="hierarchical_agent_teams_process.png"><br>随着智能体系统的发展，单一智能体可能会遇到工具选择困难（工具过多时决策质量下降）、上下文复杂度失控（难以跟踪复杂上下文）以及专业化需求（需要多个专业领域）等问题。多智能体系统通过模块化（独立开发维护）、专业化（领域专家智能体）和控制性（显式通信控制）三大优势来解决这些问题，将复杂应用分解为多个小型、独立的智能体，通过层次化组织实现任务分解和协作，使用LangGraph构建智能体网络并通过状态图管理交互。<br>在langgraph中可以将task分配给一个 MultiAgent 的 Team 来执行</p>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://langchain-ai.github.io/langgraph/tutorials/multi_agent/hierarchical_agent_teams/">Hierarchical Agent Teams</a><br><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2308.08155">AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation</a></p>
+<h3 id="manus-todo-md"><a href="#manus-todo-md" class="headerlink" title="manus todo.md"></a>manus todo.md</h3><p>manus 在处理复杂任务时，倾向于创建一个todo.md文件——并在任务进行过程中逐步更新它，勾选已完成的项目。</p>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://manus.im/zh-cn/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus">https://manus.im/zh-cn/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus</a></p>
+<h3 id="cline-deep-planning"><a href="#cline-deep-planning" class="headerlink" title="cline deep planning"></a>cline deep planning</h3><p>Cline 的深度规划（Deep Planning）是一种基于上下文工程的智能体规划方法，通过系统性的上下文管理来优化 AI 系统的决策和执行能力。</p>
+<p><strong>深度规划的本质</strong></p>
+<ul>
+<li>将复杂的任务分解为多层次、可执行的子任务</li>
+<li>通过上下文工程确保每个规划步骤都有充分的信息支持</li>
+<li>实现从高层目标到具体行动的端到端规划</li>
+</ul>
+<p><strong>上下文工程在深度规划中的作用</strong></p>
+<ol>
+<li><strong>Write Context（写入上下文）</strong>：将规划过程中的中间状态、决策依据等写入上下文</li>
+<li><strong>Select Context（选择上下文）</strong>：根据当前规划阶段选择最相关的上下文信息</li>
+<li><strong>Compress Context（压缩上下文）</strong>：对长规划序列进行压缩，保留关键信息</li>
+<li><strong>Isolate Context（隔离上下文）</strong>：将不同规划模块的上下文隔离，避免干扰</li>
+</ol>
+<p><strong>规划状态管理</strong></p>
+<ol>
+<li><strong>目标分解</strong>：将复杂目标分解为可管理的子目标</li>
+<li><strong>上下文构建</strong>：为每个子目标构建专门的上下文</li>
+<li><strong>规划生成</strong>：基于上下文生成具体的执行计划</li>
+<li><strong>执行监控</strong>：监控执行过程，动态调整规划</li>
+<li><strong>结果整合</strong>：将执行结果整合到整体规划中</li>
+</ol>
+<p><strong>与 ReAct 模式的对比</strong></p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>ReAct 模式</th>
+<th>Cline 深度规划</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>决策方式</td>
+<td>即时反应式</td>
+<td>前瞻性规划</td>
+</tr>
+<tr>
+<td>上下文使用</td>
+<td>简单工具调用</td>
+<td>复杂上下文工程</td>
+</tr>
+<tr>
+<td>任务分解</td>
+<td>单一工具调用</td>
+<td>多层次任务分解</td>
+</tr>
+<tr>
+<td>执行模式</td>
+<td>线性执行</td>
+<td>并行+串行混合</td>
+</tr>
+<tr>
+<td>错误处理</td>
+<td>重试机制</td>
+<td>规划调整机制</td>
+</tr>
+</tbody></table>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://cline.bot/blog/how-to-think-about-context-engineering-in-cline">https://cline.bot/blog/how-to-think-about-context-engineering-in-cline</a><br><a target="_blank" rel="noopener" href="https://x.com/shao__meng/status/1957031656692543939">https://x.com/shao__meng/status/1957031656692543939</a><br><a target="_blank" rel="noopener" href="https://x.com/shao__meng/status/1957682039509118989">https://x.com/shao__meng/status/1957682039509118989</a></p>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/0.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/0.html" class="post-title-link" itemprop="url">未命名</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-08-21 00:13:10 / 修改时间：23:22:33" itemprop="dateCreated datePublished" datetime="2025-08-21T00:13:10+08:00">2025-08-21</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="长期记忆缘起"><a href="#长期记忆缘起" class="headerlink" title="长期记忆缘起"></a>长期记忆缘起</h2><p>Without proper memory systems, AI applications would treat each interaction as completely new, losing valuable context and personalization opportunities.</p>
+<ul>
+<li>从过去的经验中学习，得到</li>
+<li></li>
+</ul>
+<h2 id="长期记忆模式"><a href="#长期记忆模式" class="headerlink" title="长期记忆模式"></a>长期记忆模式</h2><h3 id="从对话短期记忆提取"><a href="#从对话短期记忆提取" class="headerlink" title="从对话短期记忆提取"></a>从对话短期记忆提取</h3><p><img src="/imgs/AI/long_term_process.png" alt="long_term_process"></p>
+<h3 id="为Memory建立索引和检索"><a href="#为Memory建立索引和检索" class="headerlink" title="为Memory建立索引和检索"></a>为Memory建立索引和检索</h3><p><a target="_blank" rel="noopener" href="https://blog.langchain.com/semantic-search-for-langgraph-memory/">https://blog.langchain.com/semantic-search-for-langgraph-memory/</a></p>
+<h3 id="使用文件系统来作为上下文"><a href="#使用文件系统来作为上下文" class="headerlink" title="使用文件系统来作为上下文"></a>使用文件系统来作为上下文</h3><p>使用文件来作为观察结果（如网页搜索工具的结果）的存储，而不是将所有内容都存储于内存上下文，模型需要按需读取加载到上下文，好处是可恢复的，因为文件系统中存储的是完整的内容而不是压缩后的内容<br><img src="/imgs/AI/use_file_system_as_context.png" alt="use_file_system_as_context.png" title="use_file_system_as_context"></p>
+<h3 id="MemoryTemplate"><a href="#MemoryTemplate" class="headerlink" title="MemoryTemplate"></a>MemoryTemplate</h3><p><strong>定义</strong><br>MemoryTemplate是LangChain AI提供的长期记忆服务模板，用于构建和部署可连接到任何LangGraph代理的长期记忆服务，实现用户范围的记忆管理。</p>
+<p><strong>核心特性</strong></p>
+<ul>
+<li><strong>分离关注点</strong>：将应用逻辑（聊天机器人）与记忆（记忆图）分离</li>
+<li><strong>最小开销</strong>：从应用热路径中移除记忆创建逻辑，降低延迟成本</li>
+<li><strong>后台处理</strong>：记忆创建逻辑在后台作业中处理，避免重复处理</li>
+<li><strong>独立部署</strong>：记忆图可以独立于应用程序更新和托管</li>
+</ul>
+<p><strong>主要功能</strong></p>
+<ol>
+<li><strong>长期记忆管理</strong>：让AI应用从每次用户交互中学习</li>
+<li><strong>用户适应</strong>：根据用户个人喜好和偏好进行适应</li>
+<li><strong>错误学习</strong>：从之前的错误中学习并改进</li>
+<li><strong>记忆存储</strong>：提供可靠的记忆存储层，跨对话持久化信息</li>
+</ol>
+<p><strong>技术架构</strong></p>
+<ul>
+<li><strong>记忆图</strong>：独立的记忆处理服务</li>
+<li><strong>存储层</strong>：内置的记忆存储系统</li>
+<li><strong>命名空间</strong>：按用户ID和记忆模式进行命名空间管理</li>
+<li><strong>API接口</strong>：通过LangGraph API进行交互</li>
+</ul>
+<p><strong>记忆模式</strong></p>
+<ol>
+<li><p><strong>Patch Schema模式</strong>：允许更新单个连续的记忆模式</p>
+<ul>
+<li>支持更新现有记忆</li>
+<li>可自定义JSON模式</li>
+<li>适用于用户信息维护</li>
+</ul>
+</li>
+<li><p><strong>Insertion Schema模式</strong>：允许插入单独的”事件”记忆</p>
+<ul>
+<li>跟踪关键信息片段</li>
+<li>支持对话摘要</li>
+<li>适用于事件记录</li>
+</ul>
+</li>
+</ol>
+<p><strong>集成方式</strong></p>
+<ul>
+<li>支持Anthropic Claude模型</li>
+<li>支持OpenAI GPT模型</li>
+<li>提供LangGraph Studio集成</li>
+<li>支持云部署和本地部署</li>
+</ul>
+<p><strong>评估和优化</strong></p>
+<ul>
+<li>提供评估示例和测试用例</li>
+<li>支持LangSmith集成进行系统优化</li>
+<li>可自定义记忆类型和模式</li>
+<li>支持精确度和召回率平衡</li>
+</ul>
+<h2 id="提取"><a href="#提取" class="headerlink" title="提取"></a>提取</h2><h3 id="langextract"><a href="#langextract" class="headerlink" title="langextract"></a>langextract</h3><p>LangExtract是一个Python库，使用LLM从非结构化文本文档中提取结构化信息，基于用户定义的指令。它能够处理各种材料，如临床文本、法律文件、学术论文等，并输出结构化的JSON数据。</p>
+<p><strong>核心特性</strong></p>
+<ul>
+<li><strong>精确源定位</strong>：每个提取的实体都包含精确的源文本引用</li>
+<li><strong>可扩展性</strong>：支持处理长文档和并行处理</li>
+<li><strong>自定义提取</strong>：通过提示词和示例控制提取行为，从非结构化文本中提取实体、关系和属性</li>
+</ul>
+<p><strong>技术架构</strong></p>
+<ul>
+<li>基于LLM的信息提取</li>
+<li>支持自定义模型提供商</li>
+<li>提供插件系统扩展功能</li>
+<li>支持本地和云端模型部署</li>
+</ul>
+<p><strong>引用链接</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/google/langextract/blob/main/docs/examples/longer_text_example.md">https://github.com/google/langextract/blob/main/docs/examples/longer_text_example.md</a></li>
+</ul>
+<h3 id="LightRAG"><a href="#LightRAG" class="headerlink" title="LightRAG"></a>LightRAG</h3><p><strong>定义</strong><br>LightRAG是一个简单且快速的检索增强生成（Retrieval-Augmented Generation）系统，专注于提供高效的知识检索和生成能力。</p>
+<p><strong>核心特性</strong></p>
+<ul>
+<li><strong>简单高效</strong>：设计简洁，易于部署和使用</li>
+<li><strong>快速检索</strong>：优化的检索算法，提供快速响应</li>
+<li><strong>知识图谱集成</strong>：支持知识图谱增强的检索</li>
+<li><strong>多模态支持</strong>：可扩展支持多种数据类型</li>
+<li><strong>Web界面</strong>：提供友好的Web用户界面</li>
+</ul>
+<p><strong>主要功能</strong></p>
+<ol>
+<li><strong>智能检索</strong>：基于语义相似度的文档检索</li>
+<li><strong>上下文增强</strong>：为LLM提供相关上下文信息</li>
+<li><strong>知识图谱</strong>：利用图结构增强检索效果</li>
+<li><strong>实时查询</strong>：支持实时文档查询和生成</li>
+</ol>
+<p><strong>技术架构</strong></p>
+<ul>
+<li>基于向量数据库的检索系统</li>
+<li>集成知识图谱技术</li>
+<li>支持多种LLM模型</li>
+<li>提供RESTful API接口</li>
+</ul>
+<p><strong>性能优势</strong></p>
+<ul>
+<li>相比传统RAG方法，在多个指标上表现优异</li>
+<li>在Comprehensiveness、Diversity、Empowerment等维度上显著提升</li>
+<li>支持大规模文档集合的高效检索</li>
+</ul>
+<p><strong>生态系统</strong></p>
+<ul>
+<li><strong>RAG-Anything</strong>：多模态RAG系统</li>
+<li><strong>VideoRAG</strong>：极长上下文视频RAG</li>
+<li><strong>MiniRAG</strong>：极简RAG实现</li>
+</ul>
+<p><strong>项目信息</strong></p>
+<ul>
+<li>GitHub: <a target="_blank" rel="noopener" href="https://github.com/HKUDS/LightRAG">https://github.com/HKUDS/LightRAG</a></li>
+<li>论文: <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2410.05779">https://arxiv.org/abs/2410.05779</a></li>
+<li>许可证: MIT</li>
+<li>星标: 19.8k+</li>
+<li>维护者: HKUDS团队</li>
+</ul>
+<p><strong>相关项目</strong></p>
+<ul>
+<li>RAG-Anything: <a target="_blank" rel="noopener" href="https://github.com/HKUDS/RAG-Anything">https://github.com/HKUDS/RAG-Anything</a></li>
+<li>VideoRAG: <a target="_blank" rel="noopener" href="https://github.com/HKUDS/VideoRAG">https://github.com/HKUDS/VideoRAG</a>  </li>
+<li>MiniRAG: <a target="_blank" rel="noopener" href="https://github.com/HKUDS/MiniRAG">https://github.com/HKUDS/MiniRAG</a></li>
+</ul>
+<h3 id="memu"><a href="#memu" class="headerlink" title="memu"></a>memu</h3><p><a target="_blank" rel="noopener" href="https://github.com/NevaMind-AI/memU">https://github.com/NevaMind-AI/memU</a></p>
+<h3 id="MemoryScope"><a href="#MemoryScope" class="headerlink" title="MemoryScope"></a>MemoryScope</h3><p>定义一个pipeline来处理记忆<br><a target="_blank" rel="noopener" href="https://github.com/modelscope/MemoryScope">https://github.com/modelscope/MemoryScope</a></p>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -220,7 +567,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-17 10:39:40" itemprop="dateModified" datetime="2025-08-17T10:39:40+08:00">2025-08-17</time>
+      <time title="修改时间：2025-08-22 00:10:55" itemprop="dateModified" datetime="2025-08-22T00:10:55+08:00">2025-08-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -256,9 +603,7 @@
 <h5 id="output-parser"><a href="#output-parser" class="headerlink" title="output parser"></a>output parser</h5><p><img src="/AI/tools_are_structured_output.png" alt="tools_are_structured_output"><br>另一种方案是从大模型的结构化输出中解析工具调用，而非依赖 toolcalls 能力，这种方式提供了更大的灵活性 <a target="_blank" rel="noopener" href="https://github.com/humanlayer/12-factor-agents/blob/main/content/factor-04-tools-are-structured-outputs.md">Tools are just structured outputs</a></p>
 <p>例如 ADK 的实现就采用模型的结构化输出来识别行动 <a target="_blank" rel="noopener" href="https://google.github.io/adk-docs/agents/llm-agents/#planner">ADK Planer</a></p>
 <h4 id="2-Acting-通过外部交互获取信息，验证推理假设，更新上下文"><a href="#2-Acting-通过外部交互获取信息，验证推理假设，更新上下文" class="headerlink" title="2. Acting - 通过外部交互获取信息，验证推理假设，更新上下文"></a>2. Acting - 通过外部交互获取信息，验证推理假设，更新上下文</h4><p>通常使用工具（tools）进行交互，handoffs 机制可以将其他 Agent 作为可执行工具。是否定义独立 Agent 来执行 Acting 取决于任务复杂度及其价值（因为 Agent 运行成本较高）。此外，Agent 的异常恢复机制相对脆弱，可能需要 human-in-the-loop 介入，需要权衡考虑 <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=XSZP9GhhuAc">Prompting for Agents | Code w&#x2F; Claude</a></p>
-<h5 id="task-as-action"><a href="#task-as-action" class="headerlink" title="task as action"></a>task as action</h5><p><img src="/imgs/AI/claude_task.png" alt="claude_task.png"><br>某些实现会创建 Task 给一组 Agent 执行，这意味着工具实现具有很大自由度。例如 Claude Code 将子任务执行封装为 task 工具，执行结果返回给调用该工具的 agent，并合并到主 Context 中 <a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/analysis_claude_code/blob/main/claude_code_v_1.0.33/stage1_analysis_workspace/docs/ana_docs/task_agent_analysis.md">Claude Code Task工具与Agent架构完整技术实现分析</a></p>
-<h5 id="multi-action"><a href="#multi-action" class="headerlink" title="multi action"></a>multi action</h5><p><img src="/imgs/AI/plan_and_execute.png" alt="plan_and_execute.png"><br>当一次产生多个 Acting 时，会演进为 Plan-And-Execute 机制 <a target="_blank" rel="noopener" href="https://langchain-ai.github.io/langgraph/tutorials/plan-and-execute/plan-and-execute/">Plan-and-Execute</a></p>
-<h5 id="acting-with-dynamic-graph"><a href="#acting-with-dynamic-graph" class="headerlink" title="acting with dynamic graph"></a>acting with dynamic graph</h5><p><img src="/imgs/AI/hierarchical_agent_teams.png" alt="hierarchical_agent_teams.png"><br>动态构图能力为这种模式提供了广阔的想象空间 <a target="_blank" rel="noopener" href="https://langchain-ai.github.io/langgraph/tutorials/multi_agent/hierarchical_agent_teams/">Hierarchical Agent Teams</a>, <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2308.08155">AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation</a></p>
+<h5 id="plan-and-execute"><a href="#plan-and-execute" class="headerlink" title="plan and execute"></a>plan and execute</h5><p><img src="/imgs/AI/plan_and_execute.png" alt="plan_and_execute.png"><br>当一次产生多个 Acting 时，会演进为 Plan-And-Execute 机制 <a target="_blank" rel="noopener" href="https://langchain-ai.github.io/langgraph/tutorials/plan-and-execute/plan-and-execute/">Plan-and-Execute</a><br>相对ReAct机制，plan-and-execute机制具备前瞻性，每个任务的执行比较自由，可以灵活调度并行或串行执行。</p>
 <h4 id="3-Reasoning-Loop-重新规划，直到收敛"><a href="#3-Reasoning-Loop-重新规划，直到收敛" class="headerlink" title="3. Reasoning Loop - 重新规划，直到收敛"></a>3. Reasoning Loop - 重新规划，直到收敛</h4><p>Agent 进行多轮循环，不断执行 Reasoning 过程。在多次循环中，Memory 会记录执行历史，Agent 基于历史不断调整策略直到问题收敛 <a target="_blank" rel="noopener" href="https://langchain-ai.github.io/langgraph/concepts/memory/">Memory</a></p>
 <h5 id="replan"><a href="#replan" class="headerlink" title="replan"></a>replan</h5><p>在 Plan-and-Execute 机制中称为 Re-Plan，但不同之处在于 Re-Plan 需要上下文记录 step 历史 <a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langgraph/blob/main/docs/docs/tutorials/plan-and-execute/plan-and-execute.ipynb">Plan-and-Execute</a></p>
 <h3 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a><strong>适用场景</strong></h3><ul>
@@ -510,7 +855,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-16 22:07:35" itemprop="dateModified" datetime="2025-08-16T22:07:35+08:00">2025-08-16</time>
+      <time title="修改时间：2025-08-21 00:29:09" itemprop="dateModified" datetime="2025-08-21T00:29:09+08:00">2025-08-21</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -940,222 +1285,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/5deeeffc.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/5deeeffc.html" class="post-title-link" itemprop="url">敏捷革命</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-11-23 19:09:30" itemprop="dateCreated datePublished" datetime="2022-11-23T19:09:30+08:00">2022-11-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-20 21:04:26" itemprop="dateModified" datetime="2025-07-20T21:04:26+08:00">2025-07-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AF%BB%E4%B9%A6/" itemprop="url" rel="index"><span itemprop="name">读书</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="为什么需要Scrum"><a href="#为什么需要Scrum" class="headerlink" title="为什么需要Scrum"></a>为什么需要Scrum</h2><p>传统方法（主要是瀑布法）效率不足且经常引起项目最终无法交付。</p>
-<h2 id="Scrum团队"><a href="#Scrum团队" class="headerlink" title="Scrum团队"></a>Scrum团队</h2><p>团队效率的提升比个人能力的提升对项目完成的影响更大<br>卓越团队的特点：</p>
-<ol>
-<li>明确的目标<br>他们具有希望超越寻常的目标。实现这种目标的动力促使他们超越寻常，达到卓越。他们下决心拒绝平庸，出类拔萃，这种决定改变了他们看待自己的方式，扩大了他们的能力范围。</li>
-<li>自主决策能力<br>这种团队自我组织，自我管理，有能力决定如何开展工作，并获得了根据自己决定做事的授权。</li>
-<li>多功能<br>这些团队具备完成项目的所有技能：计划、设计、生产、销售、分销。具有这些技能的成员相互学习，相互提高。一位设计革命性新款相机的团队成员说：“当所有团队成员都在一间大房子里办公时，某个人的信息就是你的信息，并且得来全不费功夫。你会开始思考对整个团体而言，最优选择或次优选择是什么，而不再仅仅从你个人的角度考虑问题。”<br>每个团队成员都具备完成工作所需的各种技能，而不严格划分每个成员的角色，如果严格划分角色，不同角色间交流情报时就会容易产生误差。</li>
-<li>透明度高、注重信息分享</li>
-<li>团队规模<br>如果团队规模过大，沟通渠道增多会带来更大的沟通成本。<br>Scrum团队倾向于让每个成员都知道其他人在做什么，每个人正在做什么工作，正面临哪些挑战，取得了哪些进步等等，都是透明的。团队规模过大会影响沟通效果，进而导致团队分裂成小团体，以至于多功能的团队就不复存在了。</li>
-<li>Scrum Master<br>制订工作框架：冲刺、每日立会、检查与回顾。<br>Scrum Master负责确保整个工作流程的顺利推进，他的工作职责是召集会议，确保团队运作过程的透明度，为团队发现障碍，并持续改进。</li>
-<li>工作制度<br>不要把问题归咎于某一个人，而是寻求制度上的解决方案。</li>
-</ol>
-<h2 id="周期"><a href="#周期" class="headerlink" title="周期"></a>周期</h2><ol>
-<li>冲刺<br>冲刺指的是项目中的一个小的迭代周期，叫冲刺会比较有紧张感。<br>每个周期固定时间审视一下这个周期内团队成员做的成果<br>冲刺周期是固定的，有固定期限可以让团队成员方便评估自己的节奏在每个周期能做多少事情，并且不允许团队之外的任何人给团队内成员增加任务。</li>
-<li>每日立会<br>了解这个冲刺周期内各项任务的进展状况，有没有障碍，需不需要其他人来帮忙；团队的一切任务都是自主决定、自主完成的，不需要汇报。<br>时间不宜过长，不应给团队带来负担。<br>Scrum Master每日问3个问题示例：</li>
-</ol>
-<ul>
-<li>你昨天做了什么去帮助团队完成冲刺；</li>
-<li>今天你打算做什么来帮助团队完成冲刺；</li>
-<li>什么因素阻碍了团队的前进之路？<br>每日立会规则：<br>一、每天会议召开的时间是固定的，每个成员都要出席；<br>二、开会时间不能超过15分钟，每次开会都直击重点，如果有事情需要进一步讨论，可以先记录下来，在每日立会结束之后再做进一步的讨论；<br>三、每个人都要积极参与，尽量让每个人都站起来开会。</li>
-</ul>
-<h2 id="避免浪费（人力）"><a href="#避免浪费（人力）" class="headerlink" title="避免浪费（人力）"></a>避免浪费（人力）</h2><ol>
-<li>一次只做一件事<br>研究报告指出，哪些最喜欢同时执行多项任务的人自制能力相对较弱，没有办法让自己长时间集中精力。<br>同时执行多项任务一般不会加快速度，反而会拖累。</li>
-<li>一次把事情做完<br>Scrum开发过程中的工作是有节奏的。每一个迭代期，或者说每一个冲刺期，团队都试图完成很多事情。但是“完成”意味着一款能被消费者使用的、完整的、可交付的产品。如果在迭代期的最后，事情只做了一半，你将比一点都没开始做更糟糕。你花费了资源，付出了努力和时间，最后没有得到任何成果。</li>
-</ol>
-<h2 id="一次把事情做对"><a href="#一次把事情做对" class="headerlink" title="一次把事情做对"></a>一次把事情做对</h2><p>如果你出了一个错误（我们都会出错），那就在发现错误时立即修改，不然就会付出代价。<br>生产流程应该是持续改进的，而处理问题的最佳时机是你发现问题的时候，而不是发现问题之后很久再着手解决。<br>出现问题不立即修复，而是放到很久之后，会浪费更多时间：当你在做一个项目的时候，大脑专注于它，你很清楚做某件事的所有原因，这时你的脑子里存在一个与之相关的复杂架构，想在几个星期后重新建立这样的架构十分困难，会花费更多时间。</p>
-<h2 id="工时越长，效率越低"><a href="#工时越长，效率越低" class="headerlink" title="工时越长，效率越低"></a>工时越长，效率越低</h2><p><img src="/imgs/%E8%AF%BB%E4%B9%A6/%E9%A9%AC%E5%85%8B%E6%80%9D%E9%9F%A6%E5%B0%94%E6%9B%B2%E7%BA%BF.jpg" alt="马克思韦尔曲线" title="马克思韦尔曲线"><br>工作时间太长的人会开始犯错，而改正错误可能会比创造新成绩花费更多的时间。工作超出负荷的员工比较不容易集中注意力，而且会影响别人也跟着分心，不久之后他们就会开始做出错误决策。<br>这意味着我们更应该关注完成任务的时长和质量而不是工时长短。</p>
-<h2 id="确保工作的合理性"><a href="#确保工作的合理性" class="headerlink" title="确保工作的合理性"></a>确保工作的合理性</h2><p>有几种不合理现象：<br>1、目标荒谬、不切实际<br>2、期待过高<br>3、负担过重，比如繁琐的规定、没必要的汇报、会议等过多<br>4、情绪浪费，比如团队中某个人倾向于激怒别人、削弱团队斗志。</p>
-<h2 id="周期规划会"><a href="#周期规划会" class="headerlink" title="周期规划会"></a>周期规划会</h2><p>给项目划分任务<br>确立优先级：由产品负责人决定优先级<br>确定需要花费多少精力、时间和资金。怎么知道自己的速度？每个成员冲刺周期结束时复盘可以知道自己的效率如何，并且可以通过消除障碍来变得更快<br>让执行团队评估自己的工作<br>用用户故事描绘任务：角色、活动、商业价值<br>用户故事必须完整：独立性、可协商性（不要带太多细节）、有价值、可评估、规模小、可测试<br>用户故事来源：需要产品负责人拿出一半时间与购买产品的客户开展对话（了解客户对于最新产品的看法，看看自己的产品是否为客户创造了价值），还要拿出一半时间拟定待办事项清单（让团队成员知道客户重视什么、不重视什么）。</p>
-<p>产品负责人的特点</p>
-<ul>
-<li>第一，产品负责人需要在相关领域内掌握丰富的专业知识。</li>
-<li>第二，产品负责人必须获得自主决策权。</li>
-<li>第三，产品负责人必须有足够的时间与团队成员接触，向团队成员解释清楚需要做什么以及为什么要这么做。</li>
-<li>第四，产品负责人必须为价值负责。</li>
-</ul>
-<p>信息瀑布：人们倾向于遵从之前众人的行为 - 别人的评估意见只能拿来作为参考，以便改进自己的判断，而不是完全取代自己的判断。<br>光环效应：是指当认知者对一个人的某种特征形成好或坏的印象后，还倾向于据此推论该人其他方面的特征，本质上属于以偏概全的认知错误 - 评估时保证匿名性，减少互相影响<br>拥抱变化：一般最初的计划评估不会完美，关键在于，要在项目执行过程中及时加以调整和改进，而不是刻板地遵循计划。详细规划出能够创造出新价值的部分，至于项目中的剩余部分，计划粗略一些也无所谓。每个冲刺周期结束之际，都必须为顾客展示一些看得见、摸得着的新价值。你可以问顾客一些问题，比如，这是你要的吗？这能帮你解决一些问题吗？我们的方向是对的吗？如果答案是否定的，那么你就要修改你的计划。</p>
-<h2 id="二八原则"><a href="#二八原则" class="headerlink" title="二八原则"></a>二八原则</h2><p>往往20%的功能可以覆盖80%的价值<br>1、根据产品负责人对需求优先级的排列可以确定最重要的那部分需求<br>2、先做最重要的MVP部分，以期快速得到市场反馈，在此基础上检查和调整产品</p>
-<h2 id="风险"><a href="#风险" class="headerlink" title="风险"></a>风险</h2><p>Scrum的目的之一是降低项目研发过程中的风险，常见的风险是市场风险、技术风险和财务风险。<br>市场风险：Scrum注重渐进式迭代，每个周期通过show case将产品展示给客户，收集用户意见，因此可以实时对产品做出小改动，不必等到投入大量成本后再被迫做出改动。<br>技术风险：先做几种原型，实际加以比较。<br>财务风险：怎么发现自己做的产品能挣到钱？渐进式迭代+showcase</p>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/6101bd07.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/6101bd07.html" class="post-title-link" itemprop="url">性能分析-内存</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-09-18 20:09:11" itemprop="dateCreated datePublished" datetime="2022-09-18T20:09:11+08:00">2022-09-18</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><img src="/imgs/Linux/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90-%E5%86%85%E5%AD%98.png" alt="性能分析-内存" title="性能分析-内存"></p>
-<h1 id="内存原理"><a href="#内存原理" class="headerlink" title="内存原理"></a>内存原理</h1><h2 id="内存映射"><a href="#内存映射" class="headerlink" title="内存映射"></a>内存映射</h2><p>Linux为每个进程提供了一个独立的虚拟地址空间，分为<strong>内核空间</strong>和<strong>用户空间</strong>，且32位和64位系统中空间范围也不同。<br><img src="/imgs/Linux/Linux%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98.png" alt="Linux虚拟内存" title="Linux虚拟内存"></p>
-<p>用户态和内核态</p>
-<ul>
-<li>用户态：进程在用户态时,只能访问用户空间内存；</li>
-<li>内核态：进入内核态后,才可以访问内核空间内存</li>
-</ul>
-<p><strong>内存映射</strong>将<strong>虚拟内存地址</strong>映射到<strong>物理内存地址</strong>，这个映射是通过每个进程的<strong>页表</strong>来实现的：<br><img src="/imgs/Linux/Linux%E5%86%85%E5%AD%98%E6%98%A0%E5%B0%84.png" alt="Linux内存映射" title="Linux内存映射"></p>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/19/">19</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

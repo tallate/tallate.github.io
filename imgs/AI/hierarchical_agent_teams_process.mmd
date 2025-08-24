@@ -1,0 +1,70 @@
+flowchart TD
+    %% 用户输入
+    A[用户输入任务] --> B[Top-Level Supervisor]
+    
+    %% Top-Level Supervisor 决策
+    B --> C{选择执行团队}
+    C -->|需要研究| D[Research Team]
+    C -->|需要写作| E[Writing Team]
+    C -->|完成| F[END]
+    
+    %% Research Team 内部结构
+    D --> G[Research Supervisor]
+    G --> H{选择研究方式}
+    H -->|搜索信息| I[Search Agent<br/>工具: TavilySearch]
+    H -->|网页抓取| J[Web Scraper Agent<br/>工具: scrape_webpages]
+    H -->|完成| K[返回结果给Top-Level]
+    
+    I --> L[执行搜索]
+    L --> M[返回搜索结果]
+    M --> G
+    
+    J --> N[执行网页抓取]
+    N --> O[返回抓取内容]
+    O --> G
+    
+    K --> B
+    
+    %% Writing Team 内部结构
+    E --> P[Writing Supervisor]
+    P --> Q{选择写作任务}
+    Q -->|创建大纲| R[Note Taker Agent<br/>工具: create_outline, read_document]
+    Q -->|编写文档| S[Doc Writer Agent<br/>工具: write_document, edit_document, read_document]
+    Q -->|生成图表| T[Chart Generator Agent<br/>工具: read_document, python_repl_tool]
+    Q -->|完成| U[返回结果给Top-Level]
+    
+    R --> V[创建文档大纲]
+    V --> W[保存大纲文件]
+    W --> P
+    
+    S --> X[编写文档内容]
+    X --> Y[保存文档文件]
+    Y --> P
+    
+    T --> Z[生成图表/可视化]
+    Z --> AA[保存图表文件]
+    AA --> P
+    
+    U --> B
+    
+    %% 工具和状态管理
+    subgraph "Tools & State Management"
+        BB[StateGraph State<br/>MessagesState + next]
+        CC[Command System<br/>goto + update]
+        DD[HumanMessage<br/>name标识]
+    end
+    
+    %% 样式定义
+    classDef topLevel fill:#e3f2fd,stroke:#1565c0,stroke-width:3px
+    classDef supervisor fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef agent fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef tool fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef decision fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef endNode fill:#fce4ec,stroke:#ad1457,stroke-width:2px
+    
+    class B topLevel
+    class G,P supervisor
+    class I,J,R,S,T agent
+    class L,M,N,O,V,W,X,Y,Z,AA tool
+    class C,H,Q decision
+    class F endNode

@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">189</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">191</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">189</span>
+          <span class="site-state-item-count">191</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -175,6 +175,340 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/179723ca.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/179723ca.html" class="post-title-link" itemprop="url">NCC 后台简析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-09-02 00:54:39" itemprop="dateCreated datePublished" datetime="2018-09-02T00:54:39+08:00">2018-09-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%BE%E8%AE%A1/" itemprop="url" rel="index"><span itemprop="name">设计</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/28039232/what-is-the-difference-between-dependency-injection-and-dependency-look-up">What is the difference between dependency injection and dependency look up?</a></li>
+</ol>
+<h2 id="背景情况"><a href="#背景情况" class="headerlink" title="背景情况"></a>背景情况</h2><p>部门开始推一个大项目 NCC，后台几乎沿用原 NC（有近十年历史），将原来 JavaSwing 画的重量前端换成了一种“轻量前端”，其实这种轻量前端一点都不轻量；SQL 完全是自己用字符串拼接起来的；开发模式是前后端分离联调的方式，但是因为后台代码都是部署在一个服务里头的，没有司库云（微服务架构）复杂。</p>
+<!-- more -->
+<h2 id="从增删改查流程说起"><a href="#从增删改查流程说起" class="headerlink" title="从增删改查流程说起"></a>从增删改查流程说起</h2><p>对 Controller、Service 分层的讨论放在后面。</p>
+<h3 id="save"><a href="#save" class="headerlink" title="save"></a>save</h3><p>保存操作有以下特点。</p>
+<ol>
+<li>批量<br>对普通的 CRUD 操作，最大的开销是网络传输，NCC 系统中操作的往往是多个表关联在一起的复杂结构，如果分成多次请求，一方面对用户体验不好，一方面对效率也有所影响。因此 NCC 中的做法是将同类数据放到同一页签，转换为 json 格式的数据，如下所示： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;pageid&quot;:&quot;36650BIS_CARD&quot;,</span><br><span class="line">    &quot;head&quot;:&#123;</span><br><span class="line">        &quot;head&quot;:&#123;</span><br><span class="line">            &quot;areaType&quot;:&quot;form&quot;,</span><br><span class="line">            &quot;rows&quot;:[</span><br><span class="line">                &#123;</span><br><span class="line">                    &quot;values&quot;:&#123;</span><br><span class="line">                        &quot;pk_bondissueregister&quot;:&#123;</span><br><span class="line">                            &quot;display&quot;:null,</span><br><span class="line">                            &quot;value&quot;:null,</span><br><span class="line">                            &quot;scale&quot;:&quot;-1&quot;</span><br><span class="line">                        &#125;</span><br><span class="line">                        ...其他属性</span><br><span class="line">                    &#125;,</span><br><span class="line">                    &quot;status&quot;:&quot;2&quot;</span><br><span class="line">                &#125;</span><br><span class="line">            ],</span><br><span class="line">            &quot;areacode&quot;:&quot;head&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    &quot;bodys&quot;:&#123;</span><br><span class="line">        &quot;repaymentplan&quot;:&#123;</span><br><span class="line">            &quot;rows&quot;:[</span><br><span class="line">                &#123;</span><br><span class="line">                    &quot;rowid&quot;:&quot;136270.438b34a6204411a&quot;,</span><br><span class="line">                    &quot;status&quot;:&quot;2&quot;,</span><br><span class="line">                    &quot;values&quot;:&#123;</span><br><span class="line">                        &quot;pk_bondrepaymentplan_b&quot;:&#123;</span><br><span class="line">                            &quot;display&quot;:null,</span><br><span class="line">                            &quot;scale&quot;:null,</span><br><span class="line">                            &quot;value&quot;:&quot;&quot;</span><br><span class="line">                        &#125;</span><br><span class="line">                        ...其他属性</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            ],</span><br><span class="line">            &quot;areaType&quot;:&quot;table&quot;,</span><br><span class="line">            &quot;areacode&quot;:&quot;repaymentplan&quot;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>差异化<br>新增和更新操作皆为调用 save 接口，通过区别传递的数据中是否有 id 来进行区分。另外，更新操作会先从数据库中查询出旧的数据，并和客户端传参进行比较，若完全一致则直接跳过此次更新。</li>
+</ol>
+<h3 id="delete"><a href="#delete" class="headerlink" title="delete"></a>delete</h3><p>执行流程和 save 几乎一样，只是系统中不会真的删除一条数据，而是采用“逻辑删除”的方案。</p>
+<h3 id="query"><a href="#query" class="headerlink" title="query"></a>query</h3><p>查询操作的过滤条件是由前台给出的，我没有经历过重客户端时代 NC 的开发，但是在 Web 应用中也这么做有点奇怪。</p>
+<h3 id="page"><a href="#page" class="headerlink" title="page"></a>page</h3><p>分页查询的思路比较奇怪，是先按前端传递的过滤条件查出所有合适记录的 pk，然后在 Controller 层对这些 pk 进行分页:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">// ids指的是查出的所有合适记录的pk</span><br><span class="line">// 本页之后的数据数量</span><br><span class="line">int afterCurPageSize = ids.length - pageInfo.getPageIndex() * pageInfo.getPageSize() + 1;</span><br><span class="line">int targetSize = pageInfo.getPageSize() &lt; afterCurPageSize ? pageInfo.getPageSize() : afterCurPageSize;</span><br><span class="line">String[] targetIds = new String[targetSize];</span><br><span class="line">System.arraycopy(ids, pageInfo.getPageIndex() * pageInfo.getPageSize(),</span><br><span class="line">        targetIds, 0,</span><br><span class="line">        targetSize);</span><br></pre></td></tr></table></figure>
+<p>最后再调用一个批量查询的 Service 接口进行查询。</p>
+<h2 id="技术点"><a href="#技术点" class="headerlink" title="技术点"></a>技术点</h2><h3 id="轻量前端、分层"><a href="#轻量前端、分层" class="headerlink" title="轻量前端、分层"></a>轻量前端、分层</h3><p>轻量前端指的是用 React 开发的浏览器客户端，既然是轻量前端，那么做的事情肯定不会太多了，那么很多工作就必须要转移到后端了，因此在 NCC 中又引入了一个 Action 层，作为 Controller。</p>
+<h3 id="读写分离"><a href="#读写分离" class="headerlink" title="读写分离"></a>读写分离</h3><p>后台 Service 层将读操作和写操作划分到了两个接口内，实际上应用层可以根据读写进行复制，一般来说读操作更频繁，可以多创建几个实例提供服务，并在前头使用负载均衡器进行反向代理。</p>
+<h3 id="SOA"><a href="#SOA" class="headerlink" title="SOA"></a>SOA</h3><p>SOA 是一种架构风格，与微服务的主要区别是 SOA 多了一个 ESB（企业服务总线），在 SOA 中，当一个服务需要调用另一个服务时，它需要先从 ESB 中获取那个服务的调用方法、消息格式等，而微服务可以看作一种轻量化的 SOA，它没有集中的一个 ESB，服务之间通过公开的 RPC 接口来相互调用。<br>实际上 NC 没有 ESB 这玩意。首先需要将 Service 接口及其对应的实现类注册到一个 xml 文件内，服务间调用通过 NCLocator.find(class)实现：如果配置文件中没有设置服务器 URL，则直接本地反射实例化 Service 的实现类；如果配置文件中设置了服务器 URL，则使用 JDK Proxy 做动态代理，将本地方法调用转换为远程调用。</p>
+<h3 id="元数据"><a href="#元数据" class="headerlink" title="元数据"></a>元数据</h3><p>元数据是描述数据的数据，实际开发业务前需要先使用相关工具”画”出元数据，NCC 的开发极大地依赖于元数据的正确性，老的功能节点的元数据若轻易修改，很有可能导致原功能出错。</p>
+<h3 id="模板"><a href="#模板" class="headerlink" title="模板"></a>模板</h3><p>模板是对页面的抽象，平台的有关部门做了一个画模板的工具，由后端人员登录到工作桌面画模板，可以减轻前端开发人员的工作压力（可能是领导觉得前端比较稀缺?）。可以从元数据导出模板，并根据原型图进行适配。<br>随着业务的复杂化，将许多公共组件抽象出来集中管理是必须的，尤其是 NC 这么复杂的庞然大物，其业务拿出两个小时来也没办法讲完 1%，有点夸张，但是事实是这里的需求很多都是从会计等行业转来的，一次给我们讲需求时从 NC 上满屏的标签中挑了部分讲了两小时，大家都是崩溃的…因此 NC 中引入了三大模板的概念，它们分别是：查询模板、打印模板、计算模板，分别对查询 sql、打印、？？？进行了抽象。</p>
+<h3 id="依赖查找"><a href="#依赖查找" class="headerlink" title="依赖查找"></a>依赖查找</h3><p>Spring 的核心原理是 IoC，而 IoC 的主要实现方式是 DI 或依赖查找。DI 我们比较眼熟，主要有”属性注入”、”构造器注入”及”方法注入”。NCC 后台为 NC，已经有 10 来年历史，其中实现了一套依赖查找的模式，如下代码所示。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IXxxService xxxService = ServiceLocator.find(IXxxService.class);</span><br></pre></td></tr></table></figure>
+<p>当然接口和实现类之间不是自动关联在一起的，还需要定义一个 upm 文件来配置他们之间的关联关系。<br>这实际上和比较原始的 Spring 用法有点像，如下代码所示。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">XxxBean bean = application.getBean(XxxBean.class);</span><br></pre></td></tr></table></figure>
+<h3 id="内存锁"><a href="#内存锁" class="headerlink" title="内存锁"></a>内存锁</h3><h4 id="排他锁"><a href="#排他锁" class="headerlink" title="排他锁"></a>排他锁</h4><p>就是普通的锁。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">boolean isOK=false;</span><br><span class="line">try&#123;</span><br><span class="line">    isOK = PKLock.getInstance().acquireBatchLock(new String[]&#123; PK &#125;, userid);</span><br><span class="line">    if(!isOK)</span><br><span class="line">        throw new BusinessException(&quot;并发操作&quot;);</span><br><span class="line">    // TODO: 业务逻辑</span><br><span class="line">&#125; finally &#123;</span><br><span class="line">    if(isOK)&#123;</span><br><span class="line">        PKLock.getInstance().releaseBatchLock (new String[]&#123; PK &#125;, userid);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="共享锁"><a href="#共享锁" class="headerlink" title="共享锁"></a>共享锁</h4><p>共享锁适用于读者写者的情景，即某类操作可以并存、而和其他类操作不能的情况。<br>使用方法和排他锁差不多：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PKLock.getInstance().acquireBatchLock(</span><br><span class="line">        new String[]&#123; PK + IPKLockBS.STR_SHARED_LOCK &#125;, userid );</span><br></pre></td></tr></table></figure>
+<p>对同一 PK 来说，共享锁和排他锁是不能共存的。</p>
+<h4 id="动态锁"><a href="#动态锁" class="headerlink" title="动态锁"></a>动态锁</h4><p>动态锁为一种特殊的锁，进行加锁的人员不用自己释放，其调用序列一般为：<br>pklock.acquireLock… pklock.addDynamicLock…<br>如果是远程调用,远程调用结束后系统会自动释放所有的动态锁<br>动态锁其实是对前面两种锁的封装，不过动态锁不需要主动解锁，<strong>中间件会在后台事务结束前进行统一解锁</strong>；并且在同一次中间件事务中，<strong>可以重复申请相同 PK 的锁</strong>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">boolean isOK = PKLock.getInstance().addDynamicLock( PK ); </span><br></pre></td></tr></table></figure>
+<p>动态锁的实现原理是事件机制，动态锁最后会发出一个解锁事件，业务操作执行结束后会触发这个事件。</p>
+<h3 id="时间戳校验"><a href="#时间戳校验" class="headerlink" title="时间戳校验"></a>时间戳校验</h3><p>有了锁机制可以保证并发操作不会破坏数据一致性，但是不能保证用户的操作是对最新版本的数据进行的，因此需要引入时间戳机制。<br>主要通过比较当前对象的<strong>ts 值（时间戳）</strong>与数据库中该对象的 TS 值来判断用户修改的是否为最新版本的数据。在每次对数据进行修改操作时，都需要更新相应数据的时间戳标志 ts，这个一般由系统维护，不需要在业务中特殊处理。</p>
+<h3 id="动态代理"><a href="#动态代理" class="headerlink" title="动态代理"></a>动态代理</h3><p>上面提到了动态锁机制但是没有具体说解锁的时机，假设所有含写操作的业务操作都需要加锁，难道要把加锁解锁逻辑都写一遍？NC 中为了解决这个问题也实现了一套 AOP 机制，原理是 JDK Proxy，NC 会为所有在配置文件中注册的 Service 创建<strong>动态代理</strong>，在动态代理中可以对锁等公共功能进行操作，从而大大简化业务代码。在这方面来讲，NC 也可以看作 Spring 的弱化版。</p>
+<h3 id="跨组件调用"><a href="#跨组件调用" class="headerlink" title="跨组件调用"></a>跨组件调用</h3><p>NCC 后台是传统的单体式应用，所有模块几乎都放在一个服务里（用户买什么就把什么包含进来），跨模块的组件之间可能存在相互引用的关系，比如 a 需要将某些信息存入 b 中，就需要调用 b 提供的接口，而 b 在某些情况下也需要从 a 中获取某些信息，但 b 所在的 B 模块是一个更通用的组件，它不会为每个下游业务都新增代码。在 NCC 中，面对这种情况一般是由 a 来提供一个回调接口，将这个接口名保存到数据库中，然后告诉 b:”这就是 a 的接口啦”，类似于 RPC，不过将耦合的部分转移到了数据库中。</p>
+<h3 id="逻辑删除"><a href="#逻辑删除" class="headerlink" title="逻辑删除"></a>逻辑删除</h3><p>数据库里的数据不会被直接删除，而是采取逻辑删除的策略，每条数据都有一个额外的<strong>dr（delete remark）</strong>字段用于标识一条数据是否被删除，查询时需要根据这个字段进行过滤。</p>
+<h3 id="Oracle"><a href="#Oracle" class="headerlink" title="Oracle"></a>Oracle</h3><p>采用 Oracle 作为数据库，一是因为客户主要是大企业，安全、稳定有更高要求；二，数据量也确实不大，可能也用不着进行分库分表；三，作为延续了十几年的系统，当时“去 IOE 化”还没有提出，Oracle 仍是数据库领域最好的选择；最后，业务十分复杂，且底层 ORM 代码中存在大量直接使用字符串拼接出来的 SQL，想要完全移植到 MySQL 等数据库是不大现实的。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>以上我对最近工作中涉及到的东西进行了简单总结，嗯…产品底层仍有很多我未知的部分，一些与业务关联较大的代码也不适合拿出来分享，于是暂时告一段落吧。</p>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/9b8ed85e.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/9b8ed85e.html" class="post-title-link" itemprop="url">公司大佬关于编码规范的一次分享</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-08-13 16:13:15" itemprop="dateCreated datePublished" datetime="2018-08-13T16:13:15+08:00">2018-08-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/SevenGirl2017/article/details/77678233">数据库范式简单讲解(1NF、2NF、3NF、4NF、BCNF)</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/duanxz/p/3783369.html">缓存与数据库一致性之二：高并发下的 key 重建（先淘汰 cache 再写 db）的问题</a></li>
+</ol>
+<h2 id="由来"><a href="#由来" class="headerlink" title="由来"></a>由来</h2><p>公司比较看重这批新员工（基本来自 985 院校），做了比较多的培训，从公司文化到衣着讲究都专门开了课，很切合应届毕业生的需求（强制参加的…）。<br>规范类似设计模式，是对最佳实践的总结，有点收获，这里把还记得的部分总结一下。</p>
+<!-- more -->
+
+<h2 id="Java-编码规范"><a href="#Java-编码规范" class="headerlink" title="Java 编码规范"></a>Java 编码规范</h2><p>基本没听（其实是因为不知道下午要考试），内容和阿里 Java 规范很接近，有时间考个证书。</p>
+<h2 id="用户体验分享"><a href="#用户体验分享" class="headerlink" title="用户体验分享"></a>用户体验分享</h2><p>这个大佬比较惨了，大家都是程序员、还都是偏后台的那种，讲课时间还是刚吃完饭那会，大家不是特别能接受，反正我是没听进去。</p>
+<h2 id="数据库规范"><a href="#数据库规范" class="headerlink" title="数据库规范"></a>数据库规范</h2><p>公司一个架构师大佬讲的，大部分内容仍然来自阿里 Java 规范，掺杂了一些干货。</p>
+<h3 id="遵守规范有什么好处"><a href="#遵守规范有什么好处" class="headerlink" title="遵守规范有什么好处"></a>遵守规范有什么好处</h3><ol>
+<li>约定大于配置（这个理念是 SpringBoot 的基础），规范属于一种约定。</li>
+<li>提高沟通效率</li>
+<li>提升后续管理效率</li>
+</ol>
+<h3 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h3><h4 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h4><ol>
+<li>使用 UTF8MB4。</li>
+<li>注释很重要。</li>
+<li>数据库内大小写不敏感，像 MySQL、Oracle 都是大小写不敏感的，如果出现敏感的情况注意设置成不敏感的。</li>
+</ol>
+<h4 id="命名"><a href="#命名" class="headerlink" title="命名"></a>命名</h4><ol>
+<li>尽量取有意义的名字</li>
+<li>如果有多个单词使用下划线分割</li>
+<li>长度不要过长，如果设置得过长了，后面创建该表的备份表、表名末尾带上一些特殊的后缀，可能会超出数据库对表名长度的限制。</li>
+</ol>
+<h3 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h3><ol>
+<li>尽量达到 3NF<br>达到 1NF 和 2NF 是理所当然的，BCNF 又太严格了，会把表结构拆得过碎了，由此引入的多表关联会严重影响 DCL 效率，4NF 更是会把表结构拆稀碎了，达到 3NF 是比较理想的，但是不排斥使用 NoSQL 后产生的冗余。</li>
+<li>逻辑删除而不是物理删除<br>好处是可以反悔，坏处是表里数据会多很多。<br>但是实践表明删除是很少被使用的，换句话说，被删除的数据相对总数来说是很少的，比如说我们把商品加到购物车里一般都会买掉而不是删除了，因此我们更倾向于使用逻辑删除。当然也不能排除有些业务删除是常用的，那就另说了。<br>补充：其实我觉得完全可以另开一个表来存被逻辑删除的数据，我在毕设中就是这么做的。</li>
+<li>为数据加上时间戳<br>加上时间戳的主要目的是实现数据的增量同步，比如将数据同步到搜索系统（一般是 Elasticsearch）中，全量同步是无法忍受的。<br>补充：时间戳还可以当作乐观锁。</li>
+<li>合理利用 char<br>varchar 能满足大部分用到字符串的场景，但是 varchar 的效率是不如 char 的，对于手机号、身份证号这种固定长度的属性完全可以使用 char 类型保存。</li>
+<li>复杂的处理逻辑放到应用层而不是持久化层，不要用触发器、存储过程、视图，因为在云计算环境下应用层的扩展成本要远低于持久化层。<br>补充：视图其实还是可以用一下的，比如给另一个部门查点数据，又不会暴露数据库的真正结构。</li>
+</ol>
+<h4 id="补充：数据库设计理论"><a href="#补充：数据库设计理论" class="headerlink" title="补充：数据库设计理论"></a>补充：数据库设计理论</h4><p>元组&#x2F;行：一个持久化对象。<br>属性&#x2F;字段&#x2F;列：某类持久化对象的属性，属性集一般使用 U 表示。<br>超键：能唯一标识一条元组的属性集。<br>候选键：不包含多余属性的超键。<br>主键：被用户选作元组标识的候选键。<br>主属性：构成候选键的属性。<br>函数依赖（FD）：由业务确定的属性之间的依赖关系，即由一组属性可以唯一确定另一组属性。<br>关系模式（R(U)）：指在属性集中存在的所有函数依赖。<br>平凡函数依赖：在 R(U)中存在 X→Y，若 Y 包含于 X，则称 X→Y 为平凡函数依赖。<br>完全依赖：在 R(U)中，如果 X→Y，并且对于 X 的任何真子集 X’都有 X’-&#x2F;-&gt;Y’，则称 Y 完全依赖于 X，记作 X→Y。比如确定一批书的印刷时间需要给出版次和印次，不管是单独给出版次或印次都无法确认这批书。<br>部分依赖：与完全依赖相反，如果 X→Y，且 X 中存在一个真子集 X’，使得 X’→Y 成立，则称 Y 部分依赖于 X。比如学号和姓名可以确定一个学生，但其实学号就可以确定一个学生了。<br>传递依赖：指的是形如 X→Y→Z 的函数依赖。<br>多值依赖(MVD)：原始定义比较难理解，用一个特殊情况来说明，就是在同一个表里存在 X:Y、X:Z 分别是 1 对多关系，即有 Y→X、Z→X，比如[课程, 学生, 先修课]是一张表，其中课程对学生、课程对先修课都是 1 对多关系。<br>1NF：不能有复合字段（不可分的原子值）。<br>实现方法：如果有，则拆成多个字段。<br>例子：一个人可能有多个联系电话，比如手机号、固话等，应该被拆分到多列内，或者多行保存同一人的多个电话。</p>
+<table>
+<thead>
+<tr>
+<th>身份证号</th>
+<th>姓名</th>
+<th>手机号</th>
+<th>固定电话</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3303012313</td>
+<td>赵</td>
+<td>18012341234</td>
+<td>123-12341234</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>身份证号</th>
+<th>姓名</th>
+<th>手机号</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3303012313</td>
+<td>赵</td>
+<td>18012341234</td>
+</tr>
+<tr>
+<td>3303012313</td>
+<td>赵</td>
+<td>123-12341234</td>
+</tr>
+</tbody></table>
+<p>缺陷：<br>2NF：实体属性完全依赖于主键、不能仅依赖主键的一部分属性（严格地说，非主属性完全依赖于候选键）。<br>实现方法：如果存在对主键的部分依赖，则拆出来作为一个新实体。<br>例子：<br>缺陷：<br>3NF：非主键属性不能间接依赖于主键（严格地说，不能有非主属性对候选键的传递依赖）。<br>实现方法：如果存在上述传递依赖，则将依赖的两个非主属性拆出成为新表，原表和新表之间是 1 对多的关系。<br>例子：<br>缺陷：<br>BCNF：消除任何属性对候选键的传递依赖（在 3NF 的基础上，不允许候选键属性传递依赖于候选键的属性）。<br>实现方法：同 3NF。<br>例子：<br>缺陷：<br>4NF：消除非平凡且非 FD 的多值依赖。<br>实现方法：<br>例子：<br>缺陷</p>
+<h3 id="SQL-编写"><a href="#SQL-编写" class="headerlink" title="SQL 编写"></a>SQL 编写</h3><ol>
+<li>明确指出所有列，不要省略或使用通配符，比如： <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select * from t;</span><br><span class="line">insert into t values(&#x27;1&#x27;, 2);</span><br></pre></td></tr></table></figure></li>
+<li>连接操作给出表的别名，否则容易混淆</li>
+</ol>
+<h3 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h3><ol>
+<li>分库分表<br>将数据从一张表拆到多张表，后续再将这些表转移到多个数据库实例内，一般情况下可以减少单个数据库的压力，提升整体性能。常见的拆库方法如：<ul>
+<li>按业务纬度分表（垂直拆分）：将负责不同业务的表拆到不同库中。</li>
+<li>id hash（水平拆分）：对业务数据 id 求模 hash(id) % n，hash 函数是自定义的，如果 id 是数值可以直接返回 id 本身，如果是字符串可以取前几位的和（遍历每一位太慢了），n 表示我们需要将数据拆到几张表里。<br> 日期 hash（水平拆分）：将不同月甚至日的数据分散到不同的库中。<br> 特殊 hash（水平拆分）：按照某个特定的字段求模，或者根据特定范围段分散到不同的库中。 </li>
+<li>读写分离：将数据拷贝到多个读库和写库内，读库加上索引，而写库不需要，这样，当然写库还需要通过某种机制将数据增量更新到读库内。</li>
+<li>冷热分离：将冷数据分离出去，比如微信聊天中 3 天前的数据就可以算作冷数据，这部分数据比较少用到，分离出去后可以提高查询最近聊天数据的响应效率。</li>
+</ul>
+</li>
+<li>NoSQL<br>NoSQL 常用于冗余数据，可以避免复杂的关联查询。</li>
+<li>索引<br>索引可以避免全表扫描，正确使用索引可以大大提高查询效率，但要注意函数可能导致索引失效，分析 SQL 语句问题的主要工具是<strong>执行计划</strong>。</li>
+<li>分页<ul>
+<li>数据库分页优于内存分页</li>
+<li>分页前最好先过滤</li>
+<li>order by 子句中最好不要使用会重复的字段（比如 name 就有可能重名）</li>
+<li>海量数据下可以只现实前 500 条数据，而不显示总条数和页数（百科和 Google 搜索都是这么做的）。</li>
+</ul>
+</li>
+</ol>
+<h4 id="补充：缓存命中率和缓存淘汰"><a href="#补充：缓存命中率和缓存淘汰" class="headerlink" title="补充：缓存命中率和缓存淘汰"></a>补充：缓存命中率和缓存淘汰</h4><p>缓存命中率 &#x3D; 查询命中数 &#x2F; 总查询数<br><strong>缓存命中率</strong>是度量缓存有效性的常用参数，为了提高缓存命中率，最好对不变数据进行缓存。<br><strong>缓存淘汰</strong>是在服务器内存不够用时触发的，将一些<strong>价值较小的</strong>数据从缓存中淘汰，减少不必要的 swap，提升内存的有效利用率。<br>缓存淘汰还有一个问题：是先写入还是先淘汰呢？<br>首先看先写入再淘汰的情况，如下图所示。<br><img src="/imgs/%E5%85%AC%E5%8F%B8%E5%A4%A7%E4%BD%AC%E5%85%B3%E4%BA%8E%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83%E7%9A%84%E4%B8%80%E6%AC%A1%E5%88%86%E4%BA%AB/%E7%BC%93%E5%AD%98%E6%B7%98%E6%B1%B0%E9%97%AE%E9%A2%98.png" alt="X"><br>我们交换操作 3 和 4 的顺序，第一步数据库操作成功，第二步如果淘汰缓存失败，则会出现 DB 中是新数据，Cache 中是旧数据的情况，即产生了<strong>数据不一致</strong>的问题。<br>然后是先淘汰再写入的情况，同样如上图所示。<br>写和读操作是并发执行的，应用实例 1 首先发起对缓存的淘汰，应用实例 2 读缓存 miss，于是从数据库读，而应用实例 1 这才将新值写入数据库，此时实例 2 得到的数就是<strong>脏数据</strong>了，注意在分布式环境下这种执行顺序完全是有可能的。</p>
+<h4 id="补充：执行计划"><a href="#补充：执行计划" class="headerlink" title="补充：执行计划"></a>补充：执行计划</h4><h3 id="操作规范"><a href="#操作规范" class="headerlink" title="操作规范"></a>操作规范</h3><ol>
+<li>变更需要明确范围</li>
+<li>为上线预留时间和空间</li>
+<li>给最专业的人进行评估</li>
+<li>错峰操作</li>
+</ol>
+<h2 id="考试"><a href="#考试" class="headerlink" title="考试"></a>考试</h2><h3 id="考试题"><a href="#考试题" class="headerlink" title="考试题"></a>考试题</h3><p>一、单选题（每道题 2 分，共 12 分）<br>1、现有一张系统用户操作日志表，合理命名应该是（    ）<br>A、XTYHRZB<br>B、SysUserOpLog<br>C、Sys_User_Oplog<br>D、SYS_T_USER_OPLOG</p>
+<p>2、下面数据库设计不符合规范的是（    ）<br>A、大数据量表进行分库分表<br>B、为了方便查看，表中使用明文存储用户密码<br>C、使用数字格式存储时间<br>D、将 json 格式数据存储到 Nosql 数据库</p>
+<p>3、下面 SQL 编写不符合规范的是（    ）<br>A、select column1, column2 from table1<br>B、select column1, b.columna from table1, table2 b where column1 &#x3D; b.columna<br>C、insert into table1(column1,column2) values(?,?)<br>D、update table1 set column1 &#x3D; ‘aaa’  where id &#x3D; ‘001’</p>
+<p>4、下面关于性能优化不正确做法的是（    ）<br>A、尽量避免一条 SQL 从大于 4 张表中取数<br>B、如果一条 SQL 有三层以上的嵌套查询，在设计上考虑解决<br>C、为了提升代码执行效率，大量的公式运算交给数据库后端运行<br>D、为常用的分组排序字段建立索引</p>
+<p>5、下面不正确的索引建立方法的是（    ）<br>A、业务表唯一标识字段必须制定唯一索引<br>B、只要是查询可能用到的字段，都要建立索引<br>C、尽量使用数据量少的索引<br>D、索引列上不使用函数计算</p>
+<p>6、下面数据库操作符合规范的是（    ）<br>A、为了方便，应用程序使用超级管理员账号<br>B、为了快速解决问题，直接在后端数据库中修改业务数据<br>C、修改表结构告知影响人员，并预留一定时间评估、审核<br>D、程序测试完成后直接上线新功能<br>二、多选题（每道题 6 分，共 60 分）<br>1、关于领域模型命名，下列哪些说法符合规范：（      ）<br> A、数据对象命名：xxxDO，xxx 即为数据表名，例如：ResellerAccountDO。<br> B、数据传输对象：xxxDTO，xxx 为业务领域相关的名称，例如 ProductDTO。<br> C、展示层对象：xxxVO，xxx 一般为网页名称，例如 RecommendProductVO。<br> D、POJO 是 DO&#x2F;DTO&#x2F;BO&#x2F;VO 的统称，命名成 xxxPOJO。</p>
+<p>2、关于代码注释，下列哪些说法符合规范：（      ）<br>A、所有的抽象方法（包括接口中的方法）必须要用 javadoc 注释。<br>B、所有的方法，包括私有方法，最好都增加注释，有总比没有强。<br>C、过多过滥的注释，代码的逻辑一旦修改，修改注释是相当大的负担。<br>D、我的命名和代码结构非常好，可以减少注释的内容。</p>
+<p>3、关于类命名，下列哪些说法符合规范：（      ）<br>A、抽象类命名使用 Abstract 或 Base 开头。<br>B、异常类命名使用 Exception 结尾。<br>C、测试类命名以它要测试的类的名称开始，以 Test 结尾。<br>D、如果使用到了设计模式，建议在类名中体现出具体模式。例如代理模式的类命名：LoginProxy；观察者模式命名：ResourceObserver。</p>
+<p>4、关于加锁，下列哪些说法符合规范：（      ）<br>A、可以只锁代码区块的情况下，就不要锁整个方法体。<br>B、高并发的业务场景下，要考虑加锁及同步处理带来的性能损耗，能用无锁数据结构，就不要用锁。<br>C、能用对象锁的情况下，就不要用类锁。<br>D、加锁时需要保持一致的加锁顺序，否则可能会造成死锁。</p>
+<p>5、关于方法的返回值是否可以为 null，下列哪些说法符合规范：（      ）<br>A、方法的返回值可以为 null，如果是集合，必须返回空集合。<br>B、方法的返回值可以为 null，不强制返回空集合，或者空对象等。<br>C、方法实现者必须添加注释，充分说明什么情况下会返回 null 值。<br>D、防止 NPE 是调用者的责任。</p>
+<p>6、关于控制语句，下列哪些说法符合规范：（      ）<br>A、推荐 if-else 的方式可以改写成卫语句的形式。<br>B、尽量减少 try-catch 块内的逻辑，定义对象、变量、获取数据库连接等操作可以移到 try-catch 块外处理。<br>C、if ( condition) statements; 单行语句不需要使用大括号。<br>D、在一个 switch 块内，都必须包含一个 default 语句并且放在最后，即使它什么代码也没有。</p>
+<p>7、关于捕获异常和抛异常，下列哪些说法符合规范：（      ）<br>A、如果需要捕获不同类型异常，为了方便处理，可以使用 catch(Exception e){…}。<br>B、不要捕获异常后不处理，丢弃异常信息。<br>C、捕获异常与抛异常，必须是完全匹配，或者捕获异常是抛异常的父类。<br>D、异常定义时区分 unchecked &#x2F; checked 异常，避免直接使用 RuntimeException 抛出。</p>
+<p>8、关于变量和常量定义，下列哪些符合规范：（      ）<br>A、Long a&#x3D;2L；&#x2F;&#x2F;大写的 L。<br>B、Long a&#x3D;2l; &#x2F;&#x2F;小写的 l。<br>C、常量只定义一次，不再赋值，所以不需要命名规范。<br>D、不要使用一个常量类维护所有常量，应该按常量功能进行归类，分开维护。</p>
+<p>9、数组使用 Arrays.asList 转化为集合，下列说法哪些正确的：（      ）<br>A、数组元素的修改，会影响到转化过来的集合。<br>B、数组元素的修改，不会影响到转化过来的集合。<br>C、对于转换过来的集合，它的 add&#x2F;remove&#x2F;clear 方法会抛出: UnsupportedOperationException。<br>D、Arrays.asList 体现的是适配器模式，只是转换接口，后台的数据仍是数组。</p>
+<p>10、关于并发处理，下列哪些说法符合规范：（      ）<br>A、线程资源必须通过线程池提供，不允许在应用中自行显式创建线程。<br>B、同步处理时，能锁部分代码区块的情况下不要锁整个方法；高并发时，同步调用应该考虑到性能损耗。<br>C、创建线程或线程池时，推荐给线程指定一个有意义的名称，方便出错时回溯。<br>D、推荐使用 Executors.newFixedThreadPool(int x)生成指定大小的线程池。</p>
+<p>三、问答题(4 道题，共 28 分)<br>1、人力云（HR）业务需要建立人员表（含姓名、年龄、性别）和人员工作情况表（含工作开始时间、工作结束时间、工作单位、工作简介），请写出具体的建表语句。（8 分）</p>
+<p>2、请列举你所了解的分库分表方式。(6 分)</p>
+<p>3、现有业务需求要修改表结构，开发库已经修改测试完成，需要在生产库同步修改并发布新程序，请问你具体的步骤。(5 分)</p>
+<p>4、现在有一张表 tablea，主键 key1，只有主键含有唯一索引，字段 columna，columnb,columnc，数量级 100 万，现在按照主键升序，每页 100 条分页，请写去取出第 900000 到 900100 条数据的 SQL 语句。（9 分）</p>
+<h3 id="答案-分析"><a href="#答案-分析" class="headerlink" title="答案&amp;分析"></a>答案&amp;分析</h3><p>一、单项选择<br>1.D 数据库大小写不敏感，应该全部用大写<br>2.B 选项 C 时间用数字格式存储，可以方便最后的国际化时区转化<br>3.B 连接语句要对每个表给出别名，对每个字段的使用都要带上表别名，否则有子查询的情况下，语句可能出现执行计划错误，甚至结果集错误。<br>4.C 选项 B 建议使用 NoSQL 缓存或其他可以在架构上优化的措施来减少复杂的数据库操作；选项 C 公式运算容易使得索引失效因此不建议在数据库中使用；选项 D 中的建议是因为 order by 和 group by 会使用到索引。<br>5.B 选项 B 索引是有代价的，对于一些值重复性较大的列最好不建索引；选项 C 也是考虑在写操作时更新索引会拉低性能。<br>6.C 操作一般是越谨慎越好，数据库操作最好交给专业人员来做（DBA），选项 B 是为了避免数据库出问题时互相甩锅。</p>
+<p>二、多项选择<br>1.ABC 选项 C 我似乎没选，因为把 VO 当成 DO 来用了，而且现在开发都是前后台分离，很少用到页面模板；选项 D 中 POJO 确实是 DO&#x2F;DTO&#x2F;BO&#x2F;VO 的统称，但不能把所有都命名成 XxxPOJO，会分不清该类的职责。<br>2.ACD 一般接口和抽象类里的抽象方法需要加上注释，而类里面的私有方法没有这个要求，也要避免注释过多的情况。<br>3.ABCD<br>4.ABCD 使用锁时要考虑锁的粒度、性能等特性，同时应该避免死锁等问题。<br>5.BCD 我和大部分人一样非常厌恶方法返回 null，尽量返回空集合或空对象能减少很多烦恼，但是手册中认为方法可以返回 null，防止 NPE 是调用者的责任，我觉得原因很大程度上是因为难以避免远程调用失败、序列化失败、运行时异常等场景返回 null 的情况。<br>6.ABD 选项 A 卫语句指的是处理完一个分支后直接返回；选项 B 强调我们分清稳定代码和非稳定代码，不要将不会出错的稳定代码也加到 try 中，这是不负责任的。<br>7.BCD 异常最好有业务含义，能提高后期排错效率。<br>8.AD 选项 B 不规范是因为 l 和 1 容易混淆。<br>9.ACD 最好看一下 Arrays.asList()源码。<br>10.ABC FixedThreadPool 不推荐使用，因为其允许的请求队列长度为 Integer.MAX_VALUE ，可能会堆积大量的请求，从而导致 OOM 。</p>
+<p>三、简答题<br>第一题：表名和字段名按规范，表名前缀 HR，使用有意义的单词，单词间用_分割，有中文注释。<br>第二题：读写分离，冷热分离，按照特定业务纬度分表，使用 ID Hash 取余平均分表等。<br>第三题：<br>1、明确影响范围<br>2、预留应变空间时间<br>3、交由专家评估合理性和性能<br>4、脚本交由专人在生产库执行，记录；<br>5、错峰操作。<br>第四题：参考规范 3 性能优化 22  ，或者先查询 id，在根据 id 查询数据等都可。<br>补充：后一个方法为什么可行呢？因为规范要求所有删除都是逻辑删除，能保证库里的数据 id 是从 1 到 1000000 排列的。</p>
+<h3 id="反思"><a href="#反思" class="headerlink" title="反思"></a>反思</h3><p>有的题目比较抠细节，但是上课好好听应该不难。<br>大部分规范都取自阿里 Java 编码规范，但很多数据库优化策略很有见地，在日后多作总结。</p>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1210,139 +1544,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e45d6eed.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/e45d6eed.html" class="post-title-link" itemprop="url">2017 沈阳马拉松</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2017-09-08 15:40:32" itemprop="dateCreated datePublished" datetime="2017-09-08T15:40:32+08:00">2017-09-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%85%B6%E4%BB%96/" itemprop="url" rel="index"><span itemprop="name">其他</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="马拉松计划"><a href="#马拉松计划" class="headerlink" title="马拉松计划"></a>马拉松计划</h2><h3 id="训练"><a href="#训练" class="headerlink" title="训练"></a>训练</h3><table>
-<thead>
-<tr>
-<th>周</th>
-<th>一</th>
-<th>二</th>
-<th>三</th>
-<th>四</th>
-<th>五</th>
-<th>六</th>
-<th>日</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>4-10</td>
-<td>10</td>
-<td>11</td>
-<td>20</td>
-<td>13</td>
-<td>休息</td>
-<td>30</td>
-<td>休息</td>
-</tr>
-<tr>
-<td>11-17</td>
-<td>8</td>
-<td>13</td>
-<td>20</td>
-<td>13</td>
-<td>休息</td>
-<td>20</td>
-<td>休息</td>
-</tr>
-<tr>
-<td>18-24</td>
-<td>5</td>
-<td>10</td>
-<td>13</td>
-<td>8</td>
-<td>休息</td>
-<td>休息</td>
-<td>马拉松</td>
-</tr>
-</tbody></table>
-<p>PS1：后程如果跑不动，可以尝试跑 5 分钟走 1 分钟调整，喝水时也可以走一会。<br>PS2：目标是 400，平常用 11 的速度跑，马拉松用 10 的速度。  </p>
-<h3 id="饮食"><a href="#饮食" class="headerlink" title="饮食"></a>饮食</h3><p>平时多喝牛奶。<br>马拉松时带点巧克力，不知道场地里的粮食多不。  </p>
-<h3 id="装备"><a href="#装备" class="headerlink" title="装备"></a>装备</h3><p>跑前似乎有发衣服，所以就不买专门的速干衣了，但是跑鞋和毛巾袜是必须的。  </p>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/18/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/page/18/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/18/">18</a><span class="page-number current">19</span><a class="page-number" href="/page/20/">20</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/20/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
