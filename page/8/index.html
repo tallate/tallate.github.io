@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">191</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">84</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">192</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">191</span>
+          <span class="site-state-item-count">192</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -158,7 +158,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-count">84</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -175,6 +175,184 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/4eb3381c.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/4eb3381c.html" class="post-title-link" itemprop="url">分布式锁</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-07-06 16:32:14" itemprop="dateCreated datePublished" datetime="2020-07-06T16:32:14+08:00">2020-07-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+<h1 id="单机环境下的锁"><a href="#单机环境下的锁" class="headerlink" title="单机环境下的锁"></a>单机环境下的锁</h1><p>单机环境下，资源竞争者都是来自机器内部(进程&#x2F;线程)，那么实现锁的方案只需要借助单机资源就可以了，比如借助磁盘、内存、寄存器来实现。</p>
+<h2 id="竞态条件（Race-Condition）"><a href="#竞态条件（Race-Condition）" class="headerlink" title="竞态条件（Race Condition）"></a>竞态条件（Race Condition）</h2><p>计算的正确性取决于多个线程的交替执行时序时，就会发生竞态条件。比如：</p>
+<ol>
+<li>先检测（查询）后执行。执行依赖于检测的结果，而检测结果依赖于多个线程的执行时序，而多个线程的执行时序通常情况下是不固定不可判断的，从而导致执行结果出现各种问题。</li>
+<li>延迟初始化（如单例的实例化） <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class ObjFactory &#123;  </span><br><span class="line">    private Obj instance;  </span><br><span class="line"></span><br><span class="line">    public Obj getInstance()&#123;  </span><br><span class="line">        if(instance == null)&#123;  </span><br><span class="line">            instance = new Obj();  </span><br><span class="line">        &#125;  </span><br><span class="line">        return instance;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+如果两个线程同时调用 getInstance()就有可能出现：一个线程 A 创建了一个新对象 instance &#x3D; obj1，立马被另一个线程 B 覆盖 instance &#x3D; obj2，线程 A 返回了 obj1，线程 B 返回 obj2，于是 Obj 就相当于被实例化了两次。</li>
+</ol>
+<h2 id="锁的分类"><a href="#锁的分类" class="headerlink" title="锁的分类"></a>锁的分类</h2><ol>
+<li>悲观锁，前提是，一定会有并发抢占资源，强行独占资源，在整个数据处理过程中将数据处于锁定状态。</li>
+<li>乐观锁，前提是，不会发生并发抢占资源，只有在<strong>执行修改时</strong>检查是否违反数据完整性。<strong>只能防止脏读后数据的提交，不能解决脏读</strong>。</li>
+</ol>
+<h2 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h2><h2 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h2><p>乐观锁一般有以下两种实现方法：</p>
+<ol>
+<li>版本号：使用<strong>版本标识</strong>来确定读到的数据与提交时的数据是否一致。提交后修改版本标识，不一致时可以采取<strong>丢弃</strong>或<strong>再次尝试</strong>的策略。</li>
+<li>CAS：java 中的 compareandswap 即 cas，解决多线程并行情况下使用锁造成性能损耗的一种机制。CAS 操作包含三个操作数，内存位置（V）,预期原值（A）和新值（B）。如果内存位置的值与预期原值相匹配，那么处理器会西东将该位置值更新为新值。否则，处理器不做任何操作。</li>
+</ol>
+<h1 id="分布式锁"><a href="#分布式锁" class="headerlink" title="分布式锁"></a>分布式锁</h1><p>目前几乎很多大型网站及应用都是分布式部署的，分布式场景中的数据一致性问题一直是一个比较重要的话题。分布式的<strong>CAP 理论</strong>告诉我们“任何一个分布式系统都无法同时满足<strong>一致性（Consistency）</strong>、<strong>可用性（Availability）</strong>和<strong>分区容错性（Partition tolerance）</strong>，最多只能同时满足其中两项。”所以，很多系统在设计之初就要对这三者做出取舍。在互联网领域的绝大多数的场景中，都需要牺牲强一致性来换取系统的高可用性，系统往往只需要保证“最终一致性”，只要这个最终时间是在用户可以接受的范围内即可。<br>有的时候，我们需要保证一个方法在同一时间内只能被同一个线程执行。在单机环境中，Java 中其实提供了很多并发处理相关的 API，但是这些 API 在分布式场景中就无能为力了。也就是说单纯的 Java Api 并不能提供分布式锁的能力。<br>对于分布式环境下，资源竞争者生存环境更复杂了，原有依赖单机的方案不再发挥作用，这时候就需要一个大家都认可的协调者出来，帮助解决竞争问题，那这个协调者称之为分布式锁。</p>
+<h2 id="实现分布式锁的需求（方法锁，以方法作为临界区，资源锁是类似的）"><a href="#实现分布式锁的需求（方法锁，以方法作为临界区，资源锁是类似的）" class="headerlink" title="实现分布式锁的需求（方法锁，以方法作为临界区，资源锁是类似的）"></a>实现分布式锁的需求（方法锁，以方法作为临界区，资源锁是类似的）</h2><ol>
+<li>可以保证在分布式部署的应用集群中，同一个方法在同一时间只能被一台机器上的一个线程执行。</li>
+<li>这把锁要是一把可重入锁（单线程可重复获取同一把锁，避免死锁）</li>
+<li>这把锁最好是一把阻塞锁（根据业务需求考虑要不要这条）</li>
+<li>有高可用的获取锁和释放锁功能</li>
+<li>获取锁和释放锁的性能要好</li>
+</ol>
+<h2 id="基于数据库表"><a href="#基于数据库表" class="headerlink" title="基于数据库表"></a>基于数据库表</h2><p>要实现分布式锁，最简单的方式可能就是直接创建一张锁表，然后通过操作该表中的数据来实现了。<br>当我们要锁住某个方法或资源时，我们就在该表中增加一条记录，想要释放锁的时候就删除这条记录。<br>创建这样一张数据库表：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `methodLock` (</span><br><span class="line">  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT &#x27;主键&#x27;,</span><br><span class="line">  `method_name` varchar(64) NOT NULL DEFAULT &#x27;&#x27; COMMENT &#x27;锁定的方法名&#x27;,</span><br><span class="line">  `desc` varchar(1024) NOT NULL DEFAULT &#x27;备注信息&#x27;,</span><br><span class="line">  `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT &#x27;保存数据时间，自动生成&#x27;,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  UNIQUE KEY `uidx_method_name` (`method_name `) USING BTREE</span><br><span class="line">) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT=&#x27;锁定中的方法&#x27;;</span><br></pre></td></tr></table></figure>
+<h3 id="使用锁表实现方法锁"><a href="#使用锁表实现方法锁" class="headerlink" title="使用锁表实现方法锁"></a>使用锁表实现方法锁</h3><p>执行 SQL：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into methodLock(method_name,desc) values (‘method_name’,‘desc’)</span><br></pre></td></tr></table></figure>
+<p>因为我们对 method_name 做了唯一性约束，这里如果有多个请求同时提交到数据库的话，数据库会保证只有一个操作可以成功，那么我们就可以认为操作成功的那个线程获得了该方法的锁，可以执行方法体内容。<br>当方法执行完毕之后，想要释放锁的话，需要执行以下 Sql:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">delete from methodLock where method_name =&#x27;method_name&#x27;</span><br></pre></td></tr></table></figure>
+<p>上面这种简单的实现有以下几个问题：</p>
+<ul>
+<li>这把锁强依赖数据库的可用性，数据库是一个单点，一旦数据库挂掉，会导致业务系统不可用。</li>
+<li>这把锁没有失效时间，一旦解锁操作失败，就会导致锁记录一直在数据库中，其他线程无法再获得到锁。</li>
+<li>这把锁只能是非阻塞的，因为数据的 insert 操作，一旦插入失败就会直接报错。没有获得锁的线程并不会进入排队队列，要想再次获得锁就要再次触发获得锁操作。</li>
+<li>这把锁是非重入的，同一个线程在没有释放锁之前无法再次获得该锁。因为数据库中数据已经存在了。</li>
+</ul>
+<p>当然，我们也可以有其他方式解决上面的问题。</p>
+<ul>
+<li>数据库是单点？搞两个数据库，数据之前双向同步。一旦挂掉快速切换到备库上。</li>
+<li>没有失效时间？只要做一个定时任务，每隔一定时间把数据库中的超时数据清理一遍。</li>
+<li>非阻塞的？搞一个 while 循环，直到 insert 成功再返回成功。</li>
+<li>非重入的？在数据库表中加个字段，记录当前获得锁的机器的主机信息和线程信息，那么下次再获取锁的时候先查询数据库，如果当前机器的主机信息和线程信息在数据库可以查到的话，直接把锁分配给他就可以了。</li>
+</ul>
+<h3 id="使用数据库-X-锁（排他锁）实现分布式锁"><a href="#使用数据库-X-锁（排他锁）实现分布式锁" class="headerlink" title="使用数据库 X 锁（排他锁）实现分布式锁"></a>使用数据库 X 锁（排他锁）实现分布式锁</h3><p>除了可以通过增删操作数据表中的记录以外，其实还可以借助数据中自带的锁来实现分布式的锁。<br>我们还用刚刚创建的那张数据库表。可以通过数据库的排他锁来实现分布式锁。<br>基于 MySQL 的 InnoDB 引擎，可以使用以下方法来实现加锁操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public boolean lock()&#123;</span><br><span class="line">    connection.setAutoCommit(false)</span><br><span class="line">    while(true)&#123;</span><br><span class="line">        try&#123;</span><br><span class="line">            result = select * from methodLock where method_name = xxx for update;</span><br><span class="line">            if(result==null)&#123;</span><br><span class="line">                return true;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;catch(Exception e)&#123;</span><br><span class="line">            log.warn(&quot;加锁失败&quot;, e);</span><br><span class="line">        &#125;</span><br><span class="line">        sleep(1000);</span><br><span class="line">    &#125;</span><br><span class="line">    return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在查询语句后面增加 for update，数据库会在查询过程中给数据库表增加排他锁。当某条记录被加上排他锁之后，其他线程无法再在该行记录上增加排他锁。<br>我们可以认为获得排它锁的线程即可获得分布式锁，当获取到锁之后，可以执行方法的业务逻辑，执行完方法之后，再通过以下方法解锁：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public void unlock()&#123;</span><br><span class="line">    connection.commit();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过 connection.commit()操作来释放锁。<br>这种方法可以有效的解决上面提到的无法释放锁和阻塞锁的问题。</p>
+<ul>
+<li>阻塞锁？ for update 语句会在执行成功后立即返回，在执行失败时一直处于阻塞状态，直到成功。</li>
+<li>锁定之后服务宕机，无法释放？使用这种方式，服务宕机之后数据库会自己把锁释放掉。<br>但是还是无法直接解决数据库单点和可重入问题。</li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总结一下使用数据库来实现分布式锁的方式，这两种方式都是依赖数据库的一张表，一种是通过表中的记录的存在情况确定当前是否有锁存在，另外一种是通过数据库的排他锁来实现分布式锁。<br>数据库实现分布式锁的优点：</p>
+<ol>
+<li>直接借助数据库，容易理解。</li>
+</ol>
+<p>数据库实现分布式锁的缺点</p>
+<ol>
+<li>会有各种各样的问题，在解决问题的过程中会使整个方案变得越来越复杂。</li>
+<li>操作数据库需要一定的开销，性能问题需要考虑。</li>
+</ol>
+<h2 id="基于缓存"><a href="#基于缓存" class="headerlink" title="基于缓存"></a>基于缓存</h2><p>使用缓存中间件实现分布式锁的方法我已经在<a href="https://tallate.github.io/d3d5fdbf.html#%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81">Redis 客户端</a>中有过分析。</p>
+<h2 id="基于-ZooKeeper"><a href="#基于-ZooKeeper" class="headerlink" title="基于 ZooKeeper"></a>基于 ZooKeeper</h2><p>基于 zookeeper 临时有序节点可以实现的分布式锁。<br>大致思想即为：每个客户端对某个方法加锁时，在 zookeeper 上的与该方法对应的指定节点的目录下，生成一个唯一的<strong>瞬时有序节点</strong>。<br>判断是否获取锁的方式很简单，只需要判断有序节点中序号最小的一个。<br>当释放锁的时候，只需将这个瞬时节点删除即可。同时，其可以避免服务宕机导致的锁无法释放，而产生的死锁问题。<br>来看下 Zookeeper 能不能解决前面提到的问题。</p>
+<ul>
+<li>锁无法释放？使用 Zookeeper 可以有效的解决锁无法释放的问题，因为在创建锁的时候，客户端会在 ZK 中创建一个临时节点，一旦客户端获取到锁之后突然挂掉（Session 连接断开），那么这个临时节点就会自动删除掉。其他客户端就可以再次获得锁。</li>
+<li>非阻塞锁？使用 Zookeeper 可以实现阻塞的锁，客户端可以通过在 ZK 中创建顺序节点，并且在节点上绑定监听器，一旦节点有变化，Zookeeper 会通知客户端，客户端可以检查自己创建的节点是不是当前所有节点中序号最小的，如果是，那么自己就获取到锁，便可以执行业务逻辑了。</li>
+<li>不可重入？使用 Zookeeper 也可以有效的解决不可重入的问题，客户端在创建节点的时候，把当前客户端的主机信息和线程信息直接写入到节点中，下次想要获取锁的时候和当前最小的节点中的数据比对一下就可以了。如果和自己的信息一样，那么自己直接获取到锁，如果不一样就再创建一个临时的顺序节点，参与排队。</li>
+<li>单点问题？使用 Zookeeper 可以有效的解决单点问题，ZK 是集群部署的，只要集群中有半数以上的机器存活，就可以对外提供服务。</li>
+</ul>
+<h3 id="使用-Curator-实现分布式锁"><a href="#使用-Curator-实现分布式锁" class="headerlink" title="使用 Curator 实现分布式锁"></a>使用 Curator 实现分布式锁</h3><p>可以直接使用 zookeeper 第三方库 Curator 客户端，这个客户端中封装了一个可重入的锁服务。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public boolean tryLock(long timeout, TimeUnit unit) throws InterruptedException &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        return interProcessMutex.acquire(timeout, unit);</span><br><span class="line">    &#125; catch (Exception e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br><span class="line">public boolean unlock() &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        interProcessMutex.release();</span><br><span class="line">    &#125; catch (Throwable e) &#123;</span><br><span class="line">        log.error(e.getMessage(), e);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        executorService.schedule(new Cleaner(client, path), delayTimeForClean, TimeUnit.MILLISECONDS);</span><br><span class="line">    &#125;</span><br><span class="line">    return true;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Curator 提供的 InterProcessMutex 是分布式锁的实现。acquire 方法用户获取锁，release 方法用于释放锁。<br>使用 ZK 实现的分布式锁好像完全符合了本文开头我们对一个分布式锁的所有期望。但是，其实并不是，Zookeeper 实现的分布式锁其实存在一个缺点，那就是性能上可能并没有缓存服务那么高。因为每次在创建锁和释放锁的过程中，都要动态创建、销毁瞬时节点来实现锁功能。ZK 中创建和删除节点只能通过<strong>Leader</strong>服务器来执行，然后将数据同步到所有的 Follower 机器上。</p>
+<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h3><p>使用 Zookeeper 实现分布式锁的优点</p>
+<ol>
+<li>有效的解决单点问题，不可重入问题，非阻塞问题以及锁无法释放的问题。</li>
+<li>实现起来较为简单。</li>
+</ol>
+<p>使用 Zookeeper 实现分布式锁的缺点</p>
+<ol>
+<li>性能上不如使用缓存实现分布式锁。</li>
+<li>需要对 ZK 的原理有所了解。</li>
+</ol>
+<p>分布式锁实现需要根据实际需要来选择，比如红锁是AP的，而ZooKeeper是CP的。</p>
+<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><ol>
+<li>怎么使用 Redis 实现分布式锁？<br>set 命令带上 nx 和 ex 参数。</li>
+<li>怎么使用 zk 实现分布式锁？<br>先建一个代表锁的持久节点，然后每个线程要加锁就在该持久节点下创建临时有序节点，如果当前线程创建的节点是最小的，则说明可以获取到该锁，否则阻塞等待；释放锁就是将这个临时节点删除。</li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/garfieldcgf/p/6380816.html">分布式锁的几种实现方式</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/dennyzhangdd/p/7133653.html#_label0">终极锁实战：单 JVM 锁+分布式锁</a></li>
+</ol>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2223,459 +2401,6 @@
 <li>隔离性<br>利用锁和 MVCC 机制保证隔离性。</li>
 </ol>
 <h3 id="为什么最好不要有长事务"><a href="#为什么最好不要有长事务" class="headerlink" title="为什么最好不要有长事务"></a>为什么最好不要有长事务</h3><p>一般当系统判断当没有事务再使用到某些回滚日志时，这些回滚日志会被删除。那么系统怎么判断一个回滚日志不会再被使用到呢？就是当系统里没有比这个回滚日志更早的 read-view 的时候。<br>长事务意味着系统里面会存在很老的事务视图。由于这些事务随时可能访问数据库里面的任何数据，所以这个事务提交之前，数据库里面它可能用到的回滚记录都必须保留，这就会导致大量占用存储空间。 </p>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/a6d48c65.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/a6d48c65.html" class="post-title-link" itemprop="url">MySQL3_2索引</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-05-24 10:18:28" itemprop="dateCreated datePublished" datetime="2020-05-24T10:18:28+08:00">2020-05-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-
-<h1 id="InnoDB-记录存储结构"><a href="#InnoDB-记录存储结构" class="headerlink" title="InnoDB 记录存储结构"></a>InnoDB 记录存储结构</h1><p>InnoDB 将数据划分为若干个页，以<strong>页作为磁盘和内存之间交互的基本单位</strong>，InnoDB 中页的大小一般为 16 KB</p>
-<h2 id="行格式"><a href="#行格式" class="headerlink" title="行格式"></a>行格式</h2><p>指定行格式：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE 表名 (列的信息) ROW_FORMAT=行格式名称、ALTER TABLE 表名 ROW_FORMAT=行格式名称</span><br></pre></td></tr></table></figure>
-<p>InnoDB 中提供四种可用的格式：Compact、Redundant、Dynamic 和 Compressed<br>行格式细节比较多，但我们只需要关注其中的部分关键字段：</p>
-<ul>
-<li>row_id: InnoDB 引擎中一个表只能有一个主键，用于聚簇索引，如果表没有定义主键会选择第一个非 Null 的唯一索引作为主键，如果还没有，生成一个隐藏的 row_id 作为主键构造聚簇索引。</li>
-<li>trx_id: 最近更改该行数据的事务 ID；</li>
-<li>roll_ptr: undo log 的指针，用于记录之前历史数据在 undo log 中的位置；</li>
-<li>delete bit: 索引删除标志，如果 DB 删除了一条数据，是优先通知索引将该标志位设置为 1，然后通过 purge 清除线程异步删除真实的数据。</li>
-</ul>
-<h1 id="InnoDB-数据页结构"><a href="#InnoDB-数据页结构" class="headerlink" title="InnoDB 数据页结构"></a>InnoDB 数据页结构</h1><p>1、数据页被组织为一个双向链表；<br>2、每个数据页中的记录会按照主键值从小到大的顺序组成一个单向链表；<br>3、每个数据页都会为存储在它里面的记录生成一个页目录，页目录又按 ID 分段形成一个个槽，遍历该槽对应分组中的记录即可快速找到指定的记录；<br><img src="/imgs/MySQL/MySQL-%E9%A1%B5%E7%BB%93%E6%9E%84.png" alt="MySQL-页结构" title="MySQL-页结构"></p>
-<h1 id="数据目录"><a href="#数据目录" class="headerlink" title="数据目录"></a>数据目录</h1><h2 id="查看-MySQL-数据目录"><a href="#查看-MySQL-数据目录" class="headerlink" title="查看 MySQL 数据目录"></a>查看 MySQL 数据目录</h2><p>数据目录不同于安装目录，可以使用以下命令来查看：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SHOW VARIABLES LIKE &#x27;datadir&#x27;;</span><br></pre></td></tr></table></figure>
-
-<h2 id="数据目录的结构"><a href="#数据目录的结构" class="headerlink" title="数据目录的结构"></a>数据目录的结构</h2><h3 id="CREATE-DATABASE"><a href="#CREATE-DATABASE" class="headerlink" title="CREATE DATABASE "></a>CREATE DATABASE <db_name></h3><p>在数据目录下创建一个子目录 db_name，在该子目录下再创建一个名为 db.opt 的文件，该文件中包含了该数据库的各种属性，比如该数据库的字符集（charset）、比较规则（collation）等。<br>可以使用 SHOW DATABASES 命令来查看有哪些数据库。</p>
-<h3 id="CREATE-TABLE"><a href="#CREATE-TABLE" class="headerlink" title="CREATE TABLE "></a>CREATE TABLE <tb_name></h3><p>在数据库目录（db_name）下会创建一个名为 tb_name.frm 的用于描述表结构的文件。注意这个.frm 文件是二进制文件。</p>
-<h3 id="表中数据的存储-InnoDB"><a href="#表中数据的存储-InnoDB" class="headerlink" title="表中数据的存储 - InnoDB"></a>表中数据的存储 - InnoDB</h3><p>1、InnoDB 其实是使用页为基本单位来管理存储空间的，默认的页大小为 16KB。<br>2、对于 InnoDB 存储引擎来说，每个索引都对应着一棵 B+树，该 B+树的每个节点都是一个数据页，数据页之间<strong>不必要是物理连续的</strong>，因为数据页之间有双向链表来维护着这些页的顺序。<br>3、InnoDB 的聚簇索引的叶子节点存储了完整的用户记录，也就是所谓的<strong>索引即数据，数据即索引</strong>。</p>
-<p>为了更好地管理这些页（目录页、数据页），InnoDB 引入了一个更高级的结构<strong>表空间（文件空间、table space、file space）</strong>，这个表空间是一个抽象的概念，它可以对应文件系统上一个或多个真实文件（不同表空间对应的文件数量可能不同）。每一个表空间可以被划分为很多很多很多个页，我们的表数据就存放在某个表空间下的某些页里。表空间有许多类：<br>1、系统表空间（system tablespace）<br>默认情况下 InnoDB 会在<strong>数据目录</strong>下创建一个名为<strong>ibdata1</strong>文件，这个文件是<strong>自扩展文件</strong>，当不够用时会自动增加大小，因此不会有不够用的情况。<br>在一个 MySQL 服务器中，系统表空间只有一份。从 MySQL5.5.7 到 MySQL5.6.6 之间的各个版本中，我们表中的数据都会被默认存储到这个 系统表空间。<br>2、独立表空间（file-per-table tablespace）<br>在 MySQL5.6.6 以及之后的版本中，InnoDB 并不会默认的把各个表的数据存储到系统表空间中，而是为每一个表建立一个独立表空间，也就是说我们创建了多少个表，就有多少个独立表空间。<br>使用独立表空间时同样会在<strong>数据目录</strong>下创建一个文件，文件名为&lt;tb_name.ibd&gt;，用于存储该表中的数据和索引。<br>3、通用表空间（general tablespace）、undo 表空间（undo tablespace）、临时表空间（temporary tablespace）等。</p>
-<h3 id="表中数据的存储-MyISAM"><a href="#表中数据的存储-MyISAM" class="headerlink" title="表中数据的存储 - MyISAM"></a>表中数据的存储 - MyISAM</h3><p>和 InnoDB 不同的是：<br>1、MyISAM 中的索引全部都是二级索引，该存储引擎的数据和索引是分开存放的；<br>2、MyISAM 并没有什么所谓的表空间一说，表数据都存放到对应的数据库子目录下。<br>建表后，在数据目录下会新增 3 个文件 tb_name.frm、tb_name.MYD 和 tb_name.MYI。</p>
-<h3 id="视图的存储"><a href="#视图的存储" class="headerlink" title="视图的存储"></a>视图的存储</h3><p>我们知道 MySQL 中的视图其实是虚拟的表，也就是某个查询语句的一个别名而已，所以在存储视图的时候是不需要存储真实的数据的，只需要把它的结构存储起来就行了。和表一样，描述视图结构的文件也会被存储到所属数据库对应的子目录下边，只会存储一个视图名.frm 的文件。</p>
-<h3 id="其他文件"><a href="#其他文件" class="headerlink" title="其他文件"></a>其他文件</h3><p>数据目录下除了存储表数据外，还有服务器进程文件、服务器日志文件、默认&#x2F;自动生成的 SSL 和 RSA 证书和密钥文件等。</p>
-<h2 id="MySQL-的一些系统数据库"><a href="#MySQL-的一些系统数据库" class="headerlink" title="MySQL 的一些系统数据库"></a>MySQL 的一些系统数据库</h2><p>MySQL 额外创建了几个数据库来保存一些系统信息：<br>1、mysql<br>这个数据库贼核心，它存储了 MySQL 的用户账户和权限信息，一些存储过程、事件的定义信息，一些运行过程中产生的日志信息，一些帮助信息以及时区信息等。<br>2、information_schema<br>这个数据库保存着 MySQL 服务器维护的所有其他数据库的信息，比如有哪些表、哪些视图、哪些触发器、哪些列、哪些索引吧啦吧啦。这些信息并不是真实的用户数据，而是一些描述性信息，有时候也称之为元数据。<br>3、performance_schema<br>这个数据库里主要保存 MySQL 服务器运行过程中的一些状态信息，算是对 MySQL 服务器的一个性能监控。包括统计最近执行了哪些语句，在执行过程的每个阶段都花费了多长时间，内存的使用情况等等信息。<br>4、sys<br>这个数据库主要是通过视图的形式把 information_schema 和 performance_schema 结合起来，让程序员可以更方便的了解 MySQL 服务器的一些性能信息。</p>
-<h1 id="表空间"><a href="#表空间" class="headerlink" title="表空间"></a>表空间</h1><h2 id="表空间是什么"><a href="#表空间是什么" class="headerlink" title="表空间是什么"></a>表空间是什么</h2><p>表空间可以理解为一个页池，当 B+树需要增加页时会从表空间中获取空闲页分配。<br>每个页的 File Header 由以下字段组成：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">名称	占用空间大小	描述</span><br><span class="line">FIL_PAGE_SPACE_OR_CHKSUM	4字节	页的校验和（checksum值）</span><br><span class="line">FIL_PAGE_OFFSET	4字节	页号</span><br><span class="line">FIL_PAGE_PREV	4字节	上一个页的页号</span><br><span class="line">FIL_PAGE_NEXT	4字节	下一个页的页号</span><br><span class="line">FIL_PAGE_LSN	8字节	页面被最后修改时对应的日志序列位置（英文名是：Log Sequence Number）</span><br><span class="line">FIL_PAGE_TYPE	2字节	该页的类型</span><br><span class="line">FIL_PAGE_FILE_FLUSH_LSN	8字节	仅在系统表空间的一个页中定义，代表文件至少被刷新到了对应的LSN值</span><br><span class="line">FIL_PAGE_ARCH_LOG_NO_OR_SPACE_ID	4字节	页属于哪个表空间</span><br></pre></td></tr></table></figure>
-<p>1、表空间中的每一个页都对应着一个页号，也就是 FIL_PAGE_OFFSET，这个页号由 4 个字节组成，也就是 32 个比特位，所以一个表空间最多可以拥有 2³²个页，如果按照页的默认大小 16KB 来算，一个表空间最多支持 64TB 的数据。表空间的第一个页的页号为 0，之后的页号分别是 1，2，3…依此类推。<br>2、表空间中的每一个页都对应着一个页号，也就是 FIL_PAGE_OFFSET，这个页号由 4 个字节组成，也就是 32 个比特位，所以一个表空间最多可以拥有 2³²个页，如果按照页的默认大小 16KB 来算，一个表空间最多支持 64TB 的数据。表空间的第一个页的页号为 0，之后的页号分别是 1，2，3…依此类推<br>3、每个页的类型由 FIL_PAGE_TYPE 表示，比如像数据页的该字段的值就是 0x45BF，我们后边会介绍各种不同类型的页，不同类型的页在该字段上的值是不同的。</p>
-<h2 id="独立表空间结构"><a href="#独立表空间结构" class="headerlink" title="独立表空间结构"></a>独立表空间结构</h2><h3 id="区（extent）"><a href="#区（extent）" class="headerlink" title="区（extent）"></a>区（extent）</h3><p>在表空间和页之间还有一个中间结构，称为区（extent）。对于 16KB 的页来说，连续的 64 个页就是一个区，也就是说一个区默认占用 1MB 空间大小。<br>不论是系统表空间还是独立表空间，都可以看成是由若干个区组成的，每 256 个区被划分成一组。<br><img src="https://user-gold-cdn.xitu.io/2019/5/1/16a739f33c4a1c3a?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"></p>
-<p><img src="https://user-gold-cdn.xitu.io/2019/5/1/16a739f33df9307a?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"><br>如上图可知，第一个组最开始的 3 个页面的类型是固定的，也就是说 extent 0 这个区最开始的 3 个页面的类型是固定的，分别是：</p>
-<ul>
-<li>FSP_HDR 类型：这个类型的页面是用来登记整个表空间的一些整体属性以及本组所有的区，也就是 extent 0 ~ extent 255 这 256 个区的属性，稍后详细唠叨。需要注意的一点是，整个表空间只有一个 FSP_HDR 类型的页面。</li>
-<li>IBUF_BITMAP 类型：这个类型的页面是存储本组所有的区的所有页面关于 INSERT BUFFER 的信息。当然，你现在不用知道啥是个 INSERT BUFFER，后边会详细说到你吐。</li>
-<li>INODE 类型：这个类型的页面存储了许多称为 INODE 的数据结构，还是那句话，现在你不需要知道啥是个 INODE，后边儿会说到你吐。</li>
-</ul>
-<p>其余各组最开始的 2 个页面的类型是固定的，也就是说 extent 256、extent 512 这些区最开始的 2 个页面的类型是固定的，分别是：</p>
-<ul>
-<li>XDES 类型：全称是 extent descriptor，用来登记本组 256 个区的属性，也就是说对于在 extent 256 区中的该类型页面存储的就是 extent 256 ~ extent 511 这些区的属性，对于在 extent 512 区中的该类型页面存储的就是 extent 512 ~ extent 767 这些区的属性。上边介绍的 FSP_HDR 类型的页面其实和 XDES 类型的页面的作用类似，只不过 FSP_HDR 类型的页面还会额外存储一些表空间的属性。</li>
-<li>IBUF_BITMAP 类型：上边介绍过了。</li>
-</ul>
-<p>为什么要引入区的概念？实际上按之前讨论过的 B+树的结构已经能应付正常的页分配、回收操作了，引入区是为了更好地利用空间局部性，如果对页的位置不作限制，页之间可能离得特别远，导致频繁的随机 IO，而一个区是由连续的 64 个页组成的，能减少这种随机 IO 的情况。</p>
-<h3 id="段（segment）"><a href="#段（segment）" class="headerlink" title="段（segment）"></a>段（segment）</h3><p>如果将所有页都放到同一个区内，因为页分叶子节点（数据页）和非叶子节点（目录页），我们执行范围查询的时候是对叶子节点进行的，如果分配到一块，会导致范围查询时从各种区跳来跳去。<br>因此，InnoDB 又引入了段的概念，存放叶子节点的区的集合就算是一个段（segment），存放非叶子节点的区的集合也算是一个段。也就是说，一个索引是由一个叶子节点段和一个非叶子节点段组成的。</p>
-<h3 id="碎片（fragment）"><a href="#碎片（fragment）" class="headerlink" title="碎片（fragment）"></a>碎片（fragment）</h3><p>前面提到的段有浪费空间的问题，因为不管多大的表，都会给分配至少两块相同大小的区，即使这张表中的数据量非常小。<br>因此，InnoDB 又引入了碎片（fragment）区的概念，在一个碎片区中，并不是所有的页都是为了存储同一个段的数据而存在的，而是碎片区中的页可以用于不同的目的，比如有些页用于段 A，有些页用于段 B，有些页甚至哪个段都不属于。因此，为某个段分配存储空间时：<br>1、在刚开始向表中插入数据的时候，段是从某个碎片区以单个页面为单位来分配存储空间的。<br>2、当某个段已经占用了 32 个碎片区页面之后，就会以完整的区为单位来分配存储空间。<br>因此，段实际上是由一些零散的页面和一些完整区的集合。</p>
-<h3 id="区的分类"><a href="#区的分类" class="headerlink" title="区的分类"></a>区的分类</h3><p>1、空闲的区：现在还没有用到这个区中的任何页面。<br>2、有剩余空间的碎片区：表示碎片区中还有可用的页面。<br>3、没有剩余空间的碎片区：表示碎片区中的所有页面都被使用，没有空闲页面。<br>4、附属于某个段的区。每一个索引都可以分为叶子节点段和非叶子节点段，除此之外 InnoDB 还会另外定义一些特殊作用的段，在这些段中的数据量很大时将使用区来作为基本的分配单位。<br>这四种区对应 4 种状态（State）：<br>状态名	含义<br>FREE	空闲的区<br>FREE_FRAG	有剩余空间的碎片区<br>FULL_FRAG	没有剩余空间的碎片区<br>FSEG	附属于某个段的区</p>
-<p>需要再次强调一遍的是，处于 FREE、FREE_FRAG 以及 FULL_FRAG 这三种状态的区都是独立的，算是直属于表空间；而处于 FSEG 状态的区是附属于某个段的。</p>
-<h3 id="XDES-Entry"><a href="#XDES-Entry" class="headerlink" title="XDES Entry"></a>XDES Entry</h3><p>InnoDB 使用一种称为 XDES Entry（Extent Descriptor Entry）的结构来管理这些区，每个区都对应着一个 XDES Entry 结构，这个结构记录了对应的区的一些属性。<br><img src="https://user-gold-cdn.xitu.io/2019/5/1/16a739f343654829?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"><br>从图中我们可以看出，XDES Entry 是一个 40 个字节的结构，大致分为 4 个部分，各个部分的释义如下：</p>
-<ul>
-<li>Segment ID（8 字节）<br>每一个段都有一个唯一的编号，用 ID 表示，此处的 Segment ID 字段表示就是该区所在的段。当然前提是该区已经被分配给某个段了，不然的话该字段的值没啥意义。</li>
-<li>List Node（12 字节）<br>这个部分可以将若干个 XDES Entry 结构串联成一个链表<br>如果我们想定位表空间内的某一个位置的话，只需指定页号以及该位置在指定页号中的页内偏移量即可。所以：<br>Pre Node Page Number 和 Pre Node Offset 的组合就是指向前一个 XDES Entry 的指针<br>Next Node Page Number 和 Next Node Offset 的组合就是指向后一个 XDES Entry 的指针。</li>
-<li>State（4 字节）<br>这个字段表明区的状态。可选的值就是我们前边说过的那 4 个，分别是：FREE、FREE_FRAG、FULL_FRAG 和 FSEG。具体释义就不多唠叨了，前边说的够仔细了。</li>
-<li>Page State Bitmap（16 字节）<br>这个部分共占用 16 个字节，也就是 128 个比特位。我们说一个区默认有 64 个页，这 128 个比特位被划分为 64 个部分，每个部分 2 个比特位，对应区中的一个页。比如 Page State Bitmap 部分的第 1 和第 2 个比特位对应着区中的第 1 个页面，第 3 和第 4 个比特位对应着区中的第 2 个页面，依此类推，Page State Bitmap 部分的第 127 和 128 个比特位对应着区中的第 64 个页面。这两个比特位的第一个位表示对应的页是否是空闲的，第二个比特位还没有用。</li>
-</ul>
-<h3 id="利用-XDES-Entry-链表向段中插入数据的过程"><a href="#利用-XDES-Entry-链表向段中插入数据的过程" class="headerlink" title="利用 XDES Entry 链表向段中插入数据的过程"></a>利用 XDES Entry 链表向段中插入数据的过程</h3><p>当段中数据量比较少时，首先会查看表空间中是否有状态为 FREE_FLAG 的区，也就是有空闲空间的碎片区，如果找到了则从中取一些零散的页将数据插入，否则，从表空间申请一个状态为 FREE 的区，并把该区的状态变为 FREE_FLAG，并从中取一些页将数据插入，直到这个区没有空闲空间，则状态变成 FULL_FLAG。<br>当表空间的大小增大到一定的程度，这个查询操作无疑会成为瓶颈，在 InnoDB 中这个问题是通过 XDES Entry 的 List Node 来解决的：</p>
-<ul>
-<li>把状态为 FREE 的区对应的 XDES Entry 结构通过 List Node 来连接成一个链表，这个链表我们就称之为 FREE 链表。</li>
-<li>把状态为 FREE_FRAG 的区对应的 XDES Entry 结构通过 List Node 来连接成一个链表，这个链表我们就称之为 FREE_FRAG 链表。</li>
-<li>把状态为 FULL_FRAG 的区对应的 XDES Entry 结构通过 List Node 来连接成一个链表，这个链表我们就称之为 FULL_FRAG 链表。</li>
-</ul>
-<p>将记录插入段中的基本过程：<br>1、这样每当我们需要 FREE_FLAG 状态的区时，可以直接从 FREE_FLAG 链表中取；<br>2、当节点对应的区已经没有剩余的空间时，则修改这个节点的 State，并将其从 FREE_FLAG 链表移动到 FULL_FRAG 链表；<br>3、如果 FREE_FLAG 链表中一个节点都没有，则从 FREE 链表中取一个节点移动到 FREE_FLAG 链表，并修改该节点的 State 值为 FREE_FLAG。</p>
-<p>段中所有区的空间都已用完，需要申请更多的空闲区，但是怎么知道段中的区都已经满了呢？我们之前只提到表空间是有 FREE、FREE_FLAG、FULL_FLAG 这三种链表的，实际上段空间也需要：</p>
-<ul>
-<li>FREE 链表：同一个段中，所有页面都是空闲的区对应的 XDES Entry 结构会被加入到这个链表。注意和直属于表空间的 FREE 链表区别开了，此处的 FREE 链表是附属于某个段的。</li>
-<li>NOT_FULL 链表：同一个段中，仍有空闲空间的区对应的 XDES Entry 结构会被加入到这个链表。</li>
-<li>FULL 链表：同一个段中，已经没有空闲空间的区对应的 XDES Entry 结构会被加入到这个链表。</li>
-</ul>
-<h3 id="链表基节点（List-Base-Node）"><a href="#链表基节点（List-Base-Node）" class="headerlink" title="链表基节点（List Base Node）"></a>链表基节点（List Base Node）</h3><p>上述的每个链表都有一个 List Base Node，该结构中包含了链表的头节点和尾节点的指针以及这个链表中包含了多少节点的信息：<br><img src="https://user-gold-cdn.xitu.io/2019/5/1/16a739f388927e1c?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"><br>其中：</p>
-<ul>
-<li>List Length 表明该链表一共有多少节点，</li>
-<li>First Node Page Number 和 First Node Offset 表明该链表的头节点在表空间中的位置。</li>
-<li>Last Node Page Number 和 Last Node Offset 表明该链表的尾节点在表空间中的位置。</li>
-</ul>
-<p>List Base Node 总是被放在表空间的固定位置，因此主要用于定位链表位置。</p>
-<h3 id="段的结构"><a href="#段的结构" class="headerlink" title="段的结构"></a>段的结构</h3><p>段是一个逻辑上的概念，它由若干个零散的页面及一些完整的区组成。像每个区都有对应的 XDES Entry 来记录该区中的属性，段也定义了一个 INODE Entry 来记录段中的属性：<br><img src="https://user-gold-cdn.xitu.io/2019/5/1/16a739f4087c4a56?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"><br>其中：</p>
-<ul>
-<li>Segment ID<br>就是指这个 INODE Entry 结构对应的段的编号（ID）。</li>
-<li>NOT_FULL_N_USED<br>这个字段指的是在 NOT_FULL 链表中已经使用了多少个页面。</li>
-<li>3 个 List Base Node<br>分别为段的 FREE 链表、NOT_FULL 链表、FULL 链表定义了 List Base Node，这样我们想查找某个段的某个链表的头节点和尾节点的时候，就可以直接到这个部分找到对应链表的 List Base Node。</li>
-<li>Magic Number：<br>这个值是用来标记这个 INODE Entry 是否已经被初始化了（初始化的意思就是把各个字段的值都填进去了）。如果这个数字是值的 97937874，表明该 INODE Entry 已经初始化，否则没有被初始化。（不用纠结这个值有啥特殊含义，人家规定的）。</li>
-<li>Fragment Array Entry<br>我们前边强调过无数次段是一些零散页面和一些完整的区的集合，每个 Fragment Array Entry 结构都对应着一个零散的页面，这个结构一共 4 个字节，表示一个零散页面的页号。</li>
-</ul>
-<h3 id="各种类型的页面"><a href="#各种类型的页面" class="headerlink" title="各种类型的页面"></a>各种类型的页面</h3><h4 id="FSP-HDR-类型"><a href="#FSP-HDR-类型" class="headerlink" title="FSP_HDR 类型"></a>FSP_HDR 类型</h4><p><img src="https://user-gold-cdn.xitu.io/2019/5/1/16a739f4733af475?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"><br>名称	中文名	占用空间大小	简单描述<br>File Header	文件头部	38 字节	页的一些通用信息<br>File Space Header	表空间头部	112 字节	表空间的一些整体属性信息<br>XDES Entry	区描述信息	10240 字节	存储本组 256 个区对应的属性信息<br>Empty Space	尚未使用空间	5986 字节	用于页结构的填充，没啥实际意义<br>File Trailer	文件尾部	8 字节	校验页是否完整</p>
-<p>File Space Header 部分<br><img src="https://user-gold-cdn.xitu.io/2019/5/1/16a739f47508ede5?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"><br>名称	占用空间大小	描述<br>Space ID	4 字节	表空间的 ID<br>Not Used	4 字节	这 4 个字节未被使用，可以忽略<br>Size	4 字节	当前表空间占有的页面数<br>FREE Limit	4 字节	尚未被初始化的最小页号，大于或等于这个页号的区对应的 XDES Entry 结构都没有被加入 FREE 链表<br>Space Flags	4 字节	表空间的一些占用存储空间比较小的属性<br>FRAG_N_USED	4 字节	FREE_FRAG 链表中已使用的页面数量<br>List Base Node for FREE List	16 字节	FREE 链表的基节点<br>List Base Node for FREE_FRAG List	16 字节	FREE_FRAG 链表的基节点<br>List Base Node for FULL_FRAG List	16 字节	FULL_FRAG 链表的基节点<br>Next Unused Segment ID	8 字节	当前表空间中下一个未使用的 Segment ID<br>List Base Node for SEG_INODES_FULL List	16 字节	SEG_INODES_FULL 链表的基节点<br>List Base Node for SEG_INODES_FREE List	16 字节	SEG_INODES_FREE 链表的基节点</p>
-<p>TODO</p>
-<h2 id="表空间配置和优化"><a href="#表空间配置和优化" class="headerlink" title="表空间配置和优化"></a>表空间配置和优化</h2><h3 id="表数据存储位置：innodb-file-per-table"><a href="#表数据存储位置：innodb-file-per-table" class="headerlink" title="表数据存储位置：innodb_file_per_table"></a>表数据存储位置：innodb_file_per_table</h3><p>这个参数设置为 OFF 表示的是，表的数据放在系统共享表空间，也就是跟数据字典放在一起；<br>这个参数设置为 ON 表示的是，每个 InnoDB 表数据存储在一个以 .ibd 为后缀的文件中。<br>建议将这个值设置为 ON，因为，一个表单独存储为一个文件更容易管理，而且在你不需要这个表的时候，通过 drop table 命令，系统就会直接删除这个文件。而如果是放在共享表空间中，即使表删掉了，空间也是不会回收的。</p>
-<h3 id="收缩表空间（重建表）"><a href="#收缩表空间（重建表）" class="headerlink" title="收缩表空间（重建表）"></a>收缩表空间（重建表）</h3><p>表数据是存储在 B+树的叶子节点（数据页）上的，将一行数据删除置灰将这条记录标记为删除，空间并不会被释放，<strong>只有当该页的所有记录都被删除后，该页才会被标记为可复用</strong>。<br>当我们将整个表的数据删除，所有的数据页都会被标记为可复用，但是磁盘上的文件并不会变小，造成<strong>空洞</strong>。<br>可以使用<code>alter table A engine=InnoDB</code>命令来重建表，MySQL 会自动完成建立临时表、转存数据、交换表名、删除旧表的操作。<br>在往临时表写入数据的过程中如果有新数据写入到表 A 的话，就会造成数据丢失，因此在整个 DDL 过程中表 A 不能有更新，这将阻塞正常的数据库语句执行，因此说这个 DDL 不是 Online 的，但是在 MySQL5.6 之后开始引入<strong>Online DDL</strong>，对这个操作流程做了优化：</p>
-<ol>
-<li>建立一个临时文件，扫描表 A 主键的所有数据页；</li>
-<li>用数据页中表 A 的记录生成 B+ 树，存储到临时文件中；</li>
-<li>生成临时文件的过程中，将所有对 A 的操作记录在一个日志文件（row log）中，对应的是图中 state2 的状态；</li>
-<li>临时文件生成后，将日志文件中的操作应用到临时文件，得到一个逻辑数据上与表 A 相同的数据文件，对应的就是图中 state3 的状态；</li>
-<li>用临时文件替换表 A 的数据文件。</li>
-</ol>
-<p>重建表的过程中，允许对表 A 进行增删改操作，虽然刚开始 DDL 需要拿到 MDL 写锁，但是在真正拷贝数据之前就退化成了读锁，因此并不会阻塞增删改操作。</p>
-<h1 id="B-树索引的结构"><a href="#B-树索引的结构" class="headerlink" title="B+树索引的结构"></a>B+树索引的结构</h1><p>InnoDB 和 MyISAM 会自动为主键或者声明为 UNIQUE 的列去自动建立 B+树索引，但是如果我们想为其他的列建立索引就需要我们显式的去指明。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">CREATE TALBE 表名 (</span><br><span class="line">    各种列的信息 ··· ,</span><br><span class="line">    [KEY|INDEX] 索引名 (需要被索引的单个列或多个列)</span><br><span class="line">)</span><br><span class="line">ALTER TABLE 表名 ADD [INDEX|KEY] 索引名 (需要被索引的单个列或多个列);</span><br><span class="line">ALTER TABLE 表名 DROP [INDEX|KEY] 索引名;</span><br><span class="line">-- 例子</span><br><span class="line">CREATE TABLE index_demo(</span><br><span class="line">    c1 INT,</span><br><span class="line">    c2 INT,</span><br><span class="line">    c3 CHAR(1),</span><br><span class="line">    PRIMARY KEY(c1),</span><br><span class="line">    INDEX idx_c2_c3 (c2, c3)</span><br><span class="line">);</span><br><span class="line">ALTER TABLE index_demo DROP INDEX idx_c2_c3;</span><br></pre></td></tr></table></figure>
-
-<h2 id="使用索引的优点"><a href="#使用索引的优点" class="headerlink" title="使用索引的优点"></a>使用索引的优点</h2><ol>
-<li>通过创建唯一索引，可以保证数据库表中每一行数据的唯一性；</li>
-<li>大大加快数据查询速度；</li>
-<li>加速表和表之间的连接；</li>
-<li>减少查询中分组和排序的时间。</li>
-</ol>
-<h2 id="没有索引时的查找规则"><a href="#没有索引时的查找规则" class="headerlink" title="没有索引时的查找规则"></a>没有索引时的查找规则</h2><p>根据搜索条件不同分两种情况：<br>1、以主键为搜索条件<br>在页目录中使用二分查找法快速定位到对应的槽，然后遍历该槽对应分组中的记录即可定位目标记录；<br>2、以其他列作为搜索条件<br>只能从最小记录开始遍历单链表中的每条记录，效率非常低。</p>
-<h2 id="使用索引的缺点"><a href="#使用索引的缺点" class="headerlink" title="使用索引的缺点"></a>使用索引的缺点</h2><ol>
-<li>创建索引和维护索引要耗费时间，并且随着数据量的增加耗费的时间也会增加；</li>
-<li>索引需要占用磁盘空间，除了数据表占数据空间（一个数据文件）外，每一个索引还需要占用一定的磁盘空间（一个索引文件），如果有大量的索引，索引文件的大小可能超过文件数据本身；</li>
-<li>当对表中的数据进行增、删、改时，索引也要动态地维护，会导致操作本身效率降低。</li>
-</ol>
-<h2 id="一个简单的索引方案"><a href="#一个简单的索引方案" class="headerlink" title="一个简单的索引方案"></a>一个简单的索引方案</h2><p>1、插入数据时需要保证主键值是递增的<br>每页的记录数必须不超过 3 条，因此当要插入更多数据时，必须执行一个页分裂的操作，并且这个过程中如果不满足主键的递增要求，记录则必须要执行移动操作，这个过程称为页分裂：<br><img src="/imgs/MySQL/MySQL-%E6%95%B0%E6%8D%AE%E9%A1%B5%E5%88%86%E8%A3%82.png" alt="MySQL-数据页分裂" title="MySQL-数据页分裂"><br>2、给所有页建立目录项<br>页的用户记录中最小的主键值用 key 来表示；页号用 page_no 表示<br><img src="/imgs/MySQL/MySQL-%E7%9B%AE%E5%BD%95%E9%A1%B5.png" alt="MySQL-目录页" title="MySQL-目录页"><br>如上所示，每个目录项实际上记录了对应页中最小的主键值（已经有点像 B+树的结构了）。<br>当要查找一个 key 时，会先在目录中根据二分法找到其所处的页，然后再到对应页中搜索。</p>
-<h2 id="InnoDB-索引方案"><a href="#InnoDB-索引方案" class="headerlink" title="InnoDB 索引方案"></a>InnoDB 索引方案</h2><h3 id="简化方案存在的一些问题"><a href="#简化方案存在的一些问题" class="headerlink" title="简化方案存在的一些问题"></a>简化方案存在的一些问题</h3><ol>
-<li>InnoDB 中使用页来管理存储空间，最多只能保证 16KB 的连续存储空间，而随着表中的数据量增多，一页是无法存储下所有的目录项的；</li>
-<li>我们如果一页中的记录都已经被删除光了，该页也就没必要存在了，但是删除该页后却需要将其所处目录项之后的目录项都向前移动一下，这显然是非常低效的。<br>因此，InnoDB 中使用目录项来管理多级的页：<br><img src="/imgs/MySQL/MySQL-InnoDB%E4%B8%AD%E7%9A%84B%E5%8A%A0%E6%A0%91.png" alt="MySQL-InnoDB中的B加树" title="MySQL-InnoDB中的B加树"><br>当我们要查找一条记录时，先根据主键值在目录项记录的页中查找，查找方式其实和之前说的一样，定位到后再去下一级的页中查找，直到查到底层数据页中的记录或根本没找到。<br>实际上上面描述的是一种称为 B+树的结构，不论是存放用户记录的数据页，还是存放目录项记录的数据页，我们都把它们存放到 B+树这个数据结构中了，所以我们也称这些数据页为节点。从图中可以看出来，我们的实际用户记录其实都存放在 B+树的最底层的节点上，这些节点也被称为叶子节点或叶节点，其余用来存放目录项的节点称为非叶子节点或者内节点，其中 B+树最上边的那个节点也称为根节点。<br>在真实情况中 B+树存放的记录数是非常多的，层数也不会太高，如果每个数据页能存放 100 条记录，目录页能存放 1000 条记录，那么3层就能存1000x1000x100&#x3D;1亿条数据，4 层就是 1000×1000×1000×100&#x3D;1*10^11 条记录，所以我们用到的 B+树都不会超过 4 层，通过主键值去查找某条记录最多只需要做 4 个页面内的查找（查找 3 个目录项页和一个数据页），又因为在每个页面内有所谓的 Page Directory（页目录），所以在页面内也可以通过二分法实现快速定位记录。</li>
-</ol>
-<h3 id="B-树的形成过程大致如下"><a href="#B-树的形成过程大致如下" class="headerlink" title="B+树的形成过程大致如下"></a>B+树的形成过程大致如下</h3><ol>
-<li>每当为某个表创建一个 B+树索引（聚簇索引不是人为创建的，默认就有）的时候，都会为这个索引创建一个根节点页面。最开始表中没有数据的时候，每个 B+树索引对应的根节点中既没有数据记录，也没有目录项记录。</li>
-<li>随后向表中插入数据记录时，先把用户记录存储到这个根节点中。</li>
-<li>当根节点中的可用空间用完时继续插入记录，此时会将根节点中的所有记录复制到一个新分配的页，比如页 a 中，然后对这个新页进行页分裂的操作，得到另一个新页，比如页 b。这时新插入的记录根据键值（也就是聚簇索引中的主键值，二级索引中对应的索引列的值）的大小就会被分配到页 a 或者页 b 中，而根节点便升级为存储目录项记录的页。</li>
-</ol>
-<h3 id="唯一索引"><a href="#唯一索引" class="headerlink" title="唯一索引"></a>唯一索引</h3><p>唯一索引和普通索引没有本质区别，主要是在插入时会检查是否违反了唯一约束。</p>
-<h3 id="聚簇索引"><a href="#聚簇索引" class="headerlink" title="聚簇索引"></a>聚簇索引</h3><p>前面已经对 InnoDB 中的 B+树结构做了一个阐述，但是至今为止我们的讨论还没有涉及索引，我们称满足以下条件的 B+树是一个聚簇索引：<br>1、使用记录主键值的大小进行记录和页的排序<br>包括页内记录按主键大小排成单链表，各个页按页中记录的主键大小顺序排成双向链表，存放目录项记录的页在不同层次（B+树的每层）也是根据页中目录项记录的主键大小排序排成一个双向链表。<br>2、B+树的叶子节点存储的是完整数据<br>这种聚簇索引不需要手动用 INDEX 语句创建，InnoDB 引擎会为我们自动创建聚簇索引，实际上在 InnoDB 中聚簇索引就是数据的存储方式。</p>
-<h3 id="二级索引"><a href="#二级索引" class="headerlink" title="二级索引"></a>二级索引</h3><p>聚簇索引只能根据主键的查询，如果我们需要根据别的列来查询数据，则必须另外建几棵对应字段的 B+树。<br><img src="/imgs/MySQL/MySQL-%E4%BA%8C%E7%BA%A7%E7%B4%A2%E5%BC%95.png" alt="MySQL-二级索引" title="MySQL-二级索引"><br>这棵 B+树为字段 a 增加了索引，和之前的聚簇索引的区别包括：<br>1、页内的记录是按字段 a 排列成一个单向链表；<br>2、各个存放数据的页也是根据页中记录的 a 列大小顺序排成一个双向链表；<br>3、存放目录项记录的页分为不同的层次，在同一层次中的页也是根据页中目录项记录的 a 列大小顺序排成一个双向链表。<br>4、叶子节点存储的并不是完成的数据，而是 a 列+主键这两列的值；<br>5、目录项记录中不再是主键+页号的搭配，而是 a 列+页号的搭配。<br>由于叶子节点只存储了字段 a 和主键，如果要获取完整数据，还得根据主键到聚簇索引中再查一遍，这个过程被称为回表。这种按照非主键列建立的 B+树需要一次回表操作才可以定位到完整的记录，所以这种 B+树也被称为二级索引（英文名 secondary index），或者辅助索引。</p>
-<h3 id="联合索引"><a href="#联合索引" class="headerlink" title="联合索引"></a>联合索引</h3><p>我们也可以同时对多个列建立索引，实际上就是先按字段 a 排序然后再按另一个字段 b 排序，原理与之前的类似。</p>
-<h3 id="MyISAM-中的索引"><a href="#MyISAM-中的索引" class="headerlink" title="MyISAM 中的索引"></a>MyISAM 中的索引</h3><p>InnoDB 中索引即数据，也就是聚簇索引的那棵 B+树的叶子节点中已经把所有完整的用户记录都包含了，而 MyISAM 的索引方案虽然也使用树形结构，但是却将索引和数据分开存储</p>
-<ol>
-<li>将表中的记录按照记录的插入顺序单独存储在一个文件中，称之为数据文件。这个文件并不划分为若干个数据页，有多少记录就往这个文件中塞多少记录就成了。我们可以通过行号而快速访问到一条记录。<br>当然 MyISAM 同样需要记录头信息来存储一些额外数据：<br><img src="/imgs/MySQL/MySQL-MyISAM%E7%B4%A2%E5%BC%95.png" alt="MySQL-MyISAM索引" title="MySQL-MyISAM索引"><br>注意插入记录的时候并没有可以按照主键大小排序，因此无法直接使用二分查找。</li>
-<li>使用 MyISAM 存储引擎的表会把索引信息另外存储到一个称为索引文件的另一个文件中。MyISAM 会单独为表的主键创建一个索引，只不过在索引的叶子节点中存储的不是完整的用户记录，而是主键值 + 行号的组合。也就是先通过索引找到对应的行号，再通过行号去找对应的记录<br>这一点和 InnoDB 是完全不相同的，在 InnoDB 存储引擎中，我们只需要根据主键值对聚簇索引进行一次查找就能找到对应的记录，而在 MyISAM 中却需要进行一次回表操作，意味着 MyISAM 中建立的索引相当于全部都是二级索引！</li>
-<li>如果有需要的话，我们也可以对其它的列分别建立索引或者建立联合索引，原理和 InnoDB 中的索引差不多，不过在叶子节点处存储的是相应的列 + 行号。这些索引也全部都是二级索引。</li>
-</ol>
-<h1 id="B-树索引的使用"><a href="#B-树索引的使用" class="headerlink" title="B+树索引的使用"></a>B+树索引的使用</h1><h2 id="索引的代价"><a href="#索引的代价" class="headerlink" title="索引的代价"></a>索引的代价</h2><p>1、空间代价<br>一个页所占的空间默认为 16KB，现实中这样的 B+树可能由许多页组成，非常占空间；<br>2、时间代价<br>每次对数据增删改操作时都需要修改各个 B+树索引，因为所有节点、页面、记录都是按照主键大小顺序排序的，增删改操作会破坏这个顺序，因此 InnoDB 需要一些额外的记录移位、页面分裂、页面回收等操作来维护节点和记录的顺序。</p>
-<h2 id="什么时候使用-B-树索引"><a href="#什么时候使用-B-树索引" class="headerlink" title="什么时候使用 B+树索引"></a>什么时候使用 B+树索引</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE person_info(</span><br><span class="line">    id INT NOT NULL auto_increment,</span><br><span class="line">    name VARCHAR(100) NOT NULL,</span><br><span class="line">    birthday DATE NOT NULL,</span><br><span class="line">    phone_number CHAR(11) NOT NULL,</span><br><span class="line">    country varchar(100) NOT NULL,</span><br><span class="line">    PRIMARY KEY (id),</span><br><span class="line">    KEY idx_name_birthday_phone_number (name, birthday, phone_number)</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-<p>该表有两个索引<br>1、表中的主键是 id 列，它存储一个自动递增的整数。所以 InnoDB 存储引擎会自动为 id 列建立聚簇索引。<br>2、显式定义了一个联合索引 idx_name_birthday_phone_number，它由 name、birthday、phone_number 三个字段组成。<br>画成图其结构大致如下：<br><img src="https://user-gold-cdn.xitu.io/2019/10/9/16db02bc665cf0b1?imageView2/0/w/1280/h/960/format/webp/ignore-error/1"><br>下面我们分析不同的查询语句是如何使用这张表里的索引的。</p>
-<h3 id="全值匹配"><a href="#全值匹配" class="headerlink" title="全值匹配"></a>全值匹配</h3><p>搜索条件中的列和索引的定义一致。<br>这种情况要求搜索字段一致，但是顺序并没有太严格的要求，因为<strong>查询优化器</strong>会分析搜索条件并且按照可以使用的索引中列的顺序来决定使用搜索条件的先后顺序。</p>
-<h3 id="匹配左边的列"><a href="#匹配左边的列" class="headerlink" title="匹配左边的列"></a>匹配左边的列</h3><p>上面的索引中有 3 个字段，但是我们查询时并不一定会用到所有字段，如果只用到索引中左边的字段，索引页能生效，比如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM person_info WHERE name = &#x27;Ashburn&#x27; AND birthday = &#x27;1990-09-27&#x27;;</span><br></pre></td></tr></table></figure>
-<p>但是如果查询条件中没有最左边的列，则索引是无法生效的，因为索引结构是先按索引字段定义顺序依次排序的。</p>
-<h3 id="最左前缀匹配"><a href="#最左前缀匹配" class="headerlink" title="最左前缀匹配"></a>最左前缀匹配</h3><p>建立索引的本质就是对字段进行排序，很多时候字段都是字符串类型的，字符串类型字段在排序时会从前缀开始一个一个字符排序，所以我们只匹配前缀也是能够快速定位记录的，比如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM person_info WHERE name LIKE &#x27;As%&#x27;;</span><br></pre></td></tr></table></figure>
-<p>但是如果只给出了后缀或中间的某个字符串就无法利用索引了，只能执行全表扫描，比如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM person_info WHERE name LIKE &#x27;%As%&#x27;;</span><br></pre></td></tr></table></figure>
-<p>如果需要按后缀查询，则可以考虑在存储时逆序存储，查询时就可以实现最左前缀匹配了。</p>
-<h3 id="匹配范围值"><a href="#匹配范围值" class="headerlink" title="匹配范围值"></a>匹配范围值</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM person_info WHERE name &gt; &#x27;Asa&#x27; AND name &lt; &#x27;Barlow&#x27;;</span><br></pre></td></tr></table></figure>
-<p>因为 B+树索引是按该列值顺序从小到大排序的，因此匹配范围值时，只要分别找到’Asa’和’Barlow’记录，然后通过链表（同一页内是单链表，如果是跨多个数据页则会利用到页之间的双链表）取出它们之间的所有记录，如果是覆盖索引会直接返回，如果是涉及到其他字段则会再<strong>回表</strong>到聚簇索引中获取完整记录。<br>需要注意的是，对多个列执行范围查找时，只有对索引最左边那个列进行范围查找时才能用到 B+树索引，因为按 name 列范围查询出的记录并不是按照 birthday 列进行排序的，只有 name 值相同的情况下才会按 birthday 列进行排序，如下所示：<br>+—————-+———–+<br>| name           | birthday  |<br>+—————-+———–+<br>| a              | x         |<br>| a              | y         |<br>| b              | x         |<br>| b              | y         |<br>| c              | z         |<br>| …            | …       |<br>+—————-+———–+</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM person_info WHERE name &gt;= &#x27;a&#x27; AND name &lt;= &#x27;b&#x27; and birthday &lt; &#x27;y&#x27;;</span><br></pre></td></tr></table></figure>
-<p>按上面条件进行查询时，先按 name 字段过滤，得到的 4 条记录中 birthday 并没有顺序，因此继续查询 birthday 列时是用不到这个 B+树索引的。<br>但是如果前面的列是精确查找，那么对后面的列就可以进行范围查找了，比如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from person_info where name = &#x27;a&#x27; and birthday &lt; &#x27;y&#x27;;</span><br></pre></td></tr></table></figure>
-
-<h2 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h2><p>如果没有用到索引，InnoDB 排序前一般会先将数据加载到内存的<strong>sort_buffer</strong>中，或者由于数据量太大需要借助磁盘空间来存放中间结果，排序完后再将结果集返回给客户端，在 MySQL 中，这种在内存或磁盘上进行排序的方式被称为<strong>文件排序（filesort）</strong>。</p>
-<blockquote>
-<p>explain 命令查看语句的执行情况，Extra 这个字段中的“Using filesort”表示的就是需要排序，MySQL 会给每个线程分配一块内存用于排序，称为 sort_buffer。</p>
-</blockquote>
-<p>但是如果 ORDER BY 子句使用到了我们的索引列，就可能省去 filesort 这个步骤了，因为索引本身就对记录进行了排序。<br>同理，使用联合索引进行排序时，要注意 ORDER BY 后字段的顺序，比如 birthday, name 就用不了上面建立的索引了。</p>
-<h3 id="全字段排序执行流程"><a href="#全字段排序执行流程" class="headerlink" title="全字段排序执行流程"></a>全字段排序执行流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `t` (</span><br><span class="line">  `id` int(11) NOT NULL,</span><br><span class="line">  `city` varchar(16) NOT NULL,</span><br><span class="line">  `name` varchar(16) NOT NULL,</span><br><span class="line">  `age` int(11) NOT NULL,</span><br><span class="line">  `addr` varchar(128) DEFAULT NULL,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  KEY `city` (`city`)) ENGINE=InnoDB;</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select city,name,age from t where city=&#x27;杭州&#x27; order by name limit 1000;</span><br></pre></td></tr></table></figure>
-<p>因为 city 字段加上了索引，因此我们的查询语句会走<code>city</code>这个索引，具体的执行流程如下：</p>
-<ol>
-<li>初始化 sort_buffer，确定放入 name、city、age 这三个字段；</li>
-<li>从索引 city 找到第一个满足 city&#x3D;’杭州’条件的主键 id，也就是图中的 ID_X；</li>
-<li>到主键 id 索引取出整行，取 name、city、age 三个字段的值，存入 sort_buffer 中；</li>
-<li>从索引 city 取下一个记录的主键 id；</li>
-<li>重复步骤 3、4 直到 city 的值不满足查询条件为止，对应的主键 id 也就是图中的 ID_Y；</li>
-<li>对 sort_buffer 中的数据按照字段 name 做快速排序；</li>
-<li>按照排序结果取前 1000 行返回给客户端。</li>
-</ol>
-<p><img src="/imgs/MySQL/MySQL-%E5%85%A8%E5%AD%97%E6%AE%B5%E6%8E%92%E5%BA%8F%E4%BE%8B%E5%AD%90.png" alt="MySQL-全字段排序例子" title="MySQL-全字段排序例子"></p>
-<h3 id="不可以使用索引进行排序的几种情况"><a href="#不可以使用索引进行排序的几种情况" class="headerlink" title="不可以使用索引进行排序的几种情况"></a>不可以使用索引进行排序的几种情况</h3><p>1、ASC、DESC 混用<br>在使用联合索引进行排序时，要求各个排序的列的顺序是一致的，要么都是 ASC，要么都是 DESC，举个例子：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from person_info order by name, birthday desc limit 10;</span><br></pre></td></tr></table></figure>
-<p>这样，InnoDB 会先从索引的最左边确定 name 列最小的值，然后找到 name 列等于该值的所有记录，然后从这些记录最右边那条开始往左找 10 条记录；如果不足 10 条，则会继续往右找 name 第二小的记录，以此类推。<br>这个过程并不能高效利用索引，甚至不如直接利用文件排序。<br>2、where 子句中出现非排序使用到的索引列</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from person_info where country = &#x27;China&#x27; ORDER BY name LIMIT 10;</span><br></pre></td></tr></table></figure>
-<p>如上所示，name 字段是有索引的，但是 country 字段没有，因此查询时必须先把符合搜索条件 country&#x3D;’China’的记录查出再执行排序，这样无法使用索引。<br>3、排序列包含非同一索引的列<br>用来排序的多个列不是同一个索引里的，则也不能使用索引来进行排序，原因和上一点其实差不多。<br>4、排序子句使用了复杂表达式<br>比如：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM person_info ORDER BY UPPER(name) LIMIT 10;</span><br></pre></td></tr></table></figure>
-<p>原 name 排序可能是 Bbc、Cbc、abc，但是用 UPPER 计算后可能会变成 abc、bbc、cbc（默认情况下 MySQL 是会忽略大小写的区别的，这里只是作个例子）。<br>同理，下面这样的表达式也无法利用索引：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from person_info where grade / 100.0 &gt; 0.8;</span><br></pre></td></tr></table></figure>
-
-<h3 id="文件排序的例子"><a href="#文件排序的例子" class="headerlink" title="文件排序的例子"></a>文件排序的例子</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `t` (</span><br><span class="line">  `id` int(11) NOT NULL,</span><br><span class="line">  `city` varchar(16) NOT NULL,</span><br><span class="line">  `name` varchar(16) NOT NULL,</span><br><span class="line">  `age` int(11) NOT NULL,</span><br><span class="line">  `addr` varchar(128) DEFAULT NULL,</span><br><span class="line">  PRIMARY KEY (`id`),</span><br><span class="line">  KEY `city` (`city`)</span><br><span class="line">) default charset = utf8mb4 ENGINE=InnoDB;</span><br></pre></td></tr></table></figure>
-<p>对下面 select 语句执行 explain，可以发现 Extra 中包含 filesort 选项，表示该查询语句将会使用到临时文件来执行文件排序：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">explain select city, name,age from t where city=&#x27;杭州&#x27; order by name limit 1000;</span><br></pre></td></tr></table></figure>
-<p>可以用下面方法来确定一个排序语句是否使用了临时文件：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">/* 打开optimizer_trace，只对本线程有效 */</span><br><span class="line">SET optimizer_trace=&#x27;enabled=on&#x27;; </span><br><span class="line"></span><br><span class="line">/* @a保存Innodb_rows_read的初始值 */</span><br><span class="line">select VARIABLE_VALUE into @a from  performance_schema.session_status where variable_name = &#x27;Innodb_rows_read&#x27;;</span><br><span class="line"></span><br><span class="line">/* 执行语句 */</span><br><span class="line">select city, name,age from t where city=&#x27;杭州&#x27; order by name limit 1000; </span><br><span class="line"></span><br><span class="line">/* 查看 OPTIMIZER_TRACE 输出 */</span><br><span class="line">SELECT * FROM `information_schema`.`OPTIMIZER_TRACE`\G</span><br><span class="line"></span><br><span class="line">/* @b保存Innodb_rows_read的当前值 */</span><br><span class="line">select VARIABLE_VALUE into @b from performance_schema.session_status where variable_name = &#x27;Innodb_rows_read&#x27;;</span><br><span class="line"></span><br><span class="line">/* 计算Innodb_rows_read差值 */</span><br><span class="line">select @b-@a;</span><br></pre></td></tr></table></figure>
-<p>这个方法是通过查看 <code>OPTIMIZER_TRACE</code> 的结果来确认的，可以从输出中的 <code>number_of_tmp_files</code> 中看到是否使用了临时文件，如果这个值是 0，表示 sort_buffer_size 足够进行内存排序了，就没必要再执行文件排序了。</p>
-<blockquote>
-<p>number_of_tmp_files 结果永远是 2 的倍数，因为 MySQL 使用归并排序算法，将数据分成多份分别排序后存在这些临时文件中，然后把这些有序文件合并成一个有序的大文件。</p>
-</blockquote>
-<h3 id="rowid-排序"><a href="#rowid-排序" class="headerlink" title="rowid 排序"></a>rowid 排序</h3><p>如果表中每一行的字段很多、数据量较大，很容易超出<code>sort_buffer</code>的容量、并切换到文件排序，要对多个临时文件进行归并排序，效率很低。<br>字段数量过多的情况下，MySQL 会采用另一种方式来执行排序，这种方式只用将**要排序的列和主键加载到<code>sort_buffer</code>，但是这样排完序后还需要回到原表去带出需要返回的字段，需要更多次的读磁盘，所以不会被优先选择。</p>
-<blockquote>
-<p>这个字段数量的阈值可以通过<code>SET max_length_for_sort_data = 16;</code>来设置。</p>
-</blockquote>
-<h3 id="使用索引排序"><a href="#使用索引排序" class="headerlink" title="使用索引排序"></a>使用索引排序</h3><p>如果排序字段正好与索引字段一致，则 MySQL 会直接使用索引来进行排序，因为 B+树叶子节点的记录就是按索引定义的顺序来组织的，如果要查询的字段都在索引里面，则我们称该索引为覆盖索引，使用索引排序后可以直接使用索引中的字段返回、不需要再回表了。</p>
-<h2 id="分组"><a href="#分组" class="headerlink" title="分组"></a>分组</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT name, birthday, phone_number, COUNT(*) FROM person_info GROUP BY name, birthday, phone_number</span><br></pre></td></tr></table></figure>
-<p>上面这个语句会先按 name 值进行分组，所有 name 值相同的划分为一组，对 name 值相同的分组内再按 birthday 的值进行分组，以此类推。<br>如果没有索引，这个分组统计过程全部都需要在内存里实现，而因为 name,birthday,phone_number 这些字段已经有了索引，InnoDB 会直接使用索引列的顺序来进行分组。</p>
-<h2 id="回表的代价"><a href="#回表的代价" class="headerlink" title="回表的代价"></a>回表的代价</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from person_info where name &gt; &#x27;abc&#x27; and name &lt; &#x27;def&#x27;;</span><br></pre></td></tr></table></figure>
-<p>上述 SQL 会先按二级索引查到位于’abc’和’def’之间的记录，因为这些记录在磁盘上是连续的、集中分布在几个相邻的页中，因此我们可以很快地读出这些记录，这种读取方式被称为<strong>顺序 IO</strong>。但是这些记录的 id 并不一定是连续的，在聚簇索引中它们可能被分布在不同的数据页中，读取它们时需要访问更多的页，这种读取方式被称为<strong>随机 IO</strong>。<br>随机 IO 的性能比顺序 IO 的性能低得多，一般需要回表的记录越多，使用二级索引的性能就越低，如果查询的全部记录数占总体比重过大，InnoDB 甚至会放弃聚簇索引而采用全表扫描。<br>那什么时候采用全表扫描的方式，什么时候使用采用二级索引 + 回表的方式去执行查询呢？这个就是传说中的查询优化器做的工作，查询优化器会事先对表中的记录计算一些统计数据，然后再利用这些统计数据根据查询的条件来计算一下需要回表的记录数，需要回表的记录数越多，就越倾向于使用全表扫描，反之倾向于使用二级索引 + 回表的方式。当然优化器做的分析工作不仅仅是这么简单，但是大致上是个这个过程。<strong>一般情况下，限制查询获取较少的记录数会让优化器更倾向于选择使用二级索引 + 回表的方式进行查询，因为回表的记录越少，性能提升就越高</strong>。<br>为了减少这种需要全表扫描的情况，我们需要遵循一些规范，比如：<br>1、写查询语句后使用 explain 评估效率；<br>2、如果查询列表是*，优化器会更倾向于使用全表扫描；<br>3、如果加了 LIMIT 条件，因为记录变少，优化器会更倾向于使用<strong>二级索引+回表</strong>的方式查询。<br>4、<strong>覆盖索引</strong>，即要查询的目标列都处在索引中，那么优化器就会直接使用索引而不是回表操作了。</p>
-<h2 id="挑选索引"><a href="#挑选索引" class="headerlink" title="挑选索引"></a>挑选索引</h2><p>1、只为用于搜索、排序或分组的列创建索引<br>为 WHERE、ORDER BY、GROUP BY 子句中的列建立索引，一般来说业务字段变更频繁，没有必要强行建立覆盖索引。<br>2、考虑列的基数<br>在记录行数一定的情况下，列的基数越大，该列中的值越分散，列的基数越小，该列中的值越集中。<br>最好为那些列的基数大的列建立索引，为基数太小列的建立索引效果可能不好，因为基数小的话，更有可能一次性查出很多记录，还需要执行回表操作，这样对性能损耗会比较大，索引就起不到作用了。<br>3、索引列的类型尽量小<br>在表示的整数范围允许的情况下，尽量让索引列使用较小的类型，比如 TINYINT、MEDIUMINT、INT、BIGINT 中，相对 BIGINT 来说我们更优先使用 INT，因为：<br>数据类型越小，在查询时进行的比较操作越快（这是 CPU 层次的东东）<br>数据类型越小，索引占用的存储空间就越少，在一个数据页内就可以放下更多的记录，从而减少磁盘 I&#x2F;O 带来的性能损耗，也就意味着可以把更多的数据页缓存在内存中，从而加快读写效率。<br>4、索引字符串值的前缀<br>一些字符串类型的字段，如果要完整索引会占用较大的存储空间，所以我们一般只对字符串的前几个字符进行索引，就算遇到某几条记录中索引字段的前缀相同，也能通过它们的主键回表查询再进行比对，可以大大节省存储空间。<br>但是如果只索引了字段的前缀，那么 ORDER BY 排序时就无法使用到索引了，因为如果前几个处于索引中的字符相同，后面的字符不同无法比较。<br>通过比较选取不同长度前缀的区分度，可以作为创建前缀索引的参考：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select </span><br><span class="line">  count(distinct left(email,4)）as L4,</span><br><span class="line">  count(distinct left(email,5)）as L5,</span><br><span class="line">  count(distinct left(email,6)）as L6,</span><br><span class="line">  count(distinct left(email,7)）as L7,</span><br><span class="line">from SUser;</span><br></pre></td></tr></table></figure>
-<p>如果发现前缀区分度太低，也可以考虑使用后缀或原字段的 hash 字段作为索引。<br>5、主键插入顺序<br>InnoDB 中数据是存储在聚簇索引的叶子节点的，数据页和记录都是按照记录的主键从小到大排序的，如果插入数据的主键是依次增大的，那么每填满一个数据页就可以再创建一个继续插入。但是如果主键值位于某个页面的中间，那么将不得不另外执行页分裂操作，造成额外的性能损耗。<br>因此，我们写建表语句时一般都会给主键设置<strong>AUTO_INCREMENT</strong>属性，让存储引擎自己为表生成主键，而不是我们手动插入。<br>6、冗余索引<br>不要给一个字段重复定义索引。</p>
-<h2 id="为什么-InnoDB-会选错索引"><a href="#为什么-InnoDB-会选错索引" class="headerlink" title="为什么 InnoDB 会选错索引"></a>为什么 InnoDB 会选错索引</h2><h3 id="可能选择错误的情况"><a href="#可能选择错误的情况" class="headerlink" title="可能选择错误的情况"></a>可能选择错误的情况</h3><ol>
-<li>使用组合索引时没有遵守最左前缀原则；</li>
-<li>使用范围查询时（&gt;,&lt;,&lt;&gt;，!&#x3D;,between and ,like），该条件查询右边的列都会失效。</li>
-<li>如果列类型是字符串，那一定要在条件中将数据使用引号引用起来,否则不使用索引；</li>
-<li>表中数据量比较小的时候，MySQL 优化引擎，会决定不实用索引；</li>
-<li>使用 or 进行查询，联合索引会失效；</li>
-<li>在索引列上做任何操作（计算，函数，（自动或者手动）类型装换），会导致索引失效而导致全表扫描。</li>
-</ol>
-<p>即使我们正确使用了索引，还是有可能会出现没有命中索引的情况，这和 MySQL 中的所索引选择机制有关：</p>
-<ol>
-<li>采样统计扫描行数<br>InnoDB 通过<strong>采样统计</strong>查询需要扫描的行数，然后在不同查询方式（使用哪些索引、要不要排序等）中选择需要扫描行数最少的那个。<br>采样统计时，InnoDB 默认会选择 N 个数据页，统计这些页面上的不同值，得到一个平均值，然后乘以这个索引的页面数，就得到了这个索引的基数。</li>
-<li>判断执行语句本身要扫描的行数<br>explain 结果中的 rows 是预计扫描的行数，是结合所使用的索引得出的粗略结果，但是这个结果仅供参考，因为：<ul>
-<li>索引统计不准确，可以使用 analyze 来修正。</li>
-<li>实际如何选择索引还会考虑其他因素，比如非主键索引因为要回表所以性能损耗更大，因此 InnoDB 会更倾向于选择主键索引——即使主键索引的扫描行数要多得多。</li>
-</ul>
-</li>
-</ol>
-<h3 id="索引选择异常和处理"><a href="#索引选择异常和处理" class="headerlink" title="索引选择异常和处理"></a>索引选择异常和处理</h3><p>如果发现 MySQL 选择索引错误，可以通过下面的方法来优化：</p>
-<ol>
-<li>使用<code>force index</code>强行选择一个索引；</li>
-<li>修改语句，引导 MySQL 使用我们期望的索引。</li>
-<li>建一个更合适的索引，或删掉不合适的索引；</li>
-</ol>
-<h2 id="索引优化策略"><a href="#索引优化策略" class="headerlink" title="索引优化策略"></a>索引优化策略</h2><p>从前面对索引的讨论可以得出一些针对索引的优化策略：</p>
-<ol>
-<li>覆盖索引<br>如果一个索引包含（或者说覆盖）所有需要查询的字段的值，我们就称之为 <strong>覆盖索引</strong>。<br>如果可以从索引中获取到所有数据，那么就不需要再去回表了。<br>覆盖索引必须要存储索引列的值，哈希索引、空间索引和全文索引都不存储列值，MySQL 只能使用 Btree 索引作为覆盖索引。<br>排序 MySQL 支持两种方式生成排序结果：通过排序操作；通过索引顺序扫描，MySQL 可以使用同一个索引既满足查找又满足排序，只有当索引的列顺序和 Order By 子句的顺序完全一致，并且所有列的排序方向也一样时，才能使用索引进行排序，其中 Order By 子句和查询限制一样，需要满足索引的最左前缀匹配，当前导列为常量时，可以不满足最左前缀的要求。</li>
-<li>冗余和重复索引<br>重复索引是指在相同的列上按照相同的顺序创建的相同类型的索引，一旦发现重复索引，应该立即移除。<br>冗余索引与重复索引有些不同，如果创建了索引（A, B），再创建索引(A)就是冗余索引，因为这只是前一个索引的前缀索引；索引（A, ID）对于 InnodDB 来说主键列已经包含在二级索引中，所以也是冗余。<br>应尽量扩展已有索引而不是创建新的索引，但也有时候出于性能考虑需要冗余索引，因为扩展已有的索引会导致其变得太大，从而影响其他使用该索引的查询性能，特别是 count，group by 等统计查询。<br>未使用的索引，就是永远都用不到的索引，这种索引就是累赘，直接删除。</li>
-<li>前缀索引和索引选择性<br>MySQL 无法使用前缀索引做 Group By 和 Order By，也无法使用前缀索引做覆盖扫描。<br>MySQL 本身不支持反向索引，但可以将字符串反转后存储，并基于此建立前缀索引。</li>
-</ol>
-<p>索引设计不合理或者缺少索引都会对数据库和应用程序的性能造成障碍。高效的索引对于获得良好的性能非常重要。设计索引时，应该考虑以下准则：</p>
-<ol>
-<li>索引<strong>并非越多越好</strong><br>一个表中如有大量的索引，不仅占用磁盘空间，而且会影响 INSERT、DELETE、UPDATE 等语句的性能，因为当表中的数据更改的同时，索引也会进行调整和更新。也可以在维护期间根据需要删除不再使用或者很少使用的索引。</li>
-<li>避免对经常<strong>更新</strong>的表进行过多的索引，并且索引中的列尽可能的少。而对经常用于查询的字段应该创建索引，但要避免添加不必要的字段。</li>
-<li>尽量使用<strong>字段短</strong>的索引，这样可以提高索引的检索效率。如果是长度比较长的字段，应尽量使用<strong>前缀索引</strong>。</li>
-<li><strong>数据量</strong>小的表最好不要使用索引，由于数据较少，查询花费的时间可能比遍历索引的时间还要短，索引可能不会产生优化效果。</li>
-<li>在<strong>条件表达式</strong>中经常用到的不同值较多的列上建立索引，在不同值少的列上不要建立索引。比如在学生表的“性别”字段上只有“男”与“女”两个不同值，因此就无需建立索引了，如果建立索引反而会严重降低更新速度。</li>
-<li>当<strong>唯一</strong>性是某种数据本身的特征时，制定唯一索引。使用唯一索引需能确保定义的列的数据完整性，以提高查询速度。</li>
-<li>在频繁进行<strong>排序、分组、联合</strong>（即进行 group by、order by、join on 操作）的列上建立索引。如果待排序的列有多个，可以在这些列上建立组合索引。</li>
-</ol>
-<h1 id="update-语句的执行流程"><a href="#update-语句的执行流程" class="headerlink" title="update 语句的执行流程"></a>update 语句的执行流程</h1><p>一条 SQL 语句的整体执行流程如下：<br><img src="/imgs/MySQL/MySQL-SQL%E8%AF%AD%E5%8F%A5%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.png" alt="MySQL-SQL语句执行流程" title="MySQL-SQL语句执行流程"></p>
-<ol>
-<li>执行语句前要先通过连接器连接数据库；</li>
-<li>分析器通过词法和语法解析得知该语句为更新语句；</li>
-<li>优化器确定需要使用哪些索引；</li>
-<li>执行更新语句前，将跟这个表有关的查询缓存全部失效；</li>
-<li>执行器负责具体执行，找到该行数据并执行更新。</li>
-</ol>
-<h2 id="两阶段提交协议"><a href="#两阶段提交协议" class="headerlink" title="两阶段提交协议"></a>两阶段提交协议</h2><p><img src="/imgs/MySQL/MySQL-%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4%E5%8D%8F%E8%AE%AE.jpg" alt="MySQL-两阶段提交协议" title="MySQL-两阶段提交协议"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">update T set c=c+1 where ID=2;</span><br></pre></td></tr></table></figure>
-<p>对于上面这行简单的 update 语句，执行器和 InnoDB 引擎在执行时的内部流程如下：</p>
-<ol>
-<li>执行器先找引擎取 ID&#x3D;2 这一行。ID 是主键，引擎直接用树搜索找到这一行。如果 ID&#x3D;2 这一行所在的数据页本来就在内存中，就直接返回给执行器；否则，需要先从磁盘读入内存，然后再返回。<blockquote>
-<p>这里的”内存”指的是 Buffer Pool。另外，如果不影响数据一致性，MySQL 会直接写入到 change buffer，而不是从磁盘加载页面到 Buffer Pool 中，当然这是有条件的，在 CacheBuffer 的相关内容中我们还需要再讨论。</p>
-</blockquote>
-</li>
-<li>执行器拿到引擎给的行数据，把这个值加上 1，比如原来是 N，现在就是 N+1，得到新的一行数据，再调用引擎接口写入这行新数据。</li>
-<li>引擎将这行新数据更新到内存中，同时将这个更新操作记录到 redo log 里面，此时 redo log 处于 prepare 状态。然后告知执行器执行完成了，随时可以提交事务。<blockquote>
-<p>两阶段提交的 prepare 阶段。</p>
-</blockquote>
-</li>
-<li>执行器生成这个操作的 binlog，并把 binlog 写入磁盘。</li>
-<li>执行器调用引擎的提交事务接口，引擎把刚刚写入的 redo log 改成提交（commit）状态，更新完成。<blockquote>
-<p>两阶段提交的 commit 阶段。</p>
-</blockquote>
-</li>
-</ol>
-<h3 id="两阶段提交的异常情况"><a href="#两阶段提交的异常情况" class="headerlink" title="两阶段提交的异常情况"></a>两阶段提交的异常情况</h3><p>两阶段提交异常主要体现在：如果各阶段发生重启，数据库的一致性是否会受到影响。<br><img src="/imgs/MySQL/MySQL-%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4%E5%8D%8F%E8%AE%AE.jpg" alt="MySQL-两阶段提交协议" title="MySQL-两阶段提交协议"></p>
-<ol>
-<li>图中A处，写入 redo log 处于 prepare 阶段之后、写 binlog 之前，发生了崩溃（crash）<br>由于此时 binlog 还没写，redo log 也还没提交，所以崩溃恢复的时候，这个事务会回滚。这时候，binlog 还没写，所以也不会传到备库。</li>
-<li>图中B处，即bin log写完，redo log还没commit前发生crash<br>这时，如果redo log 里面的事务是完整的，也就是已经有了 commit 标识，则直接提交；<br>如果 redo log 里面的事务只有完整的 prepare，则判断对应的事务 binlog 是否存在并完整：a. 如果是，则提交事务；b. 否则，回滚事务。<br>这里，时刻 B 发生 crash 对应的就是 2(a) 的情况，崩溃恢复过程中事务会被提交。</li>
-</ol>
-<h3 id="两阶段提交的问题"><a href="#两阶段提交的问题" class="headerlink" title="两阶段提交的问题"></a>两阶段提交的问题</h3><ol>
-<li>MySQL怎么知道bin log是完整的？<br>一个事务的bin log是有完整格式的。</li>
-<li>为什么MySQL不设计成先redo log写完、再写bin log？<br>主要是为了解决事务的持久性问题：<br>对于 InnoDB 引擎来说，如果 redo log 提交完成了，事务就不能回滚（如果这还允许回滚，就可能覆盖掉别的事务的更新）。而如果 redo log 直接提交，然后 binlog 写入的时候失败，InnoDB 又回滚不了，数据和 binlog 日志又不一致了。</li>
-<li>只留bin log支持崩溃恢复和归档，不要redo log了可以吗？<br>这个主要是历史问题，MySQL的原生引擎MyISAM设计之初就没有支持崩溃恢复，后来接入InnoDB、利用InnoDB的redo log才有了崩溃恢复能力。<br>为什么bin log不能实现崩溃恢复呢？因为bin log记录的是写操作，它不能恢复数据页。<br>InnoDB 引擎使用的是 WAL 技术，执行事务的时候，写完内存和日志，事务就算完成了。如果之后崩溃，要依赖于日志来恢复数据页。<br>如果两个事务相邻执行，第二个事务还没提交前系统崩溃了，此时，事务1的数据可能还没有刷盘，事务2由于bin log可以恢复，但是事务1因为已经提交了，就不能再应用bin log来恢复了。</li>
-<li>能不能反过来只用redo log 不要 bin log？<br>如果只从崩溃恢复的角度来讲是可以的。你可以把 bin log 关掉，这样就没有两阶段提交了，但系统依然是 crash-safe 的。<br>但是redo log因为是循环写的，历史日志没法保留、也就起不到归档的作用。</li>
-<li>正常运行中的实例，数据写入后的最终落盘，是从 redo log 更新过来的还是从 buffer pool 更新过来的呢？<br>这个问题涉及到redo log和buffer pool的本质区别，我们知道写入数据实际上是写入buffer pool然后异步刷盘，那么redo log里面到底存了什么呢？<br>实际上redo log并没有记录数据页的完整数据，最终数据的落盘实际上和redo log毫无关系。<strong>在崩溃恢复场景中，InnoDB如果判断到一个数据页可能在崩溃恢复的时候丢失了更新，就会将它读到内存，然后让redo log更新内存内容，更新完成后，内存页变成脏页，就回到了第一种情况的状态。</strong></li>
-<li>redo log buffer是什么？<br>InnoDB并不会立刻将redo log数据写入磁盘，而是先写入到内存中的redo log buffer，只有在事务最后执行commit时才会真正地写入到redo log文件内。</li>
-</ol>
-<h1 id="其他索引类型"><a href="#其他索引类型" class="headerlink" title="其他索引类型"></a>其他索引类型</h1><h2 id="hash-索引"><a href="#hash-索引" class="headerlink" title="hash 索引"></a>hash 索引</h2><ol>
-<li>hash 索引基于哈希表实现，只有精确匹配索引的所有列的查询才会生效。</li>
-<li>Hash 索引将所有哈希值存储在索引中，同时保持指向每个数据行的指针。</li>
-<li>Hash 索引结构非常紧凑，查找速度非常快。</li>
-<li>Memory 引擎支持非唯一的哈希索引。</li>
-<li>InnoDB 有一个功能叫 “ 自适应哈希索引 ”，当它注意到某些列索引值被使用的非常频繁时，会在内存中基于 Btree 索引之上再建一个 hash 索引，以提高访问速度</li>
-</ol>
-<h2 id="空间数据索引"><a href="#空间数据索引" class="headerlink" title="空间数据索引"></a>空间数据索引</h2><p>MyISAM 表支持空间索引，可以作为地理数据存储。但 MySQL 对 GIS 支持不够全面。</p>
-<h2 id="全文索引"><a href="#全文索引" class="headerlink" title="全文索引"></a>全文索引</h2><ol>
-<li>全文索引是一种特殊类型的索引，他查找的是文中的关键词，而不是直接比较索引中的值。</li>
-<li>全文索引有很多的细节需要调整，比如分词、停用词、词干、复数、布尔查询等。</li>
-<li>MySQL 对空间数据索引和全文索引支持都不是很好，如果有此功能需求，建议使用其他存储引擎，如 monogDB 或基于 lucene 的 solr、es。</li>
-</ol>
-<h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><h2 id="MySQL-为什么使用-B-树作为索引的底层实现数据结构？而不是希表、数组、红黑树"><a href="#MySQL-为什么使用-B-树作为索引的底层实现数据结构？而不是希表、数组、红黑树" class="headerlink" title="MySQL 为什么使用 B+树作为索引的底层实现数据结构？而不是希表、数组、红黑树"></a>MySQL 为什么使用 B+树作为索引的底层实现数据结构？而不是希表、数组、红黑树</h2><ol>
-<li>vs 哈希表<br>哈希表支持 O(1)的读写，但是无序，无法满足排序需求。</li>
-<li>vs （有序）数组<br>数组虽然通过二分查找可以保证 O(log2n)的查找效率，且有序，但是写操作需要对整个数组“挪位置”，非常耗时。</li>
-<li>vs 红黑树<br>红黑树的每个节点都非常小，自顶向下搜索的过程中又会遍历多个节点，遍历的节点数量和树的高度有关，如果这些节点被分散到了多个页面上，相当于要将这些页面全部加载到内存中，并在内存不足时淘汰掉一些页面，导致 IO 压力增大。</li>
-</ol>
-<h2 id="一页可以保存多少个-B-树节点？一棵-B-树能存储多少条记录？"><a href="#一页可以保存多少个-B-树节点？一棵-B-树能存储多少条记录？" class="headerlink" title="一页可以保存多少个 B+树节点？一棵 B+树能存储多少条记录？"></a>一页可以保存多少个 B+树节点？一棵 B+树能存储多少条记录？</h2><p>一页对应一个 B+树节点。<br>一页的大小是 16KB，假设一行数据占用空间为 1KB，那么数据页（叶子节点）一页最多能存储 16 行数据。<br>非叶子节点存储的是数据的主键和对其他页的指针，假设主键的类型为 bigint，则占用的空间为 8 字节，指针大小在 InnoDB 源码中设置为 6 字节，因此总共为 14 字节，非叶子节点总共能存储的记录数&#x3D;16384(16KB) &#x2F; 14 &#x3D; 1170。<br>InnoDB 中 B+树的高度一般为 1-3 层，因此能存储的记录数&#x3D;1170 * 1170 * 16 &#x3D; 21902400(2 千万)。</p>
-<h2 id="为什么主键要使用自增主键"><a href="#为什么主键要使用自增主键" class="headerlink" title="为什么主键要使用自增主键"></a>为什么主键要使用自增主键</h2><p>目标是占用尽可能少的空间、且保证较高的效率，自增可以保证递增的插入，每次插入一条新记录，都是追加操作，都不涉及到挪动其他记录，也不会触发叶子节点的分裂。<br>如果是业务字段，就不容易保证有序插入了，会导致数据的写成本相对较高，而且业务字段往往较长，会更加占用存储空间。</p>
-<h2 id="重建索引"><a href="#重建索引" class="headerlink" title="重建索引"></a>重建索引</h2><p>索引可能会因为删除、页分裂等原因而导致数据页产生空洞，为了消除这些空洞、压缩磁盘空间，就需要重建索引，将原数据按顺序插入。<br>重建索引时没有必要 drop 后再 add，比如：<br>alter table T drop index k;<br>alter table T add index(k);<br>因为这两个语句都会将整个索引重建。重建索引可以用以下语句代替：<br>alter table T engine&#x3D;InnoDB</p>
-<h2 id="下面的建表语句中，既然已经有了-a-b-作为主键索引，那么在-c-上加了索引后，就已经包含了-a、b、c-三个字段，为什么还需要创建-c-a-、-c-b-这两个索引"><a href="#下面的建表语句中，既然已经有了-a-b-作为主键索引，那么在-c-上加了索引后，就已经包含了-a、b、c-三个字段，为什么还需要创建-c-a-、-c-b-这两个索引" class="headerlink" title="下面的建表语句中，既然已经有了(a, b)作为主键索引，那么在 c 上加了索引后，就已经包含了 a、b、c 三个字段，为什么还需要创建(c, a)、(c, b)这两个索引"></a>下面的建表语句中，既然已经有了(a, b)作为主键索引，那么在 c 上加了索引后，就已经包含了 a、b、c 三个字段，为什么还需要创建(c, a)、(c, b)这两个索引</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `geek` (</span><br><span class="line">  `a` int(11) NOT NULL,</span><br><span class="line">  `b` int(11) NOT NULL,</span><br><span class="line">  `c` int(11) NOT NULL,</span><br><span class="line">  `d` int(11) NOT NULL,</span><br><span class="line">  PRIMARY KEY (`a`,`b`),</span><br><span class="line">  KEY `c` (`c`),</span><br><span class="line">  KEY `ca` (`c`,`a`),</span><br><span class="line">  KEY `cb` (`c`,`b`)</span><br><span class="line">) ENGINE=InnoDB;</span><br></pre></td></tr></table></figure>
-<p>为了解答这个问题，首先需要理解索引的字段顺序是有意义的，(a, b)表示先按 a 排序，a 值相同的情况下再按 b 进行排序，索引(c, a)是先按 c 排序，再按 a 排序，这实际上和索引(c)是一样的，所以(c, a)是多余的。</p>
-<h2 id="收缩表空间"><a href="#收缩表空间" class="headerlink" title="收缩表空间"></a>收缩表空间</h2><p>对一个大小为 1TB 的表文件执行<code>alter table t engine=InnoDB</code>重建，为什么会出现占用空间没变小反而变大的情况。<br>这是因为，在重建表的时候，InnoDB 不会把整张表占满，每个页留了 1&#x2F;16 给后续的更新用。也就是说，其实重建表之后不是“最”紧凑的，反而引入了一些空洞。</p>
-<h2 id="如何使用慢查询日志（slow-log）"><a href="#如何使用慢查询日志（slow-log）" class="headerlink" title="如何使用慢查询日志（slow log）"></a>如何使用慢查询日志（slow log）</h2><h2 id="自增主键是连续的吗"><a href="#自增主键是连续的吗" class="headerlink" title="自增主键是连续的吗"></a>自增主键是连续的吗</h2><ol>
-<li>由于 AUTO_INCREMENT 存在内存中，重启时导致不连续<ul>
-<li>MyISAM 引擎的自增值保存在数据文件中。</li>
-<li>InnoDB 引擎的自增值，其实是保存在了内存里，重启后会从表中查当前最大的值+1 作为下一次主键取值；到了 MySQL 8.0 版本后，才有了“自增值持久化”的能力，也就是才实现了“如果发生重启，表的自增值可以恢复为 MySQL 重启前的值”，自增值的变更记录在了 redo log 中，重启的时候依靠 redo log 恢复重启之前的值。<br>也就是说，MySQL8.0 之前自增主键是有可能丢失的，比如：当前最大主键是 10，AUTO_INCREMENT&#x3D;11，这时我们删除了 id&#x3D;10 的行，AUTO_INCREMENT 不变，但是如果马上重启实例，则重启后的这个表的 AUTO_INCREMENT 会变成 10。</li>
-</ul>
-</li>
-<li>主键冲突<br>出现空洞还有一种情况：插入行未指定主键的时候，MySQL 会用当前的 AUTO_INCREMENT 作为主键值，并且设置 AUTO_INCREMENT+1，但是仍有可能出现跟其他唯一键冲突的情况，导致插入失败，这时 AUTO_INCREMENT 是不会回滚的，也就导致了自增主键的不连续。</li>
-<li>回滚<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">insert into t values(null,1,1);</span><br><span class="line">begin;</span><br><span class="line">insert into t values(null,2,2);</span><br><span class="line">rollback;</span><br><span class="line">insert into t values(null,2,2);</span><br><span class="line">//插入的行是(3,2,2)</span><br></pre></td></tr></table></figure>
-为什么事务回滚不允许把自增值也回滚了？主要是存在多个事务并发执行的情况：<ul>
-<li>假设事务 A 申请到了 id&#x3D;2， 事务 B 申请到 id&#x3D;3，那么这时候表 t 的自增值是 4，之后继续执行。</li>
-<li>事务 B 正确提交了，但事务 A 出现了唯一键冲突。</li>
-<li>如果允许事务 A 把自增 id 回退，也就是把表 t 的当前自增值改回 2，那么就会出现这样的情况：表里面已经有 id&#x3D;3 的行，而当前的自增 id 值是 2。</li>
-<li>接下来，继续执行的其他事务就会申请到 id&#x3D;2，然后再申请到 id&#x3D;3。这时，就会出现插入语句报错“主键冲突”。</li>
-</ul>
-</li>
-<li>事务乱序执行<br>多个事务并发执行时，这些事务内部各个语句执行顺序不确定，比如：<ul>
-<li>session B 先插入了两个记录，(1,1,1)、(2,2,2)；</li>
-<li>然后，session A 来申请自增 id 得到 id&#x3D;3，插入了（3,5,5)；</li>
-<li>之后，session B 继续执行，插入两条记录 (4,3,3)、 (5,4,4)。<br>如果现在<code>binlog_format=statement</code>，则 binlog 里对表的更新日志，要么先记 session A 的，要么先记 session B 的，那么在备库中各 session 执行的结果 id 都是连续的，这时这个库就发生了数据不一致。<br>这个问题的一种解决办法是让原库的批量插入数据语句固定生成连续的 id 值；或者在 binlog 里把插入数据的操作都如实记录进来，即<strong>innodb_autoinc_lock_mode 设置为 2，同时 binlog_format 设置为 row</strong>。</li>
-</ul>
-</li>
-</ol>
-<h2 id="对-a-b-字段分别加索引，现有一个查询条件同时对这两个字段进行过滤，怎么知道最终使用的是哪个索引？"><a href="#对-a-b-字段分别加索引，现有一个查询条件同时对这两个字段进行过滤，怎么知道最终使用的是哪个索引？" class="headerlink" title="对 a, b 字段分别加索引，现有一个查询条件同时对这两个字段进行过滤，怎么知道最终使用的是哪个索引？"></a>对 a, b 字段分别加索引，现有一个查询条件同时对这两个字段进行过滤，怎么知道最终使用的是哪个索引？</h2><p>采样统计查询需要扫描的行数，在不同查询方式中选择需要扫描行数最少的那个。<br>采样统计时，InnoDB 默认会选择 N 个数据页，统计这些页面上的不同值，得到一个平均值，然后乘以这个索引的页面数，就得到了这个索引的基数。</p>
-<h2 id="下面的语句为什么不走索引"><a href="#下面的语句为什么不走索引" class="headerlink" title="下面的语句为什么不走索引"></a>下面的语句为什么不走索引</h2><p>建表语句：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `x` (</span><br><span class="line">  `a` int(11) DEFAULT NULL,</span><br><span class="line">  `b` tinyint(4) DEFAULT NULL,</span><br><span class="line">  `c` int(11) DEFAULT NULL,</span><br><span class="line">  `str` varchar(20) DEFAULT NULL,</span><br><span class="line">  KEY `idx_test` (`a`,`b`,`c`)</span><br><span class="line">) ENGINE=InnoDB;</span><br></pre></td></tr></table></figure>
-<p>查询语句：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">explain select * from x</span><br><span class="line">where a = 5</span><br><span class="line">order by b, c;</span><br></pre></td></tr></table></figure>
-<p>其中，如下图所示，key_len 字段为 5，这是 a 字段的数据长度，因此 b、c 字段实际上并没有走索引：<br><img src="/imgs/MySQL/MySQL-%E6%9F%90%E4%BA%9B%E6%9D%A1%E4%BB%B6%E4%B8%8B%E4%B8%8D%E8%B5%B0%E7%B4%A2%E5%BC%951.png" alt="MySQL-某些条件下不走索引1" title="MySQL-某些条件下不走索引1"></p>
-<p>没有走索引的原因是：SQL 查询的执行流程是先根据<code>where</code>子句条件查二级索引，将数据回表带出<code>select</code>所需的所有字段，加载到<code>sort_buffer</code>内，然后排序。所以无法利用索引结构的有序性来实现排序。</p>
-<h2 id="为什么要加主键"><a href="#为什么要加主键" class="headerlink" title="为什么要加主键"></a>为什么要加主键</h2><p>主键唯一确定一行，没有主键我们无法 CRUD 特定的某行。</p>
-<h2 id="InnoDB的辅助索引叶子节点为什么不直接保存记录地址而要存主键键值？"><a href="#InnoDB的辅助索引叶子节点为什么不直接保存记录地址而要存主键键值？" class="headerlink" title="InnoDB的辅助索引叶子节点为什么不直接保存记录地址而要存主键键值？"></a>InnoDB的辅助索引叶子节点为什么不直接保存记录地址而要存主键键值？</h2><p>试想将记录地址直接保存到叶子节点，那每次直接可以从记录地址取到数据，就不用再回表了，这样不是更快吗？<br>其实主要原因是InnoDB的数据是按主键组织的，数据被保存到主键的叶子节点上：</p>
-<ul>
-<li>如果辅助索引保存的是记录地址，那么每次页分裂时记录的地址发生变化，还得同步到辅助索引上，这就非常麻烦了；</li>
-<li>如果辅助索引保存的是主键，除了不受主键索引树页分裂影响外，其实还要提一句的是，回表并没有那么慢，因为InnoDB中B+树的高度是非常低的，查一条记录并不需要读多少页。</li>
-</ul>
-<h2 id="为什么不要创建过多的索引"><a href="#为什么不要创建过多的索引" class="headerlink" title="为什么不要创建过多的索引"></a>为什么不要创建过多的索引</h2><p>因为维护索引开销大，当我们修改一个字段时，需要同步修改到使用了这个字段的所有索引上，也就是说会对 insert&#x2F;update&#x2F;delete 语句会有负面影响。<br>原则上应该只有查询的字段才建立索引、这些字段重复度不高且基本不变，或者通过读写分离等分库分表技术来提高数据库整体效率。</p>
-<h2 id="B-树和-B-树之间的区别"><a href="#B-树和-B-树之间的区别" class="headerlink" title="B 树和 B+树之间的区别"></a>B 树和 B+树之间的区别</h2><p><img src="/imgs/MySQL/MySQL-B%E6%A0%91%E7%A4%BA%E4%BE%8B.png" alt="MySQL-B树示例" title="MySQL-B树示例"><br><img src="/imgs/MySQL/MySQL-B%E5%8A%A0%E6%A0%91%E7%A4%BA%E4%BE%8B.png" alt="MySQL-B加树示例" title="MySQL-B加树示例"></p>
-<ol>
-<li>B 树内部节点也会存储数据，而 B+树只有叶子节点会存储数据<br>对于数据库的场景来说，因为 B+树只有叶子节点存储数据，内部节点只存储每个叶子节点中最大的键值，相当于一个页面的“指针”，因为这个“指针”占用的空间很小，因此内部节点就可以存储很多叶子节点的指针，即使这个 B+树的高度只有 3 也可以存储千万级别的页面。</li>
-<li>B+树叶子节点之间前后串联形成链表<br>如果需要范围查找，B 树需要中序遍历，而 B+树只需遍历叶子节点组成的链表。</li>
-</ol>
-<h2 id="InnoDB-与-MyISAM-之间的区别"><a href="#InnoDB-与-MyISAM-之间的区别" class="headerlink" title="InnoDB 与 MyISAM 之间的区别"></a>InnoDB 与 MyISAM 之间的区别</h2><ol>
-<li>索引角度<br>InnoDB 支持外键，而 MyISAM 不支持。<br>InnoDB 是聚集索引，而 MyISAM 是非聚集索引。</li>
-<li>表行数<br>InnoDB 不保存具体表行数，<code>select count(*) from table</code>需要全表扫描，而 MyISAM 用一个变量保存了整个表的行数，执行上述语句时可以直接读出该变量。</li>
-<li>锁角度<br>InnoDB 最小的锁粒度是行锁，MyISAM 最小的锁粒度是表锁。</li>
-<li>事务角度<br>InnoDB 支持事务，而 MyISAM 不支持。</li>
-</ol>
-<h2 id="MySQL-为什么会发生抖动"><a href="#MySQL-为什么会发生抖动" class="headerlink" title="MySQL 为什么会发生抖动"></a>MySQL 为什么会发生抖动</h2><p>InnoDB 写入磁盘前需要先记<strong>redo log</strong>，redo log 是一个有限大小的环形数组，剩余空间不足以继续写入时会执行刷脏页操作，当出现以下两种情况时，都会明显地影响性能：</p>
-<ol>
-<li>一个查询要淘汰的脏页个数太多，会导致查询的响应时间明显变长；</li>
-<li>日志被写满，更新全部堵住，写性能跌为 0，这种情况对于敏感业务来说是不能接受的。</li>
-</ol>
-<p>redo log 能帮助 MySQL 实现 ACID 中的持久化能力，非常重要，因此刷脏页本身是无法避免的，解决办法是优化刷脏页的控制策略：</p>
-<ol>
-<li>刷脏页速度<br><code>innodb_io_capacity</code>：告诉 InnoDB 磁盘能力，最好设置成磁盘的 IOPS。</li>
-<li>控制刷邻居行为<br><code>innodb_flush_neighbors</code>：如果要刷的页面旁边也是脏页，也会一块刷了，如果这个页面旁边还是脏页则这个过程会不断扩散，这个行为可以通过<code>innodb_flush_neighbors</code>这个参数控制，即最多刷新多少个邻居。</li>
-</ol>
-<h2 id="为什么写-bin-log-和-redo-log-时需要两阶段提交"><a href="#为什么写-bin-log-和-redo-log-时需要两阶段提交" class="headerlink" title="为什么写 bin log 和 redo log 时需要两阶段提交"></a>为什么写 bin log 和 redo log 时需要两阶段提交</h2><p>由于 redo log 和 binlog 是两个独立的逻辑，如果不用两阶段提交，要么就是先写完 redo log 再写 binlog，或者采用反过来的顺序。<br>在写这两个 log 的时候中间如果发生了 crash，可能会出现无法恢复的情况：</p>
-<ol>
-<li>先写 redo log 后写 bin log。<br>redo log 写完后即使系统崩溃仍然能把数据恢复过来。但是由于 bin log 没写完就 crash 了，所以 bin log 中就没有这条语句了，之后使用这个 bin log 来恢复临时库时就会丢了这次更新，导致主从不一致。</li>
-<li>先写 bin log 后写 redo log<br>bin log 写完后 crash，由于 redo log 还没写，崩溃恢复后这个事务无效（update 语句相当于没执行）。但是 bin log 里已经记录了修改操作，因此之后用 bin log 恢复的时候就多了一个事务，与原库中的值不同。</li>
-</ol>
-<h2 id="哪些命令可以立刻释放磁盘空间？"><a href="#哪些命令可以立刻释放磁盘空间？" class="headerlink" title="哪些命令可以立刻释放磁盘空间？"></a>哪些命令可以立刻释放磁盘空间？</h2><p>一般情况下删除数据只是惰性删除，不会立刻释放磁盘空间：</p>
-<ul>
-<li><code>delete * from t where ...</code></li>
-<li><code>delete * from t</code></li>
-</ul>
-<p>但是有些命令会立刻释放磁盘空间：</p>
-<ul>
-<li><code>truncate table t</code>删除表中全部数据</li>
-<li><code>alter table t engine = innodb</code>重做数据</li>
-</ul>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>

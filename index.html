@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">191</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">84</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">192</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">191</span>
+          <span class="site-state-item-count">192</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -158,7 +158,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-count">84</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -184,7 +184,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/2787e40f.html">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/241930bf.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -202,7 +202,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2787e40f.html" class="post-title-link" itemprop="url">使用task调度多agent解决复杂问题</a>
+          <a href="/241930bf.html" class="post-title-link" itemprop="url">Human in Loop的几种实现方式</a>
         </h2>
 
         <div class="post-meta-container">
@@ -212,9 +212,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2025-08-22 00:22:48 / 修改时间：02:11:51" itemprop="dateCreated datePublished" datetime="2025-08-22T00:22:48+08:00">2025-08-22</time>
+      <time title="创建时间：2025-08-24 00:22:48" itemprop="dateCreated datePublished" datetime="2025-08-24T00:22:48+08:00">2025-08-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-25 09:11:57" itemprop="dateModified" datetime="2025-08-25T09:11:57+08:00">2025-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -236,76 +242,58 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>基础的 ReAct 模式将action描述为 tool ，tool为沟通世界的桥梁，但tool可以有多种解释，比如mcp as tool, agent as tool, task as tool, human as tool(human in loop)等等，task是一种进阶的能力，它是一个需要多agent配合达成的目标。<br>看了几种实现，可以观察到一个规律：</p>
-<ul>
-<li>通过一个reasoning过程来产生plan，这个plan可以在内存中，也可以被保存到一个文件，如manus的todo.md 和 cline 的 Deep Planning</li>
-<li>将plan出的任务分派给agent来执行，分配给一个agent，或多个agent来解决复杂的问题，如 claude的sub task机制 和 langgraph的Hierarchical Agent Teams机制</li>
-<li>多个task之间应该会有上下文隔离和共享机制，既需要避免上下文爆炸，又需要在某些情况下多agent之间的信息共享</li>
-</ul>
-<h3 id="claude-sub-task"><a href="#claude-sub-task" class="headerlink" title="claude sub task"></a>claude sub task</h3><p><img src="/imgs/AI/claude_task.png" alt="claude_task.png"><br>某些实现会创建 Task 给一组 Agent 执行，这意味着工具实现具有很大自由度。例如 Claude Code 将子任务执行封装为 task 工具，执行结果返回给调用该工具的 agent，并合并到主 Context 中</p>
-<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/analysis_claude_code/blob/main/claude_code_v_1.0.33/stage1_analysis_workspace/docs/ana_docs/task_agent_analysis.md">Claude Code Task工具与Agent架构完整技术实现分析</a></p>
-<h3 id="langgraph-Hierarchical-Agent-Teams"><a href="#langgraph-Hierarchical-Agent-Teams" class="headerlink" title="langgraph Hierarchical Agent Teams"></a>langgraph Hierarchical Agent Teams</h3><p><img src="/imgs/AI/hierarchical_agent_teams_process.png" alt="hierarchical_agent_teams_process.png"><br>随着智能体系统的发展，单一智能体可能会遇到工具选择困难（工具过多时决策质量下降）、上下文复杂度失控（难以跟踪复杂上下文）以及专业化需求（需要多个专业领域）等问题。多智能体系统通过模块化（独立开发维护）、专业化（领域专家智能体）和控制性（显式通信控制）三大优势来解决这些问题，将复杂应用分解为多个小型、独立的智能体，通过层次化组织实现任务分解和协作，使用LangGraph构建智能体网络并通过状态图管理交互。<br>在langgraph中可以将task分配给一个 MultiAgent 的 Team 来执行</p>
-<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://langchain-ai.github.io/langgraph/tutorials/multi_agent/hierarchical_agent_teams/">Hierarchical Agent Teams</a><br><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2308.08155">AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation</a></p>
-<h3 id="manus-todo-md"><a href="#manus-todo-md" class="headerlink" title="manus todo.md"></a>manus todo.md</h3><p>manus 在处理复杂任务时，倾向于创建一个todo.md文件——并在任务进行过程中逐步更新它，勾选已完成的项目。</p>
-<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://manus.im/zh-cn/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus">https://manus.im/zh-cn/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus</a></p>
-<h3 id="cline-deep-planning"><a href="#cline-deep-planning" class="headerlink" title="cline deep planning"></a>cline deep planning</h3><p>Cline 的深度规划（Deep Planning）是一种基于上下文工程的智能体规划方法，通过系统性的上下文管理来优化 AI 系统的决策和执行能力。</p>
-<p><strong>深度规划的本质</strong></p>
-<ul>
-<li>将复杂的任务分解为多层次、可执行的子任务</li>
-<li>通过上下文工程确保每个规划步骤都有充分的信息支持</li>
-<li>实现从高层目标到具体行动的端到端规划</li>
-</ul>
-<p><strong>上下文工程在深度规划中的作用</strong></p>
+          <p>human-in-loop是指在agent的循环执行中，让人能够介入，从而让自动化流程中可以使用人这个工具来实现输入密码、授予权限等操作</p>
+<h1 id="magentic-ui-human-in-loop"><a href="#magentic-ui-human-in-loop" class="headerlink" title="magentic-ui human in loop"></a>magentic-ui human in loop</h1><p><a target="_blank" rel="noopener" href="https://github.com/microsoft/magentic-ui">https://github.com/microsoft/magentic-ui</a></p>
+<p>connection.py定义用户输入函数：更新agent运行状态等待用户输入，然后阻塞等待用户输入<br><img src="/imgs/AI/magentic_human_1.png" alt="magentic_human_1.png"><br><img src="/imgs/AI/magentic_human_2.png" alt="magentic_human_2.png"></p>
+<p>将user_input包装为Agent<br><img src="/imgs/AI/magentic_human_3.png" alt="magentic_human_3.png"></p>
+<p>Agent作为team的参与者，被分发<br><img src="/imgs/AI/magentic_human_4.png" alt="magentic_human_4.png"></p>
+<h1 id="LlamaIndex"><a href="#LlamaIndex" class="headerlink" title="LlamaIndex"></a>LlamaIndex</h1><p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/understanding/agent/human_in_the_loop/">https://docs.llamaindex.ai/en/stable/understanding/agent/human_in_the_loop/</a></p>
+<p>LlamaIndex会向外发送一个消息InputRequiredEvent事件，然后等待外部处理事件后回馈一个回执事件HumanResponseEvent</p>
+<h1 id="ADK"><a href="#ADK" class="headerlink" title="ADK"></a>ADK</h1><p><a target="_blank" rel="noopener" href="https://deepwiki.com/search/human-in-the-loop_c1195076-6732-4fa2-97fe-4a4d444faec6">https://deepwiki.com/search/human-in-the-loop_c1195076-6732-4fa2-97fe-4a4d444faec6</a></p>
+<p>长时间运行工具（Long-Running Tools）<br>这是最直接的实现方式，使用LongRunningFunctionTool来处理需要人工干预的异步操作。<br>核心实现流程：</p>
 <ol>
-<li><strong>Write Context（写入上下文）</strong>：将规划过程中的中间状态、决策依据等写入上下文</li>
-<li><strong>Select Context（选择上下文）</strong>：根据当前规划阶段选择最相关的上下文信息</li>
-<li><strong>Compress Context（压缩上下文）</strong>：对长规划序列进行压缩，保留关键信息</li>
-<li><strong>Isolate Context（隔离上下文）</strong>：将不同规划模块的上下文隔离，避免干扰</li>
+<li>初始调用：Agent调用长时间运行工具，工具立即返回pending状态和跟踪ID</li>
+<li>等待人工干预：系统等待外部人工处理</li>
+<li>更新工具响应：人工处理完成后，必须构造新的types.FunctionResponse并发送给Agent</li>
 </ol>
-<p><strong>规划状态管理</strong></p>
-<ol>
-<li><strong>目标分解</strong>：将复杂目标分解为可管理的子目标</li>
-<li><strong>上下文构建</strong>：为每个子目标构建专门的上下文</li>
-<li><strong>规划生成</strong>：基于上下文生成具体的执行计划</li>
-<li><strong>执行监控</strong>：监控执行过程，动态调整规划</li>
-<li><strong>结果整合</strong>：将执行结果整合到整体规划中</li>
-</ol>
-<p><strong>与 ReAct 模式的对比</strong></p>
-<table>
-<thead>
-<tr>
-<th>特性</th>
-<th>ReAct 模式</th>
-<th>Cline 深度规划</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>决策方式</td>
-<td>即时反应式</td>
-<td>前瞻性规划</td>
-</tr>
-<tr>
-<td>上下文使用</td>
-<td>简单工具调用</td>
-<td>复杂上下文工程</td>
-</tr>
-<tr>
-<td>任务分解</td>
-<td>单一工具调用</td>
-<td>多层次任务分解</td>
-</tr>
-<tr>
-<td>执行模式</td>
-<td>线性执行</td>
-<td>并行+串行混合</td>
-</tr>
-<tr>
-<td>错误处理</td>
-<td>重试机制</td>
-<td>规划调整机制</td>
-</tr>
-</tbody></table>
-<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://cline.bot/blog/how-to-think-about-context-engineering-in-cline">https://cline.bot/blog/how-to-think-about-context-engineering-in-cline</a><br><a target="_blank" rel="noopener" href="https://x.com/shao__meng/status/1957031656692543939">https://x.com/shao__meng/status/1957031656692543939</a><br><a target="_blank" rel="noopener" href="https://x.com/shao__meng/status/1957682039509118989">https://x.com/shao__meng/status/1957682039509118989</a></p>
+<p><img src="/imgs/AI/adk_humaninloop.png" alt="adk_humaninloop.png"></p>
+<h1 id="LangGraph的实现模式"><a href="#LangGraph的实现模式" class="headerlink" title="LangGraph的实现模式"></a>LangGraph的实现模式</h1><p>LangGraph 中的人机循环工作流建立在 checkpoint 系统之上，使用检查点保存每一步的图形状态，并在人工干预后恢复。</p>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://deepwiki.com/langchain-ai/langgraph/4-human-in-the-loop-capabilities#common-hil-patterns">https://deepwiki.com/langchain-ai/langgraph/4-human-in-the-loop-capabilities#common-hil-patterns</a><br><a target="_blank" rel="noopener" href="https://langchain-ai.github.io/langgraph/how-tos/human_in_the_loop/add-human-in-the-loop/#pause-using-interrupt">https://langchain-ai.github.io/langgraph/how-tos/human_in_the_loop/add-human-in-the-loop/#pause-using-interrupt</a></p>
+<h2 id="中断原语"><a href="#中断原语" class="headerlink" title="中断原语"></a>中断原语</h2><p><img src="/imgs/AI/%E4%B8%AD%E6%96%AD%E6%97%B6%E5%BA%8F%E5%9B%BE.png" alt="中断时序图.png"></p>
+<h2 id="Common-Patterns（常见模式）"><a href="#Common-Patterns（常见模式）" class="headerlink" title="Common Patterns（常见模式）"></a>Common Patterns（常见模式）</h2><p>LangGraph中的人机循环实现提供了几种常见的模式，用于不同的应用场景：</p>
+<h3 id="1-审批或拒绝模式（Approve-or-Reject）"><a href="#1-审批或拒绝模式（Approve-or-Reject）" class="headerlink" title="1. 审批或拒绝模式（Approve or Reject）"></a>1. 审批或拒绝模式（Approve or Reject）</h3><p><img src="/imgs/AI/Node%E4%B8%AD%E6%96%AD%E6%89%A7%E8%A1%8C%E6%B5%81.png" alt="Node中断执行流.png"><br>用于需要人工审批的场景，比如内容审核、决策确认等。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">approval_node</span>(<span class="params">state</span>):</span><br><span class="line">    <span class="comment"># 准备需要审批的内容</span></span><br><span class="line">    content_to_review = state[<span class="string">&quot;generated_content&quot;</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 中断等待人工审批</span></span><br><span class="line">    approval = interrupt(&#123;</span><br><span class="line">        <span class="string">&quot;content&quot;</span>: content_to_review,</span><br><span class="line">        <span class="string">&quot;action&quot;</span>: <span class="string">&quot;approve_or_reject&quot;</span></span><br><span class="line">    &#125;)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> approval == <span class="string">&quot;approve&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;<span class="string">&quot;status&quot;</span>: <span class="string">&quot;approved&quot;</span>, <span class="string">&quot;content&quot;</span>: content_to_review&#125;</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> &#123;<span class="string">&quot;status&quot;</span>: <span class="string">&quot;rejected&quot;</span>, <span class="string">&quot;content&quot;</span>: <span class="literal">None</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-审查和编辑状态模式（Review-and-Edit-State）"><a href="#2-审查和编辑状态模式（Review-and-Edit-State）" class="headerlink" title="2. 审查和编辑状态模式（Review and Edit State）"></a>2. 审查和编辑状态模式（Review and Edit State）</h3><p>允许人工审查当前状态并进行编辑修改。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">review_edit_node</span>(<span class="params">state</span>):</span><br><span class="line">    current_state = &#123;</span><br><span class="line">        <span class="string">&quot;text&quot;</span>: state.get(<span class="string">&quot;text&quot;</span>, <span class="string">&quot;&quot;</span>),</span><br><span class="line">        <span class="string">&quot;metadata&quot;</span>: state.get(<span class="string">&quot;metadata&quot;</span>, &#123;&#125;)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 中断等待人工编辑</span></span><br><span class="line">    edited_state = interrupt(&#123;</span><br><span class="line">        <span class="string">&quot;current_state&quot;</span>: current_state,</span><br><span class="line">        <span class="string">&quot;instruction&quot;</span>: <span class="string">&quot;请审查并编辑当前状态&quot;</span></span><br><span class="line">    &#125;)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> edited_state</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-审查工具调用模式（Review-Tool-Calls）"><a href="#3-审查工具调用模式（Review-Tool-Calls）" class="headerlink" title="3. 审查工具调用模式（Review Tool Calls）"></a>3. 审查工具调用模式（Review Tool Calls）</h3><p><img src="/imgs/AI/Tool%E4%B8%AD%E6%96%AD%E6%89%A7%E8%A1%8C%E6%B5%81.png" alt="Tool中断执行流.png"><br>在工具执行前进行人工审查，确保工具调用的正确性。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">tool_review_node</span>(<span class="params">state</span>):</span><br><span class="line">    tool_calls = state[<span class="string">&quot;proposed_tool_calls&quot;</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 中断等待人工确认工具调用</span></span><br><span class="line">    approved_calls = interrupt(&#123;</span><br><span class="line">        <span class="string">&quot;tool_calls&quot;</span>: tool_calls,</span><br><span class="line">        <span class="string">&quot;action&quot;</span>: <span class="string">&quot;review_tool_calls&quot;</span></span><br><span class="line">    &#125;)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;approved_tool_calls&quot;</span>: approved_calls&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-为任何工具添加中断模式（Add-Interrupts-to-Any-Tool）"><a href="#4-为任何工具添加中断模式（Add-Interrupts-to-Any-Tool）" class="headerlink" title="4. 为任何工具添加中断模式（Add Interrupts to Any Tool）"></a>4. 为任何工具添加中断模式（Add Interrupts to Any Tool）</h3><p>可以在任何工具执行前后添加人工干预点。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">tool_with_interrupt</span>(<span class="params">state</span>):</span><br><span class="line">    <span class="comment"># 工具执行前的确认</span></span><br><span class="line">    pre_confirmation = interrupt(&#123;</span><br><span class="line">        <span class="string">&quot;message&quot;</span>: <span class="string">&quot;即将执行工具，请确认&quot;</span>,</span><br><span class="line">        <span class="string">&quot;tool_name&quot;</span>: <span class="string">&quot;api_call&quot;</span></span><br><span class="line">    &#125;)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 执行工具</span></span><br><span class="line">    result = execute_tool(state[<span class="string">&quot;parameters&quot;</span>])</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 工具执行后的审查</span></span><br><span class="line">    post_review = interrupt(&#123;</span><br><span class="line">        <span class="string">&quot;result&quot;</span>: result,</span><br><span class="line">        <span class="string">&quot;action&quot;</span>: <span class="string">&quot;review_result&quot;</span></span><br><span class="line">    &#125;)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;final_result&quot;</span>: post_review&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-验证人工输入模式（Validate-Human-Input）"><a href="#5-验证人工输入模式（Validate-Human-Input）" class="headerlink" title="5. 验证人工输入模式（Validate Human Input）"></a>5. 验证人工输入模式（Validate Human Input）</h3><p>对人工输入进行验证，确保输入的正确性和完整性。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">validation_node</span>(<span class="params">state</span>):</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="comment"># 获取人工输入</span></span><br><span class="line">        user_input = interrupt(&#123;</span><br><span class="line">            <span class="string">&quot;message&quot;</span>: <span class="string">&quot;请输入数据&quot;</span>,</span><br><span class="line">            <span class="string">&quot;validation_rules&quot;</span>: [<span class="string">&quot;required&quot;</span>, <span class="string">&quot;email_format&quot;</span>]</span><br><span class="line">        &#125;)</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 验证输入</span></span><br><span class="line">        <span class="keyword">if</span> validate_input(user_input):</span><br><span class="line">            <span class="keyword">return</span> &#123;<span class="string">&quot;validated_input&quot;</span>: user_input&#125;</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="comment"># 输入无效，继续循环</span></span><br><span class="line">            <span class="keyword">continue</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="使用注意事项"><a href="#使用注意事项" class="headerlink" title="使用注意事项"></a>使用注意事项</h2><h3 id="1-副作用处理"><a href="#1-副作用处理" class="headerlink" title="1. 副作用处理"></a>1. 副作用处理</h3><ul>
+<li>将带有副作用的代码（如API调用）放在<code>interrupt</code>之后或单独的节点中</li>
+<li>避免在中断点之前执行不可逆的操作</li>
+</ul>
+<h3 id="2-子图调用"><a href="#2-子图调用" class="headerlink" title="2. 子图调用"></a>2. 子图调用</h3><ul>
+<li>当子图作为函数调用时，父图会从调用子图的节点开始重新执行</li>
+<li>子图会从包含<code>interrupt</code>的节点开始重新执行</li>
+</ul>
+<h3 id="3-单节点多中断"><a href="#3-单节点多中断" class="headerlink" title="3. 单节点多中断"></a>3. 单节点多中断</h3><ul>
+<li>在单个节点中使用多个中断时，需要注意执行顺序</li>
+<li>中断的匹配是基于严格索引的，顺序很重要</li>
+<li>避免动态改变节点结构，可能导致索引不匹配</li>
+</ul>
+<h3 id="4-调试支持"><a href="#4-调试支持" class="headerlink" title="4. 调试支持"></a>4. 调试支持</h3><ul>
+<li>可以使用LangGraph Studio设置静态断点进行调试</li>
+<li>支持在UI中检查图形状态</li>
+<li>使用<code>graph.get_state()</code>获取中断时的状态信息</li>
+</ul>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
@@ -332,7 +320,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/0.html">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/a31a76f2.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -350,7 +338,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/0.html" class="post-title-link" itemprop="url">未命名</a>
+          <a href="/a31a76f2.html" class="post-title-link" itemprop="url">长期记忆的集成方式</a>
         </h2>
 
         <div class="post-meta-container">
@@ -362,7 +350,16 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2025-08-21 00:13:10 / 修改时间：23:22:33" itemprop="dateCreated datePublished" datetime="2025-08-21T00:13:10+08:00">2025-08-21</time>
+      <time title="创建时间：2025-08-24 00:22:48 / 修改时间：21:40:22" itemprop="dateCreated datePublished" datetime="2025-08-24T00:22:48+08:00">2025-08-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+        </span>
     </span>
 
   
@@ -375,13 +372,14 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="长期记忆缘起"><a href="#长期记忆缘起" class="headerlink" title="长期记忆缘起"></a>长期记忆缘起</h2><p>Without proper memory systems, AI applications would treat each interaction as completely new, losing valuable context and personalization opportunities.</p>
-<ul>
-<li>从过去的经验中学习，得到</li>
-<li></li>
+          <h2 id="为什么需要长期记忆"><a href="#为什么需要长期记忆" class="headerlink" title="为什么需要长期记忆"></a>为什么需要长期记忆</h2><ul>
+<li>从过去的经验中学习，得到处理问题的一般模式<blockquote>
+<p>Without proper memory systems, AI applications would treat each interaction as completely new, losing valuable context and personalization opportunities.</p>
+</blockquote>
+</li>
+<li>长期记忆作为RAG的一部分，增强大模型回答领域问题的能力，而预训练专注于一般性问题的回答性能</li>
 </ul>
-<h2 id="长期记忆模式"><a href="#长期记忆模式" class="headerlink" title="长期记忆模式"></a>长期记忆模式</h2><h3 id="从对话短期记忆提取"><a href="#从对话短期记忆提取" class="headerlink" title="从对话短期记忆提取"></a>从对话短期记忆提取</h3><p><img src="/imgs/AI/long_term_process.png" alt="long_term_process"></p>
-<h3 id="为Memory建立索引和检索"><a href="#为Memory建立索引和检索" class="headerlink" title="为Memory建立索引和检索"></a>为Memory建立索引和检索</h3><p><a target="_blank" rel="noopener" href="https://blog.langchain.com/semantic-search-for-langgraph-memory/">https://blog.langchain.com/semantic-search-for-langgraph-memory/</a></p>
+<h2 id="长期记忆模式"><a href="#长期记忆模式" class="headerlink" title="长期记忆模式"></a>长期记忆模式</h2><h3 id="1-从对话提取长期记忆"><a href="#1-从对话提取长期记忆" class="headerlink" title="1. 从对话提取长期记忆"></a>1. 从对话提取长期记忆</h3><p><img src="/imgs/AI/long_term_process.png" alt="long_term_process"></p>
 <h3 id="使用文件系统来作为上下文"><a href="#使用文件系统来作为上下文" class="headerlink" title="使用文件系统来作为上下文"></a>使用文件系统来作为上下文</h3><p>使用文件来作为观察结果（如网页搜索工具的结果）的存储，而不是将所有内容都存储于内存上下文，模型需要按需读取加载到上下文，好处是可恢复的，因为文件系统中存储的是完整的内容而不是压缩后的内容<br><img src="/imgs/AI/use_file_system_as_context.png" alt="use_file_system_as_context.png" title="use_file_system_as_context"></p>
 <h3 id="MemoryTemplate"><a href="#MemoryTemplate" class="headerlink" title="MemoryTemplate"></a>MemoryTemplate</h3><p><strong>定义</strong><br>MemoryTemplate是LangChain AI提供的长期记忆服务模板，用于构建和部署可连接到任何LangGraph代理的长期记忆服务，实现用户范围的记忆管理。</p>
 <p><strong>核心特性</strong></p>
@@ -503,8 +501,250 @@
 <li>VideoRAG: <a target="_blank" rel="noopener" href="https://github.com/HKUDS/VideoRAG">https://github.com/HKUDS/VideoRAG</a>  </li>
 <li>MiniRAG: <a target="_blank" rel="noopener" href="https://github.com/HKUDS/MiniRAG">https://github.com/HKUDS/MiniRAG</a></li>
 </ul>
+<h3 id="为Memory建立索引和检索"><a href="#为Memory建立索引和检索" class="headerlink" title="为Memory建立索引和检索"></a>为Memory建立索引和检索</h3><p><a target="_blank" rel="noopener" href="https://blog.langchain.com/semantic-search-for-langgraph-memory/">https://blog.langchain.com/semantic-search-for-langgraph-memory/</a></p>
 <h3 id="memu"><a href="#memu" class="headerlink" title="memu"></a>memu</h3><p><a target="_blank" rel="noopener" href="https://github.com/NevaMind-AI/memU">https://github.com/NevaMind-AI/memU</a></p>
 <h3 id="MemoryScope"><a href="#MemoryScope" class="headerlink" title="MemoryScope"></a>MemoryScope</h3><p>定义一个pipeline来处理记忆<br><a target="_blank" rel="noopener" href="https://github.com/modelscope/MemoryScope">https://github.com/modelscope/MemoryScope</a></p>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/46410c24.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/46410c24.html" class="post-title-link" itemprop="url">为什么需要多智能体</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-08-24 00:22:48" itemprop="dateCreated datePublished" datetime="2025-08-24T00:22:48+08:00">2025-08-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-25 09:13:37" itemprop="dateModified" datetime="2025-08-25T09:13:37+08:00">2025-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="什么时候需要智能体"><a href="#什么时候需要智能体" class="headerlink" title="什么时候需要智能体"></a>什么时候需要智能体</h3><p><a target="_blank" rel="noopener" href="https://blog.crewai.com/build-agents-to-be-dependable/">https://blog.crewai.com/build-agents-to-be-dependable/</a></p>
+<h3 id="什么时候需要多智能体"><a href="#什么时候需要多智能体" class="headerlink" title="什么时候需要多智能体"></a>什么时候需要多智能体</h3><p><a target="_blank" rel="noopener" href="https://cognition.ai/blog/dont-build-multi-agents">https://cognition.ai/blog/dont-build-multi-agents</a></p>
+<p>什么时候构建multi agent<br><a target="_blank" rel="noopener" href="https://blog.langchain.com/how-and-when-to-build-multi-agent-systems/">https://blog.langchain.com/how-and-when-to-build-multi-agent-systems/</a><br><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/multi-agent-research-system?ref=blog.langchain.dev">https://www.anthropic.com/engineering/multi-agent-research-system?ref=blog.langchain.dev</a><br><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/OpuIHSwrq3vzVxNRmqogJQ">https://mp.weixin.qq.com/s/OpuIHSwrq3vzVxNRmqogJQ</a><br><a target="_blank" rel="noopener" href="https://www.camel-ai.org/blogs/project-oasis-automation-or-simulation---the-biggest-potential-of-multi-agent-systems">https://www.camel-ai.org/blogs/project-oasis-automation-or-simulation---the-biggest-potential-of-multi-agent-systems</a><br>AI Agent知识库<br><a target="_blank" rel="noopener" href="https://geek-agi.feishu.cn/wiki/NmcawMYuii4OxFkLxLrcuQRJnPg">https://geek-agi.feishu.cn/wiki/NmcawMYuii4OxFkLxLrcuQRJnPg</a><br>构建Agent的12因素<br><a target="_blank" rel="noopener" href="https://github.com/humanlayer/12-factor-agents/blob/main/content/factor-03-own-your-context-window.md">https://github.com/humanlayer/12-factor-agents/blob/main/content/factor-03-own-your-context-window.md</a><br>构建感知上下文的Agent<br><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2402.01968">https://arxiv.org/pdf/2402.01968</a><br>自我验证的Agent架构<br><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2506.01716">https://arxiv.org/pdf/2506.01716</a><br>Agent白皮书<br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/16788814512">https://zhuanlan.zhihu.com/p/16788814512</a></p>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/2787e40f.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2787e40f.html" class="post-title-link" itemprop="url">使用task调度多agent解决复杂问题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-08-22 00:22:48" itemprop="dateCreated datePublished" datetime="2025-08-22T00:22:48+08:00">2025-08-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-24 20:05:36" itemprop="dateModified" datetime="2025-08-24T20:05:36+08:00">2025-08-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>基础的 ReAct 模式将action描述为 tool ，tool为沟通世界的桥梁，但tool可以有多种解释，比如mcp as tool, agent as tool, task as tool, human as tool(human in loop)等等，task是一种进阶的能力，它是一个需要多agent配合达成的目标。<br>看了几种实现，可以观察到一个规律：</p>
+<ul>
+<li>通过一个reasoning过程来产生plan，这个plan可以在内存中，也可以被保存到一个文件，如manus的todo.md 和 cline 的 Deep Planning</li>
+<li>将plan出的任务分派给agent来执行，分配给一个agent，或多个agent来解决复杂的问题，如 claude的sub task机制 和 langgraph的Hierarchical Agent Teams机制</li>
+<li>多个task之间应该会有上下文隔离和共享机制，既需要避免上下文爆炸，又需要在某些情况下多agent之间的信息共享</li>
+</ul>
+<h3 id="claude-sub-task"><a href="#claude-sub-task" class="headerlink" title="claude sub task"></a>claude sub task</h3><p><img src="/imgs/AI/claude_task.png" alt="claude_task.png"><br>某些实现会创建 Task 给一组 Agent 执行，这意味着工具实现具有很大自由度。例如 Claude Code 将子任务执行封装为 task 工具，执行结果返回给调用该工具的 agent，并合并到主 Context 中</p>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/analysis_claude_code/blob/main/claude_code_v_1.0.33/stage1_analysis_workspace/docs/ana_docs/task_agent_analysis.md">Claude Code Task工具与Agent架构完整技术实现分析</a></p>
+<h3 id="langgraph-Hierarchical-Agent-Teams"><a href="#langgraph-Hierarchical-Agent-Teams" class="headerlink" title="langgraph Hierarchical Agent Teams"></a>langgraph Hierarchical Agent Teams</h3><p><img src="/imgs/AI/hierarchical_agent_teams_process.png" alt="hierarchical_agent_teams_process.png"><br>随着智能体系统的发展，单一智能体可能会遇到工具选择困难（工具过多时决策质量下降）、上下文复杂度失控（难以跟踪复杂上下文）以及专业化需求（需要多个专业领域）等问题。多智能体系统通过模块化（独立开发维护）、专业化（领域专家智能体）和控制性（显式通信控制）三大优势来解决这些问题，将复杂应用分解为多个小型、独立的智能体，通过层次化组织实现任务分解和协作，使用LangGraph构建智能体网络并通过状态图管理交互。<br>在langgraph中可以将task分配给一个 MultiAgent 的 Team 来执行</p>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://langchain-ai.github.io/langgraph/tutorials/multi_agent/hierarchical_agent_teams/">Hierarchical Agent Teams</a><br><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2308.08155">AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation</a></p>
+<h3 id="manus-todo-md"><a href="#manus-todo-md" class="headerlink" title="manus todo.md"></a>manus todo.md</h3><p>manus 在处理复杂任务时，倾向于创建一个todo.md文件——并在任务进行过程中逐步更新它，勾选已完成的项目。</p>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://manus.im/zh-cn/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus">https://manus.im/zh-cn/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus</a></p>
+<h3 id="cline-deep-planning"><a href="#cline-deep-planning" class="headerlink" title="cline deep planning"></a>cline deep planning</h3><p>Cline 的深度规划（Deep Planning）是一种基于上下文工程的智能体规划方法，通过系统性的上下文管理来优化 AI 系统的决策和执行能力。</p>
+<p><strong>深度规划的本质</strong></p>
+<ul>
+<li>将复杂的任务分解为多层次、可执行的子任务</li>
+<li>通过上下文工程确保每个规划步骤都有充分的信息支持</li>
+<li>实现从高层目标到具体行动的端到端规划</li>
+</ul>
+<p><strong>上下文工程在深度规划中的作用</strong></p>
+<ol>
+<li><strong>Write Context（写入上下文）</strong>：将规划过程中的中间状态、决策依据等写入上下文</li>
+<li><strong>Select Context（选择上下文）</strong>：根据当前规划阶段选择最相关的上下文信息</li>
+<li><strong>Compress Context（压缩上下文）</strong>：对长规划序列进行压缩，保留关键信息</li>
+<li><strong>Isolate Context（隔离上下文）</strong>：将不同规划模块的上下文隔离，避免干扰</li>
+</ol>
+<p><strong>规划状态管理</strong></p>
+<ol>
+<li><strong>目标分解</strong>：将复杂目标分解为可管理的子目标</li>
+<li><strong>上下文构建</strong>：为每个子目标构建专门的上下文</li>
+<li><strong>规划生成</strong>：基于上下文生成具体的执行计划</li>
+<li><strong>执行监控</strong>：监控执行过程，动态调整规划</li>
+<li><strong>结果整合</strong>：将执行结果整合到整体规划中</li>
+</ol>
+<p><strong>与 ReAct 模式的对比</strong></p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>ReAct 模式</th>
+<th>Cline 深度规划</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>决策方式</td>
+<td>即时反应式</td>
+<td>前瞻性规划</td>
+</tr>
+<tr>
+<td>上下文使用</td>
+<td>简单工具调用</td>
+<td>复杂上下文工程</td>
+</tr>
+<tr>
+<td>任务分解</td>
+<td>单一工具调用</td>
+<td>多层次任务分解</td>
+</tr>
+<tr>
+<td>执行模式</td>
+<td>线性执行</td>
+<td>并行+串行混合</td>
+</tr>
+<tr>
+<td>错误处理</td>
+<td>重试机制</td>
+<td>规划调整机制</td>
+</tr>
+</tbody></table>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://cline.bot/blog/how-to-think-about-context-engineering-in-cline">https://cline.bot/blog/how-to-think-about-context-engineering-in-cline</a><br><a target="_blank" rel="noopener" href="https://x.com/shao__meng/status/1957031656692543939">https://x.com/shao__meng/status/1957031656692543939</a><br><a target="_blank" rel="noopener" href="https://x.com/shao__meng/status/1957682039509118989">https://x.com/shao__meng/status/1957682039509118989</a></p>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
@@ -660,82 +900,6 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/0.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/0.html" class="post-title-link" itemprop="url">未命名</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-08-11 21:54:58" itemprop="dateCreated datePublished" datetime="2025-08-11T21:54:58+08:00">2025-08-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-17 10:53:21" itemprop="dateModified" datetime="2025-08-17T10:53:21+08:00">2025-08-17</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id=""><a href="#" class="headerlink" title=""></a></h2><h2 id="使用工具来实现"><a href="#使用工具来实现" class="headerlink" title="使用工具来实现"></a>使用工具来实现</h2><p>请发布一篇小红书笔记<br>标题：”MultiAgent的几种执行模式”<br>内容为multi_agent_run_mode.md中的内容并且将内容简略成适合在小红书上发布的格式，内容语气低调一些，不要按markdown格式组织，而是要灵活用emoji和空行来划分段落，topics尽量少一些就一个Agent<br>图片路径：”&#x2F;Users&#x2F;hgc&#x2F;code&#x2F;tallate.github.io_src&#x2F;source&#x2F;imgs&#x2F;AI&#x2F;plan_and_execute_procedure.png”</p>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://tallate.github.io/7d3d1e2.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -772,7 +936,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-13 23:45:26" itemprop="dateModified" datetime="2025-08-13T23:45:26+08:00">2025-08-13</time>
+      <time title="修改时间：2025-08-24 21:42:39" itemprop="dateModified" datetime="2025-08-24T21:42:39+08:00">2025-08-24</time>
     </span>
 
   
@@ -837,7 +1001,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/35eaa9b4.html" class="post-title-link" itemprop="url">Context Engineering</a>
+          <a href="/35eaa9b4.html" class="post-title-link" itemprop="url">上下文工程的实现路径</a>
         </h2>
 
         <div class="post-meta-container">
@@ -855,7 +1019,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-21 00:29:09" itemprop="dateModified" datetime="2025-08-21T00:29:09+08:00">2025-08-21</time>
+      <time title="修改时间：2025-08-25 09:14:44" itemprop="dateModified" datetime="2025-08-25T09:14:44+08:00">2025-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -877,8 +1041,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>这篇文档，记录了当前对上下文工程的最佳实践，后续我也希望多做一些实践。</p>
-<h2 id="Context-Engineering"><a href="#Context-Engineering" class="headerlink" title="Context Engineering"></a>Context Engineering</h2><h3 id="为什么需要Context-Engineering"><a href="#为什么需要Context-Engineering" class="headerlink" title="为什么需要Context Engineering"></a>为什么需要Context Engineering</h3><p>文章强调”Communication is all you need”的理念</p>
+          <h2 id="Context-Engineering"><a href="#Context-Engineering" class="headerlink" title="Context Engineering"></a>Context Engineering</h2><h3 id="为什么需要Context-Engineering"><a href="#为什么需要Context-Engineering" class="headerlink" title="为什么需要Context Engineering"></a>为什么需要Context Engineering</h3><p>文章强调”Communication is all you need”的理念</p>
 <ul>
 <li>与LLM的沟通很困难，且经常被低估</li>
 <li>许多智能体错误的根本原因在于沟通问题</li>
@@ -1171,98 +1334,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/e6497dae.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/3b7ce3c6.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/3b7ce3c6.html" class="post-title-link" itemprop="url">MySQL_慢SQL调优总结</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-07-28 16:18:28" itemprop="dateCreated datePublished" datetime="2023-07-28T16:18:28+08:00">2023-07-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>MySQL 慢SQL调优总结</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/3b7ce3c6.html#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>

@@ -19,31 +19,28 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="并发（Concurrency）线程、进程，线程安全，进程同步，可见性，一致性，锁，信号量，并发，并行 线程和进程从操作系统概念上说，线程是最小的可执行单位，也就是系统调度的最小单位。进程是资源分配的最小单位。线程是依赖进程存在的，共享进程内的资源，如内存，cpu，io 等。在操作系统的发展过程中，为了提高系统的稳定性、吞吐量和安全性，操作系统内核和用户态做了隔离，例如 Linux 有内核线程">
+    <meta name="description" content="文件系统操作1234567ls -F filename # 列出目录，使用*等符号标志文件类型，*表示可执行文件，&#x2F;为目录文件ls -i filename # 查看文件inode号mkdir -p dirname # 创建目录，如果有父目录就创建父目录stat filename # 查看文件详细信息，包括inode号、链接数mv # 移动&#x2F;重命名ln oldfile newfile # 创建">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Linux 基本概念">
+<meta property="og:title" content="Linux 与文件系统">
 <meta property="og:url" content="https://tallate.github.io/283c6d00.html">
 <meta property="og:site_name" content="Tallate">
-<meta property="og:description" content="并发（Concurrency）线程、进程，线程安全，进程同步，可见性，一致性，锁，信号量，并发，并行 线程和进程从操作系统概念上说，线程是最小的可执行单位，也就是系统调度的最小单位。进程是资源分配的最小单位。线程是依赖进程存在的，共享进程内的资源，如内存，cpu，io 等。在操作系统的发展过程中，为了提高系统的稳定性、吞吐量和安全性，操作系统内核和用户态做了隔离，例如 Linux 有内核线程">
+<meta property="og:description" content="文件系统操作1234567ls -F filename # 列出目录，使用*等符号标志文件类型，*表示可执行文件，&#x2F;为目录文件ls -i filename # 查看文件inode号mkdir -p dirname # 创建目录，如果有父目录就创建父目录stat filename # 查看文件详细信息，包括inode号、链接数mv # 移动&#x2F;重命名ln oldfile newfile # 创建">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://tallate.github.io/imgs/Linux/Linux%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84.png">
-<meta property="og:image" content="https://tallate.github.io/imgs/Linux/IO%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B.png">
 <meta property="article:published_time" content="2019-09-14T03:34:43.000Z">
-<meta property="article:modified_time" content="2025-07-06T17:56:20.872Z">
+<meta property="article:modified_time" content="2025-07-06T17:56:20.871Z">
 <meta property="article:author" content="tallate">
 <meta property="article:tag" content="Linux">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tallate.github.io/imgs/Linux/Linux%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84.png">
 
 
 <link rel="canonical" href="https://tallate.github.io/283c6d00.html">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/283c6d00.html","path":"/283c6d00.html","title":"Linux 基本概念"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/283c6d00.html","path":"/283c6d00.html","title":"Linux 与文件系统"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Linux 基本概念 | Tallate</title>
+<title>Linux 与文件系统 | Tallate</title>
   
 
 
@@ -92,7 +89,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">191</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">84</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">192</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -143,7 +140,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%EF%BC%88Concurrency%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">并发（Concurrency）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%92%8C%E8%BF%9B%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">线程和进程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8"><span class="nav-number">1.2.</span> <span class="nav-text">线程安全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%EF%BC%88deadlock%EF%BC%89"><span class="nav-number">1.3.</span> <span class="nav-text">死锁（deadlock）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">1.3.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B5%84%E6%BA%90"><span class="nav-number">1.3.2.</span> <span class="nav-text">资源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E4%BA%A7%E7%94%9F%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.3.3.</span> <span class="nav-text">死锁产生的原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E4%BA%A7%E7%94%9F%E7%9A%84%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.3.4.</span> <span class="nav-text">死锁产生的条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E9%81%BF%E5%85%8D"><span class="nav-number">1.3.5.</span> <span class="nav-text">死锁避免</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%BB%E9%94%81%E9%A2%84%E9%98%B2"><span class="nav-number">1.3.6.</span> <span class="nav-text">死锁预防</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8C%81%E4%B9%85%E5%8C%96%EF%BC%88Persistent%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">持久化（Persistent）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux-IO-%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.1.</span> <span class="nav-text">Linux IO 模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%99%A8%E7%AE%A1%E7%90%86"><span class="nav-number">2.2.</span> <span class="nav-text">存储器管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.3.</span> <span class="nav-text">文件系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IO%EF%BC%88pipe%EF%BC%89"><span class="nav-number">2.4.</span> <span class="nav-text">IO（pipe）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="nav-number">2.5.</span> <span class="nav-text">虚拟内存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#swap"><span class="nav-number">2.5.1.</span> <span class="nav-text">swap</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E5%8C%96%EF%BC%88Virtualization%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">虚拟化（Virtualization）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A9%B1%E5%8A%A8%E7%AE%A1%E7%90%86"><span class="nav-number">3.1.</span> <span class="nav-text">驱动管理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux-%E5%BA%94%E7%94%A8"><span class="nav-number">4.1.</span> <span class="nav-text">Linux 应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="nav-number">4.2.</span> <span class="nav-text">操作系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Concurrency"><span class="nav-number">4.2.1.</span> <span class="nav-text">Concurrency</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Persistent"><span class="nav-number">4.2.2.</span> <span class="nav-text">Persistent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Virtualization"><span class="nav-number">4.2.3.</span> <span class="nav-text">Virtualization</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux-%E5%86%85%E6%A0%B8"><span class="nav-number">4.3.</span> <span class="nav-text">Linux 内核</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%93%8D%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">文件系统操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#chroot"><span class="nav-number">1.1.</span> <span class="nav-text">chroot</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mount-%E5%92%8C-umount"><span class="nav-number">1.2.</span> <span class="nav-text">mount 和 umount</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ln"><span class="nav-number">1.3.</span> <span class="nav-text">ln</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fdisk"><span class="nav-number">1.4.</span> <span class="nav-text">fdisk</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -156,7 +153,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">191</span>
+          <span class="site-state-item-count">192</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -167,7 +164,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-count">84</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -207,12 +204,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Linux 基本概念 | Tallate">
+      <meta itemprop="name" content="Linux 与文件系统 | Tallate">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Linux 基本概念
+          Linux 与文件系统
         </h1>
 
         <div class="post-meta-container">
@@ -254,76 +251,18 @@
     <div class="post-body" itemprop="articleBody"><span id="more"></span>
 
 
-<h1 id="并发（Concurrency）"><a href="#并发（Concurrency）" class="headerlink" title="并发（Concurrency）"></a>并发（Concurrency）</h1><p>线程、进程，线程安全，进程同步，可见性，一致性，锁，信号量，并发，并行</p>
-<h2 id="线程和进程"><a href="#线程和进程" class="headerlink" title="线程和进程"></a>线程和进程</h2><p>从操作系统概念上说，<strong>线程</strong>是最小的可执行单位，也就是系统调度的最小单位。<strong>进程</strong>是资源分配的最小单位。线程是依赖进程存在的，共享进程内的资源，如内存，cpu，io 等。在操作系统的发展过程中，为了提高系统的稳定性、吞吐量和安全性，操作系统内核和用户态做了隔离，例如 Linux 有内核线程，用户线程，内核进程，用户进程，从根本上 Linux 是没有线程的，线程对 Linux 系统来说是个特殊的进程。那么用户线程和内核线程是一一对应呢？从宏观上看是一一对应的，在用户态的每一个线程，都会在内核有对应的执行线程，但是由于资源的限制，用户态的线程和内核线程是多对一的关系。用户进程和内核进程也类似。具体怎样对应的，这里就不探讨了。<br>为了提高操作系统的实时性，操作系统是以时间片轮转来实现任务调度的。理论上时间片内是不可以被中断的，可认为是 cpu 最小的单位执行时间。现代操作系统为了提高用户体验，线程都是抢占式的，而中断一般在时间片用完的时候发生。线程、进程和 CPU 都是多对一的关系，所以存在进程线程切换的问题。<br>线程内部还是有自己内存空间的，所以有个概念叫线程内存模型。线程内部有自己私有的本地内存，故线程和线程之间的本地内存存在可见性问题。例如全局变量 A 在线程 1 修改后，线程 2 并不一定能拿到 A 的修改值，因为线程 1 会把全局变量 A 拷贝到本地内存，修改后并不会马上同步。在编译的时候，编译器为了优化，（例如利用超线程技术）可能会重排指令的执行顺序，这就会存在一致性了。</p>
-<h2 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h2><p>在线程安全里面经常要讨论的两个问题就是：可见性和一致性。锁是什么东西呢？锁就是一道内存屏障，保证可见性和一致性的一种策略，由操作系统甚至更底层的硬件提供。加锁是消耗资源的，特别是在多核 CPU 上，现在多核 CPU 一般有 3 级缓存，一级缓存通常是单核独占的，而线程的本地内存很可能就保存在 cpu 的缓存里面，然而加锁就意味着保证可见性和一致性，需要中断同步数据，保证别人拿到的是最新修改值。由于用途不同，锁被设计成各种各样的，如互斥锁，读写锁，自旋锁，同步块，数据库的事务等，如果只要保证可见性的，可以不使用锁，在 java 里面可以使用 volatile 修饰全局变量。虽然在 c／c＋＋，都有同样的修饰符，但是是不是一样的意思呢，请参考其他文章。</p>
-<h2 id="死锁（deadlock）"><a href="#死锁（deadlock）" class="headerlink" title="死锁（deadlock）"></a>死锁（deadlock）</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>多个进程竞争资源造成的互相等待情况。  </p>
-<h3 id="资源"><a href="#资源" class="headerlink" title="资源"></a>资源</h3><p>可重用性资源：可供重复使用多次的资源<br>不可抢占性资源：一旦系统把某资源分配给该进程后，就不能将它强行收回，只能在进程使用完后自动释放<br>可消耗资源:又叫临时性资源，它是在进程运行期间，由进程动态的创建和消耗的  </p>
-<h3 id="死锁产生的原因"><a href="#死锁产生的原因" class="headerlink" title="死锁产生的原因"></a>死锁产生的原因</h3><ol>
-<li>系统资源的竞争<br>系统资源的竞争导致系统资源不足，以及资源分配不当，导致死锁。<br>主要是竞争可重用不可抢占式的资源和可消耗的资源。  </li>
-<li>进程运行推进顺序不合适<br>进程在运行过程中，请求和释放资源的顺序不当，会导致死锁。</li>
-</ol>
-<h3 id="死锁产生的条件"><a href="#死锁产生的条件" class="headerlink" title="死锁产生的条件"></a>死锁产生的条件</h3><p><strong>互斥条件</strong> 一个资源每次只能被一个进程使用，即在一段时间内某资源仅为一个进程所占有。此时若有其他进程请求该资源，则请求进程只能等待。<br><strong>请求与保持条件</strong> 进程已经保持了至少一个资源，但又提出了新的资源请求，而该资源 已被其他进程占有，此时请求进程被阻塞，但对自己已获得的资源保持不放。<br><strong>不可剥夺条件</strong> 进程所获得的资源在未使用完毕之前，不能被其他进程强行夺走，即只能 由获得该资源的进程自己来释放（只能是主动释放)。<br><strong>循环等待条件</strong> 若干进程间形成首尾相接循环等待资源的关系<br><strong>这四个条件是死锁的必要条件，只要系统发生死锁，这些条件必然成立，而只要上述条件之一不满足，就不会发生死锁。</strong><br>形象地说，就是有两个酒鬼，一个有开瓶器，一个有酒，这两种资源都只能被一个人占有（互斥），且用完之前不能被另一个人抢去（不可剥夺），他们互相等对方手上的资源（循环等待），但又不肯放开自己手上的资源（请求与保持），因此陷入了死锁。  </p>
-<h3 id="死锁避免"><a href="#死锁避免" class="headerlink" title="死锁避免"></a>死锁避免</h3><p>系统对进程发出每一个系统能够满足的资源申请进行动态检查,并根据检查结果决定是否分配资源,如果分配后系统可能发生死锁,则不予分配,否则予以分配。<br>书上给出了两种死锁避免策略  </p>
-<ol>
-<li>进程启动拒绝<br>若对每个资源，能满足现有所有进程再加上新进程的需求，则可以启动这个进程，否则拒绝  </li>
-<li>资源分配拒绝（银行家算法）</li>
-</ol>
-<h3 id="死锁预防"><a href="#死锁预防" class="headerlink" title="死锁预防"></a>死锁预防</h3><p>死锁预防是设法至少破坏产生死锁的四个必要条件之一，严格的防止死锁的出现。  </p>
-<ol>
-<li>互斥<br>不可能禁止，比如文件只允许互斥的写访问  </li>
-<li>占有且等待<br>可以要求进程一次性请求所有需要的资源，并且阻塞这个进程直到所有请求都同时满足，这样就不会再请求新资源了。  </li>
-<li>不可抢占</li>
-<li>循环等待</li>
-</ol>
-<h1 id="持久化（Persistent）"><a href="#持久化（Persistent）" class="headerlink" title="持久化（Persistent）"></a>持久化（Persistent）</h1><h2 id="Linux-IO-模型"><a href="#Linux-IO-模型" class="headerlink" title="Linux IO 模型"></a>Linux IO 模型</h2><p><img src="/imgs/Linux/Linux%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84.png" alt="X" title="Linux整体结构"><br>应用程序调用内核 IO 函数的过程如下图所示：<br><img src="/imgs/Linux/IO%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B.png" alt="X" title="IO系统调用过程"><br>处于 OS 的安全性等的考虑，进程无法直接操作 I&#x2F;O 设备，必须通过系统调用来请求内核完成 I&#x2F;O 动作，而内核会为每个 I&#x2F;O 设备维护一个 Buffer。</p>
-<ol>
-<li>用户进程发起请求；</li>
-<li>内核接收到请求后，从 I&#x2F;O 设备中获取数据到 Buffer 中；</li>
-<li>将 Buffer 中的数据拷贝到用户进程的地址空间，该用户进程获取到数据后响应给客户端。</li>
-</ol>
-<p>在整个请求过程中，数据输入至 Buffer 需要时间，从 Buffer 复制数据到进程也需要时间，这个等待时间是限制 I&#x2F;O 效率的罪魁祸首，根据等待方式的不同，I&#x2F;O 动作可以分为以下五种模式：</p>
-<ul>
-<li>阻塞 I&#x2F;O（Blocking I&#x2F;O）</li>
-<li>非阻塞 I&#x2F;O（Non-Blocking I&#x2F;O）</li>
-<li>I&#x2F;O 复用（I&#x2F;O Multiplexing）</li>
-<li>信号驱动的 I&#x2F;O（Signal Driven I&#x2F;O）</li>
-<li>异步 I&#x2F;O（Asynchronous I&#x2F;O）</li>
-</ul>
-<h2 id="存储器管理"><a href="#存储器管理" class="headerlink" title="存储器管理"></a>存储器管理</h2><h2 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a>文件系统</h2><h2 id="IO（pipe）"><a href="#IO（pipe）" class="headerlink" title="IO（pipe）"></a>IO（pipe）</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;syscall.h&gt;</span><br><span class="line"></span><br><span class="line">int testPipe()&#123;</span><br><span class="line">    int fd[2];</span><br><span class="line"></span><br><span class="line">    int *read_fd = &amp;fd[0];</span><br><span class="line">    int *write_fd = &amp;fd[1];</span><br><span class="line"></span><br><span class="line">    if(pipe(fd) == -1)&#123;</span><br><span class="line">        printf(&quot;pipe create failed\n&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    int pid = fork();</span><br><span class="line">    if(pid == -1)&#123;</span><br><span class="line">        printf(&quot;fork failed&quot;);</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    else if(pid == 0)&#123;</span><br><span class="line">        int count;</span><br><span class="line">        char string[] = &quot;hahaha&quot;;</span><br><span class="line">        close(*read_fd);</span><br><span class="line">        count = write(*write_fd, string, sizeof(string));</span><br><span class="line">        printf(&quot;写了%d个字符\n&quot;, count);</span><br><span class="line">        return 0;</span><br><span class="line">    &#125;</span><br><span class="line">    else&#123;</span><br><span class="line">        int count;</span><br><span class="line">        char buffer[100];</span><br><span class="line">        close(*write_fd);</span><br><span class="line">        count = read(*read_fd, buffer, sizeof(buffer));</span><br><span class="line">        printf(&quot;父进程接受到%d字节的数据:%s&quot;, count, buffer);</span><br><span class="line">        return 0;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="文件系统操作"><a href="#文件系统操作" class="headerlink" title="文件系统操作"></a>文件系统操作</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ls -F filename # 列出目录，使用*等符号标志文件类型，*表示可执行文件，/为目录文件</span><br><span class="line">ls -i filename # 查看文件inode号</span><br><span class="line">mkdir -p dirname # 创建目录，如果有父目录就创建父目录</span><br><span class="line">stat filename # 查看文件详细信息，包括inode号、链接数</span><br><span class="line">mv # 移动/重命名</span><br><span class="line">ln oldfile newfile # 创建硬链接</span><br><span class="line">ln -s sourcefile/sourcedir targetfile/targetdir # 创建软链接</span><br></pre></td></tr></table></figure>
+<h3 id="chroot"><a href="#chroot" class="headerlink" title="chroot"></a>chroot</h3><p><a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/linux/l-cn-chroot/">chroot</a></p>
+<h3 id="mount-和-umount"><a href="#mount-和-umount" class="headerlink" title="mount 和 umount"></a>mount 和 umount</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount | column -t # 查看挂载分区信息</span><br></pre></td></tr></table></figure>
+<p>制作目录硬链接。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 假设当前目录下有a和b两个目录</span><br><span class="line">mount -o bind a b # b成为a的硬链接，其实就是将a挂载到了b上</span><br><span class="line">mount # 通过mount可以看出是bind这个参数起作用</span><br><span class="line">/dev/sda2 on /home/hgc/Downloads/b type ext4 (rw,relatime,errors=remount-ro,data=ordered)</span><br><span class="line"># 删除时必须先卸载再删除</span><br><span class="line">umount b</span><br><span class="line">rm -rf b</span><br></pre></td></tr></table></figure>
+<h3 id="ln"><a href="#ln" class="headerlink" title="ln"></a>ln</h3><h3 id="fdisk"><a href="#fdisk" class="headerlink" title="fdisk"></a>fdisk</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fdisk -l # 查看硬盘分区信息</span><br></pre></td></tr></table></figure>
 
-<h2 id="虚拟内存"><a href="#虚拟内存" class="headerlink" title="虚拟内存"></a>虚拟内存</h2><h3 id="swap"><a href="#swap" class="headerlink" title="swap"></a>swap</h3><h1 id="虚拟化（Virtualization）"><a href="#虚拟化（Virtualization）" class="headerlink" title="虚拟化（Virtualization）"></a>虚拟化（Virtualization）</h1><h2 id="驱动管理"><a href="#驱动管理" class="headerlink" title="驱动管理"></a>驱动管理</h2><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><h2 id="Linux-应用"><a href="#Linux-应用" class="headerlink" title="Linux 应用"></a>Linux 应用</h2><ol>
-<li>虚拟内存<br><a target="_blank" rel="noopener" href="https://www.linux.com/news/all-about-linux-swap-space">All about Linux swap space</a><br><a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/swap">Swap</a><br><a target="_blank" rel="noopener" href="https://haydenjames.io/linux-performance-almost-always-add-swap-space/">Linux Performance: Why You Should Almost Always Add Swap Space</a></li>
-<li>演进<br><a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/linux/l-kernel-advances/index.html">Linux 内核的发展 介绍 2.6.28 和 2.6.29 版本中的新特性</a><br><a target="_blank" rel="noopener" href="https://linux.cn/article-6179-1.html">对 Linux 内核的发展方向的展望 - Linux 4.2</a></li>
-<li>运维<br><a target="_blank" rel="noopener" href="https://juejin.im/entry/5c9780335188252d941493d3">老司机告诉你：正规的运维工作是什么的?</a></li>
-<li>并发<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/u011677209/article/details/78082722">Linux 原子操作 atomic_cmpxchg()&#x2F;Atomic_read()&#x2F;Atomic_set()&#x2F;Atomic_add()&#x2F;Atomic_sub()</a></li>
-<li>隔离<br><a target="_blank" rel="noopener" href="https://www.v2ex.com/member/jerry017cn/topics">cgroup - jerry017cn</a></li>
-</ol>
-<h2 id="操作系统"><a href="#操作系统" class="headerlink" title="操作系统"></a>操作系统</h2><ol>
-<li>分时和实时操作系统<br><a target="_blank" rel="noopener" href="https://www.osrtos.com/">List of open source real-time operating systems</a></li>
-<li>操作系统概念<br><a target="_blank" rel="noopener" href="https://www.cnblogs.com/leesf456/p/5375198.html">【操作系统】操作系统综述（一）</a></li>
-<li><a target="_blank" rel="noopener" href="http://pages.cs.wisc.edu/~remzi/OSTEP/#book-chapters">Operating Systems: Three Easy Pieces</a></li>
-</ol>
-<h3 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h3><ol>
-<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/leesf456/p/5413517.html">【操作系统】进程管理（二）</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/leesf456/p/5605193.html">【操作系统】处理机调度与死锁（三）</a></li>
-</ol>
-<h3 id="Persistent"><a href="#Persistent" class="headerlink" title="Persistent"></a>Persistent</h3><ol>
-<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/leesf456/p/5616041.html">【操作系统】存储器管理（四）</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/leesf456/p/5626339.html">【操作系统】文件管理（六）</a></li>
-</ol>
-<h3 id="Virtualization"><a href="#Virtualization" class="headerlink" title="Virtualization"></a>Virtualization</h3><ol>
-<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/leesf456/p/5622859.html">【操作系统】设备管理（五）</a></li>
-</ol>
-<h2 id="Linux-内核"><a href="#Linux-内核" class="headerlink" title="Linux 内核"></a>Linux 内核</h2><ol>
-<li>哈工大操作系统<br><a target="_blank" rel="noopener" href="https://mooc.study.163.com/course/1000002004?_trace_c_p_k2_=6a6064778bf54c5f98396d86c4146823#/info">操作系统之基础</a><br><a target="_blank" rel="noopener" href="https://www.shiyanlou.com/courses/115">操作系统原理与实践</a></li>
-<li>NJU<br><a target="_blank" rel="noopener" href="https://nju-ics.gitbooks.io/ics2016-programming-assignment/content/1.1.html">在开始愉快的 PA 之旅之前</a><br><a target="_blank" rel="noopener" href="https://github.com/NJU-ProjectN/LiteNES">NJU-ProjectN</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.linfo.org/index.html">The Linux Information Project</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.kernel.org/">The Linux Kernel Archives</a></li>
-<li><a target="_blank" rel="noopener" href="https://tinylab.gitbooks.io/linux-doc/content/zh-cn/">Linux 内核文档（中文版）</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.superfrink.net/athenaeum/OS-FAQ/os-faq.html">Write Your Own Operating System</a></li>
-<li><a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.828/">6.828: Operating System Engineering</a></li>
-</ol>
+
+
+
+
+
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
     </div>
 
@@ -345,8 +284,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/283c6d00.html" rel="next" title="Linux 与文件系统">
-                  Linux 与文件系统 <i class="fa fa-angle-right"></i>
+                <a href="/283c6d00.html" rel="next" title="Linux 基本概念">
+                  Linux 基本概念 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>

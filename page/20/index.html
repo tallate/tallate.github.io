@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">191</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">84</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">192</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">191</span>
+          <span class="site-state-item-count">192</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -158,7 +158,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-count">84</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -175,6 +175,129 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/fa5fc05a.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/fa5fc05a.html" class="post-title-link" itemprop="url">姓名排序</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-11-06 23:29:41" itemprop="dateCreated datePublished" datetime="2017-11-06T23:29:41+08:00">2017-11-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+
+<h2 id="姓名排序"><a href="#姓名排序" class="headerlink" title="姓名排序"></a>姓名排序</h2><p>题目描述：给定 30,000 个中国人的名字，选用一种线性排序方法有效排序，要求使用内存不超过 1G。<br>想法 1：计数排序，汉字组合显然是无穷多的，无法确定元素的范围，而且可能有重名的情况，所以不能使用；<br>想法 2：使用桶排序，不好确定每个桶的元素范围，一般情况下都是假定元素限制在(0,1]；<br>想法 3：使用基数排序可以一次按名字的第 i 位的排序，如果每个桶的标志为一个汉字，那桶就太多了，如果每个桶的标志为汉字的首字母，桶够少了，但是每个桶都需要大量时间，既然是汉字，我们完全可以用汉字拼音；  </p>
+<h3 id="获得测试组"><a href="#获得测试组" class="headerlink" title="获得测试组"></a>获得测试组</h3><p>一组有 3w 行，每一行随机 2-10 个 utf-8 中文字符  </p>
+<p>从这里[1]了解到 unicode 字符的基本汉字编码范围为 4E00-9FA5，我的想法是随机生成一个 19968-40869 的 unsigned int 型数，然后编码成 utf-8 字符；  </p>
+<p>utf-8 字符可以由 unicode 字符转换而来，转换算法[2]为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">×××××××× ×××××××× -&gt; 1110×××× 10×××××× 10××××××</span><br><span class="line">1110拼上前4位</span><br><span class="line">10拼上中间6位</span><br><span class="line">10拼上后6位</span><br></pre></td></tr></table></figure>
+<p>输入到文件中</p>
+<p>源码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">﻿#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;time.h&gt;</span><br><span class="line">//中文字为3字节，第一步</span><br><span class="line">void randomname(unsigned char *name)&#123;</span><br><span class="line">    int length = random() % 8 + 2;</span><br><span class="line">    int pos;</span><br><span class="line">    for(pos = 0; pos &lt; length; pos++)&#123;</span><br><span class="line">        unsigned int a = (random() % 20902) + 19968;</span><br><span class="line">	       name[3 * pos] = (a &gt;&gt; 12) + 224;</span><br><span class="line">	       name[3 * pos + 1] = ((a &gt;&gt; 6) % 64) + 128;</span><br><span class="line">	       name[3 * pos + 2] = (a % 64) + 128;</span><br><span class="line">    &#125;</span><br><span class="line">    name[3 * pos] = &#x27;\0&#x27;;</span><br><span class="line">    printf(&quot;%s&quot;, name);</span><br><span class="line">&#125;</span><br><span class="line">void makefile(FILE *f)&#123;</span><br><span class="line">    if(f == NULL)&#123;</span><br><span class="line">        fprintf(stderr, &quot;error1&quot;);</span><br><span class="line">        exit(1);</span><br><span class="line">    &#125;</span><br><span class="line">    unsigned char name[35];</span><br><span class="line">    int count = 30000;</span><br><span class="line">    srand(time(0));</span><br><span class="line">    while(count--)&#123;</span><br><span class="line">        randomname(name);</span><br><span class="line">        if(fprintf(f, &quot;%s%c&quot;, name, &#x27;\r&#x27;) == 0)&#123;</span><br><span class="line">            fprintf(stderr, &quot;error&quot;);</span><br><span class="line">	           break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    fclose(f);</span><br><span class="line">&#125;</span><br><span class="line">int main(void)&#123;</span><br><span class="line">    FILE *f = fopen(&quot;a.txt&quot;, &quot;w&quot;);</span><br><span class="line">    makefile(f);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="转码"><a href="#转码" class="headerlink" title="转码"></a>转码</h3><p>我们希望按照拼音顺序排序，所以得先将 UTF-8 字符转换为 GB2312 编码  </p>
+<p>这里遇到了难题，我打算使用 linux 下的 iconv 进行转码，但是转出来的都是乱码，可能是对转码的工作原理还不明白。  </p>
+<p>刚开始我打算编写 C 语言代码转换 utf-8 -&gt; gb2312，但是失败了，一是因为有些字符在 gb2312 中不存在，报错：  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">C语言中出现 iconv(pattern, pin, &amp;inlen, pout, &amp;outlen) 返回-1</span><br><span class="line">命令行下出现 iconv: 未知 0 处的非法输入序列</span><br></pre></td></tr></table></figure>
+<p>二是我直接输出到了终端，结果出现了乱码：  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">你好 -&gt; ����</span><br></pre></td></tr></table></figure>
+<p>是因为终端默认使用 utf-8，这样就无法显示了。  </p>
+<p>后来使用 GBK，因为 GBK 包括 gb2312，将编码后的字符直接输出到了文件中，这样就能看到编码后的结果了  </p>
+<p>代码：  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;iconv.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">int code_convert(char *from_charset, char *to_charset, char *inbuf, size_t inlen, char *outbuf, size_t outlen)&#123;</span><br><span class="line">    iconv_t pattern;</span><br><span class="line">    char **pin = &amp;inbuf;</span><br><span class="line">    char **pout = &amp;outbuf;</span><br><span class="line">    pattern = iconv_open(to_charset, from_charset);</span><br><span class="line">    if(pattern == 0)&#123;</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    memset(outbuf, 0, outlen);</span><br><span class="line">    if(iconv(pattern, pin, &amp;inlen, pout, &amp;outlen) == -1)&#123;</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    iconv_close(pattern);</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line">#define MAXNUM 30000</span><br><span class="line">#define MAXNAME 31</span><br><span class="line">char names_utf8[MAXNUM][MAXNAME];</span><br><span class="line">char names_gb2312[MAXNUM][MAXNAME];</span><br><span class="line">void readFile(char *fileName)&#123;</span><br><span class="line">    FILE *f;</span><br><span class="line">    if((f = fopen(fileName, &quot;r&quot;)) == NULL)&#123;</span><br><span class="line">        fprintf(stderr, &quot;cant open file %s\n&quot;, fileName);</span><br><span class="line">        exit(1);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    int pos;</span><br><span class="line">    for(pos = 0; pos &lt; MAXNUM; pos++)&#123;</span><br><span class="line">        //fgets(names_utf8[pos], MAXNAME, f);fgets会保留行末尾的\r\n</span><br><span class="line">        fscanf(f, &quot;%s&quot;, names_utf8[pos]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">void convert()&#123;</span><br><span class="line">    FILE *f = fopen(&quot;b.txt&quot;, &quot;w&quot;);</span><br><span class="line">    int pos;</span><br><span class="line">    for(pos = 0; pos &lt; MAXNUM; pos++)&#123;</span><br><span class="line">        if(code_convert(&quot;utf-8&quot;, &quot;GBK&quot;, names_utf8[pos], strlen(names_utf8[pos]), names_gb2312[pos], MAXNAME) == -1)&#123;</span><br><span class="line">	           fprintf(stderr, &quot;iconv error&quot;);</span><br><span class="line">	           exit(2);</span><br><span class="line">        &#125;</span><br><span class="line">       fprintf(f, &quot;%s\r\n&quot;, names_gb2312[pos]);</span><br><span class="line">    &#125;</span><br><span class="line">    fclose(f);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这部分代码等价于以下命令：  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo iconv -f utf-8 -t GBK a.txt -o b.txt</span><br></pre></td></tr></table></figure>
+<p>起初认为像 GBK 这样的汉字编码标准会很地道地按拼音顺序来编码，但是还是太天真了，因为有多音字存在等原因，要按拼音编码是不大可能的；  </p>
+<p>最终上网找了一个汉字转拼音的程序[4]，找拼音的大致思路是预先准备好拼音及该拼音的汉字，要找一个汉字的拼音就遍历一遍找，方法比较简单只覆盖了一部分汉字，而且是线性遍历效率不高，还有个缺点就是多音字只能找到第一个；  </p>
+<h3 id="对姓名进行排序"><a href="#对姓名进行排序" class="headerlink" title="对姓名进行排序"></a>对姓名进行排序</h3><p>最后就是使用基数排序了，因为使用 utf-8 编码，所以数组中 27-29 为第 10 个汉字，24-26 为第 9 个汉字，以此类推，姓名有长有短，比如“张三”的后 8 位都不存在，默认放入 0 号桶，其他情况如果能找到该位汉字的拼音，将姓名放到对应的桶中，如果找不到，默认该汉字未编码，放入 0 号桶，这里桶其实代表 a&#x2F;an&#x2F;ang…，最后为了保证排序的稳定性，桶使用了队列实现；  </p>
+<p>代码如下所示：<br>其中<code>pinyin.h</code>是，代码如<a href="/files/%E7%AE%97%E6%B3%95/pinyin.h">这里</a>所示。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;pinyin.h&quot; //汉字-拼音</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#define P2HSIZE (sizeof(p2h) / sizeof(p2h[0]))</span><br><span class="line">int getP2Hpos(char word[])&#123;</span><br><span class="line">    if(word == NULL || word[0] == &#x27;\0&#x27;)&#123; return -1; &#125;</span><br><span class="line">    int pos;</span><br><span class="line">    char *curHzString;</span><br><span class="line">    for(pos = 0; pos &lt; P2HSIZE; pos++)&#123;</span><br><span class="line">        curHzString = p2h[pos].hz;</span><br><span class="line">        if(strstr(curHzString, word))&#123;</span><br><span class="line">            return pos;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return -1;</span><br><span class="line">&#125;</span><br><span class="line">#define MAXNUM 30000 //文件中姓名的数量</span><br><span class="line">#define MAXNAME 31 //姓名最多为10个汉字</span><br><span class="line">char *names_utf8[MAXNUM];</span><br><span class="line">/*******************************************/</span><br><span class="line">void readFile(char *fileName)&#123;</span><br><span class="line">    FILE *f;</span><br><span class="line">    if((f = fopen(fileName, &quot;r&quot;)) == NULL)&#123;</span><br><span class="line">        fprintf(stderr, &quot;cant open file %s\n&quot;, fileName);</span><br><span class="line">        exit(1);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    int pos;</span><br><span class="line">    for(pos = 0; pos &lt; MAXNUM; pos++)&#123;</span><br><span class="line">        names_utf8[pos] = (char*)malloc(MAXNAME * sizeof(char));</span><br><span class="line">        fscanf(f, &quot;%s&quot;, names_utf8[pos]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">void clearNames()&#123;</span><br><span class="line">    int pos;</span><br><span class="line">    for(pos = 0; pos &lt; MAXNUM; pos++)&#123;</span><br><span class="line">        free(names_utf8[pos]);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">/****************************************/</span><br><span class="line">typedef struct cell&#123;</span><br><span class="line">    int pos;</span><br><span class="line">    struct cell *next;</span><br><span class="line">&#125;cell;</span><br><span class="line">typedef struct bucket&#123;</span><br><span class="line">    cell *front;</span><br><span class="line">    cell *rear;</span><br><span class="line">&#125;bucket;</span><br><span class="line">int isEmpty(bucket *b)&#123;</span><br><span class="line">    return b-&gt;rear == NULL;</span><br><span class="line">&#125;</span><br><span class="line">cell *makeCell(int pos)&#123;</span><br><span class="line">    cell *c = (cell*)malloc(sizeof(cell));</span><br><span class="line">    if(c == NULL)&#123; fprintf(stderr, &quot;error&quot;); &#125;</span><br><span class="line">    c-&gt;pos = pos, c-&gt;next = NULL;</span><br><span class="line">    return c;</span><br><span class="line">&#125;</span><br><span class="line">bucket *makeBucket()&#123;</span><br><span class="line">    bucket *b = (bucket*)malloc(sizeof(bucket));</span><br><span class="line">    b-&gt;front = b-&gt;rear = NULL;</span><br><span class="line">    return b;</span><br><span class="line">&#125;</span><br><span class="line">int push(bucket *b, int pos)&#123;</span><br><span class="line">    if(b == NULL)&#123;printf(&quot;error&quot;);</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    cell *c = makeCell(pos);</span><br><span class="line">    if(isEmpty(b))&#123;</span><br><span class="line">        b-&gt;rear = b-&gt;front = c;</span><br><span class="line">    &#125;</span><br><span class="line">    else&#123;</span><br><span class="line">        b-&gt;front-&gt;next = c;</span><br><span class="line">        b-&gt;front = c;</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line">int pop(bucket *b)&#123;</span><br><span class="line">    if(isEmpty(b))&#123;</span><br><span class="line">        return -1;</span><br><span class="line">    &#125;</span><br><span class="line">    else&#123;</span><br><span class="line">        cell *rear = b-&gt;rear;</span><br><span class="line">        int pos = rear-&gt;pos;</span><br><span class="line">        b-&gt;rear = rear-&gt;next;</span><br><span class="line">        free(rear);</span><br><span class="line">        return pos;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//桶的数量就是拼音的数量，0号桶用于装找不到拼音的汉字</span><br><span class="line">#define BUCKETSNUM (P2HSIZE + 1)</span><br><span class="line">bucket *buckets[BUCKETSNUM];</span><br><span class="line">char tmp[4];</span><br><span class="line">void pushBuckets(int radix)&#123;//1 &lt;= radix &lt;= 10，表示第几个字</span><br><span class="line">    int pos, bucketId;</span><br><span class="line">    for(pos = 0; pos &lt; MAXNUM; pos++)&#123;//如果改成while(pos++ &lt; MAXNUM)会出现段错误，为什么？？</span><br><span class="line">        strncpy(tmp, names_utf8[pos] + 3 * (radix - 1), 3);</span><br><span class="line">        bucketId = getP2Hpos(tmp) + 1;</span><br><span class="line">        push(buckets[bucketId], pos);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//桶中保存的是对应姓名数组的下标</span><br><span class="line">void popBuckets()&#123;</span><br><span class="line">    char *names_tmp[MAXNUM];</span><br><span class="line">    int npos;</span><br><span class="line">    for(npos = 0; npos &lt; MAXNUM; npos++)&#123;</span><br><span class="line">        names_tmp[npos] = names_utf8[npos];</span><br><span class="line">    &#125;</span><br><span class="line">    npos = 0;</span><br><span class="line">    int bpos;</span><br><span class="line">    for(bpos = 0; bpos &lt; BUCKETSNUM; bpos++)&#123;</span><br><span class="line">        while(!isEmpty(buckets[bpos]))&#123;</span><br><span class="line">            int pos = pop(buckets[bpos]);</span><br><span class="line">            names_utf8[npos++] = names_tmp[pos];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">void initBuckets()&#123;</span><br><span class="line">    int pos;</span><br><span class="line">    for(pos = 0; pos &lt; BUCKETSNUM; pos++)&#123;</span><br><span class="line">        buckets[pos] = makeBucket();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">void clearBuckets()&#123;</span><br><span class="line">    int pos;</span><br><span class="line">    for(pos = 0; pos &lt; BUCKETSNUM; pos++)&#123;</span><br><span class="line">        while(pop(buckets[pos]) != -1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">void radixSort()&#123;</span><br><span class="line">    int radix;</span><br><span class="line">    for(radix = 10; radix &gt;= 1; radix--)&#123;</span><br><span class="line">        pushBuckets(radix);</span><br><span class="line">        popBuckets();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">void writeResult()&#123;</span><br><span class="line">    FILE *f = fopen(&quot;result.dat&quot;, &quot;w&quot;);</span><br><span class="line">    if(f == NULL)&#123; fprintf(stderr, &quot;open file failed&quot;); exit(1);&#125;</span><br><span class="line">    </span><br><span class="line">    int pos;</span><br><span class="line">    for(pos = 0; pos &lt; MAXNUM; pos++)&#123;</span><br><span class="line">        fprintf(f, &quot;%s\r\n&quot;, names_utf8[pos]);</span><br><span class="line">    &#125;</span><br><span class="line">    fclose(f);</span><br><span class="line">&#125;</span><br><span class="line">void func()&#123;</span><br><span class="line">    readFile(&quot;a.txt&quot;);</span><br><span class="line">    initBuckets();</span><br><span class="line">    radixSort();</span><br><span class="line">    writeResult();</span><br><span class="line">    clearNames();</span><br><span class="line">&#125;</span><br><span class="line">int main(void)&#123;</span><br><span class="line">    func();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h2><p>当需要排序的数据量很大，例如 100G 个人按照年龄排序，如何基于外存对这些数据排序？使用 mapreduce 等工具？  </p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="http://www.qqxiuzi.cn/zh/hanzi-unicode-bianma.php">汉字 Unicode 编码范围</a></li>
+<li><a href="www.zhihu.com/question/23374078">Unicode 和 UTF-8 有何区别？</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/jnbbwyth/article/details/6991371">linux 下 iconv()函数的用法</a></li>
+<li><a target="_blank" rel="noopener" href="http://download.csdn.net/detail/lovesoftchina/5654309">Linux C 实现 简单的 汉字转拼音</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.crifan.com/files/doc/docbook/char_encoding/release/html/char_encoding.html">字符编码详解</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/jk110333/article/details/19685127">C&#x2F;C++段错误问题排查和解决方法</a></li>
+</ol>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 

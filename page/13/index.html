@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">191</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">84</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">192</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">191</span>
+          <span class="site-state-item-count">192</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -158,7 +158,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-count">84</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -184,7 +184,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/bf77fad5.html">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/89826705.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -202,7 +202,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/bf77fad5.html" class="post-title-link" itemprop="url">自制LinuxContainer</a>
+          <a href="/89826705.html" class="post-title-link" itemprop="url">Docker 概述</a>
         </h2>
 
         <div class="post-meta-container">
@@ -242,66 +242,157 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h2><h3 id="进程和clone系统调用"><a href="#进程和clone系统调用" class="headerlink" title="进程和clone系统调用"></a>进程和clone系统调用</h3><p>进程（Process）是运行中的程序实例，又可以称为任务（Task），进程在Linux内核中使用一个PCB来表示，主要包含运行状态、信号、进程号、父进程号、运行时间累计值、正在使用的文件（文件描述符表）、本任务的局部描述符及任务状态段信息。<br>不同于fork，clone系统调用允许子进程共享部分父进程的上下文，如内存空间、文件描述符表、信号等。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/* Prototype for the glibc wrapper function */</span><br><span class="line">#define _GNU_SOURCE</span><br><span class="line">#include &lt;sched.h&gt;</span><br><span class="line">int clone(int (*fn)(void *), void *child_stack,</span><br><span class="line">          int flags, void *arg, ...</span><br><span class="line">          /* pid_t *ptid, void *newtls, pid_t *ctid */ );</span><br><span class="line">/* For the prototype of the raw system call, see NOTES */</span><br></pre></td></tr></table></figure>
-<p><code>clone</code>常用于实现<strong>多线程</strong>，因为子进程和父进程可以共享内存。<br>不同于<code>fork</code>创建的子进程会从调用的位置开始执行，<code>clone</code>创建的子进程会执行实参传入的<code>fn(arg)</code>，并将实参中的<code>arg</code>传入。<br>当<code>fn(arg)</code>返回后子进程页会终止，返回值即为子进程的exit code，当然子进程在遇到显式的<code>exit</code>调用或终止信号也会立刻退出。<br>子进程与父进程共享内存，它们不能（也不应该）使用同一个栈，因此必须使用<code>child_stack</code>参数指定子进程使用的栈所在的内存空间。栈是从上向下生长的，因此最好指定最顶层的一个地址。<br><code>flags</code>的低位包含子进程退出了发送给父进程的信号，If this signal is specified as anything other than SIGCHLD, then the parent process must specify the __WALL or __WCLONE options when waiting for the child with wait(2). If no signal is specified, then the parent process is not signaled when the child terminates.<br><code>flags</code> 还可以指定子进程和父进程间可以共享的内容，具体内容见<code>man clone</code>。</p>
-<h3 id="虚拟网络设备和veth-pair"><a href="#虚拟网络设备和veth-pair" class="headerlink" title="虚拟网络设备和veth pair"></a>虚拟网络设备和veth pair</h3><p>Linux container 中用到一个叫做veth的东西，这是一种新的设备，专门为 container 所建。veth 从名字上来看是 Virtual ETHernet 的缩写，它的作用很简单，就是要把从一个 network namespace 发出的数据包转发到另一个 namespace。veth 设备是成对的，一个是 container 之中，另一个在 container 之外，即在真实机器上能看到的。 </p>
-<h4 id="veth设备实现原理"><a href="#veth设备实现原理" class="headerlink" title="veth设备实现原理"></a>veth设备实现原理</h4><p>VETH设备总是成对出现，送到一端请求发送的数据总是从另一端以请求接受的形式出现。创建并配置正确后，向其一端输入数据，VETH会改变数据的方向并将其送入内核网络子系统，完成数据的注入，而在另一端则能读到此数据。（Namespace，其中往veth设备上任意一端上RX到的数据，都会在另一端上以TX的方式发送出去）veth工作在L2数据链路层，veth-pair设备在转发数据包过程中并不串改数据包内容。<br>这里写图片描述<br>显然，仅有veth-pair设备，容器是无法访问网络的。因为容器发出的数据包，实质上直接进入了veth1设备的协议栈里。如果容器需要访问网络，需要使用bridge等技术，将veth1接收到的数据包通过某种方式转发出去。</p>
-<blockquote>
-<p>VETH: Typically used when you are trying to connect two entities which would want to “get hold of” (for lack of better phrase) an interface to forward&#x2F;receive frames. These entities could be containers&#x2F;bridges&#x2F;ovs-switch etc. Say you want to connect a docker&#x2F;lxc container to OVS. You can create a veth pair and push the first interface to the docker&#x2F;lxc (say, as a phys interface) and push the other interface to OVS. You cannot do this with TAP.</p>
-</blockquote>
-<h4 id="veth设备特点"><a href="#veth设备特点" class="headerlink" title="veth设备特点"></a>veth设备特点</h4><ul>
-<li>veth和其它的网络设备都一样，一端连接的是内核协议栈</li>
-<li>veth设备是成对出现的，另一端两个设备彼此相连</li>
-<li>一个设备收到协议栈的数据发送请求后，会将数据发送到另一个设备上去</li>
+          <span id="more"></span>
+
+<h2 id="Docker-是什么"><a href="#Docker-是什么" class="headerlink" title="Docker 是什么"></a>Docker 是什么</h2><ul>
+<li>Docker 是开源应用容器引擎，轻量级容器技术。</li>
+<li>基于 Go 语言，并遵循 Apache2.0 协议开源。</li>
+<li>Docker 可以让开发者打包他们的应用、依赖包及配置文件打包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 系统上，也可以实现虚拟化。</li>
+<li>容器完全使用沙箱技术，相互之间不会有任何接口。</li>
+<li>类似于虚拟机技术（vmware、vitural），但 docker 直接运行在操作系统（Linux）上，而不是运行在虚拟机中，速度快，性能开销极低。<br>Docker 支持将软件编译成一个<strong>镜像</strong>，然后在镜像中对各种软件做好配置，将镜像发布出去（Docker Hub），其他使用者可以直接使用这个镜像。 运行中的这个镜像称为容器，容器启动是非常快速的。类似 windows 里面的 ghost 操 作系统，安装好后什么都有了。<br>docker<strong>容器</strong>可以理解为在沙盒中运行的进程。这个沙盒包含了该进程运行所必须的资源，包括文件系统、系统类库、shell 环境等等。但这个沙盒默认是不会运行任何程序的。你需要在沙盒中运行一个进程来启动某一个容器。这个进程是该容器的唯一进程，所以当该进程结束的时候，容器也会完全的停止。</li>
 </ul>
-<h4 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 创建veth</span><br><span class="line">ip link add name veth0 type veth0 peer name veth1</span><br></pre></td></tr></table></figure>
-<p>其他细节见Linux篇《虚拟化-网络设备》</p>
-<h3 id="资源隔离、namespace和cgroup"><a href="#资源隔离、namespace和cgroup" class="headerlink" title="资源隔离、namespace和cgroup"></a>资源隔离、namespace和cgroup</h3><p><strong>namespace</strong>的主要作用是对两个系统内的标识符的命名进行隔离，namespace有以下几种。<br><img src="/imgs/Docker/Linux-namespace%E7%A7%8D%E7%B1%BB.jpg" alt="Linux-namespace种类" title="Linux-namespace种类"><br>这几个flag 可以在调用clone进行进程创建的时候作为参数传入，从而实现namespace的隔离，从这个角度来说，container主要是进程角度的隔离，而不是传统的虚拟机（一些虚拟机实现同样是基于对操作系统层的虚拟化，所以应该和container是类似的，比如普通vmware），因为container底层用的是同一个内核来调度。</p>
-<p><strong>cgroup</strong> 是linux 内核的另外一个控制和隔离进程的特性，他分为cpu ，memory，net，io等几个子系统，从而实现对进程cpu，内存，磁盘，网络等资源使用的控制。</p>
-<h3 id="虚拟文件系统（VFS）和chroot"><a href="#虚拟文件系统（VFS）和chroot" class="headerlink" title="虚拟文件系统（VFS）和chroot"></a>虚拟文件系统（VFS）和chroot</h3><p>将根目录设置成另外一个目录</p>
-<h2 id="自制容器"><a href="#自制容器" class="headerlink" title="自制容器"></a>自制容器</h2><p>docker 只是一个工具，container 技术的核心还是linux 内核的cgroup + chroot + namespace 技术。</p>
-<h3 id="制作image"><a href="#制作image" class="headerlink" title="制作image"></a>制作image</h3><p>制作自己容器，需要一个image ，可以从网上下一个，也可以自己制作，制作很简单，新装一个操作系统，安装一些需要用到的软件包，然后用tar 制作 &#x2F; 目录下的压缩包，去掉一些虚拟文件系统的文件，本文用的是自己制作的centos 6.5 的image。</p>
-<h3 id="容器实现过程"><a href="#容器实现过程" class="headerlink" title="容器实现过程"></a>容器实现过程</h3><p>容器实现过程可以归纳为</p>
+<h3 id="常见应用场景"><a href="#常见应用场景" class="headerlink" title="常见应用场景"></a>常见应用场景</h3><ul>
+<li>Web 应用的自动化打包和发布。</li>
+<li>自动化测试和持续集成、发布。</li>
+<li>在服务型环境中部署和调整数据库或其他的后台应用。</li>
+<li>从头编译或者扩展现有的 OpenShift 或 Cloud Foundry 平台来搭建自己的 PaaS 环境。</li>
+</ul>
+<h3 id="Docker-特点"><a href="#Docker-特点" class="headerlink" title="Docker 特点"></a>Docker 特点</h3><p>Docker 是一个基于容器的应用开发、部署和运行平台，它为开发者和系统管理员们提供了一种新式的应用部署方式，具有灵活（最复杂的应用都能容器化）、轻量（容器共享一个服务器内核）、可替换的（可以在容器运行过程中更新服务器）、可移植的（本地、云上皆可）、可伸缩的（可以轻松地进行复制）、可栈化（指的是可以将多个服务部署在一起，比如用 docker-compose）的特性。<br>Docker is a platform for developers and sysadmins to develop, deploy, and run applications with containers. The use of Linux containers to deploy applications is called containerization. Containers are not new, but their use for easily deploying applications is.<br>Containerization is increasingly popular because containers are:</p>
+<ul>
+<li>Flexible: Even the most complex applications can be containerized.</li>
+<li>Lightweight: Containers leverage and share the host kernel.</li>
+<li>Interchangeable: You can deploy updates and upgrades on-the-fly.</li>
+<li>Portable: You can build locally, deploy to the cloud, and run anywhere.</li>
+<li>Scalable: You can increase and automatically distribute container replicas.</li>
+<li>Stackable: You can stack services vertically and on-the-fly.</li>
+</ul>
+<h3 id="Docker-优势"><a href="#Docker-优势" class="headerlink" title="Docker 优势"></a>Docker 优势</h3><p>容器技术相比虚拟机，主要优势在于性能上，其性能优势可以说达到了一个量级的差距。根据 Boden Russell 在 OpenStack 上做的一次基准测试报告，一个 KVM 实例的平均内存消耗有 292MB，而一个 docker 实例的平均内存消耗在 49MB 左右。在 CPU overhead 和启动时间方面，docker 基本都比 KVM 有一个量级的优势。<br>目前，一个 AWS 上的 micro 实例，每小时的按需使用成本大约在一美分多一些。如果用 docker 来提供实例，那么每小时的按需使用成本很可能会做到 0.1 美分。这一点对于云经济至关重要。正如经济学家 William Stanley Jevons 的理论所呈现的，随着商品的价格越便宜，人们使用它们的场景和频率会越来越多。</p>
 <ol>
-<li>用clone系统调用创建子进程，传入namespace的那几个参数，实现namespace的隔离；</li>
-<li>父进程中创建veth pair ，一个veth在自己的namespace，将另一个设置为子进程的namespace，实现container和宿主机的网络通信；</li>
-<li>父进程创建cgroup memory和cpuset子系统，将子进程attach到cgroup子系统上，实现container 的资源限制和隔离；</li>
-<li>子进程在自己的namespace里，设置主机名，mount proc虚拟文件系统，设置veth ip，chroot到centos 6镜像的位置， 最终将进程镜像替换成&#x2F;bin&#x2F;bash；</li>
-<li>父进程调用waitpid 等待子进程退出。</li>
+<li>container 是一种部署单元，用户可以自由决定部署的范围（dev、test、production），即组织容器的方式，换句话说，容器可以简化工作流和软件的开发、部署生命周期；                         </li>
+<li>可以从传统的虚拟机环境平滑过渡到裸机生产环境内；<br>保证了线上线下环境的一致性。我们在线下的开发环境使用 Docker 构建好 weaapp 的镜像后，可以直接在线上使用一个镜像，保证了线上线下环境的一致性，再也不会有在线下开发环境中运行正常，而部署到线上各种错误了。</li>
+<li>实现了模块化，提高了复用性。<br>我们可以将数据库和 Tomcat 运行在不同的容器中，从某种角度来说，这也降低了模块之间的耦合性，便于拓展。比如我们要把 MySQL 替换为 oracle，只需要再构建一个 oracle 镜像并启动与 Tomcat 连接即可，非常方便。对于我们构建的镜像，在其他 app 中直接拿来用就可以了，不必重复劳动。</li>
+<li>提高整体效率；<br>极大的简化了 webapp 的部署流程。在不使用 Docker 时，我们部署 app 时，要先搭建好 app 运行所需环境，这个过程做过的人都知道多么枯燥繁琐，一不小心还出错。而有了 Docker，我们只需要直接构建一个我们 webapp 的镜像然后将其运行即可，无论在多少台服务器中部署，都是如此。再比如，使用 Docker 之前要搭建一个 WordPress 对于新手来说是有些困难的，而有了 Docker，只需要从 DockerHub 上 pull 一个 WordPress 镜像并启动就可以了，非常非常方便。</li>
+<li>实现了虚拟化，提高硬件利用率，有了 Docker，我们可以在一台服务器上运行很多 webapp，充分利用闲置资源。<br>这时候，服务器的操作系统就类似于货轮，而一个个 Docker 容器就相当于货轮上的一个个集装箱。现在大热的云服务市场，不少就用了 Docker。举个例子来说，现在我们有一台操作系统为 Ubuntu14.04 的服务器，我们构建不同版本的 ubuntu 镜像并启动，并且为不同的用户分配不同的容器。这样，用一台服务器可以虚拟出 n 个运行着不同操作系统的虚拟服务器，而对于用户来说，这些是透明的––用户则认为自己拥有一台完整的服务器。据我推测，阿里云的服务器就是这么干的。这充分利用了闲置的硬件资源。</li>
+<li>Fast<ul>
+<li>传统方式慢，传统情况下，应用服务器扩容缩容步骤繁多流程冗长,从服务器申请、初始化、应用部署、测试、加入退出集群、服务器下线。比如，业务遇到突发的流量高峰时,无法进行快速的扩容,当准备好的时候可能流量高峰已经过去了。</li>
+<li>传统不稳定，代码上线发布历经多个环境,在某个环境中测试时修复了 bug,代码等无法及时同步各环境中,提升了服务上线的风险。</li>
+<li>Runtime performance at near bare metal speeds (typically 97+ percent or bare metal – a few ticks shaven off for bean counters).</li>
+<li>Management operations (boot, stop, start, reboot, etc.) in seconds or milliseconds.</li>
+</ul>
+</li>
+<li>Agile<ul>
+<li>VM-like agility – it’s still “virtualization”.</li>
+<li>Seamlessly move between virtual and bare metal environments permitting new development workflows which reduce costs (e.g. develop on VMs and move to bare metal in the “click of a button” for production).</li>
+</ul>
+</li>
+<li>Flexible<ul>
+<li>Containerize a “system” (OS less the kernel).</li>
+<li>Containerize “application(s)”.</li>
+</ul>
+</li>
+<li>Lightweight<ul>
+<li>Just enough Operating System (JeOS); include only what you need reducing image and container bloat.</li>
+<li>Minimal per container penalty which equates to greater density and hence greater returns on existing assets – imagine packing 100s or 1000s of containers on a single host node.</li>
+</ul>
+</li>
+<li>Inexpensive<ul>
+<li>Open source – free – lower TCO.</li>
+<li>Supported with out-of-the-box modern Linux kernels.</li>
+</ul>
+</li>
+<li>Ecosystem<ul>
+<li>Growing in popularity – just checkout the google trends for docker or LXC.</li>
+<li>Vibrant community and numerous 3rd party applications (1000s of prebuilt images on docker index and 100s of open source apps on github or other public sources).</li>
+</ul>
+</li>
+<li>Cloudy<ul>
+<li>Various Cloud management frameworks provide support for creating and managing Linux Containers – including <strong>OpenStack</strong> my personal favorite.</li>
+</ul>
+</li>
 </ol>
-<h3 id="容器实现"><a href="#容器实现" class="headerlink" title="容器实现"></a>容器实现</h3><p>见下面的《源码》部分</p>
-<h3 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h3><p>在解压好镜像后，该镜像根目录下可能还没有必须的命令文件及其依赖的动态链接库，主要是由于用<code>chroot</code>改变根目录后，原来路径下的一些文件在当前镜像内都找不到了，一般安装完操作系统后这些文件应该都安装好了，如果需要可以<a target="_blank" rel="noopener" href="https://ubuntuforums.org/showthread.php?t=1434781">通过手动移动来解决</a>。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ldd /bin/bash</span><br><span class="line">cp --parents /lib/x86_64-linux-gnu/libtinfo.so.5 ./</span><br></pre></td></tr></table></figure>
-<p>编译执行容器代码。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc lxc_demo.c -o lxc_demo -lcgroup</span><br><span class="line">sudo ./lxc_demo</span><br></pre></td></tr></table></figure>
-<p>接下来分别在宿主机和容器内执行命令，可以得出一些结论：</p>
+<h3 id="Docker-劣势"><a href="#Docker-劣势" class="headerlink" title="Docker 劣势"></a>Docker 劣势</h3><p>既然容器技术有如此大的优势，为什么基于容器的云现在还没有成为主流？我认为主要还是安全性的问题。虚拟机可以利用来自硬件的信任机制来提升安全性，这些机制在 Intel Virtualization Technology Evolution 的演示中有详细的介绍。即使如此，虚拟机仍然被视为相对不安全，比如前一段时间 Xen（半虚拟化，在硬件层和 OS 层之间的虚拟层）爆出一个漏洞，导致 AWS 不得不大量升级自己的主机。</p>
 <ol>
-<li>容器和宿主机镜像可能不同，但是内核相同；<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># （宿主机内）</span><br><span class="line">hgc@hgc-X555LD:~$ uname -r</span><br><span class="line">4.13.0-45-generic</span><br><span class="line"></span><br><span class="line"># （容器内）</span><br><span class="line">bash-4.4# uname -r</span><br><span class="line">4.13.0-45-generic</span><br></pre></td></tr></table></figure></li>
-<li>根目录下的文件不同；<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls /</span><br></pre></td></tr></table></figure></li>
-<li>hostname，宿主机内为用户设定的主机名，容器内为mydocker，说明UTS namespace隔离成功；<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname</span><br></pre></td></tr></table></figure></li>
-<li>网络方面有回环网络卡lo和veth1，veth1 169.254.1.2 能ping 通veth0的地址（宿主机上的veth）169.254.2.1，如果在外面加iptables 做nat 转换的话，container里面还可以和外面通信。我们看不到外面宿主机的eth0 和 eth1，说明container 的network namespace 隔离成功。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"># （宿主机内）</span><br><span class="line">$ ip addr</span><br><span class="line">......</span><br><span class="line">19: veth0@if18: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000</span><br><span class="line">    link/ether 46:c0:eb:a8:34:8d brd ff:ff:ff:ff:ff:ff link-netnsid 0</span><br><span class="line">    inet 169.254.1.1/30 scope global veth0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::44c0:ebff:fea8:348d/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line"></span><br><span class="line"># （容器内）网络方面有回环网络卡lo和veth1</span><br><span class="line">bash-4.4# ip addr</span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1/128 scope host </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">18: veth1@if19: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000</span><br><span class="line">    link/ether ce:04:78:b6:5a:2d brd ff:ff:ff:ff:ff:ff link-netnsid 0</span><br><span class="line">    inet 169.254.1.2/30 scope global veth1</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::cc04:78ff:feb6:5a2d/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line"># 尝试ping宿主机上的veth0设备</span><br><span class="line">bash-4.4# ping 169.254.1.1</span><br><span class="line">PING 169.254.1.1 (169.254.1.1) 56(84) bytes of data.</span><br><span class="line">64 bytes from 169.254.1.1: icmp_seq=1 ttl=64 time=0.101 ms</span><br><span class="line">......</span><br></pre></td></tr></table></figure></li>
-<li>目前container 里面只有&#x2F;bin&#x2F;bash , 且进程号为 1，不是我们常见的init进程，或者systemd 。因为&#x2F;bin&#x2F;bash 为该namespace 下的第一个进程，说明我们的pid namespace隔离成功。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 查看进程</span><br><span class="line">bash-4.4# ps -aux </span><br><span class="line">USER PID %CPU %MEM VSZ RSS TTY STAT START TIME COMMAND</span><br><span class="line">0 1 0.0 0.0 9924 3264 ? S 01:02 0:00 /bin/bash</span><br><span class="line">0 8 0.0 0.0 30524 2820 ? R+ 01:02 0:00 ps -aux</span><br></pre></td></tr></table></figure></li>
-<li>mount 显示挂载的文件系统，和宿主机的不一样，说明mount namespace隔离成功。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 查看挂载情况（这里有点问题，原文里还有rootfs、sysfs等）</span><br><span class="line">bash-4.4# mount</span><br><span class="line">proc on /proc type proc (rw,relatime)</span><br><span class="line">......</span><br></pre></td></tr></table></figure></li>
-<li>就cgroup的隔离情况来说，在cgroup文件系统内，memory的限制是我们设置的512M，cpu使用的是0-1号。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">hgc@hgc-X555LD:~/tools/virtualmachines/ubuntu-16.04$ cd /sys/fs/cgroup/memory/mydocker_1530580167/</span><br><span class="line">hgc@hgc-X555LD:/sys/fs/cgroup/memory/mydocker_1530580167$ cat memory.limit_in_bytes </span><br><span class="line">536870912</span><br><span class="line">hgc@hgc-X555LD:/sys/fs/cgroup/memory/mydocker_1530580167$ cd /sys/fs/cgroup/cpuset/mydocker_1530580167/</span><br><span class="line">hgc@hgc-X555LD:/sys/fs/cgroup/cpuset/mydocker_1530580167$ cat cpuset.cpus </span><br><span class="line">0-1</span><br><span class="line">hgc@hgc-X555LD:/sys/fs/cgroup/cpuset/mydocker_1530580167$ cat cpuset.mems </span><br><span class="line">0</span><br><span class="line">hgc@hgc-X555LD:/sys/fs/cgroup/cpuset/mydocker_1530580167$ top</span><br></pre></td></tr></table></figure>
-从下面执行情况可以看出，只有0号和1号cpu idle为0 ，其他的都接近100%，说明cgroup隔离效果是很好的。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"># （宿主机内）执行top命令并点击1查看CPU负载情况</span><br><span class="line">hgc@hgc-X555LD:/sys/fs/cgroup/cpuset/mydocker_1530580167$ top</span><br><span class="line">top - 10:02:22 up 13:19, 1 user, load average: 0.74, 0.68, 0.72</span><br><span class="line">Tasks: 348 total, 1 running, 346 sleeping, 0 stopped, 1 zombi</span><br><span class="line">%Cpu0 : 5.3 us, 2.3 sy, 0.0 ni, 91.7 id, 0.0 wa, 0.0 hi, 0.7</span><br><span class="line">%Cpu1 : 8.3 us, 12.6 sy, 0.0 ni, 78.8 id, 0.0 wa, 0.0 hi, 0.3</span><br><span class="line">%Cpu2 : 4.0 us, 2.0 sy, 0.0 ni, 93.9 id, 0.0 wa, 0.0 hi, 0.0</span><br><span class="line">%Cpu3 : 3.0 us, 2.4 sy, 0.0 ni, 94.6 id, 0.0 wa, 0.0 hi, 0.0</span><br><span class="line">%Cpu4 : 7.1 us, 5.7 sy, 0.0 ni, 87.2 id, 0.0 wa, 0.0 hi, 0.0</span><br><span class="line">%Cpu5 : 4.4 us, 1.4 sy, 0.0 ni, 93.9 id, 0.3 wa, 0.0 hi, 0.0</span><br><span class="line">%Cpu6 : 3.3 us, 2.7 sy, 0.0 ni, 93.7 id, 0.0 wa, 0.0 hi, 0.3</span><br><span class="line">%Cpu7 : 3.7 us, 1.3 sy, 0.0 ni, 94.6 id, 0.0 wa, 0.0 hi, 0.3</span><br><span class="line">......</span><br><span class="line"></span><br><span class="line"># （容器内）执行多个死循环任务，强行使CPU忙碌</span><br><span class="line">bash-4.4# while true; do echo &gt; /dev/null; done &amp;                   </span><br><span class="line">[1] 10</span><br><span class="line">bash-4.4# while true; do echo &gt; /dev/null; done &amp;</span><br><span class="line">[2] 11</span><br><span class="line">bash-4.4# while true; do echo &gt; /dev/null; done &amp;</span><br><span class="line">[3] 12</span><br><span class="line">bash-4.4# while true; do echo &gt; /dev/null; done &amp;</span><br><span class="line">[4] 13</span><br><span class="line">bash-4.4# while true; do echo &gt; /dev/null; done &amp;</span><br><span class="line">[5] 14</span><br><span class="line">bash-4.4# while true; do echo &gt; /dev/null; done &amp;</span><br><span class="line">[6] 15</span><br><span class="line">bash-4.4# while true; do echo &gt; /dev/null; done &amp;</span><br><span class="line">[7] 16</span><br><span class="line"></span><br><span class="line"># （宿主机内）同样是执行top命令并点击1，可以看到头两个CPU的负载情况有了明显变化</span><br><span class="line">hgc@hgc-X555LD:/sys/fs/cgroup/cpuset/mydocker_1530580167$ top</span><br><span class="line">top - 10:05:05 up 13:22, 1 user, load average: 4.25, 1.68, 1.06</span><br><span class="line">Tasks: 355 total, 1 running, 353 sleeping, 0 stopped, 1 zombi</span><br><span class="line">%Cpu0 : 9.9 us, 34.8 sy, 0.0 ni, 53.2 id, 2.0 wa, 0.0 hi, 0.0</span><br><span class="line">%Cpu1 : 14.4 us, 43.6 sy, 0.0 ni, 40.2 id, 1.7 wa, 0.0 hi, 0.0</span><br><span class="line">%Cpu2 : 2.2 us, 0.6 sy, 0.0 ni, 92.0 id, 0.0 wa, 0.0 hi, 5.1</span><br><span class="line">%Cpu3 : 2.6 us, 1.3 sy, 0.0 ni, 95.0 id, 0.0 wa, 0.0 hi, 1.0</span><br><span class="line">%Cpu4 : 6.4 us, 10.0 sy, 0.0 ni, 83.6 id, 0.0 wa, 0.0 hi, 0.0</span><br><span class="line">%Cpu5 : 2.3 us, 1.2 sy, 0.0 ni, 95.3 id, 0.0 wa, 0.0 hi, 1.2</span><br><span class="line">%Cpu6 : 1.7 us, 0.7 sy, 0.0 ni, 97.6 id, 0.0 wa, 0.0 hi, 0.0</span><br><span class="line">%Cpu7 : 2.0 us, 2.7 sy, 0.0 ni, 95.3 id, 0.0 wa, 0.0 hi, 0.0</span><br><span class="line">......</span><br></pre></td></tr></table></figure></li>
+<li>Docker Hub（镜像管理中心）不稳定<br>第一个就是很重要的 Docker Hub 的访问问题。我们知道国内访问一些海外的网站有时候会有稳定性的问题。Docker Hub 在我们的实践中就经常出现访问不了的问题。但这种访问的问题并不是持续的，而是时有时无。由于大量的成熟 Docker 映像（image）都需要从 Docker Hub 下载，很多脚本在执行到这一步时，结果很难预料。一种方案是修改缺省的 Docker Hub 地址，改为采用国内的一些镜像（mirror）。但是在没有官方认证的成熟稳定的镜像网站时，Docker 映像的更新不容易得到保证；另一种方案是自行搭建自己的 Docker Hub。但是一来这样就失去了强大的社区贡献的映像资源，二来要花费很多精力来保持更新和同步。容器技术带来的简单化，又因为映像管理而复杂化，得不偿失。</li>
+<li>运维难度大<br>第二个就是容器技术的资源管理和运维。因为容器技术本身更适于解决大规模应用场景，所以通常都是集群基础上的部署、运维，但是目前对这一系列任务的自动化处理尚无统一的或者标准的框架。如果要让 Docker 真正在实际环境中发挥最大的效能并且易于维护，就需要有很成熟稳定的资源编排（orchestration）、资源调度（scheduling）和部署（deployment）的支持，但是这方面暂时还没有很明显的最佳解决方案，所以大多数人都在摸索和搭建自己的解决方案。我们在微软开放技术内部也是在一些开源技术的基础之上，自行开发了容器在微软公有云 Azure 上的资源管理调度和部署运维的系统，传统上的开发运维和持续集成，持续部署的技术，比如 Chef，Puppet，Jenkins 等，都可以很容易的与容器技术一起工作。</li>
 </ol>
-<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br></pre></td><td class="code"><pre><span class="line">#define _GNU_SOURCE</span><br><span class="line"></span><br><span class="line">#include &lt;sys/types.h&gt;</span><br><span class="line">#include &lt;sys/wait.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;sched.h&gt;</span><br><span class="line">#include &lt;signal.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line">#include &lt;errno.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;sys/mount.h&gt;</span><br><span class="line">// 必须先安装：sudo apt-get install libcgroup-dev</span><br><span class="line">#include &lt;libcgroup.h&gt;</span><br><span class="line">#include &lt;time.h&gt;</span><br><span class="line">#include &lt;signal.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">#include &lt;fcntl.h&gt;</span><br><span class="line"></span><br><span class="line">#define STACK_SIZE (1024 * 1024)</span><br><span class="line">#define MEMORY_LIMIT (512*1024*1024)</span><br><span class="line"></span><br><span class="line">//const char *rootfs = &quot;/data1/centos6/rootfs/&quot;; //centos6 镜像位置</span><br><span class="line">//const char *rootfs = &quot;/home/hgc/tools/virtualmachines/ubuntu-16.04/&quot;; // 镜像位置</span><br><span class="line">//const char *hostname = &quot;mydocker&quot;; //container 主机名</span><br><span class="line">static char child_stack[STACK_SIZE];</span><br><span class="line">//char *const child_args[] = &#123;</span><br><span class="line">//    &quot;/bin/bash&quot;,</span><br><span class="line">//    NULL</span><br><span class="line">//&#125;;</span><br><span class="line">int pipe_fd[2]; //父子进程同步</span><br><span class="line"></span><br><span class="line">int child_main(void *args) &#123;</span><br><span class="line">  char c;</span><br><span class="line">  // TODO:子进程里无法使用全局变量rootfs和hostname</span><br><span class="line">  // 镜像位置</span><br><span class="line">  const char *rootfs = &quot;/home/hgc/tools/virtualmachines/ubuntu-16.04/&quot;;</span><br><span class="line">  // container 主机名</span><br><span class="line">  const char *hostname = &quot;mydocker&quot;;</span><br><span class="line">  // 在子进程（容器）内执行的任务</span><br><span class="line">  // TODO:因为chroot改变了根目录的位置，所以在保证目标命令存在容器内的基础上（这里是/bin/bash），</span><br><span class="line">  // TODO:必须保证该命令依赖的资源同样存在于容器内（动态链接库，使用ldd查看）</span><br><span class="line">  char *const child_args[] = &#123;</span><br><span class="line">      &quot;/bin/bash&quot;,</span><br><span class="line">      0</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  printf(&quot;In child process(container)\n&quot;);</span><br><span class="line">  chroot(rootfs); //用chroot 切换根目录</span><br><span class="line">  if (errno != 0) &#123;</span><br><span class="line">    perror(&quot;chroot()&quot;);</span><br><span class="line">    exit(1);</span><br><span class="line">  &#125;</span><br><span class="line">  // TODO:这里不能使用sizeof</span><br><span class="line">  //clone 调用中的 CLONE_NEWUTS起隔离主机名和域名的作用</span><br><span class="line">  sethostname(hostname, strlen(hostname));</span><br><span class="line">  if (errno != 0) &#123;</span><br><span class="line">    perror(&quot;sethostname()!&quot;);</span><br><span class="line">    exit(1);</span><br><span class="line">  &#125;</span><br><span class="line">  //挂载proc子系统，CLONE_NEWNS 起隔离文件系统作用</span><br><span class="line">  // 需要在rootfs目录下创建proc目录</span><br><span class="line">  mount(&quot;proc&quot;, &quot;/proc&quot;, &quot;proc&quot;, 0, NULL);</span><br><span class="line">  if (errno != 0) &#123;</span><br><span class="line">    perror(&quot;Mount(proc)&quot;);</span><br><span class="line">    exit(1);</span><br><span class="line">  &#125;</span><br><span class="line">  //切换的根目录</span><br><span class="line">  chdir(&quot;/&quot;);</span><br><span class="line">  close(pipe_fd[1]);</span><br><span class="line">  read(pipe_fd[0], &amp;c, 1);</span><br><span class="line">  //设置veth1 网络</span><br><span class="line">  system(&quot;ip link set lo up&quot;);</span><br><span class="line">  system(&quot;ip link set veth1 up&quot;);</span><br><span class="line">  system(&quot;ip addr add 169.254.1.2/30 dev veth1&quot;);</span><br><span class="line">  //将子进程的镜像替换成bash</span><br><span class="line">  printf(&quot;[%s]\n&quot;, child_args[0]);</span><br><span class="line">  if (execv(child_args[0], child_args) == -1) &#123;</span><br><span class="line">    perror(&quot;execv(path, argv)&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  return 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct cgroup *cgroup_control(pid_t pid) &#123;</span><br><span class="line">  struct cgroup *cgroup = NULL;</span><br><span class="line">  int ret;</span><br><span class="line">  ret = cgroup_init();</span><br><span class="line">  char *cgname = malloc(19 * sizeof(char));</span><br><span class="line">  if (ret) &#123;</span><br><span class="line">    printf(&quot;error occurs while init cgroup.\n&quot;);</span><br><span class="line">    return NULL;</span><br><span class="line">  &#125;</span><br><span class="line">  time_t now_time = time(NULL);</span><br><span class="line">  sprintf(cgname, &quot;mydocker_%d&quot;, (int) now_time);</span><br><span class="line">  printf(&quot;%s\n&quot;, cgname);</span><br><span class="line">  cgroup = cgroup_new_cgroup(cgname);</span><br><span class="line">  if (!cgroup) &#123;</span><br><span class="line">    ret = ECGFAIL;</span><br><span class="line">    printf(&quot;Error new cgroup%s\n&quot;, cgroup_strerror(ret));</span><br><span class="line">    goto out;</span><br><span class="line">  &#125;</span><br><span class="line">  //添加cgroup memory 和 cpuset子系统</span><br><span class="line">  struct cgroup_controller *cgc = cgroup_add_controller(cgroup, &quot;memory&quot;);</span><br><span class="line">  struct cgroup_controller *cgc_cpuset = cgroup_add_controller(cgroup, &quot;cpuset&quot;);</span><br><span class="line">  if (!cgc || !cgc_cpuset) &#123;</span><br><span class="line">    ret = ECGINVAL;</span><br><span class="line">    printf(&quot;Error add controller %s\n&quot;, cgroup_strerror(ret));</span><br><span class="line">    goto out;</span><br><span class="line">  &#125;</span><br><span class="line">  // 内存限制  512M</span><br><span class="line">  if (cgroup_add_value_uint64(cgc, &quot;memory.limit_in_bytes&quot;, MEMORY_LIMIT)) &#123;</span><br><span class="line">    printf(&quot;Error limit memory.\n&quot;);</span><br><span class="line">    goto out;</span><br><span class="line">  &#125;</span><br><span class="line">  //限制只能使用0和1号cpu</span><br><span class="line">  if (cgroup_add_value_string(cgc_cpuset, &quot;cpuset.cpus&quot;, &quot;0-1&quot;)) &#123;</span><br><span class="line">    printf(&quot;Error limit cpuset cpus.\n&quot;);</span><br><span class="line">    goto out;</span><br><span class="line">  &#125;</span><br><span class="line">  //限制只能使用0和1块内存</span><br><span class="line">  // TODO:使用0-1作为参数会报错“Invalid argument”</span><br><span class="line">  if (cgroup_add_value_string(cgc_cpuset, &quot;cpuset.mems&quot;, &quot;0&quot;)) &#123;</span><br><span class="line">    printf(&quot;Error limit cpuset mems.\n&quot;);</span><br><span class="line">    goto out;</span><br><span class="line">  &#125;</span><br><span class="line">  ret = cgroup_create_cgroup(cgroup, 0);</span><br><span class="line">  if (ret) &#123;</span><br><span class="line">    printf(&quot;Error create cgroup%s\n&quot;, cgroup_strerror(ret));</span><br><span class="line">    goto out;</span><br><span class="line">  &#125;</span><br><span class="line">  ret = cgroup_attach_task_pid(cgroup, pid);</span><br><span class="line">  if (ret) &#123;</span><br><span class="line">    printf(&quot;Error attach_task_pid %s\n&quot;, cgroup_strerror(ret));</span><br><span class="line">    goto out;</span><br><span class="line">  &#125;</span><br><span class="line">  return cgroup;</span><br><span class="line">  out:</span><br><span class="line">  if (cgroup) &#123;</span><br><span class="line">    cgroup_delete_cgroup(cgroup, 0);</span><br><span class="line">    cgroup_free(&amp;cgroup);</span><br><span class="line">  &#125;</span><br><span class="line">  return NULL;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">  char *cmd;</span><br><span class="line">  printf(&quot;main process: \n&quot;);</span><br><span class="line">  pipe(pipe_fd);</span><br><span class="line">  if (errno != 0) &#123;</span><br><span class="line">    perror(&quot;pipe()&quot;);</span><br><span class="line">    exit(1);</span><br><span class="line">  &#125;</span><br><span class="line">  // 调用clone创建子进程，传入namespace的几个flag参数，实现namespace的隔离</span><br><span class="line">  // 子进程执行child_main函数，其堆栈空间使用child_stack参数指定</span><br><span class="line">  // clone与线程的实现息息相关：http://www.xuebuyuan.com/1422353.html</span><br><span class="line">  int child_pid = clone(child_main, child_stack + STACK_SIZE, \</span><br><span class="line">            CLONE_NEWNET | CLONE_NEWNS | CLONE_NEWPID | CLONE_NEWIPC | CLONE_NEWUTS | SIGCHLD, NULL);</span><br><span class="line">  struct cgroup *cg = cgroup_control(child_pid);</span><br><span class="line">  // 添加veth pair，设置veth1 在子进程的的namespace，veth0 在父进程的namespace，为了实现container和宿主机之间的网络通信</span><br><span class="line">  // linl3 实现起来太繁琐，借用命令行工具ip 实现</span><br><span class="line">  system(&quot;ip link add veth0 type veth peer name veth1&quot;);</span><br><span class="line">  asprintf(&amp;cmd, &quot;ip link set veth1 netns %d&quot;, child_pid); // asprintf根据字符串长度申请足够的内存空间，但在之后必须手动释放</span><br><span class="line">  system(cmd);</span><br><span class="line">  system(&quot;ip link set veth0 up&quot;);</span><br><span class="line">  system(&quot;ip addr add 169.254.1.1/30 dev veth0&quot;);</span><br><span class="line">  free(cmd);</span><br><span class="line">  //等执行以上命令，通知子进程，子进程设置自己的网络</span><br><span class="line">  close(pipe_fd[1]);</span><br><span class="line">  waitpid(child_pid, NULL, 0);</span><br><span class="line">  if (cg) &#123;</span><br><span class="line">    cgroup_delete_cgroup(cg, 0); //删除cgroup 子系统</span><br><span class="line">  &#125;</span><br><span class="line">  printf(&quot;child process exited.\n&quot;);</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="镜像和容器（Images-and-containers）"><a href="#镜像和容器（Images-and-containers）" class="headerlink" title="镜像和容器（Images and containers）"></a>镜像和容器（Images and containers）</h3><p>A container is launched by running an image. An image is an executable package that includes everything needed to run an application–the code, a runtime, libraries, environment variables, and configuration files.<br>A container is a runtime instance of an image–what the image becomes in memory when executed (that is, an image with state, or a user process). You can see a list of your running containers with the command, docker ps, just as you would in Linux.<br>一个镜像是：</p>
+<ul>
+<li>一个只读模板，可以用来创建容器，一个镜像可以创建多个容器</li>
+<li>Docker 提供了一个很简单的机制来创建和更新现有的镜像，甚至可以直接从其他人那里获取做好的镜像直接使用<br>可以理解为 Java 中的类<br>一个容器是：</li>
+<li>容器是从镜像创建的运行实例，也就是镜像启动后的一个实例称为容器，是独立运行的一个或一组应用。</li>
+<li>docker 利用容器来运行应用，他可以被启动、开始、停止、删除，每个容器都是相互隔离的、保证安全的平台。</li>
+<li>可以把容器看做是一个简易版的 Linux（包括 root 用户权限、进程空间、用户空间和网络空间等）和运行在其中的应用程序。</li>
+<li>可以理解为 Java 中通过类创建的实例。</li>
+</ul>
+<h3 id="服务端和客户端"><a href="#服务端和客户端" class="headerlink" title="服务端和客户端"></a>服务端和客户端</h3><p>Docker系统有两个程序：docker服务端和docker客户端。其中docker服务端是一个服务进程，管理着所有的容器。docker客户端则扮演着docker服务端的远程控制器，可以用来控制docker的服务端进程。大部分情况下，docker服务端和客户端运行在一台机器上。<br>Docker开放的API与Docker的守护进程进行通信。</p>
+<h3 id="docker-仓库（Resoisitory）"><a href="#docker-仓库（Resoisitory）" class="headerlink" title="docker 仓库（Resoisitory）"></a>docker 仓库（Resoisitory）</h3><ul>
+<li>仓库是集中存放镜像文件的场所，类似 git 代码仓库等。</li>
+<li>仓库（Respository）和仓库注册服务器（Registry）是有区别的。仓库注册服务器一般存放多个仓库，每个仓库又有多个镜像，每个镜像又有不同的标签（tag）。</li>
+<li>仓库分为公开仓库（public）和私有仓库（private）两种形式。</li>
+<li>最大的公开仓库是 <strong>Docker Hub</strong>，国内的公开仓库有阿里云等。</li>
+<li>可以在本地网络创建一个私有仓库。</li>
+<li>当创建好自己的镜像后，可以通过 push 命令把它上传到公开或私有仓库。</li>
+<li>仓库的概念类似 Git，仓库注册服务器可以理解为 GitHub 这种托管服务。</li>
+</ul>
+<h3 id="Containers-virtual-machines"><a href="#Containers-virtual-machines" class="headerlink" title="Containers &amp; virtual machines"></a>Containers &amp; virtual machines</h3><p>传统的部署云服务的方式是通过虚拟机完成的，虚拟机会在宿主机上运行一个完整的操作系统、通过hypervisor来间接使用宿主机的硬件资源，实际上这远远超出了应用运行所必须的资源。而容器正相反，它在操作系统中作为进程运行，与所有其他容器共享同一内核、占用相同容量的内存空间，相对来说，会更加轻量。<br>A container runs natively on Linux and shares the kernel of the host machine with other containers. It runs a discrete process, taking no more memory than any other executable, making it lightweight.<br>By contrast, a virtual machine (VM) runs a full-blown “guest” operating system with virtualaccess to host resources through a hypervisor. In general, VMs provide an environment with more resources than most applications need.<br>下图是Docker（容器）和传统虚拟机之间运行架构的示意图。<br>Container stack example Virtual machine stack example<br>In reality virtualization and Docker can and are used together in modern dev-ops. Most VPS providers are running bare-metal full virtualization technologies like Xen and Docker usually runs on top of a virtualized Ubuntu instance.</p>
+<h3 id="Docker-与-LXC（Linux-Container）"><a href="#Docker-与-LXC（Linux-Container）" class="headerlink" title="Docker 与 LXC（Linux Container）"></a>Docker 与 LXC（Linux Container）</h3><p>LXC利用Linux上相关技术实现容器，Docker则在如下的几个方面进行了改进：<br>移植性：通过抽象容器配置，容器可以实现一个平台移植到另一个平台；<br>镜像系统：基于AUFS的镜像系统为容器的分发带来了很多的便利，同时共同的镜像层只需要存储一份，实现高效率的存储；<br>版本管理：类似于GIT的版本管理理念，用户可以更方面的创建、管理镜像文件；<br>仓库系统：仓库系统大大降低了镜像的分发和管理的成本；<br>周边工具：各种现有的工具（配置管理、云平台）对Docker的支持，以及基于Docker的Pass、CI等系统，让Docker的应用更加方便和多样化。 </p>
+<h3 id="Docker与Vagrant"><a href="#Docker与Vagrant" class="headerlink" title="Docker与Vagrant"></a>Docker与Vagrant</h3><p>两者的定位完全不同<br>Vagrant类似于Boot2Docker（一款运行Docker的最小内核），是一套虚拟机的管理环境，Vagrant可以在多种系统上和虚拟机软件中运行，可以在Windows。Mac等非Linux平台上为Docker支持，自身具有较好的包装性和移植性。<br>原生Docker自身只能运行在Linux平台上，但启动和运行的性能都比虚拟机要快，往往更适合快速开发和部署应用的场景。<br>Docker不是虚拟机，而是进程隔离，对于资源的消耗很少，单一开发环境下Vagrant是虚拟机上的封装，虚拟机本身会消耗资源。因此对于开发环境来讲，使用Docker是更好的选择。</p>
+<h2 id="开始使用Docker"><a href="#开始使用Docker" class="headerlink" title="开始使用Docker"></a>开始使用Docker</h2><h3 id="查看操作系统版本"><a href="#查看操作系统版本" class="headerlink" title="查看操作系统版本"></a>查看操作系统版本</h3><p>Docker是基于LXC（Linux Container）的，因此最好在Linux环境下使用。<br>Docker要求内核版本高于3.10（如果是Ubuntu则需要高于12.04的发行版）可以使用下面命令查看操作系统版本：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname -r</span><br></pre></td></tr></table></figure>
+<h3 id="安装（Ubuntu）"><a href="#安装（Ubuntu）" class="headerlink" title="安装（Ubuntu）"></a>安装（Ubuntu）</h3><p>最好上官网下载安装最新版docker-ce，命令行下的太旧了：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install docker.io</span><br><span class="line">docker version</span><br></pre></td></tr></table></figure>
+<p>或者按照官网上的步骤：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"># 安装插件，可以使用HTTPS来下载仓库软件</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install \</span><br><span class="line">    apt-transport-https \</span><br><span class="line">    ca-certificates \</span><br><span class="line">    curl \</span><br><span class="line">    software-properties-common</span><br><span class="line"># 获取GPG公钥</span><br><span class="line">curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -</span><br><span class="line"># 验证公钥是正确的</span><br><span class="line">sudo apt-key fingerprint 0EBFCD88</span><br><span class="line"># 设置stable仓库</span><br><span class="line">sudo apt-get install software-properties-common python-software-properties # 如果缺少了add-apt-repository命令需要安装一下</span><br><span class="line">sudo add-apt-repository \</span><br><span class="line">   &quot;deb [arch=amd64] https://download.docker.com/linux/ubuntu \</span><br><span class="line">   $(lsb_release -cs) \</span><br><span class="line">   stable&quot;</span><br><span class="line"># 安装</span><br><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get install docker-ce</span><br><span class="line"># 安装某个特定版本</span><br><span class="line">#apt-cache madison docker-ce # 列出可用版本</span><br><span class="line">#sudo apt-get install docker-ce=&lt;VERSION&gt;</span><br><span class="line"># 运行hello-world</span><br><span class="line">docker run hello-world</span><br></pre></td></tr></table></figure>
+<h3 id="安装（CentOS）"><a href="#安装（CentOS）" class="headerlink" title="安装（CentOS）"></a>安装（CentOS）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">yum update</span><br><span class="line">yum install docker</span><br><span class="line">systemctl start docker</span><br><span class="line">systemtctl enable docker # 设定为开机启动</span><br><span class="line">systemtctl stop docker</span><br></pre></td></tr></table></figure>
+<h3 id="安装（Mac）"><a href="#安装（Mac）" class="headerlink" title="安装（Mac）"></a>安装（Mac）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="下载镜像"><a href="#下载镜像" class="headerlink" title="下载镜像"></a>下载镜像</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 搜索可用的镜像，或者上http://index.docker.io/查找</span><br><span class="line">docker search tutorial</span><br><span class="line"># 下载镜像，在docker的镜像索引网站上面，镜像都是按照用户名/镜像名的方式来存储的。有一组比较特殊的镜像，比如ubuntu这类基础镜像，经过官方的验证，值得信任，可以直接用镜像名来检索到。</span><br><span class="line">docker pull learn/tutorial</span><br></pre></td></tr></table></figure>
+<h3 id="运行容器"><a href="#运行容器" class="headerlink" title="运行容器"></a>运行容器</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># docker run命令有两个参数，一个是镜像名，一个是要在镜像中运行的命令。</span><br><span class="line">docker run learn/tutorial echo &quot;hello word&quot;</span><br><span class="line"># 在容器中安装一个软件，在执行apt-get 命令的时候，要带上-y参数。如果不指定-y参数的话，apt-get命令会进入交互模式，需要用户输入命令来进行确认，但在docker环境中是无法响应这种交互的</span><br><span class="line">docker run learn/tutorial apt-get install -y ping</span><br></pre></td></tr></table></figure>
+<h3 id="保存对容器的修改"><a href="#保存对容器的修改" class="headerlink" title="保存对容器的修改"></a>保存对容器的修改</h3><p>当你对某一个容器做了修改之后（通过在容器中运行某一个命令），可以把对容器的修改保存下来，这样下次可以从保存后的最新状态运行该容器。docker中保存状态的过程称之为committing，它保存的新旧状态之间的区别，从而产生一个新的版本。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># 获得查看正在运行中的、安装完ping命令之后容器的id</span><br><span class="line">docker ps -l</span><br><span class="line">docker container ls --all</span><br><span class="line"># 查看更详细的信息</span><br><span class="line">docker inspect </span><br><span class="line"># 将镜像保存为learn/ping，无需拷贝完整的id，通常来讲最开始的三至四个字母即可区分，比如94b82c71517f可以简写为94b</span><br><span class="line">docker commit [CONTAINER ID] learn/ping</span><br><span class="line"># 查看刚保存的镜像</span><br><span class="line">docker images</span><br><span class="line"># 在新的镜像中运行ping www.baidu.com，旧的镜像中没有安装所以不能运行、会返回奇怪的信息</span><br><span class="line">docker run learn/tutorial ping www.baidu.com</span><br><span class="line">docker run learn/tutorial ping www.baidu.com</span><br></pre></td></tr></table></figure>
+<h3 id="发布镜像"><a href="#发布镜像" class="headerlink" title="发布镜像"></a>发布镜像</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 列出本地的所有镜像</span><br><span class="line">docker images</span><br><span class="line"># 将某一个镜像发布到官网</span><br><span class="line">docker push</span><br></pre></td></tr></table></figure>
+
+<h3 id="设置用户"><a href="#设置用户" class="headerlink" title="设置用户"></a>设置用户</h3><ol>
+<li>使用root用户运行<br>通常我们使用Docker的时候都是使用root用户身份运行的，官方说法如下：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">The docker daemon binds to a Unix socket instead of a TCP port. By default that Unix socket is owned by the user root and other users can access it with sudo. For this reason, docker daemon always runs as the root user. </span><br><span class="line">To avoid having to use sudo when you use the docker command, create a Unix group called docker and add users to it. When the docker daemon starts, it makes the ownership of the Unix socket read/writable by the docker group.</span><br></pre></td></tr></table></figure></li>
+<li>使用普通用户运行<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo groupadd docker # docker组可能已经存在了</span><br><span class="line">sudo gpasswd -a $&#123;USER&#125; docker # 将当前用户加入docker组</span><br><span class="line">sudo systemctl restart docker # 重新启动docker服务（下面是CentOS7的命令）</span><br></pre></td></tr></table></figure>
+然后当前用户注销再重新登录就可以正常使用docker命令了：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="登录"><a href="#登录" class="headerlink" title="登录"></a>登录</h3><p>要登录容器进行操作，一种办法是在运行容器的时候开放22端口到外部，然后使用ssh来连接：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker create -it --name=容器别名 -p 20022:22 ics-image</span><br><span class="line">ssh -p 20022 root@localhost</span><br></pre></td></tr></table></figure>
+<p>另一种办法是在运行中的容器内执行&#x2F;bin&#x2F;bash：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec -it 容器名 /bin/bash</span><br></pre></td></tr></table></figure>
 
 
-<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><h3 id="LXC"><a href="#LXC" class="headerlink" title="LXC"></a>LXC</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://linuxcontainers.org/">Linux Containers</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/linux/l-cn-chroot/">理解 chroot</a></li>
+<h2 id="Docker-Daemon"><a href="#Docker-Daemon" class="headerlink" title="Docker Daemon"></a>Docker Daemon</h2><h3 id="Docker迁移"><a href="#Docker迁移" class="headerlink" title="Docker迁移"></a>Docker迁移</h3><p>将一台宿主机上的Docker环境迁移到另一台宿主机上是比较方便的，只需停止Docker服务，将整个docker存储文件复制到另外一台宿主机上，然后调整另外一台宿主机的配置即可。</p>
+<h2 id="Docker-Hub"><a href="#Docker-Hub" class="headerlink" title="Docker Hub"></a>Docker Hub</h2><h3 id="仓库（Repository）、注册服务器（Registry）、注册索引（Index）"><a href="#仓库（Repository）、注册服务器（Registry）、注册索引（Index）" class="headerlink" title="仓库（Repository）、注册服务器（Registry）、注册索引（Index）"></a>仓库（Repository）、注册服务器（Registry）、注册索引（Index）</h3><p>仓库是存放一组关联镜像的集合，比如同一个应用的不同版本的镜像；<br>注册服务器是存放实际的镜像的地方；<br>注册索引则负责维护用户的账号，权限，搜索，标签等管理。注册服务器利用注册索引来实现认证等管理。 </p>
+<h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><h3 id="Docker-Hub-1"><a href="#Docker-Hub-1" class="headerlink" title="Docker Hub"></a>Docker Hub</h3><ol>
+<li>docker pull老超时<br>试试国内的加速：<a target="_blank" rel="noopener" href="https://www.daocloud.io/mirror#accelerator-doc">https://www.daocloud.io/mirror#accelerator-doc</a><br>或连接VPN后试试</li>
+<li>pull或push时出现一直Waiting的情况<br>网上没有找到答案，开了VPN也没啥用，最后把环境变量改回来（eval $(docker-machine env -u)）就好了。</li>
+<li>从非官方仓库（如：dl.dockerpool.com）下载镜像的时候，有时候会提示“Error：Invaild registry endpoint <a target="_blank" rel="noopener" href="https://dl.docker.com:5000/v1/%E2%80%A6%E2%80%9D">https://dl.docker.com:5000/v1/…”</a>?<br>Docker 自1.3.0版本往后以来，加强了对镜像安全性的验证，需要手动添加对非官方仓库的信任。<br>DOCKER_OPTS&#x3D;”–insecure-registry dl.dockerpool.com:5000”<br>重启docker服务</li>
 </ol>
-<h3 id="虚拟网络设备"><a href="#虚拟网络设备" class="headerlink" title="虚拟网络设备"></a>虚拟网络设备</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/sld880311/article/details/77650937">Linux-虚拟网络设备-veth pair</a></li>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://github.com/docker-library/official-images">docker-library &#x2F; official-images</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/develop/develop-images/dockerfile_best-practices/">Best practices for writing Dockerfiles</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.dockone.io/article/932">十分钟带你理解 Kubernetes 核心概念</a></li>
+<li>Install Docker <a target="_blank" rel="noopener" href="https://docs.docker.com/install/">https://docs.docker.com/install/</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/install/linux/docker-ce/ubuntu/">Get Docker CE for Ubuntu</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/get-started/">Get Started</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.docker.org.cn/book/docker/docker-run-8.html">入门教程 中文</a></li>
+<li><a target="_blank" rel="noopener" href="https://hub.docker.com/">Docker Hub</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.docker.com/swarm/tallate/dashboard/onboarding/cloud-registry">Docker Cloud</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/reference/commandline/dockerd/">命令行参考文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/install/linux/linux-postinstall/">安装后配置</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.docker.com/config/daemon/systemd/">daemon配置</a></li>
 </ol>
-<h3 id="clone"><a href="#clone" class="headerlink" title="clone"></a>clone</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u013272948/article/details/69218319">linux的Clone()函数详解</a></li>
-</ol>
-<h3 id="Linux-namespace"><a href="#Linux-namespace" class="headerlink" title="Linux namespace"></a>Linux namespace</h3><ol>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/preterhuman_peak/article/details/40857117">Linux Namespaces机制</a></li>
-<li><a target="_blank" rel="noopener" href="https://linux.cn/article-5019-1.html">介绍 Linux 的命名空间</a></li>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://draveness.me/docker">Docker 核心技术与实现原理</a></li>
+<li><a target="_blank" rel="noopener" href="https://monkeyvault.net/docker-vs-virtualization/">Docker vs Virtualization</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/16047306/how-is-docker-different-from-a-virtual-machine">How is Docker different from a virtual machine?</a></li>
+<li><a target="_blank" rel="noopener" href="http://bodenr.blogspot.com/2014/05/kvm-and-docker-lxc-benchmarking-with.html">KVM and Docker LXC Benchmarking with OpenStack</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.mirantis.com/blog/ok-i-give-up-is-docker-now-moby-and-what-is-linuxkit/">OK, I give up. Is Docker now Moby? And what is LinuxKit?</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.oschina.net/news/84176/the-reason-of-docker-launches-moby">Docker 切出 Moby 背后的真实原因分析</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/docker/libcontainer">docker&#x2F;libcontainer</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/zqg5258423/article/details/53843757">docker最新代码源码编译</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/dghpgyss/article/details/72772834">如何编译docker 1.2.0版本的源码</a></li>
 </ol>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
@@ -659,6 +750,151 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/bf77fad5.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/bf77fad5.html" class="post-title-link" itemprop="url">自制LinuxContainer</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-07 18:51:58" itemprop="dateCreated datePublished" datetime="2019-09-07T18:51:58+08:00">2019-09-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h2><h3 id="进程和clone系统调用"><a href="#进程和clone系统调用" class="headerlink" title="进程和clone系统调用"></a>进程和clone系统调用</h3><p>进程（Process）是运行中的程序实例，又可以称为任务（Task），进程在Linux内核中使用一个PCB来表示，主要包含运行状态、信号、进程号、父进程号、运行时间累计值、正在使用的文件（文件描述符表）、本任务的局部描述符及任务状态段信息。<br>不同于fork，clone系统调用允许子进程共享部分父进程的上下文，如内存空间、文件描述符表、信号等。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/* Prototype for the glibc wrapper function */</span><br><span class="line">#define _GNU_SOURCE</span><br><span class="line">#include &lt;sched.h&gt;</span><br><span class="line">int clone(int (*fn)(void *), void *child_stack,</span><br><span class="line">          int flags, void *arg, ...</span><br><span class="line">          /* pid_t *ptid, void *newtls, pid_t *ctid */ );</span><br><span class="line">/* For the prototype of the raw system call, see NOTES */</span><br></pre></td></tr></table></figure>
+<p><code>clone</code>常用于实现<strong>多线程</strong>，因为子进程和父进程可以共享内存。<br>不同于<code>fork</code>创建的子进程会从调用的位置开始执行，<code>clone</code>创建的子进程会执行实参传入的<code>fn(arg)</code>，并将实参中的<code>arg</code>传入。<br>当<code>fn(arg)</code>返回后子进程页会终止，返回值即为子进程的exit code，当然子进程在遇到显式的<code>exit</code>调用或终止信号也会立刻退出。<br>子进程与父进程共享内存，它们不能（也不应该）使用同一个栈，因此必须使用<code>child_stack</code>参数指定子进程使用的栈所在的内存空间。栈是从上向下生长的，因此最好指定最顶层的一个地址。<br><code>flags</code>的低位包含子进程退出了发送给父进程的信号，If this signal is specified as anything other than SIGCHLD, then the parent process must specify the __WALL or __WCLONE options when waiting for the child with wait(2). If no signal is specified, then the parent process is not signaled when the child terminates.<br><code>flags</code> 还可以指定子进程和父进程间可以共享的内容，具体内容见<code>man clone</code>。</p>
+<h3 id="虚拟网络设备和veth-pair"><a href="#虚拟网络设备和veth-pair" class="headerlink" title="虚拟网络设备和veth pair"></a>虚拟网络设备和veth pair</h3><p>Linux container 中用到一个叫做veth的东西，这是一种新的设备，专门为 container 所建。veth 从名字上来看是 Virtual ETHernet 的缩写，它的作用很简单，就是要把从一个 network namespace 发出的数据包转发到另一个 namespace。veth 设备是成对的，一个是 container 之中，另一个在 container 之外，即在真实机器上能看到的。 </p>
+<h4 id="veth设备实现原理"><a href="#veth设备实现原理" class="headerlink" title="veth设备实现原理"></a>veth设备实现原理</h4><p>VETH设备总是成对出现，送到一端请求发送的数据总是从另一端以请求接受的形式出现。创建并配置正确后，向其一端输入数据，VETH会改变数据的方向并将其送入内核网络子系统，完成数据的注入，而在另一端则能读到此数据。（Namespace，其中往veth设备上任意一端上RX到的数据，都会在另一端上以TX的方式发送出去）veth工作在L2数据链路层，veth-pair设备在转发数据包过程中并不串改数据包内容。<br>这里写图片描述<br>显然，仅有veth-pair设备，容器是无法访问网络的。因为容器发出的数据包，实质上直接进入了veth1设备的协议栈里。如果容器需要访问网络，需要使用bridge等技术，将veth1接收到的数据包通过某种方式转发出去。</p>
+<blockquote>
+<p>VETH: Typically used when you are trying to connect two entities which would want to “get hold of” (for lack of better phrase) an interface to forward&#x2F;receive frames. These entities could be containers&#x2F;bridges&#x2F;ovs-switch etc. Say you want to connect a docker&#x2F;lxc container to OVS. You can create a veth pair and push the first interface to the docker&#x2F;lxc (say, as a phys interface) and push the other interface to OVS. You cannot do this with TAP.</p>
+</blockquote>
+<h4 id="veth设备特点"><a href="#veth设备特点" class="headerlink" title="veth设备特点"></a>veth设备特点</h4><ul>
+<li>veth和其它的网络设备都一样，一端连接的是内核协议栈</li>
+<li>veth设备是成对出现的，另一端两个设备彼此相连</li>
+<li>一个设备收到协议栈的数据发送请求后，会将数据发送到另一个设备上去</li>
+</ul>
+<h4 id="常用命令"><a href="#常用命令" class="headerlink" title="常用命令"></a>常用命令</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># 创建veth</span><br><span class="line">ip link add name veth0 type veth0 peer name veth1</span><br></pre></td></tr></table></figure>
+<p>其他细节见Linux篇《虚拟化-网络设备》</p>
+<h3 id="资源隔离、namespace和cgroup"><a href="#资源隔离、namespace和cgroup" class="headerlink" title="资源隔离、namespace和cgroup"></a>资源隔离、namespace和cgroup</h3><p><strong>namespace</strong>的主要作用是对两个系统内的标识符的命名进行隔离，namespace有以下几种。<br><img src="/imgs/Docker/Linux-namespace%E7%A7%8D%E7%B1%BB.jpg" alt="Linux-namespace种类" title="Linux-namespace种类"><br>这几个flag 可以在调用clone进行进程创建的时候作为参数传入，从而实现namespace的隔离，从这个角度来说，container主要是进程角度的隔离，而不是传统的虚拟机（一些虚拟机实现同样是基于对操作系统层的虚拟化，所以应该和container是类似的，比如普通vmware），因为container底层用的是同一个内核来调度。</p>
+<p><strong>cgroup</strong> 是linux 内核的另外一个控制和隔离进程的特性，他分为cpu ，memory，net，io等几个子系统，从而实现对进程cpu，内存，磁盘，网络等资源使用的控制。</p>
+<h3 id="虚拟文件系统（VFS）和chroot"><a href="#虚拟文件系统（VFS）和chroot" class="headerlink" title="虚拟文件系统（VFS）和chroot"></a>虚拟文件系统（VFS）和chroot</h3><p>将根目录设置成另外一个目录</p>
+<h2 id="自制容器"><a href="#自制容器" class="headerlink" title="自制容器"></a>自制容器</h2><p>docker 只是一个工具，container 技术的核心还是linux 内核的cgroup + chroot + namespace 技术。</p>
+<h3 id="制作image"><a href="#制作image" class="headerlink" title="制作image"></a>制作image</h3><p>制作自己容器，需要一个image ，可以从网上下一个，也可以自己制作，制作很简单，新装一个操作系统，安装一些需要用到的软件包，然后用tar 制作 &#x2F; 目录下的压缩包，去掉一些虚拟文件系统的文件，本文用的是自己制作的centos 6.5 的image。</p>
+<h3 id="容器实现过程"><a href="#容器实现过程" class="headerlink" title="容器实现过程"></a>容器实现过程</h3><p>容器实现过程可以归纳为</p>
+<ol>
+<li>用clone系统调用创建子进程，传入namespace的那几个参数，实现namespace的隔离；</li>
+<li>父进程中创建veth pair ，一个veth在自己的namespace，将另一个设置为子进程的namespace，实现container和宿主机的网络通信；</li>
+<li>父进程创建cgroup memory和cpuset子系统，将子进程attach到cgroup子系统上，实现container 的资源限制和隔离；</li>
+<li>子进程在自己的namespace里，设置主机名，mount proc虚拟文件系统，设置veth ip，chroot到centos 6镜像的位置， 最终将进程镜像替换成&#x2F;bin&#x2F;bash；</li>
+<li>父进程调用waitpid 等待子进程退出。</li>
+</ol>
+<h3 id="容器实现"><a href="#容器实现" class="headerlink" title="容器实现"></a>容器实现</h3><p>见下面的《源码》部分</p>
+<h3 id="实验"><a href="#实验" class="headerlink" title="实验"></a>实验</h3><p>在解压好镜像后，该镜像根目录下可能还没有必须的命令文件及其依赖的动态链接库，主要是由于用<code>chroot</code>改变根目录后，原来路径下的一些文件在当前镜像内都找不到了，一般安装完操作系统后这些文件应该都安装好了，如果需要可以<a target="_blank" rel="noopener" href="https://ubuntuforums.org/showthread.php?t=1434781">通过手动移动来解决</a>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ldd /bin/bash</span><br><span class="line">cp --parents /lib/x86_64-linux-gnu/libtinfo.so.5 ./</span><br></pre></td></tr></table></figure>
+<p>编译执行容器代码。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc lxc_demo.c -o lxc_demo -lcgroup</span><br><span class="line">sudo ./lxc_demo</span><br></pre></td></tr></table></figure>
+<p>接下来分别在宿主机和容器内执行命令，可以得出一些结论：</p>
+<ol>
+<li>容器和宿主机镜像可能不同，但是内核相同；<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># （宿主机内）</span><br><span class="line">hgc@hgc-X555LD:~$ uname -r</span><br><span class="line">4.13.0-45-generic</span><br><span class="line"></span><br><span class="line"># （容器内）</span><br><span class="line">bash-4.4# uname -r</span><br><span class="line">4.13.0-45-generic</span><br></pre></td></tr></table></figure></li>
+<li>根目录下的文件不同；<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls /</span><br></pre></td></tr></table></figure></li>
+<li>hostname，宿主机内为用户设定的主机名，容器内为mydocker，说明UTS namespace隔离成功；<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostname</span><br></pre></td></tr></table></figure></li>
+<li>网络方面有回环网络卡lo和veth1，veth1 169.254.1.2 能ping 通veth0的地址（宿主机上的veth）169.254.2.1，如果在外面加iptables 做nat 转换的话，container里面还可以和外面通信。我们看不到外面宿主机的eth0 和 eth1，说明container 的network namespace 隔离成功。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"># （宿主机内）</span><br><span class="line">$ ip addr</span><br><span class="line">......</span><br><span class="line">19: veth0@if18: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000</span><br><span class="line">    link/ether 46:c0:eb:a8:34:8d brd ff:ff:ff:ff:ff:ff link-netnsid 0</span><br><span class="line">    inet 169.254.1.1/30 scope global veth0</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::44c0:ebff:fea8:348d/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line"></span><br><span class="line"># （容器内）网络方面有回环网络卡lo和veth1</span><br><span class="line">bash-4.4# ip addr</span><br><span class="line">1: lo: &lt;LOOPBACK,UP,LOWER_UP&gt; mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000</span><br><span class="line">    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00</span><br><span class="line">    inet 127.0.0.1/8 scope host lo</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 ::1/128 scope host </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">18: veth1@if19: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000</span><br><span class="line">    link/ether ce:04:78:b6:5a:2d brd ff:ff:ff:ff:ff:ff link-netnsid 0</span><br><span class="line">    inet 169.254.1.2/30 scope global veth1</span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line">    inet6 fe80::cc04:78ff:feb6:5a2d/64 scope link </span><br><span class="line">       valid_lft forever preferred_lft forever</span><br><span class="line"># 尝试ping宿主机上的veth0设备</span><br><span class="line">bash-4.4# ping 169.254.1.1</span><br><span class="line">PING 169.254.1.1 (169.254.1.1) 56(84) bytes of data.</span><br><span class="line">64 bytes from 169.254.1.1: icmp_seq=1 ttl=64 time=0.101 ms</span><br><span class="line">......</span><br></pre></td></tr></table></figure></li>
+<li>目前container 里面只有&#x2F;bin&#x2F;bash , 且进程号为 1，不是我们常见的init进程，或者systemd 。因为&#x2F;bin&#x2F;bash 为该namespace 下的第一个进程，说明我们的pid namespace隔离成功。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 查看进程</span><br><span class="line">bash-4.4# ps -aux </span><br><span class="line">USER PID %CPU %MEM VSZ RSS TTY STAT START TIME COMMAND</span><br><span class="line">0 1 0.0 0.0 9924 3264 ? S 01:02 0:00 /bin/bash</span><br><span class="line">0 8 0.0 0.0 30524 2820 ? R+ 01:02 0:00 ps -aux</span><br></pre></td></tr></table></figure></li>
+<li>mount 显示挂载的文件系统，和宿主机的不一样，说明mount namespace隔离成功。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 查看挂载情况（这里有点问题，原文里还有rootfs、sysfs等）</span><br><span class="line">bash-4.4# mount</span><br><span class="line">proc on /proc type proc (rw,relatime)</span><br><span class="line">......</span><br></pre></td></tr></table></figure></li>
+<li>就cgroup的隔离情况来说，在cgroup文件系统内，memory的限制是我们设置的512M，cpu使用的是0-1号。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">hgc@hgc-X555LD:~/tools/virtualmachines/ubuntu-16.04$ cd /sys/fs/cgroup/memory/mydocker_1530580167/</span><br><span class="line">hgc@hgc-X555LD:/sys/fs/cgroup/memory/mydocker_1530580167$ cat memory.limit_in_bytes </span><br><span class="line">536870912</span><br><span class="line">hgc@hgc-X555LD:/sys/fs/cgroup/memory/mydocker_1530580167$ cd /sys/fs/cgroup/cpuset/mydocker_1530580167/</span><br><span class="line">hgc@hgc-X555LD:/sys/fs/cgroup/cpuset/mydocker_1530580167$ cat cpuset.cpus </span><br><span class="line">0-1</span><br><span class="line">hgc@hgc-X555LD:/sys/fs/cgroup/cpuset/mydocker_1530580167$ cat cpuset.mems </span><br><span class="line">0</span><br><span class="line">hgc@hgc-X555LD:/sys/fs/cgroup/cpuset/mydocker_1530580167$ top</span><br></pre></td></tr></table></figure>
+从下面执行情况可以看出，只有0号和1号cpu idle为0 ，其他的都接近100%，说明cgroup隔离效果是很好的。 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"># （宿主机内）执行top命令并点击1查看CPU负载情况</span><br><span class="line">hgc@hgc-X555LD:/sys/fs/cgroup/cpuset/mydocker_1530580167$ top</span><br><span class="line">top - 10:02:22 up 13:19, 1 user, load average: 0.74, 0.68, 0.72</span><br><span class="line">Tasks: 348 total, 1 running, 346 sleeping, 0 stopped, 1 zombi</span><br><span class="line">%Cpu0 : 5.3 us, 2.3 sy, 0.0 ni, 91.7 id, 0.0 wa, 0.0 hi, 0.7</span><br><span class="line">%Cpu1 : 8.3 us, 12.6 sy, 0.0 ni, 78.8 id, 0.0 wa, 0.0 hi, 0.3</span><br><span class="line">%Cpu2 : 4.0 us, 2.0 sy, 0.0 ni, 93.9 id, 0.0 wa, 0.0 hi, 0.0</span><br><span class="line">%Cpu3 : 3.0 us, 2.4 sy, 0.0 ni, 94.6 id, 0.0 wa, 0.0 hi, 0.0</span><br><span class="line">%Cpu4 : 7.1 us, 5.7 sy, 0.0 ni, 87.2 id, 0.0 wa, 0.0 hi, 0.0</span><br><span class="line">%Cpu5 : 4.4 us, 1.4 sy, 0.0 ni, 93.9 id, 0.3 wa, 0.0 hi, 0.0</span><br><span class="line">%Cpu6 : 3.3 us, 2.7 sy, 0.0 ni, 93.7 id, 0.0 wa, 0.0 hi, 0.3</span><br><span class="line">%Cpu7 : 3.7 us, 1.3 sy, 0.0 ni, 94.6 id, 0.0 wa, 0.0 hi, 0.3</span><br><span class="line">......</span><br><span class="line"></span><br><span class="line"># （容器内）执行多个死循环任务，强行使CPU忙碌</span><br><span class="line">bash-4.4# while true; do echo &gt; /dev/null; done &amp;                   </span><br><span class="line">[1] 10</span><br><span class="line">bash-4.4# while true; do echo &gt; /dev/null; done &amp;</span><br><span class="line">[2] 11</span><br><span class="line">bash-4.4# while true; do echo &gt; /dev/null; done &amp;</span><br><span class="line">[3] 12</span><br><span class="line">bash-4.4# while true; do echo &gt; /dev/null; done &amp;</span><br><span class="line">[4] 13</span><br><span class="line">bash-4.4# while true; do echo &gt; /dev/null; done &amp;</span><br><span class="line">[5] 14</span><br><span class="line">bash-4.4# while true; do echo &gt; /dev/null; done &amp;</span><br><span class="line">[6] 15</span><br><span class="line">bash-4.4# while true; do echo &gt; /dev/null; done &amp;</span><br><span class="line">[7] 16</span><br><span class="line"></span><br><span class="line"># （宿主机内）同样是执行top命令并点击1，可以看到头两个CPU的负载情况有了明显变化</span><br><span class="line">hgc@hgc-X555LD:/sys/fs/cgroup/cpuset/mydocker_1530580167$ top</span><br><span class="line">top - 10:05:05 up 13:22, 1 user, load average: 4.25, 1.68, 1.06</span><br><span class="line">Tasks: 355 total, 1 running, 353 sleeping, 0 stopped, 1 zombi</span><br><span class="line">%Cpu0 : 9.9 us, 34.8 sy, 0.0 ni, 53.2 id, 2.0 wa, 0.0 hi, 0.0</span><br><span class="line">%Cpu1 : 14.4 us, 43.6 sy, 0.0 ni, 40.2 id, 1.7 wa, 0.0 hi, 0.0</span><br><span class="line">%Cpu2 : 2.2 us, 0.6 sy, 0.0 ni, 92.0 id, 0.0 wa, 0.0 hi, 5.1</span><br><span class="line">%Cpu3 : 2.6 us, 1.3 sy, 0.0 ni, 95.0 id, 0.0 wa, 0.0 hi, 1.0</span><br><span class="line">%Cpu4 : 6.4 us, 10.0 sy, 0.0 ni, 83.6 id, 0.0 wa, 0.0 hi, 0.0</span><br><span class="line">%Cpu5 : 2.3 us, 1.2 sy, 0.0 ni, 95.3 id, 0.0 wa, 0.0 hi, 1.2</span><br><span class="line">%Cpu6 : 1.7 us, 0.7 sy, 0.0 ni, 97.6 id, 0.0 wa, 0.0 hi, 0.0</span><br><span class="line">%Cpu7 : 2.0 us, 2.7 sy, 0.0 ni, 95.3 id, 0.0 wa, 0.0 hi, 0.0</span><br><span class="line">......</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br></pre></td><td class="code"><pre><span class="line">#define _GNU_SOURCE</span><br><span class="line"></span><br><span class="line">#include &lt;sys/types.h&gt;</span><br><span class="line">#include &lt;sys/wait.h&gt;</span><br><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;sched.h&gt;</span><br><span class="line">#include &lt;signal.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line">#include &lt;errno.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;sys/mount.h&gt;</span><br><span class="line">// 必须先安装：sudo apt-get install libcgroup-dev</span><br><span class="line">#include &lt;libcgroup.h&gt;</span><br><span class="line">#include &lt;time.h&gt;</span><br><span class="line">#include &lt;signal.h&gt;</span><br><span class="line">#include &lt;string.h&gt;</span><br><span class="line">#include &lt;fcntl.h&gt;</span><br><span class="line"></span><br><span class="line">#define STACK_SIZE (1024 * 1024)</span><br><span class="line">#define MEMORY_LIMIT (512*1024*1024)</span><br><span class="line"></span><br><span class="line">//const char *rootfs = &quot;/data1/centos6/rootfs/&quot;; //centos6 镜像位置</span><br><span class="line">//const char *rootfs = &quot;/home/hgc/tools/virtualmachines/ubuntu-16.04/&quot;; // 镜像位置</span><br><span class="line">//const char *hostname = &quot;mydocker&quot;; //container 主机名</span><br><span class="line">static char child_stack[STACK_SIZE];</span><br><span class="line">//char *const child_args[] = &#123;</span><br><span class="line">//    &quot;/bin/bash&quot;,</span><br><span class="line">//    NULL</span><br><span class="line">//&#125;;</span><br><span class="line">int pipe_fd[2]; //父子进程同步</span><br><span class="line"></span><br><span class="line">int child_main(void *args) &#123;</span><br><span class="line">  char c;</span><br><span class="line">  // TODO:子进程里无法使用全局变量rootfs和hostname</span><br><span class="line">  // 镜像位置</span><br><span class="line">  const char *rootfs = &quot;/home/hgc/tools/virtualmachines/ubuntu-16.04/&quot;;</span><br><span class="line">  // container 主机名</span><br><span class="line">  const char *hostname = &quot;mydocker&quot;;</span><br><span class="line">  // 在子进程（容器）内执行的任务</span><br><span class="line">  // TODO:因为chroot改变了根目录的位置，所以在保证目标命令存在容器内的基础上（这里是/bin/bash），</span><br><span class="line">  // TODO:必须保证该命令依赖的资源同样存在于容器内（动态链接库，使用ldd查看）</span><br><span class="line">  char *const child_args[] = &#123;</span><br><span class="line">      &quot;/bin/bash&quot;,</span><br><span class="line">      0</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  printf(&quot;In child process(container)\n&quot;);</span><br><span class="line">  chroot(rootfs); //用chroot 切换根目录</span><br><span class="line">  if (errno != 0) &#123;</span><br><span class="line">    perror(&quot;chroot()&quot;);</span><br><span class="line">    exit(1);</span><br><span class="line">  &#125;</span><br><span class="line">  // TODO:这里不能使用sizeof</span><br><span class="line">  //clone 调用中的 CLONE_NEWUTS起隔离主机名和域名的作用</span><br><span class="line">  sethostname(hostname, strlen(hostname));</span><br><span class="line">  if (errno != 0) &#123;</span><br><span class="line">    perror(&quot;sethostname()!&quot;);</span><br><span class="line">    exit(1);</span><br><span class="line">  &#125;</span><br><span class="line">  //挂载proc子系统，CLONE_NEWNS 起隔离文件系统作用</span><br><span class="line">  // 需要在rootfs目录下创建proc目录</span><br><span class="line">  mount(&quot;proc&quot;, &quot;/proc&quot;, &quot;proc&quot;, 0, NULL);</span><br><span class="line">  if (errno != 0) &#123;</span><br><span class="line">    perror(&quot;Mount(proc)&quot;);</span><br><span class="line">    exit(1);</span><br><span class="line">  &#125;</span><br><span class="line">  //切换的根目录</span><br><span class="line">  chdir(&quot;/&quot;);</span><br><span class="line">  close(pipe_fd[1]);</span><br><span class="line">  read(pipe_fd[0], &amp;c, 1);</span><br><span class="line">  //设置veth1 网络</span><br><span class="line">  system(&quot;ip link set lo up&quot;);</span><br><span class="line">  system(&quot;ip link set veth1 up&quot;);</span><br><span class="line">  system(&quot;ip addr add 169.254.1.2/30 dev veth1&quot;);</span><br><span class="line">  //将子进程的镜像替换成bash</span><br><span class="line">  printf(&quot;[%s]\n&quot;, child_args[0]);</span><br><span class="line">  if (execv(child_args[0], child_args) == -1) &#123;</span><br><span class="line">    perror(&quot;execv(path, argv)&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">  return 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct cgroup *cgroup_control(pid_t pid) &#123;</span><br><span class="line">  struct cgroup *cgroup = NULL;</span><br><span class="line">  int ret;</span><br><span class="line">  ret = cgroup_init();</span><br><span class="line">  char *cgname = malloc(19 * sizeof(char));</span><br><span class="line">  if (ret) &#123;</span><br><span class="line">    printf(&quot;error occurs while init cgroup.\n&quot;);</span><br><span class="line">    return NULL;</span><br><span class="line">  &#125;</span><br><span class="line">  time_t now_time = time(NULL);</span><br><span class="line">  sprintf(cgname, &quot;mydocker_%d&quot;, (int) now_time);</span><br><span class="line">  printf(&quot;%s\n&quot;, cgname);</span><br><span class="line">  cgroup = cgroup_new_cgroup(cgname);</span><br><span class="line">  if (!cgroup) &#123;</span><br><span class="line">    ret = ECGFAIL;</span><br><span class="line">    printf(&quot;Error new cgroup%s\n&quot;, cgroup_strerror(ret));</span><br><span class="line">    goto out;</span><br><span class="line">  &#125;</span><br><span class="line">  //添加cgroup memory 和 cpuset子系统</span><br><span class="line">  struct cgroup_controller *cgc = cgroup_add_controller(cgroup, &quot;memory&quot;);</span><br><span class="line">  struct cgroup_controller *cgc_cpuset = cgroup_add_controller(cgroup, &quot;cpuset&quot;);</span><br><span class="line">  if (!cgc || !cgc_cpuset) &#123;</span><br><span class="line">    ret = ECGINVAL;</span><br><span class="line">    printf(&quot;Error add controller %s\n&quot;, cgroup_strerror(ret));</span><br><span class="line">    goto out;</span><br><span class="line">  &#125;</span><br><span class="line">  // 内存限制  512M</span><br><span class="line">  if (cgroup_add_value_uint64(cgc, &quot;memory.limit_in_bytes&quot;, MEMORY_LIMIT)) &#123;</span><br><span class="line">    printf(&quot;Error limit memory.\n&quot;);</span><br><span class="line">    goto out;</span><br><span class="line">  &#125;</span><br><span class="line">  //限制只能使用0和1号cpu</span><br><span class="line">  if (cgroup_add_value_string(cgc_cpuset, &quot;cpuset.cpus&quot;, &quot;0-1&quot;)) &#123;</span><br><span class="line">    printf(&quot;Error limit cpuset cpus.\n&quot;);</span><br><span class="line">    goto out;</span><br><span class="line">  &#125;</span><br><span class="line">  //限制只能使用0和1块内存</span><br><span class="line">  // TODO:使用0-1作为参数会报错“Invalid argument”</span><br><span class="line">  if (cgroup_add_value_string(cgc_cpuset, &quot;cpuset.mems&quot;, &quot;0&quot;)) &#123;</span><br><span class="line">    printf(&quot;Error limit cpuset mems.\n&quot;);</span><br><span class="line">    goto out;</span><br><span class="line">  &#125;</span><br><span class="line">  ret = cgroup_create_cgroup(cgroup, 0);</span><br><span class="line">  if (ret) &#123;</span><br><span class="line">    printf(&quot;Error create cgroup%s\n&quot;, cgroup_strerror(ret));</span><br><span class="line">    goto out;</span><br><span class="line">  &#125;</span><br><span class="line">  ret = cgroup_attach_task_pid(cgroup, pid);</span><br><span class="line">  if (ret) &#123;</span><br><span class="line">    printf(&quot;Error attach_task_pid %s\n&quot;, cgroup_strerror(ret));</span><br><span class="line">    goto out;</span><br><span class="line">  &#125;</span><br><span class="line">  return cgroup;</span><br><span class="line">  out:</span><br><span class="line">  if (cgroup) &#123;</span><br><span class="line">    cgroup_delete_cgroup(cgroup, 0);</span><br><span class="line">    cgroup_free(&amp;cgroup);</span><br><span class="line">  &#125;</span><br><span class="line">  return NULL;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">  char *cmd;</span><br><span class="line">  printf(&quot;main process: \n&quot;);</span><br><span class="line">  pipe(pipe_fd);</span><br><span class="line">  if (errno != 0) &#123;</span><br><span class="line">    perror(&quot;pipe()&quot;);</span><br><span class="line">    exit(1);</span><br><span class="line">  &#125;</span><br><span class="line">  // 调用clone创建子进程，传入namespace的几个flag参数，实现namespace的隔离</span><br><span class="line">  // 子进程执行child_main函数，其堆栈空间使用child_stack参数指定</span><br><span class="line">  // clone与线程的实现息息相关：http://www.xuebuyuan.com/1422353.html</span><br><span class="line">  int child_pid = clone(child_main, child_stack + STACK_SIZE, \</span><br><span class="line">            CLONE_NEWNET | CLONE_NEWNS | CLONE_NEWPID | CLONE_NEWIPC | CLONE_NEWUTS | SIGCHLD, NULL);</span><br><span class="line">  struct cgroup *cg = cgroup_control(child_pid);</span><br><span class="line">  // 添加veth pair，设置veth1 在子进程的的namespace，veth0 在父进程的namespace，为了实现container和宿主机之间的网络通信</span><br><span class="line">  // linl3 实现起来太繁琐，借用命令行工具ip 实现</span><br><span class="line">  system(&quot;ip link add veth0 type veth peer name veth1&quot;);</span><br><span class="line">  asprintf(&amp;cmd, &quot;ip link set veth1 netns %d&quot;, child_pid); // asprintf根据字符串长度申请足够的内存空间，但在之后必须手动释放</span><br><span class="line">  system(cmd);</span><br><span class="line">  system(&quot;ip link set veth0 up&quot;);</span><br><span class="line">  system(&quot;ip addr add 169.254.1.1/30 dev veth0&quot;);</span><br><span class="line">  free(cmd);</span><br><span class="line">  //等执行以上命令，通知子进程，子进程设置自己的网络</span><br><span class="line">  close(pipe_fd[1]);</span><br><span class="line">  waitpid(child_pid, NULL, 0);</span><br><span class="line">  if (cg) &#123;</span><br><span class="line">    cgroup_delete_cgroup(cg, 0); //删除cgroup 子系统</span><br><span class="line">  &#125;</span><br><span class="line">  printf(&quot;child process exited.\n&quot;);</span><br><span class="line">  return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><h3 id="LXC"><a href="#LXC" class="headerlink" title="LXC"></a>LXC</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://linuxcontainers.org/">Linux Containers</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.ibm.com/developerworks/cn/linux/l-cn-chroot/">理解 chroot</a></li>
+</ol>
+<h3 id="虚拟网络设备"><a href="#虚拟网络设备" class="headerlink" title="虚拟网络设备"></a>虚拟网络设备</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/sld880311/article/details/77650937">Linux-虚拟网络设备-veth pair</a></li>
+</ol>
+<h3 id="clone"><a href="#clone" class="headerlink" title="clone"></a>clone</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u013272948/article/details/69218319">linux的Clone()函数详解</a></li>
+</ol>
+<h3 id="Linux-namespace"><a href="#Linux-namespace" class="headerlink" title="Linux namespace"></a>Linux namespace</h3><ol>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/preterhuman_peak/article/details/40857117">Linux Namespaces机制</a></li>
+<li><a target="_blank" rel="noopener" href="https://linux.cn/article-5019-1.html">介绍 Linux 的命名空间</a></li>
+</ol>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://tallate.github.io/2215add6.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -882,6 +1118,127 @@
 <ol>
 <li>发送完请求后阻塞<br><code>HeaderExchangeHandler</code><br>用户线程在发送完请求后，会调用 <code>DefaultFuture</code> 的 <code>get</code> 方法等待响应对象的到来，这时每个<code>DefaultFuture</code>都会关联一个<strong>调用编号</strong>，用于在接收到响应时能对应上请求的<code>DefaultFuture</code>。<br>当响应对象到来后，IO 线程根据<strong>调用编号</strong>可以找到<code>DefaultFuture</code>，之后会将响应对象保存到<code>DefaultFuture</code>，并唤醒用户线程。</li>
 </ol>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/bf6c261d.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/bf6c261d.html" class="post-title-link" itemprop="url">Dubbo的SPI原理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-07 18:51:58" itemprop="dateCreated datePublished" datetime="2019-09-07T18:51:58+08:00">2019-09-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Dubbo/" itemprop="url" rel="index"><span itemprop="name">Dubbo</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+
+
+<h2 id="接口扩展策略注解-SPI"><a href="#接口扩展策略注解-SPI" class="headerlink" title="接口扩展策略注解 @SPI"></a>接口扩展策略注解 @SPI</h2><p>Dubbo中的很多扩展接口，如 Protocol、Transporter、Filter 等，都是通过 JDK 的 SPI 机制实现的，也就是说这些功能都可被用户自定义的扩展所替换，接口扩展点由注解<code>@SPI</code>定义。<br>JDK 中 SPI（Service Provider Interface）的设计与策略模式如出一辙，开发者可以替换掉 Dubbo 原扩展接口的默认实现，完成自定义需求，即可以自定义实现策略。<br>Dubbo 在 JDK 现有 SPI 实现的基础上做了如下改进：</p>
+<ol>
+<li>JDK 标准的 SPI 会一次性实例化扩展点所有实现，如果有扩展实现初始化很耗时，但如果没用上也加载，会很浪费资源。</li>
+<li>如果扩展点加载失败，连扩展点的名称都拿不到了。比如：JDK 标准的 ScriptEngine，通过 getName();获取脚本类型的名称，但如果 RubyScriptEngine 因为所依赖的 jruby.jar 不存在，导致 RubyScriptEngine 类加载失败，这个失败原因被吃掉了，和 ruby 对应不起来，当用户执行 ruby 脚本时，会报不支持 ruby，而不是真正失败的原因。</li>
+<li>增加了对扩展点 IoC 和 AOP 的支持，一个扩展点可以直接 setter 注入其它扩展点。</li>
+</ol>
+<p>那么 Dubbo 的 SPI 机制是怎么实现的呢？以协议扩展为例，Dubbo 中协议被抽象为 Protocol 接口。</p>
+<h3 id="读取扩展点"><a href="#读取扩展点" class="headerlink" title="读取扩展点"></a>读取扩展点</h3><p>ServiceConfig#protocol</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Protocol protocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension()</span><br></pre></td></tr></table></figure>
+
+<p>Dubbo 使用 ExtensionLoader 实现扩展点加载。</p>
+<ul>
+<li>ExtensionLoader#getExtensionLoader()<br>获取 ExtensionLoader 实现，保证每种扩展点一个单例。</li>
+<li>ExtensionLoader#getAdaptiveExtension()<br>根据不同的 SPI 扩展点，即不同的 interface，生成不同的 Adaptive 实例的代码。<br>-&gt; getAdaptiveExtensionClass()<br>-&gt; getExtensionClasses()<br>-&gt; loadExtensionClasses()<br>加载所有的扩展点实现，直到扩展点方法执行时才决定调用是一个扩展点实现，即从众多的实现策略中决定具体使用哪一个策略。<br>ExtensionLoader 会依次从<code>META-INF/dubbo/internal</code>（Dubbo 内部实现）、<code>META-INF/dubbo/</code>（开发者自定义策略）、<code>META-INF/services/</code>这几个目录下读取扩展点实现，目录下的同名文件配置了对应扩展点的实现策略，调用 loadFile 来加载对应的扩展策略。<br>-&gt; loadFile(Map&lt;String, Class&lt;?&gt;&gt; extensionClasses, String dir)</li>
+</ul>
+<h3 id="生成-Adaptive-实例"><a href="#生成-Adaptive-实例" class="headerlink" title="生成 Adaptive 实例"></a>生成 Adaptive 实例</h3><ul>
+<li>ExtensionLoader#loadFile<br>-&gt; String fileName &#x3D; dir + type.getName()<br>拼接文件路径<br>-&gt; ClassLoader classLoader &#x3D; findClassLoader()<br>拿到 ExtensionLoader 的类加载器。<br>-&gt; Class&lt;?&gt; clazz &#x3D; Class.forName(line, true, classLoader);<br>文件每行是一个实现类的全路径名，通过反射加载并拿到具体类型。<br>-&gt; extensionClasses.put(n, clazz)<br>添加到 map 里返回。</li>
+<li>ExtensionLoader#cachedClasses<br>-&gt; cachedClasses.set(classes)<br>添加到缓存。</li>
+<li>ExtensionLoader#createAdaptiveExtensionClass<br>-&gt; ExtensionLoader#createAdaptiveExtensionClassCode<br>生成 Adaptive 类。<br>-&gt; compiler &#x3D; ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.common.compiler.Compiler.class).getAdaptiveExtension()<br>拿到编译接口扩展点的一个具体实现，dubbo 内部支持 jdk 和 javassist，默认是 javassist。<br>-&gt; compiler.compile(code, classLoader)<br>编译代码，生成 Adaptive 实例类。</li>
+</ul>
+<p>上面提到 Compiler 也是一个扩展点，同样也依赖这个流程来实例化，在运行时生成 Adaptive 实例的时候，需要生成 Compiler 接口的 Adaptive 实例，即运行生成 Adaptive 实例的时候需要先有一个 Compiler 接口的 Adaptive 实例，那这样岂不是陷入了死循环，这里就要提到显示指定 Adaptive 实例的情况。<code>@Adaptive</code>注解支持类级别和方法级别：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、类级别：只能拥有一个，注解打在接口实现类上，显示的注册一个Adaptive实例，在编译期就存在，如`AdaptiveCompiler`，解决了上面的死循环问题，由`AdaptiveCompiler`依据dubbo配置决定使用哪个编译类；</span><br><span class="line">2、方法级别：在运行期动态的生成Adaptive实例。</span><br></pre></td></tr></table></figure>
+
+<h3 id="通过-URL-动态选择协议"><a href="#通过-URL-动态选择协议" class="headerlink" title="通过 URL 动态选择协议"></a>通过 URL 动态选择协议</h3><p>ExtensionLoader#createAdaptiveExtensionClassCode<br>生成的 Protocol 的 Adaptive 实例类，依据 URL 中 protocol key-value 的值，选择对应的 Protocol 策略来暴露和引用服务。<br>扩展点方法调用会有 URL 参数（或是参数有 URL 成员），这样依赖的扩展点可以从 URL 拿到配置信息，所有的扩展点自己定好配置的 Key 后，配置信息从 URL 上从最外层传入，URL 在配置传递上即是一条总线。<br>以 dubbo+zookeeper 为例，暴露和引用远程服务都是注册在 zookeeper 上的，服务注册在 zookeeper 上本质其实是一个 URL，远程服务调用的过程中依据 URL 的 key-value 来动态决定执行 Protocol、Filter 等接口扩展点的执行策略。<br>下面是 Provider 端暴露 HelloService 服务时在 zookeeper 上注册的 URL，在 zookeeper 上的路径为&#x2F;dubbo&#x2F;com.dubbo.test.service.HelloService&#x2F;providers，URL 表示了采用 dubbo 协议，接口为 com.dubbo.test.service.HelloService，方法为 say，要执行的 Filter 为 whiteFilter 等。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[zk： localhost：2181(CONNECTED) 1] Is /dubbo/com.dubbo.test.service.HelloService/providers</span><br><span class="line">[dubbo://127.0.0.1:2O881/com.dubbo.test.service.HelloService?anyhost=true&amp;application=dubbo-test-service&amp;dubbo=2.4.10&amp;group=test-prod&amp;interface=com.dubbo.test.service.HelloService&amp;methods=say&amp;pid=21242&amp;revision=l.0&amp;service.filter=whiteFilter&amp;side=providerxtamp=1495436105078&amp;version=l.0]</span><br></pre></td></tr></table></figure>
+
+<h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><ul>
+<li>volatile Class&lt;~&gt; cachedAdaptiveClass<br>这个是缓存 AdaptiveClass，如果一个扩展类的类上面带有 @Adaptive 注解，那么这个类就会被缓存在这个地方，每一种类型的扩展类只有一个 AdaptiveClass，如果发现有多个，则会报错。另外，当通过 getAdaptiveExtensionClass 来获取自适应扩展类时，如果当前还没有 AdaptiveClass，则会自动创建一个（动态生成 Java 代码，再编译，典型的比如 Protocol$Adaptive 就是这么生成的）</li>
+<li>Set&lt;~&gt; cachedWrapperClasses<br>这个是缓存包装类的，Dubbo 判断一个扩展类是否是包装类比较简单，通过构造函数来判断，如果这个扩展类有一个构造函数，其中参数是当前扩展类的类型，那么就是包装类，举个例子，ProtocolFilterWrapper 就是 protocol 扩展类的包装类，因为有这个构造函数：<code>public ProtocolFilterWrapper(Protocol protocol)</code></li>
+<li>Map&lt;~&gt; cachedActivates<br>这个是缓存激活的扩展类，当然，@Activate 注解还可以规定激活的条件和时机</li>
+<li>Holder&lt;~&gt; cachedClasses<br>这个是缓存 Adaptive 和 Wrapper 扩展类之外的普通扩展类</li>
+</ul>
+<p>扩展类被加载后会根据一定的规则放入以上 4 个缓存中，比如带有 @Adaptive 注解的会被放入 cachedAdaptiveClass。</p>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
@@ -1197,127 +1554,6 @@
 <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/loveqishan/article/details/89531587">如何提高使用 Java 反射的效率？</a></li>
 <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_26525215/article/details/82943040">Java 序列化框架性能比较</a></li>
 </ol>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/bf6c261d.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/bf6c261d.html" class="post-title-link" itemprop="url">Dubbo的SPI原理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-09-07 18:51:58" itemprop="dateCreated datePublished" datetime="2019-09-07T18:51:58+08:00">2019-09-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Dubbo/" itemprop="url" rel="index"><span itemprop="name">Dubbo</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-
-
-<h2 id="接口扩展策略注解-SPI"><a href="#接口扩展策略注解-SPI" class="headerlink" title="接口扩展策略注解 @SPI"></a>接口扩展策略注解 @SPI</h2><p>Dubbo中的很多扩展接口，如 Protocol、Transporter、Filter 等，都是通过 JDK 的 SPI 机制实现的，也就是说这些功能都可被用户自定义的扩展所替换，接口扩展点由注解<code>@SPI</code>定义。<br>JDK 中 SPI（Service Provider Interface）的设计与策略模式如出一辙，开发者可以替换掉 Dubbo 原扩展接口的默认实现，完成自定义需求，即可以自定义实现策略。<br>Dubbo 在 JDK 现有 SPI 实现的基础上做了如下改进：</p>
-<ol>
-<li>JDK 标准的 SPI 会一次性实例化扩展点所有实现，如果有扩展实现初始化很耗时，但如果没用上也加载，会很浪费资源。</li>
-<li>如果扩展点加载失败，连扩展点的名称都拿不到了。比如：JDK 标准的 ScriptEngine，通过 getName();获取脚本类型的名称，但如果 RubyScriptEngine 因为所依赖的 jruby.jar 不存在，导致 RubyScriptEngine 类加载失败，这个失败原因被吃掉了，和 ruby 对应不起来，当用户执行 ruby 脚本时，会报不支持 ruby，而不是真正失败的原因。</li>
-<li>增加了对扩展点 IoC 和 AOP 的支持，一个扩展点可以直接 setter 注入其它扩展点。</li>
-</ol>
-<p>那么 Dubbo 的 SPI 机制是怎么实现的呢？以协议扩展为例，Dubbo 中协议被抽象为 Protocol 接口。</p>
-<h3 id="读取扩展点"><a href="#读取扩展点" class="headerlink" title="读取扩展点"></a>读取扩展点</h3><p>ServiceConfig#protocol</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Protocol protocol = ExtensionLoader.getExtensionLoader(Protocol.class).getAdaptiveExtension()</span><br></pre></td></tr></table></figure>
-
-<p>Dubbo 使用 ExtensionLoader 实现扩展点加载。</p>
-<ul>
-<li>ExtensionLoader#getExtensionLoader()<br>获取 ExtensionLoader 实现，保证每种扩展点一个单例。</li>
-<li>ExtensionLoader#getAdaptiveExtension()<br>根据不同的 SPI 扩展点，即不同的 interface，生成不同的 Adaptive 实例的代码。<br>-&gt; getAdaptiveExtensionClass()<br>-&gt; getExtensionClasses()<br>-&gt; loadExtensionClasses()<br>加载所有的扩展点实现，直到扩展点方法执行时才决定调用是一个扩展点实现，即从众多的实现策略中决定具体使用哪一个策略。<br>ExtensionLoader 会依次从<code>META-INF/dubbo/internal</code>（Dubbo 内部实现）、<code>META-INF/dubbo/</code>（开发者自定义策略）、<code>META-INF/services/</code>这几个目录下读取扩展点实现，目录下的同名文件配置了对应扩展点的实现策略，调用 loadFile 来加载对应的扩展策略。<br>-&gt; loadFile(Map&lt;String, Class&lt;?&gt;&gt; extensionClasses, String dir)</li>
-</ul>
-<h3 id="生成-Adaptive-实例"><a href="#生成-Adaptive-实例" class="headerlink" title="生成 Adaptive 实例"></a>生成 Adaptive 实例</h3><ul>
-<li>ExtensionLoader#loadFile<br>-&gt; String fileName &#x3D; dir + type.getName()<br>拼接文件路径<br>-&gt; ClassLoader classLoader &#x3D; findClassLoader()<br>拿到 ExtensionLoader 的类加载器。<br>-&gt; Class&lt;?&gt; clazz &#x3D; Class.forName(line, true, classLoader);<br>文件每行是一个实现类的全路径名，通过反射加载并拿到具体类型。<br>-&gt; extensionClasses.put(n, clazz)<br>添加到 map 里返回。</li>
-<li>ExtensionLoader#cachedClasses<br>-&gt; cachedClasses.set(classes)<br>添加到缓存。</li>
-<li>ExtensionLoader#createAdaptiveExtensionClass<br>-&gt; ExtensionLoader#createAdaptiveExtensionClassCode<br>生成 Adaptive 类。<br>-&gt; compiler &#x3D; ExtensionLoader.getExtensionLoader(com.alibaba.dubbo.common.compiler.Compiler.class).getAdaptiveExtension()<br>拿到编译接口扩展点的一个具体实现，dubbo 内部支持 jdk 和 javassist，默认是 javassist。<br>-&gt; compiler.compile(code, classLoader)<br>编译代码，生成 Adaptive 实例类。</li>
-</ul>
-<p>上面提到 Compiler 也是一个扩展点，同样也依赖这个流程来实例化，在运行时生成 Adaptive 实例的时候，需要生成 Compiler 接口的 Adaptive 实例，即运行生成 Adaptive 实例的时候需要先有一个 Compiler 接口的 Adaptive 实例，那这样岂不是陷入了死循环，这里就要提到显示指定 Adaptive 实例的情况。<code>@Adaptive</code>注解支持类级别和方法级别：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1、类级别：只能拥有一个，注解打在接口实现类上，显示的注册一个Adaptive实例，在编译期就存在，如`AdaptiveCompiler`，解决了上面的死循环问题，由`AdaptiveCompiler`依据dubbo配置决定使用哪个编译类；</span><br><span class="line">2、方法级别：在运行期动态的生成Adaptive实例。</span><br></pre></td></tr></table></figure>
-
-<h3 id="通过-URL-动态选择协议"><a href="#通过-URL-动态选择协议" class="headerlink" title="通过 URL 动态选择协议"></a>通过 URL 动态选择协议</h3><p>ExtensionLoader#createAdaptiveExtensionClassCode<br>生成的 Protocol 的 Adaptive 实例类，依据 URL 中 protocol key-value 的值，选择对应的 Protocol 策略来暴露和引用服务。<br>扩展点方法调用会有 URL 参数（或是参数有 URL 成员），这样依赖的扩展点可以从 URL 拿到配置信息，所有的扩展点自己定好配置的 Key 后，配置信息从 URL 上从最外层传入，URL 在配置传递上即是一条总线。<br>以 dubbo+zookeeper 为例，暴露和引用远程服务都是注册在 zookeeper 上的，服务注册在 zookeeper 上本质其实是一个 URL，远程服务调用的过程中依据 URL 的 key-value 来动态决定执行 Protocol、Filter 等接口扩展点的执行策略。<br>下面是 Provider 端暴露 HelloService 服务时在 zookeeper 上注册的 URL，在 zookeeper 上的路径为&#x2F;dubbo&#x2F;com.dubbo.test.service.HelloService&#x2F;providers，URL 表示了采用 dubbo 协议，接口为 com.dubbo.test.service.HelloService，方法为 say，要执行的 Filter 为 whiteFilter 等。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[zk： localhost：2181(CONNECTED) 1] Is /dubbo/com.dubbo.test.service.HelloService/providers</span><br><span class="line">[dubbo://127.0.0.1:2O881/com.dubbo.test.service.HelloService?anyhost=true&amp;application=dubbo-test-service&amp;dubbo=2.4.10&amp;group=test-prod&amp;interface=com.dubbo.test.service.HelloService&amp;methods=say&amp;pid=21242&amp;revision=l.0&amp;service.filter=whiteFilter&amp;side=providerxtamp=1495436105078&amp;version=l.0]</span><br></pre></td></tr></table></figure>
-
-<h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><ul>
-<li>volatile Class&lt;~&gt; cachedAdaptiveClass<br>这个是缓存 AdaptiveClass，如果一个扩展类的类上面带有 @Adaptive 注解，那么这个类就会被缓存在这个地方，每一种类型的扩展类只有一个 AdaptiveClass，如果发现有多个，则会报错。另外，当通过 getAdaptiveExtensionClass 来获取自适应扩展类时，如果当前还没有 AdaptiveClass，则会自动创建一个（动态生成 Java 代码，再编译，典型的比如 Protocol$Adaptive 就是这么生成的）</li>
-<li>Set&lt;~&gt; cachedWrapperClasses<br>这个是缓存包装类的，Dubbo 判断一个扩展类是否是包装类比较简单，通过构造函数来判断，如果这个扩展类有一个构造函数，其中参数是当前扩展类的类型，那么就是包装类，举个例子，ProtocolFilterWrapper 就是 protocol 扩展类的包装类，因为有这个构造函数：<code>public ProtocolFilterWrapper(Protocol protocol)</code></li>
-<li>Map&lt;~&gt; cachedActivates<br>这个是缓存激活的扩展类，当然，@Activate 注解还可以规定激活的条件和时机</li>
-<li>Holder&lt;~&gt; cachedClasses<br>这个是缓存 Adaptive 和 Wrapper 扩展类之外的普通扩展类</li>
-</ul>
-<p>扩展类被加载后会根据一定的规则放入以上 4 个缓存中，比如带有 @Adaptive 注解的会被放入 cachedAdaptiveClass。</p>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
@@ -1722,142 +1958,6 @@
             </div>
           <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/54dfb258.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/54dfb258.html" class="post-title-link" itemprop="url">异地多活</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-09-01 21:07:49" itemprop="dateCreated datePublished" datetime="2019-09-01T21:07:49+08:00">2019-09-01</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">分布式系统</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<h2 id="两地三中心"><a href="#两地三中心" class="headerlink" title="两地三中心"></a>两地三中心</h2><h3 id="为什么要建设多个-IDC（数据中心）"><a href="#为什么要建设多个-IDC（数据中心）" class="headerlink" title="为什么要建设多个 IDC（数据中心）"></a>为什么要建设多个 IDC（数据中心）</h3><p>灾备。</p>
-<h3 id="为什么是两地三中心（同城-跨城）"><a href="#为什么是两地三中心（同城-跨城）" class="headerlink" title="为什么是两地三中心（同城+跨城）"></a>为什么是两地三中心（同城+跨城）</h3><p>最大可能性地避免天灾人祸。<br>但距离过远、数据传输速度慢，同时会带来<strong>数据一致性</strong>问题。</p>
-<blockquote>
-<p>这体现了 CAP 原理：一致性（C）与高可用（A）不可兼得。</p>
-</blockquote>
-<h3 id="部署方式"><a href="#部署方式" class="headerlink" title="部署方式"></a>部署方式</h3><p>全量灾备例子：新浪的弹性伸缩服务（back up、单元化）<br>部分灾备例子：支付宝早期架构</p>
-<h3 id="研发"><a href="#研发" class="headerlink" title="研发"></a>研发</h3><p>业务分级</p>
-<ol>
-<li>SLA、SLO、SLI</li>
-<li>为什么要做业务分级<br>便于做灾备。</li>
-</ol>
-<p>SRE（现已归入 devops 体系）</p>
-<ol>
-<li>监控体系<br>IDC<br>网络<br>基础服务<br>应用服务<br>流量<br>安全<br>用户（agent、听云、白山云）</li>
-<li>灾备</li>
-<li>fire-help<br>发现（完备的监控系统、混沌工程）、恢复（回滚）、解决、复盘</li>
-</ol>
-<p>数据<br>实时性（有些业务一定要实时，有些不需要）</p>
-<h2 id="怎么做"><a href="#怎么做" class="headerlink" title="怎么做"></a>怎么做</h2><ol>
-<li>调研方案</li>
-<li>可行性分析</li>
-<li>形成多种方案<ul>
-<li>进行技术选型</li>
-<li>成本分析（人力、金钱）</li>
-<li>风险分析</li>
-<li>形成一套方案</li>
-</ul>
-</li>
-<li>决策</li>
-</ol>
-<h2 id="成本预算"><a href="#成本预算" class="headerlink" title="成本预算"></a>成本预算</h2><h2 id="确定资源"><a href="#确定资源" class="headerlink" title="确定资源"></a>确定资源</h2><ol>
-<li>金钱待遇</li>
-<li>业务</li>
-<li>职级（向谁汇报）</li>
-</ol>
-<h2 id="立项"><a href="#立项" class="headerlink" title="立项"></a>立项</h2><ol>
-<li>计算规划</li>
-<li>分配资源</li>
-<li>时间节点（中期汇报、日报）</li>
-<li>风险点</li>
-</ol>
-<h2 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h2><ol>
-<li>安排任务</li>
-<li>通过按计划完成任务来提升自我的影响力</li>
-</ol>
-<h2 id="验收"><a href="#验收" class="headerlink" title="验收"></a>验收</h2><ol>
-<li>干系方的验收<br>包括让 QA、产品经理验收。</li>
-<li>非干系方的验收<br>比如让媒体报道，提升我们公司的影响力。</li>
-<li>形成闭环<br>review 计划，看是否达到了预期。</li>
-</ol>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
 

@@ -84,7 +84,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">191</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">84</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">192</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -147,7 +147,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">191</span>
+          <span class="site-state-item-count">192</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -158,7 +158,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-count">84</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -175,6 +175,209 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/ad5b98b9.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/ad5b98b9.html" class="post-title-link" itemprop="url">JVM 的结构</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-05 20:56:12" itemprop="dateCreated datePublished" datetime="2019-10-05T20:56:12+08:00">2019-10-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+
+<p><img src="/imgs/JVM/JVM%E7%BB%93%E6%9E%84.png" alt="JVM结构" title="JVM结构"><br>JVM 特指用于运行由 Java 虚拟机规范规定的字节码的运行时系统，它具有以下特征：</p>
+<ul>
+<li>平台无关性<br>JVM 本身是平台相关的，只是对不同平台都有实现，所以我们编译成的字节码才可以在各个平台上执行，因此称 Java 平台无关指的是字节码是平台无关的。</li>
+<li>高度抽象<br>JVM 提供了编译器、类加载、动态内存管理、线程等一套工具，作为虚拟机，程序经编译后运行在 JVM 上时，几乎完全不必担心平台的兼容性。<br>本地方法接口只是作为一个扩展功能提供，并不是必须的，实际上除了对性能严格要求的场合，本地方法一般不会被使用。<blockquote>
+<p>编译器严格来说和虚拟机并无太大关联，JVM 可以供 Groovy、Kotlin、Scala 等一系列语言作为运行时环境，</p>
+</blockquote>
+</li>
+</ul>
+<p>下图表示 JVM 的系统结构，包括与 Class 文件打交道的类装载系统、进行运行时数据管理的系统、进行方法执行的系统、本地方法接口（JNI）和本地方法库这些部分。</p>
+<h3 id="类装载子系统"><a href="#类装载子系统" class="headerlink" title="类装载子系统"></a>类装载子系统</h3><p>类装载子系统负责查找并装载类型，类装载器主要包含两种：<strong>启动类装载器（Java 虚拟机实现的一部分）</strong>和<strong>用户自定义类装载器（Java 程序的一部分）</strong>。</p>
+<p>启动类装载器 – Java 虚拟机必须有一个启动类装载器，用于装载受信任的类，如 Java API 的 class 文件。<br>用户自定义类装载器 – 继承自 ClassLoader 类，ClassLoader 的如下四个方法，是通往 Java 虚拟机的通道。</p>
+<ul>
+<li>protected final Class defineClass(String name, byte data[], int offset, int length); &#x2F;&#x2F; data 为二进制的 Java Class 文件数据，表示一个新的可用类型，之后把这个类型导入到方法区中</li>
+<li>protected final Class defineClass(String name, byte data[], int offset, int length, ProtectionDomain protectionDomain);</li>
+<li>protected final Class findSystemClass(String name); &#x2F;&#x2F; 参数为全限定名，通过类装载器进行装载</li>
+<li>protected final void resolveClass(Class c); &#x2F;&#x2F; 参数为 Class 实例，完成连接初始化操作</li>
+</ul>
+<p>类装载子系统负责<strong>定位和导入二进制 class 文件，并且保证导入类的正确性，为类变量分配并初始化内存，以及帮助解析符号引用</strong>。类装载器必须严格按照如下顺序进行类的装载。</p>
+<ol>
+<li>装载 – 查找并装载类型的二进制数据</li>
+<li>连接 – 执行验证，准备，以及解析（可选），连接分为如下三个步骤<br> 验证 – 确保被导入类型的正确性<br> 准备 – 为类变量（static）分配内存，并将其初始化为默认值<br> 解析 – 把类型中的符号引用转换为直接引用</li>
+<li>初始化 – 把类变量初始化为正确初始值</li>
+</ol>
+<h2 id="内存管理系统"><a href="#内存管理系统" class="headerlink" title="内存管理系统"></a>内存管理系统</h2><h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><p>方法区是线程共享的内存区域，用于存储已被虚拟机加载的类信息、常量、静态变量、即时编译器编译后的代码等数据，当方法区无法满足内存分配需求时，将抛出 OutOfMemoryError。<br>类信息包括：</p>
+<ol>
+<li>类型全限定名。</li>
+<li>类型的直接超类的全限定名（除非这个类型是 java.lang.Object，它没有超类）。</li>
+<li>类型是类类型还是接口类型。</li>
+<li>类型的访问修饰符（public、abstract、final 的某个子集）。</li>
+<li>任何直接超接口的全限定名的有序列表。</li>
+<li>类型的常量池。</li>
+<li>字段信息。</li>
+<li>方法信息。</li>
+<li>除了常量以外的所有类（静态）变量。</li>
+<li>一个到类 ClassLoader 的引用。</li>
+<li>一个到 Class 类的引用。</li>
+</ol>
+<p>着重介绍<strong>常量池</strong>，虚拟机必须要为每个被装载的类型维护一个常量池。常量池就是该类型所用常量的一个有序集合，包括直接常量和对其他类型、字段和方法的符号引用。它在 Java 程序的<strong>动态连接</strong>（运行时解析字节码中使用到的符号引用）中起着核心作用。<br>除了以上结构外，JVM 的实现者还可以添加一些其他的数据结构，如方法表：对每个加载的非抽象类的类信息中都添加一个方法表，方法表是一组对类实例方法的直接引用——包括从父类继承的方法，JVM 可以通过方法表快速找到实例方法。</p>
+<blockquote>
+<p>C++中 virtual 函数是通过虚函数表实现的，Java 中所有方法都是 virtual 的，因此也就不需要再标注虚拟了，正像 Java 虽然宣称没有指针，但是 Java 里其实全是指针。Java 中类似的检查机制不少，这体现了 Java 的一种设计思想：始终将安全放在效率之上。</p>
+</blockquote>
+<h3 id="元空间"><a href="#元空间" class="headerlink" title="元空间"></a>元空间</h3><p>JDK1.8 的一大改动是方法区变成了元空间，其实就是放开了类空间的大小，容量取决于是 32 位或是 64 位操作系统的可用虚拟内存大小，32 位系统本地最多有 4G 虚拟内存空间，物理内存取决于操作系统的配置。新参数<code>MaxMetaspaceSize</code>用于限制本地内存分配给类元数据的大小，如果没有指定这个参数，元空间会在运行时根据需要动态调整，大小随意。对于没用的类及类加载器的垃圾回收将在元数据使用达到 MaxMetaspaceSize 参数的设定值时进行。</p>
+<h3 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h3><p>一个虚拟机实例只对应一个堆空间，堆是<strong>线程共享</strong>的，当然还有可能会划分出多个线程私有的分配缓冲区（<strong>TLAB</strong>）。堆空间是存放对象实例的地方，几乎所有对象实例都在这里分配。堆也是<strong>垃圾收集器</strong>管理的主要区域，因此也被称为“GC 堆”。<br>堆可以处于物理上不连续的内存空间中，只要逻辑上连续即可，就像磁盘空间一样。<br>当堆中没有足够的内存进行对象实例分配时，并且堆也无法扩展时，会抛出 OutOfMemoryError 异常。<br>对 OOM 的排查通常是先通过内存映像分析工具对 Dump 出来的堆转储快照进行分析，重点是确认内存中的对象是否是必要的，也就是要先分清楚到底是出现了<strong>内存泄漏</strong>还是<strong>内存溢出</strong>。</p>
+<ul>
+<li>如果是内存泄漏，可进一步通过工具查看泄露对象到 GC Roots 的引用链。于是就能找到泄露对象的类型信息及 GC Roots 引用链的信息，就可以比较准确地定位出泄露代码的位置。</li>
+<li>如果不存在泄露，就是内存中的对象确实都还必须存活着，那就应当检查虚拟机的堆参数（-Xmx 与 -Xms），与机器物理内存对比看是否还可以调大，从代码上检查是否存在某些对象生命周期过长、持有状态时间过长的情况，尝试减少程序运行期的内存消耗。</li>
+</ul>
+<h3 id="程序计数器"><a href="#程序计数器" class="headerlink" title="程序计数器"></a>程序计数器</h3><p>每个线程拥有自己的程序计数器，线程之间的程序计数器互不影响，在任何一个确定的时刻，一个处理器（对于多核处理器来说是一个内核）都只会执行一条线程中的指令。<br>PC 寄存器的内容总是下一条将被执行指令的”地址”，这里的”地址”可以是一个本地指针，也可以是在方法字节码中相对于该方法起始指令的偏移量。</p>
+<ul>
+<li>如果该线程正在执行一个本地方法，则程序计数器内容为 undefined。</li>
+<li>此区域在 Java 虚拟机规范中没有规定任何 OutOfMemoryError 情况的区域。</li>
+</ul>
+<h3 id="虚拟机栈"><a href="#虚拟机栈" class="headerlink" title="虚拟机栈"></a>虚拟机栈</h3><p>我们一般会把 Java 内存区分为堆内存和栈内存，而所指的“栈”就是这里的虚拟机栈，或者说是虚拟机栈中局部变量表部分。<br>Java 栈也是线程私有的，虚拟机只会对栈进行两种操作，以帧为单位的<strong>入栈</strong>和<strong>出栈</strong>。每个方法在执行时都会创建一个<strong>栈帧</strong>，并入栈，成为当前帧，每一个方法从调用直至执行完成的过程，就对应着一个栈帧在虚拟机栈中从入栈到出栈的过程。栈帧由三部分组成：局部变量区、操作数栈、帧数据区。<br><strong>局部变量区</strong>被组织为一个以字长为单位、从 0 开始计数的数组。字节码指令通过从 0 开始的索引来使用其中的数据。类型为 int、float、reference 和 returnAddress 的值在数组中只占据一项，而类型为 byte、short 和 char 的值存入时都会转化为 int 类型，也占一项，而 long、double 则连续占据两项。<br><strong>操作数栈</strong>也常被称为操作栈，它是一个后入先出栈。当一个方法刚刚执行的时候，这个方法的操作数栈是空的，在方法执行的过程中，会有各种字节码指令向操作数栈中写入和提取值，也就是入栈与出栈操作。在使用操作数栈时需要注意实例方法和类方法：<br>    <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class Example &#123;</span><br><span class="line">    // 类方法</span><br><span class="line">    public static int classMethod(int i, long l, float f, double d, Object o, byte b) &#123;</span><br><span class="line">        return 0;</span><br><span class="line">    &#125;</span><br><span class="line">    // 实例方法</span><br><span class="line">    public int instanceMethod(char c, double d, short s, boolean b) &#123;</span><br><span class="line">        return 0;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>类方法和实例方法栈帧结构有所不同，从图中可以看到它们之间的区别：</p>
+<ul>
+<li>类方法帧里没有隐含的 this 引用，而实例方法帧中会隐含一个 this 引用；</li>
+</ul>
+<p>并且注意：</p>
+<ul>
+<li>byte,char,short,boolean 类型存入局部变量区的时候都会被转化成 int 类型值，当被存回堆或者方法区时，才会转化回原来的类型；</li>
+<li>returnAddress 类型数据是指向字节码的指针（方法区的字节码指令），它只存在于字节码层面，与编程语言无关，我们在 Java 语言中是不会直接与 returnAddress 类型数据打交道的。<blockquote>
+<p>每个线程所持有的程序计数器（pc）实际上就是 returnAddress 类型的数据，当线程执行 native 方法时，pc 中的值为 undefied。</p>
+</blockquote>
+</li>
+<li>操作数栈被组织成一个以字长为单位的数组，它是通过标准的栈操作——即入栈和出栈来进行访问，而不是通过索引访问。入栈和出栈也会存在类型的转化；</li>
+<li>当一个方法执行完毕之后，要返回之前调用它的地方，因此在栈帧中必须保存一个方法返回地址。方法退出的过程实际上等同于把当前栈帧出栈，因此退出时可能执行的操作有：恢复上层方法的局部变量表和操作数栈，把返回值(如果有的话)压入调用都栈帧的操作数栈中，调用 PC 计数器的值以指向方法调用指令后面的一条指令等。</li>
+<li>每个栈帧都包含一个指向运行时常量池中该栈帧所属方法的引用，持有这个引用是为了支持方法调用过程中的动态连接。在 Class 文件的常量池中存有大量的符号引用，字节码中的方法调用指令就以常量池中指向方法的符号引用为参数。这些符号引用一部分会在类加载阶段或第一次使用的时候转化为直接引用，这种转化称为静态解析。另外一部分将在每一次的运行期期间转化为直接引用，这部分称为动态连接。</li>
+</ul>
+<p><strong>栈数据区</strong>存放一些用于支持常量池解析、正常方法返回以及异常派发机制的信息。即将常量池的符号引用转化为直接地址引用、恢复发起调用的方法的帧进行正常返回，发生异常时转交异常表进行处理。</p>
+<ul>
+<li>虚拟机规范允许具体的虚拟机实现增加一些规范里没有描述的信息到栈帧中，例如与高度相关的信息，这部分信息完全取决于具体的虚拟机实现。在实际开发中，一般会把动态连接，方法返回地址与其它附加信息全部归为一类，称为<strong>栈帧信息</strong>。</li>
+</ul>
+<p>在 Java 虚拟机规范中，规定了两种异常状况：如果线程请求的栈深度大于虚拟机所允许的深度，将抛出 StackOverflowError 异常；如果虚拟机栈可以动态扩展，当扩展时无法申请到足够的内存，就会抛出 OutOfMemoryError 异常。</p>
+<p>系统分配给每个进程的内存是有限制的，除去 Java 堆、方法区、程序计数器，如果虚拟机进程本身耗费的内存不计算在内，剩下内存就由虚拟机栈和本地方法栈“瓜分”了。每个线程分配到的栈容量越大，可以建立的线程数量自然就越少，建立线程时就越容易把剩下的内存耗尽，出现<strong>虚拟机栈溢出</strong>的情况。</p>
+<ul>
+<li>如果线程请求的栈深度大于虚拟机所允许的最大深度，将抛出 StackOverflowError 异常，出现 StackOverflowError 异常时有错误栈可以阅读，栈深度在大多数情况下达到 1000~2000 完全没有问题，对于正常的方法调用（包括递归），这个深度在一半情况下完全够用。</li>
+<li>如果虚拟机在扩展栈（建立更多的线程）时无法申请到足够的内存空间，则抛出 OutOfMemoryError 异常，在不能减少线程数或者更换 64 位虚拟机的情况下，就只能通过减少最大堆和减少栈容量来换取更多的线程。</li>
+</ul>
+<p>一般可以认为 Java 中的一切变量都是引用，实际的对象存储在堆中，但是基础类型比较特殊，它们可以直接使用操作符进行算数运算，不过基础类型也带来了一些问题，比如装箱拆箱过程中可能产生空指针异常。Java 中引入基础类型的动机应该是性能与空间利用率，毕竟使用引用时还得通过<strong>指针碰撞</strong>或<strong>空闲列表</strong>方法（根据垃圾收集器不同而不同）来找到实际对象，而且基础类型本身占用的空间不多，如果用引用势必占用的空间会加倍。<br>基础类型并不是都分配在栈上，具体有以下几种情况：</p>
+<ol>
+<li>在方法中声明的变量，即该变量是局部变量，每当程序调用方法时，系统都会为该方法建立一个方法栈，其所在方法中声明的变量就放在方法栈中，当方法结束系统会释放方法栈，其对应在该方法中声明的变量随着栈的销毁而结束，这就局部变量只能在方法中有效的原因<br>在方法中声明的变量可以是基本类型的变量，也可以是引用类型的变量。<ul>
+<li>当声明是基本类型的变量的时，其变量名及值（变量名及值是两个概念）是放在方法栈中</li>
+<li>当声明的是引用变量时，所声明的变量（该变量实际上是在方法中存储的是内存地址值）是放在方法的栈中，该变量所指向的对象是放在堆类存中的。</li>
+</ul>
+</li>
+<li>在类中声明的变量是成员变量，也叫全局变量，放在堆中的（因为全局变量不会随着某个方法执行结束而销毁）。<br>同样在类中声明的变量即可是基本类型的变量 也可是引用类型的变量<ul>
+<li>当声明的是基本类型的变量其变量名及值是放在堆中的</li>
+<li>引用类型时，其声明的变量仍然会存储一个内存地址值，该内存地址值指向所引用的对象。引用变量名和对应的对象仍然存储在相应的堆中</li>
+</ul>
+</li>
+</ol>
+<h3 id="堆外内存"><a href="#堆外内存" class="headerlink" title="堆外内存"></a>堆外内存</h3><h4 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 分配一块1024字节的堆外内存</span><br><span class="line">ByteBuffer buffer = ByteBuffer.allocateDirect(1024);</span><br><span class="line">System.out.println(buffer.capacity());</span><br><span class="line">buffer.putInt(0, 2018);</span><br><span class="line">System.out.println(buffer.getInt(0));</span><br></pre></td></tr></table></figure>
+
+<h4 id="为什么要使用堆外内存"><a href="#为什么要使用堆外内存" class="headerlink" title="为什么要使用堆外内存"></a>为什么要使用堆外内存</h4><p>主要是因为堆外内存在 IO 操作方面的优势，举一个例子：在通信中，将存在于堆内存中的数据 flush 到远程时，需要首先将堆内存中的数据拷贝到堆外内存中，然后再写入 Socket 中；如果直接将数据存到堆外内存中就可以避免上述拷贝操作，提升性能。类似的例子还有读写文件。<br>但是需要注意的是，直接访问堆外内存并不会比访问 Java 堆更快：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/njCKlx8mBh6kSP2lC9mT4g">哪个更快：Java 堆还是本地内存</a>。堆外内存更适合用于操作大块的数据（&gt;2G）、可以直接使用操作系统提供的本地 IO 进行操作。</p>
+<h4 id="可用的堆外内存额度"><a href="#可用的堆外内存额度" class="headerlink" title="可用的堆外内存额度"></a>可用的堆外内存额度</h4><ol>
+<li>可以通过设定 <code>-XX:MaxDirectMemorySize</code> 来显式指定最大的堆外内存。</li>
+<li>设定 <code>-Dsun.nio.MaxDirectMemorySize</code> 来显式指定：如果该属性为-1，则取<code>directMemory = Runtime.getRuntime().maxMemory()</code>，即 JVM 运行时的最大内存；否则，如果指定这个属性等于-1，则默认为 64M。<br>如果是 JDK8，具体代码见<code>VM.saveAndRemoveProperties()</code>，如果是 JDK8 之前，则代码见<code>VM.maxDirectMemory()</code>。<br>另外，<code>Runtime.getRuntime().maxMemory()</code>是一个 native 方法，HotSpot 中对应的 C++代码如下所示：<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">JNIEXPORT jlong JNICALL</span><br><span class="line">Java_java_lang_Runtime_maxMemory(JNIEnv *env, jobject this)</span><br><span class="line">&#123;</span><br><span class="line">    return JVM_MaxMemory();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">JVM_ENTRY_NO_ENV(jlong, JVM_MaxMemory(void))</span><br><span class="line">  JVMWrapper(&quot;JVM_MaxMemory&quot;);</span><br><span class="line">  size_t n = Universe::heap()-&gt;max_capacity();</span><br><span class="line">  return convert_size_t_to_jlong(n);</span><br><span class="line">JVM_END</span><br></pre></td></tr></table></figure>
+其中 max_capacity() 实际返回的是 –Xmx 设置值减去一个 survivor space 的预留区大小，与堆内大小存很接近。</li>
+</ol>
+<h4 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h4><ol>
+<li>分配<br>ByteBuffer.allocateDirect<br>DirectByteBuffer(int)<br>-&gt; Bits.reserveMemory 在系统中保存总分配内存（按页分配）的大小和实际内存的大小<br> -&gt; Bits.tryReserveMemory 判断系统内存（堆外内存）是否足够，Bits 有一个全局 totalCapacity 变量记录当前已经使用的堆外内存量<br> -&gt; JavaLangRefAccess.tryHandlePendingReference 非阻塞，将已经被 JVM 垃圾回收的 DirectBuffer 对象的堆外内存释放。<br> -&gt; System.gc 触发一次 FullGC，<code>System.gc</code>并不能保证 FullGC 被马上执行，如果设置了<code>-XX:+DisableExplicitGC</code>则这种显式的 GC 会被禁用<br> -&gt; Bits.tryReserveMemory 为了等待 FullGC 释放足够的空间，之后还会重试最多 9 次 tryReserveMemory，每次重试会 sleep 1, 2, 4, 8, 16, 32, 64, 128, 256ms，也就是说最多可以等 0.5s<br> -&gt; throw new OutOfMemoryError 分配空间失败，抛出 OOM 异常<br>-&gt; Unsafe.allocateMemory native 方法，通过 JNI 调用 C++函数分配堆外内存，并返回内存基地址<br>-&gt; Unsafe.setMemory(base, size, (byte) 0) 将分配的内存清零<br>-&gt; Cleaner.create 创建一个 Cleaner 用于释放堆空间</li>
+<li>释放<br>Cleaner.create Cleaner 内部维护了一个 static 的 Cleaner 对象的链表，create 调用创建了一个 Cleaner 对象并将其加入到该链表中<br>-&gt; new Cleaner(DirectByteBuffer, new Deallocator(base, size, cap))</li>
+</ol>
+<p>Cleaner 实现 GC 回收堆外内存的原理是<code>PhantomReference（虚引用）</code>，虚引用必须和引用队列（ReferenceQueue）一起使用，一般用于实现追踪垃圾收集器的回收动作。虚引用不会影响 JVM 是否要 GC 这个对象的判断，当 GC 某个对象时，如果有此对象上还有虚引用，会将虚引用对象插入 <code>ReferenceQueue</code> 队列。<br>对于 Cleaner 对象，当 GC 时发现它除了虚引用外已不可达（持有它的 DirectByteBuffer 对象在 GC 中被回收了，此时，只有 Cleaner 对象唯一保存了堆外内存的数据），就会把它放进 Reference 类的 <code>pending</code> 静态变量里。<br>PhantomReference 的父类是 Reference，Reference 类内部的 static 块会启动 ReferenceHandler 线程，线程优先级很高，这个线程是用来处理 JVM 在 GC 过程中交接过来的 reference（<code>pending</code>）。<br>下面是该线程的大致执行流程：<br>ReferenceHandler.run() 死循环处理 JVM 提交的 reference，如果是 Clearner 则调用其 clean 方法<br>-&gt; Cleaner.clean<br>    -&gt; Cleaner.remove(Cleaner) 首先将 Cleaner 从链表中移除，以便 Cleaner 自身可被 GC 回收掉<br>    -&gt; DirectByteBuffer.Deallocator.run()<br>        -&gt; Unsafe.freeMemory 释放分配的堆外内存<br>        -&gt; Bits.unreserveMemory 更新 Bits.totalCapacity</p>
+<h4 id="手动释放堆外内存"><a href="#手动释放堆外内存" class="headerlink" title="手动释放堆外内存"></a>手动释放堆外内存</h4><p>如前面所述，可以通过编码调用 DirectByteBuffer 的 cleaner 的 clean 方法来释放堆外内存。但需要注意：cleaner 是 private 访问权限，所以，需使用反射来实现。</p>
+<h4 id="MappedByteBuffer"><a href="#MappedByteBuffer" class="headerlink" title="MappedByteBuffer"></a>MappedByteBuffer</h4><p>MappedByteBuffer 是用来访问大文件的，其实是利用操作系统的 mapedfile 的机制，把一个大文件映射到物理内存，然后用户进程像访问内存一样访问文件，背后操作系统会把磁盘文件映射到内存中来，这是操作系统预估你想存取哪块提前为你准备好的。</p>
+<h3 id="本地方法栈"><a href="#本地方法栈" class="headerlink" title="本地方法栈"></a>本地方法栈</h3><p>访问本地方式时使用到的栈，为本地方法服务，与虚拟机栈一样，本地方法区域也会抛出 StackOverflowError 和 OutOfMemoryError 异常。</p>
+<h2 id="方法执行引擎"><a href="#方法执行引擎" class="headerlink" title="方法执行引擎"></a>方法执行引擎</h2><p>用户所编写的程序如何表现正确的行为需要执行引擎的支持，执行引擎执行字节码指令，完成程序的功能。</p>
+<h2 id="本地方法接口（JNI）"><a href="#本地方法接口（JNI）" class="headerlink" title="本地方法接口（JNI）"></a>本地方法接口（JNI）</h2><p>本地方法接口称为 JNI，是为可移植性准备的。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li>《Hotspot 实战》</li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/column/details/14851.html">GC 性能优化</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/lirenzuo/column/info/17179">JVM 菜鸟进阶高手之路</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jvms/se8/html/index.html">The Java® Virtual Machine Specification</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jls/se8/html/index.html">The Java® Language Specification</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7f6832d61880">Java 和操作系统交互细节</a></li>
+</ol>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1947,243 +2150,6 @@ jdk1.6 及之前版本，因为 HotSpot 实行“永久代”（PermGen），方
             </div>
           <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/f1a5dd67.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/f1a5dd67.html" class="post-title-link" itemprop="url">Redis 数据结构</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-09-22 12:21:48" itemprop="dateCreated datePublished" datetime="2019-09-22T12:21:48+08:00">2019-09-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-07-07 01:56:20" itemprop="dateModified" datetime="2025-07-07T01:56:20+08:00">2025-07-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%BC%93%E5%AD%98/" itemprop="url" rel="index"><span itemprop="name">缓存</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-
-<h1 id="基本数据结构"><a href="#基本数据结构" class="headerlink" title="基本数据结构"></a>基本数据结构</h1><h2 id="String"><a href="#String" class="headerlink" title="String"></a>String</h2><h3 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h3><ol>
-<li>最大能存储 512MB &#x3D;&#x3D; 536870912 B(byte) ；</li>
-<li>二进制安全，在传输数据的时候，能保证二进制数据的信息安全，也就是不会被篡改、破译；如果被攻击，能够及时检测出来</li>
-<li>能存储各种类型的数据，字符串、数字，以至对象（通过json序列化）、位图等。</li>
-</ol>
-<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><p>容量：512M</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set aa &#x27;str&#x27;</span><br><span class="line">get aa</span><br></pre></td></tr></table></figure>
-<p>操作总结</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">set/get/del/append/strlen key</span><br><span class="line">incr/decr/incrby/decrby key</span><br><span class="line">getrange key start end/setrange key offset value（从offset处开始读取/覆盖）</span><br><span class="line">setex key seconds value(set with expire插入key的同时设置过期时间)/setnx key value(set if not exists如果已存在则直接返回0)</span><br><span class="line">mset/mget/msetnx key value &#123;key value&#125;（设置/读取多个key的值，msetnx比较特殊，要么都成功，要么一个都不执行，可以用来设置一个对象的多个不同字段）</span><br><span class="line">getset key(设置并返回key对应的旧值，可以用于计数器的重置)</span><br></pre></td></tr></table></figure>
-<h3 id="常见应用"><a href="#常见应用" class="headerlink" title="常见应用"></a>常见应用</h3><p>字符串、jpg图片、序列化对象、一些复杂的计数功能的缓存</p>
-<h2 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h2><p>存储 String 类型键值对的映射表、对象</p>
-<h3 id="基本使用方法"><a href="#基本使用方法" class="headerlink" title="基本使用方法"></a>基本使用方法</h3><p>容量：每个 Hash 可存 2^32 - 1（约 40 亿）个键值对</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hmset user username &#x27;name&#x27; password &#x27;123456&#x27; # 定义一个有两个元素的Hash表</span><br><span class="line">hgetall user # 获取user中所有key和value</span><br><span class="line">hget user username # 获取user中key为username的value</span><br></pre></td></tr></table></figure>
-<h3 id="常见应用-1"><a href="#常见应用-1" class="headerlink" title="常见应用"></a>常见应用</h3><p>单点登录（存&lt;CookieId, 用户信息&gt;，设置 30 分钟为缓存过期时间，能很好地模拟出类似 Session 的效果）。</p>
-<h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><p>String列表</p>
-<h3 id="基本使用方法-1"><a href="#基本使用方法-1" class="headerlink" title="基本使用方法"></a>基本使用方法</h3><p>容量：每个 List 可存 2^32 - 1 个元素</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">lpush ball basketball soccer # 按顺序从左侧压入，如果ball列表不存在则创建</span><br><span class="line">rpush ball volleyball</span><br><span class="line">lrange 0 1 # 获取索引从0到1的值</span><br></pre></td></tr></table></figure>
-<p>操作总结</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">lpush/rpush/lrange</span><br><span class="line">lpop/rpop</span><br><span class="line">lindex</span><br><span class="line">llen</span><br><span class="line">lrem key</span><br><span class="line">ltrim key</span><br><span class="line">rpoplpush</span><br><span class="line">lset key index value</span><br><span class="line">linsert key before/after val1 val2</span><br></pre></td></tr></table></figure>
-<h3 id="常见应用-2"><a href="#常见应用-2" class="headerlink" title="常见应用"></a>常见应用</h3><p>简单的消息队列<br>基于 Redis 的分页功能（利用 lrang 命令，性能极佳，用户体验好）</p>
-<h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><p>字符串的无序集合，使用 Hash 实现（key 和 value 相同的 Hash）</p>
-<h3 id="基本使用方法-2"><a href="#基本使用方法-2" class="headerlink" title="基本使用方法"></a>基本使用方法</h3><p>容量：2^32 - 1 个成员</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sadd myset li1 # 向集合myset中添加一个元素li1，若不存在则创建</span><br><span class="line">smembers myset</span><br></pre></td></tr></table></figure>
-<h3 id="常见应用-3"><a href="#常见应用-3" class="headerlink" title="常见应用"></a>常见应用</h3><p>全局去重（为什么不用 JDK 自带的 Set 去重？因为我们的系统一般都是集群部署）<br>计算共同喜好、全部喜好、自己独有的喜好等功能（交集、并集、差集）</p>
-<h2 id="ZSet"><a href="#ZSet" class="headerlink" title="ZSet"></a>ZSet</h2><p>字符串的有序集合，每个元素都关联一个 double 类型的权重参数 score，集合中的元素能够按 score 进行排列。</p>
-<h3 id="基本使用方法-3"><a href="#基本使用方法-3" class="headerlink" title="基本使用方法"></a>基本使用方法</h3><p>容量：2^32 - 1 个成员</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">zadd myzset 0 abc</span><br><span class="line">zrangebyscore myzset 0 10</span><br></pre></td></tr></table></figure>
-<h3 id="常见应用-4"><a href="#常见应用-4" class="headerlink" title="常见应用"></a>常见应用</h3><p>排行榜<br>取 Top N 操作<br>延时任务（<a target="_blank" rel="noopener" href="https://www.cnblogs.com/rjzheng/p/8972725.html%EF%BC%89">https://www.cnblogs.com/rjzheng/p/8972725.html）</a><br>范围查找</p>
-<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>实现上类似于 Java 的 SortedSet 和 HashMap 的结合体，value 唯一（Set 结构的特点），每个 value 一个 score 代表该 value 的排序权重。<br>zset 内部是使用一种叫做跳跃列表的结构实现的。</p>
-<h1 id="Redis-数据结构的实现"><a href="#Redis-数据结构的实现" class="headerlink" title="Redis 数据结构的实现"></a>Redis 数据结构的实现</h1><h2 id="数据结构的声明和实现"><a href="#数据结构的声明和实现" class="headerlink" title="数据结构的声明和实现"></a>数据结构的声明和实现</h2><p><img src="/imgs/Redis/Redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%8F%8A%E5%85%B6%E5%AE%9E%E7%8E%B0.png" alt="Redis数据结构及其实现" title="Redis数据结构及其实现"><br>Redis 中的 set、zset 等结构在 Redis 中并不是由一个单独的数据结构实现的，而是会根据情况有所变化。</p>
-<h3 id="set"><a href="#set" class="headerlink" title="set"></a>set</h3><p>set和Java中的HashSet有点像，它本身是HashMap的封装，key是集合中的对象，而value直接用NULL代替。<br>但是注意一些特殊情况：</p>
-<ul>
-<li>创建集合对象时，如果发现集合内的元素可以使用整数（longlong）编码，则创建一个intset而不是dict；</li>
-<li>之前是intset编码的情况下，插入的新元素如果是非整数的，那么集合会被重新转换成dict编码的；或者插入的元素数量达到了阈值（512），也会自动转换成dict。<br>创建代码见：<code>t_set.c/setTypeCreate()</code></li>
-</ul>
-<h3 id="zset"><a href="#zset" class="headerlink" title="zset"></a>zset</h3><p>zset同样有两种形态：ziplist编码和skiplist编码。</p>
-<ul>
-<li>按ziplist编码的情况下：<br>zset本身就是个ziplist对象。</li>
-<li>按skiplist编码的情况下：<br>zset的集合功能是通过dict实现的，这部分和set并无区别；<br>zset的有序性是通过skiplist实现的，skiplist按分值排序成员，支持平均复杂度为O(logN)的按分值定位成员的操作。</li>
-</ul>
-<p>执行zadd命令代码：<code>t_zset.c/zaddGenericCommand()</code><br>创建zset对象：<code>object.c/createZsetZiplistObject()</code>、<code>object.c/createZsetObject()</code></p>
-<h2 id="SDS-Simple-Dynamic-String"><a href="#SDS-Simple-Dynamic-String" class="headerlink" title="SDS(Simple Dynamic String)"></a>SDS(Simple Dynamic String)</h2><p>Redis 中的动态数组有以下特点：</p>
-<ul>
-<li>可动态扩展内存。sds 表示的字符串其内容可以修改，也可以追加。在很多语言中字符串会分为 mutable 和 immutable 两种，显然 sds 属于 mutable 类型的。</li>
-<li>减少修改字符串的内存重新分配次数<br>C语言由于不记录字符串的长度，所以如果要修改字符串，必须要重新分配内存（先释放再申请），因为如果没有重新分配，字符串长度增大时会造成内存缓冲区溢出，字符串长度减小时会造成内存泄露。<br>而对于SDS，由于<code>len</code>属性和<code>free</code>属性的存在，对于修改字符串SDS实现了空间预分配和惰性空间释放两种策略：<br>1、空间预分配：对字符串进行空间扩展的时候，扩展的内存比实际需要的多，这样可以减少连续执行字符串增长操作所需的内存重分配次数。<br>2、惰性空间释放：对字符串进行缩短操作时，程序不立即使用内存重新分配来回收缩短后多余的字节，而是使用 free 属性将这些字节的数量记录下来，等待后续使用。（当然SDS也提供了相应的API，当我们有需要时，也可以手动释放这些未使用的空间。）</li>
-<li>二进制安全（Binary Safe）。sds 能存储任意二进制数据，而不仅仅是可打印字符。</li>
-<li>与传统的 C 语言字符串类型兼容。</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">struct SDS&lt;T&gt; &#123;</span><br><span class="line">  T capacity; // 数组容量</span><br><span class="line">  T len; // 数组当前长度</span><br><span class="line">  byte flags; // 特殊标识位，不理睬它</span><br><span class="line">  byte[] content; // 数组内容</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>下面的函数将 t 数组拷贝到 s 中，如果长度不够则需要进行扩容：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">/* Append the specified binary-safe string pointed by &#x27;t&#x27; of &#x27;len&#x27; bytes to the</span><br><span class="line"> * end of the specified sds string &#x27;s&#x27;.</span><br><span class="line"> *</span><br><span class="line"> * After the call, the passed sds string is no longer valid and all the</span><br><span class="line"> * references must be substituted with the new pointer returned by the call. */</span><br><span class="line">sds sdscatlen(sds s, const void *t, size_t len) &#123;</span><br><span class="line">    size_t curlen = sdslen(s);  // 原字符串长度</span><br><span class="line"></span><br><span class="line">    // 按需调整空间，如果 capacity 不够容纳追加的内容，就会重新分配字节数组并复制原字符串的内容到新数组中</span><br><span class="line">    s = sdsMakeRoomFor(s,len);</span><br><span class="line">    if (s == NULL) return NULL; // 内存不足</span><br><span class="line">    memcpy(s+curlen, t, len);  // 追加目标字符串的内容到字节数组中</span><br><span class="line">    sdssetlen(s, curlen+len); // 设置追加后的长度值</span><br><span class="line">    s[curlen+len] = &#x27;\0&#x27;; // 让字符串以\0 结尾，便于调试打印，还可以直接使用 glibc 的字符串函数进行操作</span><br><span class="line">    return s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>SDS 有 embstr 和 raw 两种存储结构，它们的区别是：</p>
-<ol>
-<li>内存分配上：<br>embstr 调用 1 次 malloc, 因此 redisObject 和 SDS 内存是连续分配的；<br>raw 需要调用 2 次 malloc, 因此 redisObject 和 SDS 内存不连续分配</li>
-<li>使用上:<br>embstr 整体 64 byte, 正好和<strong>cpu cache line</strong> 64byte 一样, 可以更好的使用缓存, 效率更高</li>
-</ol>
-<h2 id="quicklist"><a href="#quicklist" class="headerlink" title="quicklist"></a>quicklist</h2><p>Redis 早期版本存储 list 数据结构采用（元素少时 ziplist、多时 linkedlist ）的方案，但是：</p>
-<ol>
-<li>链表的附加空间太高，prev 和 next 指针就要占去 16 个字节（64 位系统）；</li>
-<li>链表每个节点都是单独分配，会加剧内存的碎片化。</li>
-</ol>
-<p>因此在之后的版本中转换为了 quicklist 存储。<br>quicklist 是 ziplist 和 linkedlist 的混合体，它将 linkedlist 按段切分，每一段使用 ziplist 来紧凑存储，多个 ziplist 之间使用双向指针串接起来。<br><img src="/imgs/Redis/Redis-quicklist%E7%BB%93%E6%9E%84.png" alt="Redis-quicklist结构" title="Redis-quicklist结构"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">struct ziplist &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line">struct ziplist_compressed &#123;</span><br><span class="line">    int32 size;</span><br><span class="line">    byte[] compressed_data;</span><br><span class="line">&#125;</span><br><span class="line">struct quicklistNode &#123;</span><br><span class="line">    quicklistNode* prev;</span><br><span class="line">    quicklistNode* next;</span><br><span class="line">    ziplist* zl; // 指向压缩列表</span><br><span class="line">    int32 size; // ziplist 的字节总数</span><br><span class="line">    int16 count; // ziplist 中的元素数量</span><br><span class="line">    int2 encoding; // 存储形式 2bit，原生字节数组还是 LZF 压缩存储</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line">struct quicklist &#123;</span><br><span class="line">    quicklistNode* head;</span><br><span class="line">    quicklistNode* tail;</span><br><span class="line">    long count; // 元素总数</span><br><span class="line">    int nodes; // ziplist 节点的个数</span><br><span class="line">    int compressDepth; // LZF 算法压缩深度</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="ziplist"><a href="#ziplist" class="headerlink" title="ziplist"></a>ziplist</h2><p>ziplist 是一种压缩存储的数组结构，当 Redis 中的集合数据结构很小，则它会使用这种紧凑的存储形式存储，元素之间紧挨着存储，查找就是对数组进行遍历找到目标对象。</p>
-<ul>
-<li>zset 和 hash 容器在元素个数较少时会采用 ziplist 存储。当存储的对象数量小于 512 且所有 entry 的 value 值长度小于 64，采用 ziplist 存储，否则转为采用 hashtable 存储。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">import redis</span><br><span class="line">client = redis.StrictRedis()</span><br><span class="line">client.delete(&quot;hello&quot;)</span><br><span class="line">for i in range(512):</span><br><span class="line">    client.hset(&quot;hello&quot;, str(i), str(i))</span><br><span class="line">print client.object(&quot;encoding&quot;, &quot;hello&quot;)</span><br><span class="line">client.hset(&quot;hello&quot;, &quot;512&quot;, &quot;512&quot;)</span><br><span class="line"># 或者插入一个长度为65的值也能起到转化的作用</span><br><span class="line">print client.object(&quot;encoding&quot;, &quot;hello&quot;)</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>可以上服务器上使用<code>debug object</code>命令验证数据结构的类型：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&gt; zadd hgc_test 1.0 go 2.0 python 2.0 java</span><br><span class="line">...</span><br><span class="line">&gt; debug object hgc_test</span><br><span class="line">Value at:0x7f73c6d673a0 refcount:1 encoding:ziplist serializedlength:36 lru:1381596 lru_seconds_idle:77</span><br></pre></td></tr></table></figure>
-<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p><img src="/imgs/Redis/Redis-ziplist%E7%BB%93%E6%9E%84.png" alt="Redis-ziplist结构" title="Redis-ziplist结构"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">struct ziplist&lt;T&gt; &#123;</span><br><span class="line">    int32 zlbytes; // 整个压缩列表占用字节数</span><br><span class="line">    int32 zltail_offset; // 最后一个元素距离压缩列表起始位置的偏移量，用于快速定位到最后一个节点</span><br><span class="line">    int16 zllength; // 元素个数</span><br><span class="line">    T[] entries; // 元素内容列表，挨个挨个紧凑存储</span><br><span class="line">    int8 zlend; // 标志压缩列表的结束，值恒为 0xFF</span><br><span class="line">&#125;</span><br><span class="line">struct entry &#123;</span><br><span class="line">    int&lt;var&gt; prevlen; // 前一个 entry 的字节长度</span><br><span class="line">    int&lt;var&gt; encoding; // 元素类型编码</span><br><span class="line">    optional byte[] content; // 元素内容</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>zltail_offset 字段可以快速定位到 ziplist 中的最后一个节点，可以用于倒序遍历，entry 中的 prevlen 表示前一个 entry 的字节长度，可以用于倒序遍历时找到下一个元素的位置；</li>
-<li>encoding 记录编码类型，ziplist 利用该字段决定后面的 content 内容的形式，比如用<code>00xxxxxx</code>表示最大长度为 63 的短字符串，<code>01xxxxxx xxxxxxxx</code>表示中等长度的字符串；</li>
-</ul>
-<h3 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h3><p>ziplist 是紧凑存储的，没有冗余空间，因此插入一个新元素就需要调用 realloc 重新分配内存空间，并将之前的内容一次性拷贝到新的内存空间中。<br>重新分配空间是比较耗时的，因此 ziplist 不适合存储大量数据。</p>
-<h3 id="更新-删除"><a href="#更新-删除" class="headerlink" title="更新&#x2F;删除"></a>更新&#x2F;删除</h3><p>修改或删除一个元素后其后一个位置的元素中的 prevlen 也需要级联更新，prevlen 字段又是变长的，所以可能会导致连锁反应。</p>
-<h3 id="ziplist-vs-dict"><a href="#ziplist-vs-dict" class="headerlink" title="ziplist vs dict"></a>ziplist vs dict</h3><p>为什么 hash 结构中会采用 ziplist 而不是 dict，主要原因如下：</p>
-<ol>
-<li>数据量小时，ziplist 的速度也很快；</li>
-<li>数据量大时，ziplist 在每次插入或修改时引发的 realloc 操作会有更大的概率造成内存拷贝，从而降低性能，而且数据项过多的时候，在 ziplist 上查找指定数据项的性能会变得很低，因为在 ziplist 上的查找需要进行遍历。</li>
-</ol>
-<h2 id="dict（字典）"><a href="#dict（字典）" class="headerlink" title="dict（字典）"></a>dict（字典）</h2><p>dict 是 Redis 中使用最广泛的数据结构：</p>
-<ol>
-<li>hash 结构的数据会用到字典；</li>
-<li>整个 Redis 数据库的所有 key 和 value 也组成了一个全局字典；</li>
-<li>带过期时间的 key 集合也是一个字典；</li>
-<li>set 结构的底层实现也是字典，只是所有 value 都是 NULL；</li>
-<li>zset 集合中存储 value 和 score 值的映射关系也是通过 dict 结构实现的。</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">struct RedisDb &#123;</span><br><span class="line">    dict* dict; // all keys  key=&gt;value</span><br><span class="line">    dict* expires; // all expired keys key=&gt;long(timestamp)</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct dict &#123;</span><br><span class="line">    ...</span><br><span class="line">    dictht ht[2];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">struct zset &#123;</span><br><span class="line">    dict *dict; // all values  value=&gt;score</span><br><span class="line">    zskiplist *zsl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="hashtable"><a href="#hashtable" class="headerlink" title="hashtable"></a>hashtable</h3><p>dict 中的 hashtable 结构和 Java 中的 HashMap 类似，使用一个数组来保存所有的哈希桶，通过<strong>siphash</strong>函数来将 key 散列到数组中的某个桶上，每个哈希桶都是一个链表，也就是说如果发生哈希冲突，则将新元素直接插入到桶的头部。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">struct dictEntry &#123;</span><br><span class="line">    void* key;</span><br><span class="line">    void* val;</span><br><span class="line">    dictEntry* next; // 链接下一个 entry</span><br><span class="line">&#125;</span><br><span class="line">struct dictht &#123;</span><br><span class="line">    dictEntry** table; // 二维</span><br><span class="line">    long size; // 第一维数组的长度</span><br><span class="line">    long used; // hash 表中的元素个数</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="扩容：渐进式-rehash"><a href="#扩容：渐进式-rehash" class="headerlink" title="扩容：渐进式 rehash"></a>扩容：渐进式 rehash</h3><p>正常情况下，当 hashtable 中元素的个数等于第一维数组的长度时、来了一个新增&#x2F;修改&#x2F;删除操作，就会触发扩容，扩容的新数组是原数组大小的 2 倍。</p>
-<blockquote>
-<p>存在一个特殊情况：如果 Redis 正在做 bgsave，为了减少内存页的过多分离 (Copy On Write)，Redis 尽量不去扩容 (<code>dict_can_resize</code>)，但是如果 hash 表已经非常满了，元素的个数已经达到了第一维数组长度的 5 倍 (<code>dict_force_resize_ratio</code>)，说明 hash 表已经过于拥挤了，这个时候就会强制扩容。</p>
-</blockquote>
-<p><img src="/imgs/Redis/Redis-dict%E6%89%A9%E5%AE%B9rehash.png" alt="Redis-dict扩容rehash" title="Redis-dict扩容rehash"><br>一般情况下 dict 中只有一个 hashtable 有值，但是在扩容时会分配另一个新的 hashtable，然后执行<strong>渐进式</strong>的数据迁移，避免一次性对所有 key 执行 rehash，而是将 rehash 操作分散到了对 dict 的各个增删改查操作中去了。</p>
-<ol>
-<li>在扩容过程中，如果有新增元素，则该元素会被同时添加到新 hashtable 中；</li>
-<li>查询、删除、修改操作中，会先查询旧 hashtable，若存在则迁移这个 key 所在的桶并返回元素，若不存在则到新 hashtable 中查找元素。</li>
-<li>有一个异步线程执行定时任务对字典主动迁移。</li>
-</ol>
-<p>dict 之所以这样设计，是为了避免 rehash 期间单个请求的响应时间剧烈增加。<br>当旧 hashtable 中无元素时，即代表迁移完毕，这时会将新旧 hashtable 的指针交换，旧的会被删除，而新的则取而代之。</p>
-<h3 id="缩容"><a href="#缩容" class="headerlink" title="缩容"></a>缩容</h3><p>当 hash 表因为元素的逐渐删除变得越来越稀疏时，Redis 会对 hash 表进行缩容来减少 hash 表的第一维数组空间占用。缩容的条件是元素个数低于数组长度的 10%。<br>缩容不会考虑 Redis 是否正在做 bgsave，因为 COW 的特性是当内存页上的数据被修改时会复制一页做修改，如果删除操作并不会触发删除内存页的数据，操作系统回收内存机制导致的。</p>
-<h3 id="全局哈希表"><a href="#全局哈希表" class="headerlink" title="全局哈希表"></a>全局哈希表</h3><p><code>get a</code>和<code>llen b</code>中的a和b是不同数据结构的对象，他们统统被存储在一个叫全局哈希表的地方。<br>哈希表中的每个哈希桶存储的不是值本身，而是指向它们的指针。<br><img src="/imgs/Redis/Redis%E4%B8%AD%E7%9A%84%E5%85%A8%E5%B1%80%E5%93%88%E5%B8%8C%E8%A1%A8.jpg" alt="Redis中的全局哈希表" title="Redis中的全局哈希表"><br>代码定义在：<code>redis.h/redisDb</code></p>
-<p>缺点：</p>
-<ol>
-<li>过多的哈希冲突容易产生过长的哈希桶（哈希冲突链）。<br>为了减少这个问题产生的影响，需要对哈希表进行rehash操作，这个rehash操作和dict数据结构的rehash原理是一样的。<blockquote>
-<p>全局哈希表实际上就是dict，可以看源码中的定义。</p>
-</blockquote>
-</li>
-</ol>
-<p>优点：</p>
-<ol>
-<li>合适的散列函数和扩容机制可以保证<code>O(1)</code>的操作复杂度。</li>
-</ol>
-<h2 id="skiplist"><a href="#skiplist" class="headerlink" title="skiplist"></a>skiplist</h2><p>zset 中除了 dict（字典）外，还会用一个 skiplist 来提供按score排序的要求，以实现指定 score 的范围来获取 value 列表的功能。</p>
-<p><img src="/imgs/Redis/Redis-skiplist%E7%BB%93%E6%9E%84.png" alt="Redis-skiplist结构" title="Redis-skiplist结构"></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">struct zslnode &#123;</span><br><span class="line">  string value;</span><br><span class="line">  double score;</span><br><span class="line">  zslnode*[] forwards;  // 多层连接指针</span><br><span class="line">  zslnode* backward;  // 回溯指针</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">struct zsl &#123;</span><br><span class="line">  zslnode* header; // 跳跃列表头指针</span><br><span class="line">  int maxLevel; // 跳跃列表当前的最高层</span><br><span class="line">  map&lt;string, zslnode*&gt; ht; // hash 结构的所有键值对</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<ul>
-<li>各层均为一个有序的链表结构；</li>
-<li>层数越大，节点越少；</li>
-<li>有一个 header 节点作为哨兵，value&#x3D;null，score&#x3D;Double.MIN_VALUE。</li>
-</ul>
-<h3 id="插入-1"><a href="#插入-1" class="headerlink" title="插入"></a>插入</h3><p>插入时会先自顶向下找到新节点在跳表中底层的插入位置，插入每一层时都有概率晋升到更高一层，在 Redis 中是 25%。</p>
-<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>删除每一层上的对应节点。</p>
-<h3 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h3><p>如果不影响排序则直接更新，否则会先删除再重新插入。 </p>
-<h2 id="布隆过滤器"><a href="#布隆过滤器" class="headerlink" title="布隆过滤器"></a>布隆过滤器</h2><h2 id="HyperLogLog"><a href="#HyperLogLog" class="headerlink" title="HyperLogLog"></a>HyperLogLog</h2><p>布隆过滤器用于实现<code>contains</code>的需求，而 HyperLogLog 主要用于实现<code>count</code>。<br>同样是一个特别大的位数组，HyperLogLog 将位数组拆分为桶，每个桶是连续的 6 个位，计数时并非单独对某个桶计数，而是：</p>
-<ul>
-<li>set 操作：计算 key 的散列值，为一个 64 位的数字，前 14 位是桶的位置，桶记录后 50 位中第一个 1 的位置 count，并且<code>count = max(count, oldCount)</code>，即每次记录最大的计数。</li>
-<li>count 操作：因为是概率算法，每个桶的计数值并不精确，但是所有桶的调和均值非常接近真实的计数值。</li>
-</ul>
-<h2 id="pubsub"><a href="#pubsub" class="headerlink" title="pubsub"></a>pubsub</h2><p>用于实现轻量级的发布订阅功能。</p>
-<h2 id="geohash"><a href="#geohash" class="headerlink" title="geohash"></a>geohash</h2><h1 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h1><h2 id="使用string还是hash？"><a href="#使用string还是hash？" class="headerlink" title="使用string还是hash？"></a>使用string还是hash？</h2><p>当数据量少时，使用hash明显更加节省内存，因为数据少时hash会转成ziplist的结构，而string每个kv都需要一大堆的额外空间存储元数据。</p>
-<h2 id="如何使用Redis的数据结构实现统计？"><a href="#如何使用Redis的数据结构实现统计？" class="headerlink" title="如何使用Redis的数据结构实现统计？"></a>如何使用Redis的数据结构实现统计？</h2><ol>
-<li>需要支持集合运算（差集、交集、并集）的场合<br>使用set、zset，数据量少时会转成ziplist节省内存。</li>
-<li>需要进行二值统计的场合<br>使用bitmap</li>
-<li>需要大规模统计，且不要求精确统计的场合<br>使用HyperLogLog</li>
-</ol>
-<h2 id="采用渐进式hash时，如果实例暂时没有接收到新请求，是不是就不会做rehash了？"><a href="#采用渐进式hash时，如果实例暂时没有接收到新请求，是不是就不会做rehash了？" class="headerlink" title="采用渐进式hash时，如果实例暂时没有接收到新请求，是不是就不会做rehash了？"></a>采用渐进式hash时，如果实例暂时没有接收到新请求，是不是就不会做rehash了？</h2><p>不会，还有一个定时任务每隔100ms执行rehash，而且每次执行时长不会超过1ms，以免影响其他任务。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ol>
-<li><a target="_blank" rel="noopener" href="https://redissrc.readthedocs.io/en/latest/">redis源码解析</a></li>
-</ol>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
 

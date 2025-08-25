@@ -19,12 +19,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="这篇文档，记录了当前对上下文工程的最佳实践，后续我也希望多做一些实践。 Context Engineering为什么需要Context Engineering文章强调”Communication is all you need”的理念  与LLM的沟通很困难，且经常被低估 许多智能体错误的根本原因在于沟通问题 Context Engineering正是解决这些沟通问题的关键AI在应用中的表现，除了">
+    <meta name="description" content="Context Engineering为什么需要Context Engineering文章强调”Communication is all you need”的理念  与LLM的沟通很困难，且经常被低估 许多智能体错误的根本原因在于沟通问题 Context Engineering正是解决这些沟通问题的关键AI在应用中的表现，除了模型本身能力，更关键的是能否获取“有效且准确的context”。这里的c">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Context Engineering">
+<meta property="og:title" content="上下文工程的实现路径">
 <meta property="og:url" content="https://tallate.github.io/35eaa9b4.html">
 <meta property="og:site_name" content="Tallate">
-<meta property="og:description" content="这篇文档，记录了当前对上下文工程的最佳实践，后续我也希望多做一些实践。 Context Engineering为什么需要Context Engineering文章强调”Communication is all you need”的理念  与LLM的沟通很困难，且经常被低估 许多智能体错误的根本原因在于沟通问题 Context Engineering正是解决这些沟通问题的关键AI在应用中的表现，除了">
+<meta property="og:description" content="Context Engineering为什么需要Context Engineering文章强调”Communication is all you need”的理念  与LLM的沟通很困难，且经常被低估 许多智能体错误的根本原因在于沟通问题 Context Engineering正是解决这些沟通问题的关键AI在应用中的表现，除了模型本身能力，更关键的是能否获取“有效且准确的context”。这里的c">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://tallate.github.io/imgs/AI/rise_of_context_engineering.png">
 <meta property="og:image" content="https://tallate.github.io/imgs/AI/context_engineering_4_strategy.png">
@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://tallate.github.io/imgs/AI/tools_as_prompt_prefix.png">
 <meta property="og:image" content="https://tallate.github.io/imgs/AI/context_mcp.png">
 <meta property="article:published_time" content="2025-07-27T16:22:48.000Z">
-<meta property="article:modified_time" content="2025-08-20T16:29:09.886Z">
+<meta property="article:modified_time" content="2025-08-25T01:14:44.827Z">
 <meta property="article:author" content="tallate">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://tallate.github.io/imgs/AI/rise_of_context_engineering.png">
@@ -45,10 +45,10 @@
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/35eaa9b4.html","path":"/35eaa9b4.html","title":"Context Engineering"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/35eaa9b4.html","path":"/35eaa9b4.html","title":"上下文工程的实现路径"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Context Engineering | Tallate</title>
+<title>上下文工程的实现路径 | Tallate</title>
   
 
 
@@ -97,7 +97,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">83</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">191</span></a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">84</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">192</span></a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -161,7 +161,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">191</span>
+          <span class="site-state-item-count">192</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -172,7 +172,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-count">84</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -212,12 +212,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Context Engineering | Tallate">
+      <meta itemprop="name" content="上下文工程的实现路径 | Tallate">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Context Engineering
+          上下文工程的实现路径
         </h1>
 
         <div class="post-meta-container">
@@ -235,7 +235,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-21 00:29:09" itemprop="dateModified" datetime="2025-08-21T00:29:09+08:00">2025-08-21</time>
+      <time title="修改时间：2025-08-25 09:14:44" itemprop="dateModified" datetime="2025-08-25T09:14:44+08:00">2025-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -256,8 +256,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>这篇文档，记录了当前对上下文工程的最佳实践，后续我也希望多做一些实践。</p>
-<h2 id="Context-Engineering"><a href="#Context-Engineering" class="headerlink" title="Context Engineering"></a>Context Engineering</h2><h3 id="为什么需要Context-Engineering"><a href="#为什么需要Context-Engineering" class="headerlink" title="为什么需要Context Engineering"></a>为什么需要Context Engineering</h3><p>文章强调”Communication is all you need”的理念</p>
+    <div class="post-body" itemprop="articleBody"><h2 id="Context-Engineering"><a href="#Context-Engineering" class="headerlink" title="Context Engineering"></a>Context Engineering</h2><h3 id="为什么需要Context-Engineering"><a href="#为什么需要Context-Engineering" class="headerlink" title="为什么需要Context Engineering"></a>为什么需要Context Engineering</h3><p>文章强调”Communication is all you need”的理念</p>
 <ul>
 <li>与LLM的沟通很困难，且经常被低估</li>
 <li>许多智能体错误的根本原因在于沟通问题</li>
@@ -474,9 +473,12 @@
 <h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><p>Context Engineering<br><a target="_blank" rel="noopener" href="https://github.com/davidkimai/Context-Engineering/blob/75b74e9d2e8528777dd6b072ae5c33e22df4fa17/00_COURSE/01_context_retrieval_generation/01_prompt_engineering.md?plain=1#L2671">https://github.com/davidkimai/Context-Engineering/blob/75b74e9d2e8528777dd6b072ae5c33e22df4fa17/00_COURSE/01_context_retrieval_generation/01_prompt_engineering.md?plain=1#L2671</a></p>
 <p><a target="_blank" rel="noopener" href="https://rlancemartin.github.io/2025/06/23/context_engineering/">https://rlancemartin.github.io/2025/06/23/context_engineering/</a><br><a target="_blank" rel="noopener" href="https://blog.langchain.com/the-rise-of-context-engineering/">https://blog.langchain.com/the-rise-of-context-engineering/</a><br><a target="_blank" rel="noopener" href="https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html">https://www.dbreunig.com/2025/06/22/how-contexts-fail-and-how-to-fix-them.html</a><br><a target="_blank" rel="noopener" href="https://github.com/langchain-ai/how_to_fix_your_context">https://github.com/langchain-ai/how_to_fix_your_context</a></p>
 <p>一个面向PM的Context Engineering说明<br><a target="_blank" rel="noopener" href="https://x.com/PawelHuryn/status/1950126237562671313">https://x.com/PawelHuryn/status/1950126237562671313</a><br><a target="_blank" rel="noopener" href="https://www.productcompass.pm/p/context-engineering?utm_source=publication-search">https://www.productcompass.pm/p/context-engineering?utm_source=publication-search</a></p>
-<p>claude是如何做上下文工程的：<a target="_blank" rel="noopener" href="https://www.xiaohongshu.com/explore/6882005d000000001d00d53a?app_platform=android&ignoreEngage=true&app_version=8.92.0&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBIAt7FwVT3rmjUCxeIUs-9z3euUYE-PTih9HgqFRJcJE=&author_share=1&xhsshare=CopyLink&shareRedId=ODc4Rjc2PDs2NzUyOTgwNjY1OTk4Rj1C&apptime=1753439829&share_id=c6e6707db94640ef8bd24b59ea1b466e&share_channel=copy_link">https://www.xiaohongshu.com/explore/6882005d000000001d00d53a?app_platform=android&amp;ignoreEngage=true&amp;app_version=8.92.0&amp;share_from_user_hidden=true&amp;xsec_source=app_share&amp;type=normal&amp;xsec_token=CBIAt7FwVT3rmjUCxeIUs-9z3euUYE-PTih9HgqFRJcJE=&amp;author_share=1&amp;xhsshare=CopyLink&amp;shareRedId=ODc4Rjc2PDs2NzUyOTgwNjY1OTk4Rj1C&amp;apptime=1753439829&amp;share_id=c6e6707db94640ef8bd24b59ea1b466e&amp;share_channel=copy_link</a><br><a target="_blank" rel="noopener" href="https://github.com/zilliztech/claude-context/blob/master/packages/core/src/context.ts">https://github.com/zilliztech/claude-context/blob/master/packages/core/src/context.ts</a><br><a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/analysis_claude_code/blob/main/claude_code_v_1.0.33/stage1_analysis_workspace/docs/ana_docs/task_agent_analysis.md">https://github.com/shareAI-lab/analysis_claude_code/blob/main/claude_code_v_1.0.33/stage1_analysis_workspace/docs/ana_docs/task_agent_analysis.md</a></p>
+<p>claude是如何做上下文工程的：<a target="_blank" rel="noopener" href="https://www.xiaohongshu.com/explore/6882005d000000001d00d53a?app_platform=android&ignoreEngage=true&app_version=8.92.0&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBIAt7FwVT3rmjUCxeIUs-9z3euUYE-PTih9HgqFRJcJE=&author_share=1&xhsshare=CopyLink&shareRedId=ODc4Rjc2PDs2NzUyOTgwNjY1OTk4Rj1C&apptime=1753439829&share_id=c6e6707db94640ef8bd24b59ea1b466e&share_channel=copy_link">https://www.xiaohongshu.com/explore/6882005d000000001d00d53a?app_platform=android&amp;ignoreEngage=true&amp;app_version=8.92.0&amp;share_from_user_hidden=true&amp;xsec_source=app_share&amp;type=normal&amp;xsec_token=CBIAt7FwVT3rmjUCxeIUs-9z3euUYE-PTih9HgqFRJcJE=&amp;author_share=1&amp;xhsshare=CopyLink&amp;shareRedId=ODc4Rjc2PDs2NzUyOTgwNjY1OTk4Rj1C&amp;apptime=1753439829&amp;share_id=c6e6707db94640ef8bd24b59ea1b466e&amp;share_channel=copy_link</a><br><a target="_blank" rel="noopener" href="https://github.com/zilliztech/claude-context/blob/master/packages/core/src/context.ts">https://github.com/zilliztech/claude-context/blob/master/packages/core/src/context.ts</a><br><a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/analysis_claude_code/blob/main/claude_code_v_1.0.33/stage1_analysis_workspace/docs/ana_docs/task_agent_analysis.md">https://github.com/shareAI-lab/analysis_claude_code/blob/main/claude_code_v_1.0.33/stage1_analysis_workspace/docs/ana_docs/task_agent_analysis.md</a><br><a target="_blank" rel="noopener" href="https://baoyu.io/translations/decoding-claude-code">https://baoyu.io/translations/decoding-claude-code</a></p>
 <p>langgraph是如何做上下文工程的：<a target="_blank" rel="noopener" href="https://blog.csdn.net/bugyinyin/article/details/149195239">https://blog.csdn.net/bugyinyin/article/details/149195239</a></p>
 <p>manus是怎么做上下文工程的：<a target="_blank" rel="noopener" href="https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus">https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus</a></p>
+<p>cline怎么做context engineering的<br><a target="_blank" rel="noopener" href="https://cline.bot/blog/how-to-think-about-context-engineering-in-cline">https://cline.bot/blog/how-to-think-about-context-engineering-in-cline</a><br><a target="_blank" rel="noopener" href="https://x.com/shao__meng/status/1957031656692543939">https://x.com/shao__meng/status/1957031656692543939</a><br><a target="_blank" rel="noopener" href="https://x.com/shao__meng/status/1957682039509118989">https://x.com/shao__meng/status/1957682039509118989</a></p>
+<p>长期记忆<br><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2508.08997">https://arxiv.org/pdf/2508.08997</a><br><a target="_blank" rel="noopener" href="https://github.com/agiresearch/A-mem">https://github.com/agiresearch/A-mem</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/1888290059859514793">https://zhuanlan.zhihu.com/p/1888290059859514793</a><br><a target="_blank" rel="noopener" href="https://github.com/landing-ai/agentic-doc">https://github.com/landing-ai/agentic-doc</a></p>
+<p>上下文工程的链接<br><a target="_blank" rel="noopener" href="https://x.com/lenadroid/status/1943685060785524824">https://x.com/lenadroid/status/1943685060785524824</a><br><a target="_blank" rel="noopener" href="https://www.philschmid.de/context-engineering">https://www.philschmid.de/context-engineering</a><br><a target="_blank" rel="noopener" href="https://blog.langchain.com/context-engineering-for-agents/">https://blog.langchain.com/context-engineering-for-agents/</a></p>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
     </div>
 
