@@ -19,29 +19,30 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="human-in-loop是指在agent的循环执行中，让人能够介入，从而让自动化流程中可以使用人这个工具来实现输入密码、授予权限等操作 magentic-ui human in loophttps:&#x2F;&#x2F;github.com&#x2F;microsoft&#x2F;magentic-ui connection.py定义用户输入函数：更新agent运行状态等待用户输入，然后阻塞等待用户输入 将user_input包装为">
+    <meta name="description" content="human-in-loop是指在agent的循环执行中，让人能够介入，从而让自动化流程中可以使用人这个工具来实现输入密码、授予权限等操作。实现human-in-loop主要取决于两个能力：  阻塞通知能力，原地阻塞，等待用户输入，用户输入将通过事件通知的方式来触发流程的继续执行，例如：LlamaIndex和ADK的实现 中断恢复能力，在关键执行节点保存执行上下文，让任务能恢复执行，例如：LangG">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Human in Loop的几种实现方式">
 <meta property="og:url" content="https://tallate.github.io/241930bf.html">
 <meta property="og:site_name" content="Tallate">
-<meta property="og:description" content="human-in-loop是指在agent的循环执行中，让人能够介入，从而让自动化流程中可以使用人这个工具来实现输入密码、授予权限等操作 magentic-ui human in loophttps:&#x2F;&#x2F;github.com&#x2F;microsoft&#x2F;magentic-ui connection.py定义用户输入函数：更新agent运行状态等待用户输入，然后阻塞等待用户输入 将user_input包装为">
+<meta property="og:description" content="human-in-loop是指在agent的循环执行中，让人能够介入，从而让自动化流程中可以使用人这个工具来实现输入密码、授予权限等操作。实现human-in-loop主要取决于两个能力：  阻塞通知能力，原地阻塞，等待用户输入，用户输入将通过事件通知的方式来触发流程的继续执行，例如：LlamaIndex和ADK的实现 中断恢复能力，在关键执行节点保存执行上下文，让任务能恢复执行，例如：LangG">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tallate.github.io/imgs/AI/%E4%B8%AD%E6%96%AD%E6%97%B6%E5%BA%8F%E5%9B%BE.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/AI/Node%E4%B8%AD%E6%96%AD%E6%89%A7%E8%A1%8C%E6%B5%81.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/AI/Tool%E4%B8%AD%E6%96%AD%E6%89%A7%E8%A1%8C%E6%B5%81.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/AI/llamaindex_humaninloop.png">
+<meta property="og:image" content="https://tallate.github.io/imgs/AI/adk_humaninloop.png">
 <meta property="og:image" content="https://tallate.github.io/imgs/AI/magentic_human_1.png">
 <meta property="og:image" content="https://tallate.github.io/imgs/AI/magentic_human_2.png">
 <meta property="og:image" content="https://tallate.github.io/imgs/AI/magentic_human_3.png">
 <meta property="og:image" content="https://tallate.github.io/imgs/AI/magentic_human_4.png">
-<meta property="og:image" content="https://tallate.github.io/imgs/AI/adk_humaninloop.png">
-<meta property="og:image" content="https://tallate.github.io/imgs/AI/%E4%B8%AD%E6%96%AD%E6%97%B6%E5%BA%8F%E5%9B%BE.png">
-<meta property="og:image" content="https://tallate.github.io/imgs/AI/Node%E4%B8%AD%E6%96%AD%E6%89%A7%E8%A1%8C%E6%B5%81.png">
-<meta property="og:image" content="https://tallate.github.io/imgs/AI/Tool%E4%B8%AD%E6%96%AD%E6%89%A7%E8%A1%8C%E6%B5%81.png">
 <meta property="article:published_time" content="2025-08-23T16:22:48.000Z">
-<meta property="article:modified_time" content="2025-08-25T01:11:57.585Z">
+<meta property="article:modified_time" content="2025-08-31T07:24:17.045Z">
 <meta property="article:author" content="tallate">
 <meta property="article:tag" content="Human-in-the-Loop">
 <meta property="article:tag" content="LangGraph">
 <meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tallate.github.io/imgs/AI/magentic_human_1.png">
+<meta name="twitter:image" content="https://tallate.github.io/imgs/AI/%E4%B8%AD%E6%96%AD%E6%97%B6%E5%BA%8F%E5%9B%BE.png">
 
 
 <link rel="canonical" href="https://tallate.github.io/241930bf.html">
@@ -151,7 +152,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#magentic-ui-human-in-loop"><span class="nav-number">1.</span> <span class="nav-text">magentic-ui human in loop</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LlamaIndex"><span class="nav-number">2.</span> <span class="nav-text">LlamaIndex</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ADK"><span class="nav-number">3.</span> <span class="nav-text">ADK</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LangGraph%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%A8%A1%E5%BC%8F"><span class="nav-number">4.</span> <span class="nav-text">LangGraph的实现模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%8E%9F%E8%AF%AD"><span class="nav-number">4.1.</span> <span class="nav-text">中断原语</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Common-Patterns%EF%BC%88%E5%B8%B8%E8%A7%81%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-number">4.2.</span> <span class="nav-text">Common Patterns（常见模式）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%A1%E6%89%B9%E6%88%96%E6%8B%92%E7%BB%9D%E6%A8%A1%E5%BC%8F%EF%BC%88Approve-or-Reject%EF%BC%89"><span class="nav-number">4.2.1.</span> <span class="nav-text">1. 审批或拒绝模式（Approve or Reject）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AE%A1%E6%9F%A5%E5%92%8C%E7%BC%96%E8%BE%91%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F%EF%BC%88Review-and-Edit-State%EF%BC%89"><span class="nav-number">4.2.2.</span> <span class="nav-text">2. 审查和编辑状态模式（Review and Edit State）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%AE%A1%E6%9F%A5%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8%E6%A8%A1%E5%BC%8F%EF%BC%88Review-Tool-Calls%EF%BC%89"><span class="nav-number">4.2.3.</span> <span class="nav-text">3. 审查工具调用模式（Review Tool Calls）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E4%B8%BA%E4%BB%BB%E4%BD%95%E5%B7%A5%E5%85%B7%E6%B7%BB%E5%8A%A0%E4%B8%AD%E6%96%AD%E6%A8%A1%E5%BC%8F%EF%BC%88Add-Interrupts-to-Any-Tool%EF%BC%89"><span class="nav-number">4.2.4.</span> <span class="nav-text">4. 为任何工具添加中断模式（Add Interrupts to Any Tool）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E9%AA%8C%E8%AF%81%E4%BA%BA%E5%B7%A5%E8%BE%93%E5%85%A5%E6%A8%A1%E5%BC%8F%EF%BC%88Validate-Human-Input%EF%BC%89"><span class="nav-number">4.2.5.</span> <span class="nav-text">5. 验证人工输入模式（Validate Human Input）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">4.3.</span> <span class="nav-text">使用注意事项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%89%AF%E4%BD%9C%E7%94%A8%E5%A4%84%E7%90%86"><span class="nav-number">4.3.1.</span> <span class="nav-text">1. 副作用处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AD%90%E5%9B%BE%E8%B0%83%E7%94%A8"><span class="nav-number">4.3.2.</span> <span class="nav-text">2. 子图调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%8D%95%E8%8A%82%E7%82%B9%E5%A4%9A%E4%B8%AD%E6%96%AD"><span class="nav-number">4.3.3.</span> <span class="nav-text">3. 单节点多中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E8%B0%83%E8%AF%95%E6%94%AF%E6%8C%81"><span class="nav-number">4.3.4.</span> <span class="nav-text">4. 调试支持</span></a></li></ol></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#LangGraph%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">LangGraph的实现模式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%8E%9F%E8%AF%AD"><span class="nav-number">1.1.</span> <span class="nav-text">中断原语</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Common-Patterns%EF%BC%88%E5%B8%B8%E8%A7%81%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">Common Patterns（常见模式）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AE%A1%E6%89%B9%E6%88%96%E6%8B%92%E7%BB%9D%E6%A8%A1%E5%BC%8F%EF%BC%88Approve-or-Reject%EF%BC%89"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. 审批或拒绝模式（Approve or Reject）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AE%A1%E6%9F%A5%E5%92%8C%E7%BC%96%E8%BE%91%E7%8A%B6%E6%80%81%E6%A8%A1%E5%BC%8F%EF%BC%88Review-and-Edit-State%EF%BC%89"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. 审查和编辑状态模式（Review and Edit State）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%AE%A1%E6%9F%A5%E5%B7%A5%E5%85%B7%E8%B0%83%E7%94%A8%E6%A8%A1%E5%BC%8F%EF%BC%88Review-Tool-Calls%EF%BC%89"><span class="nav-number">1.2.3.</span> <span class="nav-text">3. 审查工具调用模式（Review Tool Calls）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E4%B8%BA%E4%BB%BB%E4%BD%95%E5%B7%A5%E5%85%B7%E6%B7%BB%E5%8A%A0%E4%B8%AD%E6%96%AD%E6%A8%A1%E5%BC%8F%EF%BC%88Add-Interrupts-to-Any-Tool%EF%BC%89"><span class="nav-number">1.2.4.</span> <span class="nav-text">4. 为任何工具添加中断模式（Add Interrupts to Any Tool）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E9%AA%8C%E8%AF%81%E4%BA%BA%E5%B7%A5%E8%BE%93%E5%85%A5%E6%A8%A1%E5%BC%8F%EF%BC%88Validate-Human-Input%EF%BC%89"><span class="nav-number">1.2.5.</span> <span class="nav-text">5. 验证人工输入模式（Validate Human Input）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.3.</span> <span class="nav-text">使用注意事项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%89%AF%E4%BD%9C%E7%94%A8%E5%A4%84%E7%90%86"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. 副作用处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AD%90%E5%9B%BE%E8%B0%83%E7%94%A8"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. 子图调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%8D%95%E8%8A%82%E7%82%B9%E5%A4%9A%E4%B8%AD%E6%96%AD"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. 单节点多中断</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LlamaIndex"><span class="nav-number">2.</span> <span class="nav-text">LlamaIndex</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ADK"><span class="nav-number">3.</span> <span class="nav-text">ADK</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#magentic-ui-human-in-loop"><span class="nav-number">4.</span> <span class="nav-text">magentic-ui human in loop</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -238,7 +239,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-25 09:11:57" itemprop="dateModified" datetime="2025-08-25T09:11:57+08:00">2025-08-25</time>
+      <time title="修改时间：2025-08-31 15:24:17" itemprop="dateModified" datetime="2025-08-31T15:24:17+08:00">2025-08-31</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -259,23 +260,12 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>human-in-loop是指在agent的循环执行中，让人能够介入，从而让自动化流程中可以使用人这个工具来实现输入密码、授予权限等操作</p>
-<h1 id="magentic-ui-human-in-loop"><a href="#magentic-ui-human-in-loop" class="headerlink" title="magentic-ui human in loop"></a>magentic-ui human in loop</h1><p><a target="_blank" rel="noopener" href="https://github.com/microsoft/magentic-ui">https://github.com/microsoft/magentic-ui</a></p>
-<p>connection.py定义用户输入函数：更新agent运行状态等待用户输入，然后阻塞等待用户输入<br><img src="/imgs/AI/magentic_human_1.png" alt="magentic_human_1.png"><br><img src="/imgs/AI/magentic_human_2.png" alt="magentic_human_2.png"></p>
-<p>将user_input包装为Agent<br><img src="/imgs/AI/magentic_human_3.png" alt="magentic_human_3.png"></p>
-<p>Agent作为team的参与者，被分发<br><img src="/imgs/AI/magentic_human_4.png" alt="magentic_human_4.png"></p>
-<h1 id="LlamaIndex"><a href="#LlamaIndex" class="headerlink" title="LlamaIndex"></a>LlamaIndex</h1><p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/understanding/agent/human_in_the_loop/">https://docs.llamaindex.ai/en/stable/understanding/agent/human_in_the_loop/</a></p>
-<p>LlamaIndex会向外发送一个消息InputRequiredEvent事件，然后等待外部处理事件后回馈一个回执事件HumanResponseEvent</p>
-<h1 id="ADK"><a href="#ADK" class="headerlink" title="ADK"></a>ADK</h1><p><a target="_blank" rel="noopener" href="https://deepwiki.com/search/human-in-the-loop_c1195076-6732-4fa2-97fe-4a4d444faec6">https://deepwiki.com/search/human-in-the-loop_c1195076-6732-4fa2-97fe-4a4d444faec6</a></p>
-<p>长时间运行工具（Long-Running Tools）<br>这是最直接的实现方式，使用LongRunningFunctionTool来处理需要人工干预的异步操作。<br>核心实现流程：</p>
+    <div class="post-body" itemprop="articleBody"><p>human-in-loop是指在agent的循环执行中，让人能够介入，从而让自动化流程中可以使用人这个工具来实现输入密码、授予权限等操作。<br>实现human-in-loop主要取决于两个能力：</p>
 <ol>
-<li>初始调用：Agent调用长时间运行工具，工具立即返回pending状态和跟踪ID</li>
-<li>等待人工干预：系统等待外部人工处理</li>
-<li>更新工具响应：人工处理完成后，必须构造新的types.FunctionResponse并发送给Agent</li>
+<li>阻塞通知能力，原地阻塞，等待用户输入，用户输入将通过事件通知的方式来触发流程的继续执行，例如：LlamaIndex和ADK的实现</li>
+<li>中断恢复能力，在关键执行节点保存执行上下文，让任务能恢复执行，例如：LangGraph的实现</li>
 </ol>
-<p><img src="/imgs/AI/adk_humaninloop.png" alt="adk_humaninloop.png"></p>
 <h1 id="LangGraph的实现模式"><a href="#LangGraph的实现模式" class="headerlink" title="LangGraph的实现模式"></a>LangGraph的实现模式</h1><p>LangGraph 中的人机循环工作流建立在 checkpoint 系统之上，使用检查点保存每一步的图形状态，并在人工干预后恢复。</p>
-<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://deepwiki.com/langchain-ai/langgraph/4-human-in-the-loop-capabilities#common-hil-patterns">https://deepwiki.com/langchain-ai/langgraph/4-human-in-the-loop-capabilities#common-hil-patterns</a><br><a target="_blank" rel="noopener" href="https://langchain-ai.github.io/langgraph/how-tos/human_in_the_loop/add-human-in-the-loop/#pause-using-interrupt">https://langchain-ai.github.io/langgraph/how-tos/human_in_the_loop/add-human-in-the-loop/#pause-using-interrupt</a></p>
 <h2 id="中断原语"><a href="#中断原语" class="headerlink" title="中断原语"></a>中断原语</h2><p><img src="/imgs/AI/%E4%B8%AD%E6%96%AD%E6%97%B6%E5%BA%8F%E5%9B%BE.png" alt="中断时序图.png"></p>
 <h2 id="Common-Patterns（常见模式）"><a href="#Common-Patterns（常见模式）" class="headerlink" title="Common Patterns（常见模式）"></a>Common Patterns（常见模式）</h2><p>LangGraph中的人机循环实现提供了几种常见的模式，用于不同的应用场景：</p>
 <h3 id="1-审批或拒绝模式（Approve-or-Reject）"><a href="#1-审批或拒绝模式（Approve-or-Reject）" class="headerlink" title="1. 审批或拒绝模式（Approve or Reject）"></a>1. 审批或拒绝模式（Approve or Reject）</h3><p><img src="/imgs/AI/Node%E4%B8%AD%E6%96%AD%E6%89%A7%E8%A1%8C%E6%B5%81.png" alt="Node中断执行流.png"><br>用于需要人工审批的场景，比如内容审核、决策确认等。</p>
@@ -306,11 +296,27 @@
 <li>中断的匹配是基于严格索引的，顺序很重要</li>
 <li>避免动态改变节点结构，可能导致索引不匹配</li>
 </ul>
-<h3 id="4-调试支持"><a href="#4-调试支持" class="headerlink" title="4. 调试支持"></a>4. 调试支持</h3><ul>
-<li>可以使用LangGraph Studio设置静态断点进行调试</li>
-<li>支持在UI中检查图形状态</li>
-<li>使用<code>graph.get_state()</code>获取中断时的状态信息</li>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://deepwiki.com/langchain-ai/langgraph/4-human-in-the-loop-capabilities#common-hil-patterns">https://deepwiki.com/langchain-ai/langgraph/4-human-in-the-loop-capabilities#common-hil-patterns</a><br><a target="_blank" rel="noopener" href="https://langchain-ai.github.io/langgraph/how-tos/human_in_the_loop/add-human-in-the-loop/#pause-using-interrupt">https://langchain-ai.github.io/langgraph/how-tos/human_in_the_loop/add-human-in-the-loop/#pause-using-interrupt</a></p>
+<h1 id="LlamaIndex"><a href="#LlamaIndex" class="headerlink" title="LlamaIndex"></a>LlamaIndex</h1><p><img src="/imgs/AI/llamaindex_humaninloop.png" alt="llamaindex_humaninloop.png"><br>LlamaIndex会向外发送一个消息InputRequiredEvent事件，然后等待外部处理事件后回馈一个回执事件HumanResponseEvent</p>
+<ul>
+<li>事件驱动：使用 InputRequiredEvent 和 HumanResponseEvent 进行异步通信</li>
+<li>人工确认：危险操作需要用户明确确认（”yes” 或 “no”）</li>
+<li>异步处理：使用 async&#x2F;await 模式处理异步事件</li>
+<li>流式处理：通过 stream_events() 实时处理事件流</li>
 </ul>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://github.com/run-llama/python-agents-tutorial/blob/main/5_human_in_the_loop.py">https://github.com/run-llama/python-agents-tutorial/blob/main/5_human_in_the_loop.py</a><br><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/understanding/agent/human_in_the_loop/">https://docs.llamaindex.ai/en/stable/understanding/agent/human_in_the_loop/</a></p>
+<h1 id="ADK"><a href="#ADK" class="headerlink" title="ADK"></a>ADK</h1><p>长时间运行工具（Long-Running Tools）<br>这是最直接的实现方式，使用LongRunningFunctionTool来处理需要人工干预的异步操作。<br>核心实现流程：</p>
+<ol>
+<li>初始调用：Agent调用长时间运行工具，工具立即返回pending状态和跟踪ID</li>
+<li>等待人工干预：系统等待外部人工处理</li>
+<li>更新工具响应：人工处理完成后，必须构造新的types.FunctionResponse并发送给Agent</li>
+</ol>
+<p><img src="/imgs/AI/adk_humaninloop.png" alt="adk_humaninloop.png"></p>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://deepwiki.com/search/human-in-the-loop_c1195076-6732-4fa2-97fe-4a4d444faec6">https://deepwiki.com/search/human-in-the-loop_c1195076-6732-4fa2-97fe-4a4d444faec6</a></p>
+<h1 id="magentic-ui-human-in-loop"><a href="#magentic-ui-human-in-loop" class="headerlink" title="magentic-ui human in loop"></a>magentic-ui human in loop</h1><p>connection.py定义用户输入函数：更新agent运行状态等待用户输入，然后阻塞等待用户输入<br><img src="/imgs/AI/magentic_human_1.png" alt="magentic_human_1.png"><br><img src="/imgs/AI/magentic_human_2.png" alt="magentic_human_2.png"></p>
+<p>将user_input包装为Agent<br><img src="/imgs/AI/magentic_human_3.png" alt="magentic_human_3.png"></p>
+<p>Agent作为team的参与者，被分发<br><img src="/imgs/AI/magentic_human_4.png" alt="magentic_human_4.png"></p>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://github.com/microsoft/magentic-ui">https://github.com/microsoft/magentic-ui</a></p>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
     </div>
 

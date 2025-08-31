@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2024-01-01T00:00:00.000Z" agent="5.0" etag="xxx" version="22.1.16" type="device">
+  <diagram name="人工审批流程" id="human-approval-flow">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- 参与者 (Lifelines) -->
+        <mxCell id="user" value="用户" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="30" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="agent" value="Agent" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="200" y="40" width="30" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="longRunningTool" value="LongRunningTool" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="360" y="40" width="30" height="60" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="externalSystem" value="ExternalSystem" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxCell id="externalSystemLifeline" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="externalSystem">
+            <mxGeometry x="15" y="120" width="0" height="600" as="geometry" />
+          </mxCell>
+        </mxCell>
+        
+        <mxCell id="runner" value="Runner" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="520" y="40" width="30" height="60" as="geometry" />
+        </mxCell>
+        
+        <!-- 生命线 -->
+        <mxCell id="userLifeline" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="55" y="120" width="0" height="600" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="agentLifeline" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="215" y="120" width="0" height="600" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="longRunningToolLifeline" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="375" y="120" width="0" height="600" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="runnerLifeline" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;container=1;recursiveResize=0;rounded=0;shadow=0;strokeWidth=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="535" y="120" width="0" height="600" as="geometry" />
+        </mxCell>
+        
+        <!-- 交互消息 -->
+        <!-- 1. 用户 -> Agent -->
+        <mxCell id="msg1" value="发送请求 (如报销申请)" style="html=1;verticalAlign=bottom;endArrow=block;endSize=8;endFill=0;strokeWidth=2;rounded=0;shadow=0;strokeColor=#000000;" edge="1" parent="1" source="userLifeline" target="agentLifeline">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="55" y="160" as="sourcePoint" />
+            <mxPoint x="215" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 2. Agent 自调用 -->
+        <mxCell id="msg2" value="调用 ask_for_approval()" style="html=1;verticalAlign=bottom;endArrow=open;endSize=8;endFill=0;strokeWidth=2;rounded=0;shadow=0;strokeColor=#000000;" edge="1" parent="1" source="agentLifeline" target="agentLifeline">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="215" y="200" as="sourcePoint" />
+            <mxPoint x="215" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 3. Agent -> 用户 -->
+        <mxCell id="msg3" value="返回 pending 状态 + ticketId" style="html=1;verticalAlign=bottom;endArrow=open;endSize=8;endFill=0;strokeWidth=2;rounded=0;shadow=0;strokeColor=#000000;" edge="1" parent="1" source="agentLifeline" target="userLifeline">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="215" y="280" as="sourcePoint" />
+            <mxPoint x="55" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 4. Agent -> 用户 -->
+        <mxCell id="msg4" value="通知等待审批状态" style="html=1;verticalAlign=bottom;endArrow=open;endSize=8;endFill=0;strokeWidth=2;rounded=0;shadow=0;strokeColor=#000000;" edge="1" parent="1" source="agentLifeline" target="userLifeline">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="215" y="320" as="sourcePoint" />
+            <mxPoint x="55" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 5. ExternalSystem 人工审批过程 (黄色高亮框) -->
+        <mxCell id="approvalProcess" value="人工审批过程" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="320" y="360" width="120" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- 5.1 人工处理审批 -->
+        <mxCell id="msg5_1" value="人工处理审批" style="html=1;verticalAlign=bottom;endArrow=open;endSize=8;endFill=0;strokeWidth=2;rounded=0;shadow=0;strokeColor=#000000;" edge="1" parent="1" source="externalSystemLifeline" target="externalSystemLifeline">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="15" y="380" as="sourcePoint" />
+            <mxPoint x="15" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 5.2 构造 FunctionResponse -->
+        <mxCell id="msg5_2" value="构造 FunctionResponse" style="html=1;verticalAlign=bottom;endArrow=open;endSize=8;endFill=0;strokeWidth=2;rounded=0;shadow=0;strokeColor=#000000;" edge="1" parent="1" source="externalSystemLifeline" target="externalSystemLifeline">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="15" y="420" as="sourcePoint" />
+            <mxPoint x="15" y="440" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 6. ExternalSystem -> LongRunningTool -->
+        <mxCell id="msg6" value="发送更新的工具响应" style="html=1;verticalAlign=bottom;endArrow=block;endSize=8;endFill=0;strokeWidth=2;rounded=0;shadow=0;strokeColor=#000000;" edge="1" parent="1" source="externalSystemLifeline" target="longRunningToolLifeline">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="15" y="480" as="sourcePoint" />
+            <mxPoint x="375" y="480" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 7. Runner 注释 (黄色高亮框) -->
+        <mxCell id="runnerNote" value="使用相同的 id 和 name" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="580" y="460" width="120" height="40" as="geometry" />
+        </mxCell>
+        
+        <!-- 8. LongRunningTool -> Agent -->
+        <mxCell id="msg8" value="处理更新后的响应" style="html=1;verticalAlign=bottom;endArrow=open;endSize=8;endFill=0;strokeWidth=2;rounded=0;shadow=0;strokeColor=#000000;" edge="1" parent="1" source="longRunningToolLifeline" target="agentLifeline">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="375" y="520" as="sourcePoint" />
+            <mxPoint x="215" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 9. LongRunningTool -> Agent -->
+        <mxCell id="msg9" value="返回最终结果" style="html=1;verticalAlign=bottom;endArrow=open;endSize=8;endFill=0;strokeWidth=2;rounded=0;shadow=0;strokeColor=#000000;" edge="1" parent="1" source="longRunningToolLifeline" target="agentLifeline">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="375" y="560" as="sourcePoint" />
+            <mxPoint x="215" y="560" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- 10. Agent -> 用户 -->
+        <mxCell id="msg10" value="返回审批结果" style="html=1;verticalAlign=bottom;endArrow=open;endSize=8;endFill=0;strokeWidth=2;rounded=0;shadow=0;strokeColor=#000000;" edge="1" parent="1" source="agentLifeline" target="userLifeline">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="215" y="600" as="sourcePoint" />
+            <mxPoint x="55" y="600" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

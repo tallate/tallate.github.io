@@ -220,7 +220,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-25 09:11:57" itemprop="dateModified" datetime="2025-08-25T09:11:57+08:00">2025-08-25</time>
+      <time title="修改时间：2025-08-31 15:24:17" itemprop="dateModified" datetime="2025-08-31T15:24:17+08:00">2025-08-31</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -242,23 +242,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>human-in-loop是指在agent的循环执行中，让人能够介入，从而让自动化流程中可以使用人这个工具来实现输入密码、授予权限等操作</p>
-<h1 id="magentic-ui-human-in-loop"><a href="#magentic-ui-human-in-loop" class="headerlink" title="magentic-ui human in loop"></a>magentic-ui human in loop</h1><p><a target="_blank" rel="noopener" href="https://github.com/microsoft/magentic-ui">https://github.com/microsoft/magentic-ui</a></p>
-<p>connection.py定义用户输入函数：更新agent运行状态等待用户输入，然后阻塞等待用户输入<br><img src="/imgs/AI/magentic_human_1.png" alt="magentic_human_1.png"><br><img src="/imgs/AI/magentic_human_2.png" alt="magentic_human_2.png"></p>
-<p>将user_input包装为Agent<br><img src="/imgs/AI/magentic_human_3.png" alt="magentic_human_3.png"></p>
-<p>Agent作为team的参与者，被分发<br><img src="/imgs/AI/magentic_human_4.png" alt="magentic_human_4.png"></p>
-<h1 id="LlamaIndex"><a href="#LlamaIndex" class="headerlink" title="LlamaIndex"></a>LlamaIndex</h1><p><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/understanding/agent/human_in_the_loop/">https://docs.llamaindex.ai/en/stable/understanding/agent/human_in_the_loop/</a></p>
-<p>LlamaIndex会向外发送一个消息InputRequiredEvent事件，然后等待外部处理事件后回馈一个回执事件HumanResponseEvent</p>
-<h1 id="ADK"><a href="#ADK" class="headerlink" title="ADK"></a>ADK</h1><p><a target="_blank" rel="noopener" href="https://deepwiki.com/search/human-in-the-loop_c1195076-6732-4fa2-97fe-4a4d444faec6">https://deepwiki.com/search/human-in-the-loop_c1195076-6732-4fa2-97fe-4a4d444faec6</a></p>
-<p>长时间运行工具（Long-Running Tools）<br>这是最直接的实现方式，使用LongRunningFunctionTool来处理需要人工干预的异步操作。<br>核心实现流程：</p>
+          <p>human-in-loop是指在agent的循环执行中，让人能够介入，从而让自动化流程中可以使用人这个工具来实现输入密码、授予权限等操作。<br>实现human-in-loop主要取决于两个能力：</p>
 <ol>
-<li>初始调用：Agent调用长时间运行工具，工具立即返回pending状态和跟踪ID</li>
-<li>等待人工干预：系统等待外部人工处理</li>
-<li>更新工具响应：人工处理完成后，必须构造新的types.FunctionResponse并发送给Agent</li>
+<li>阻塞通知能力，原地阻塞，等待用户输入，用户输入将通过事件通知的方式来触发流程的继续执行，例如：LlamaIndex和ADK的实现</li>
+<li>中断恢复能力，在关键执行节点保存执行上下文，让任务能恢复执行，例如：LangGraph的实现</li>
 </ol>
-<p><img src="/imgs/AI/adk_humaninloop.png" alt="adk_humaninloop.png"></p>
 <h1 id="LangGraph的实现模式"><a href="#LangGraph的实现模式" class="headerlink" title="LangGraph的实现模式"></a>LangGraph的实现模式</h1><p>LangGraph 中的人机循环工作流建立在 checkpoint 系统之上，使用检查点保存每一步的图形状态，并在人工干预后恢复。</p>
-<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://deepwiki.com/langchain-ai/langgraph/4-human-in-the-loop-capabilities#common-hil-patterns">https://deepwiki.com/langchain-ai/langgraph/4-human-in-the-loop-capabilities#common-hil-patterns</a><br><a target="_blank" rel="noopener" href="https://langchain-ai.github.io/langgraph/how-tos/human_in_the_loop/add-human-in-the-loop/#pause-using-interrupt">https://langchain-ai.github.io/langgraph/how-tos/human_in_the_loop/add-human-in-the-loop/#pause-using-interrupt</a></p>
 <h2 id="中断原语"><a href="#中断原语" class="headerlink" title="中断原语"></a>中断原语</h2><p><img src="/imgs/AI/%E4%B8%AD%E6%96%AD%E6%97%B6%E5%BA%8F%E5%9B%BE.png" alt="中断时序图.png"></p>
 <h2 id="Common-Patterns（常见模式）"><a href="#Common-Patterns（常见模式）" class="headerlink" title="Common Patterns（常见模式）"></a>Common Patterns（常见模式）</h2><p>LangGraph中的人机循环实现提供了几种常见的模式，用于不同的应用场景：</p>
 <h3 id="1-审批或拒绝模式（Approve-or-Reject）"><a href="#1-审批或拒绝模式（Approve-or-Reject）" class="headerlink" title="1. 审批或拒绝模式（Approve or Reject）"></a>1. 审批或拒绝模式（Approve or Reject）</h3><p><img src="/imgs/AI/Node%E4%B8%AD%E6%96%AD%E6%89%A7%E8%A1%8C%E6%B5%81.png" alt="Node中断执行流.png"><br>用于需要人工审批的场景，比如内容审核、决策确认等。</p>
@@ -289,11 +278,27 @@
 <li>中断的匹配是基于严格索引的，顺序很重要</li>
 <li>避免动态改变节点结构，可能导致索引不匹配</li>
 </ul>
-<h3 id="4-调试支持"><a href="#4-调试支持" class="headerlink" title="4. 调试支持"></a>4. 调试支持</h3><ul>
-<li>可以使用LangGraph Studio设置静态断点进行调试</li>
-<li>支持在UI中检查图形状态</li>
-<li>使用<code>graph.get_state()</code>获取中断时的状态信息</li>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://deepwiki.com/langchain-ai/langgraph/4-human-in-the-loop-capabilities#common-hil-patterns">https://deepwiki.com/langchain-ai/langgraph/4-human-in-the-loop-capabilities#common-hil-patterns</a><br><a target="_blank" rel="noopener" href="https://langchain-ai.github.io/langgraph/how-tos/human_in_the_loop/add-human-in-the-loop/#pause-using-interrupt">https://langchain-ai.github.io/langgraph/how-tos/human_in_the_loop/add-human-in-the-loop/#pause-using-interrupt</a></p>
+<h1 id="LlamaIndex"><a href="#LlamaIndex" class="headerlink" title="LlamaIndex"></a>LlamaIndex</h1><p><img src="/imgs/AI/llamaindex_humaninloop.png" alt="llamaindex_humaninloop.png"><br>LlamaIndex会向外发送一个消息InputRequiredEvent事件，然后等待外部处理事件后回馈一个回执事件HumanResponseEvent</p>
+<ul>
+<li>事件驱动：使用 InputRequiredEvent 和 HumanResponseEvent 进行异步通信</li>
+<li>人工确认：危险操作需要用户明确确认（”yes” 或 “no”）</li>
+<li>异步处理：使用 async&#x2F;await 模式处理异步事件</li>
+<li>流式处理：通过 stream_events() 实时处理事件流</li>
 </ul>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://github.com/run-llama/python-agents-tutorial/blob/main/5_human_in_the_loop.py">https://github.com/run-llama/python-agents-tutorial/blob/main/5_human_in_the_loop.py</a><br><a target="_blank" rel="noopener" href="https://docs.llamaindex.ai/en/stable/understanding/agent/human_in_the_loop/">https://docs.llamaindex.ai/en/stable/understanding/agent/human_in_the_loop/</a></p>
+<h1 id="ADK"><a href="#ADK" class="headerlink" title="ADK"></a>ADK</h1><p>长时间运行工具（Long-Running Tools）<br>这是最直接的实现方式，使用LongRunningFunctionTool来处理需要人工干预的异步操作。<br>核心实现流程：</p>
+<ol>
+<li>初始调用：Agent调用长时间运行工具，工具立即返回pending状态和跟踪ID</li>
+<li>等待人工干预：系统等待外部人工处理</li>
+<li>更新工具响应：人工处理完成后，必须构造新的types.FunctionResponse并发送给Agent</li>
+</ol>
+<p><img src="/imgs/AI/adk_humaninloop.png" alt="adk_humaninloop.png"></p>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://deepwiki.com/search/human-in-the-loop_c1195076-6732-4fa2-97fe-4a4d444faec6">https://deepwiki.com/search/human-in-the-loop_c1195076-6732-4fa2-97fe-4a4d444faec6</a></p>
+<h1 id="magentic-ui-human-in-loop"><a href="#magentic-ui-human-in-loop" class="headerlink" title="magentic-ui human in loop"></a>magentic-ui human in loop</h1><p>connection.py定义用户输入函数：更新agent运行状态等待用户输入，然后阻塞等待用户输入<br><img src="/imgs/AI/magentic_human_1.png" alt="magentic_human_1.png"><br><img src="/imgs/AI/magentic_human_2.png" alt="magentic_human_2.png"></p>
+<p>将user_input包装为Agent<br><img src="/imgs/AI/magentic_human_3.png" alt="magentic_human_3.png"></p>
+<p>Agent作为team的参与者，被分发<br><img src="/imgs/AI/magentic_human_4.png" alt="magentic_human_4.png"></p>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://github.com/microsoft/magentic-ui">https://github.com/microsoft/magentic-ui</a></p>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
@@ -348,9 +353,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2025-08-24 00:22:48 / 修改时间：21:40:22" itemprop="dateCreated datePublished" datetime="2025-08-24T00:22:48+08:00">2025-08-24</time>
+      <time title="创建时间：2025-08-24 00:22:48" itemprop="dateCreated datePublished" datetime="2025-08-24T00:22:48+08:00">2025-08-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-25 09:15:13" itemprop="dateModified" datetime="2025-08-25T09:15:13+08:00">2025-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -566,7 +577,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-25 09:13:37" itemprop="dateModified" datetime="2025-08-25T09:13:37+08:00">2025-08-25</time>
+      <time title="修改时间：2025-08-25 09:15:13" itemprop="dateModified" datetime="2025-08-25T09:15:13+08:00">2025-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
