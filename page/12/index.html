@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
@@ -17,7 +18,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
     <meta property="og:type" content="website">
 <meta property="og:title" content="Tallate">
@@ -178,37 +179,77 @@
 
 
   <section class="ai-home" aria-labelledby="ai-home-title">
-    <div class="ai-home__eyebrow">TALLATE · AI KNOWLEDGE ASSISTANT</div>
-    <h1 id="ai-home-title">有什么想聊的？</h1>
-    <p>可以问我技术、架构，也可以直接探索这个博客里的内容。</p>
+    <div class="ai-home__orb"><span></span><i></i></div>
+    <div class="ai-home__eyebrow">TALLATE / PERSONAL KNOWLEDGE INTERFACE</div>
+    <h1 id="ai-home-title">探索 Tallate</h1>
+    <p>一个从后端系统走向 AI Agent 的工程师，正在思考、构建和记录什么？</p>
+    <div class="ai-home__suggestions" aria-label="推荐问题">
+      <button type="button" data-question="Tallate 是谁？">Tallate 是谁？</button>
+      <button type="button" data-question="他的技术路线是怎样的？">他的技术路线</button>
+      <button type="button" data-question="为什么从后端转向 AI Agent？">为什么研究 Agent？</button>
+      <button type="button" data-question="推荐几篇最能代表 Tallate 的博客文章。">推荐博客文章</button>
+      <button type="button" data-question="Tallate 如何理解 Context Engineering？">Context Engineering</button>
+      <button type="button" data-question="他做过哪些有意思的项目？">有意思的项目</button>
+    </div>
     <form id="ai-chat-form" class="ai-home__form">
-      <textarea id="ai-chat-input" rows="2" maxlength="10000" placeholder="输入你的问题，按 Enter 发送，Shift + Enter 换行" required></textarea>
-      <button type="submit">发送 ↗</button>
+      <textarea id="ai-chat-input" rows="2" maxlength="10000" placeholder="输入你想了解的问题……" required></textarea>
+      <button type="submit" aria-label="发送">↗</button>
     </form>
     <div id="ai-chat-status" class="ai-home__status" role="status"></div>
-    <div id="ai-chat-answer" class="ai-home__answer" hidden></div>
+    <div id="ai-chat-answer" class="ai-home__answer" hidden><span class="ai-home__answer-label">AI RESPONSE</span><div id="ai-chat-answer-text" class="ai-home__markdown"></div></div>
   </section>
   <style>
-    .ai-home { max-width:760px; margin:10vh auto 72px; text-align:center; }
-    .ai-home__eyebrow { color:#8a94a6; font-size:11px; letter-spacing:.16em; }
-    .ai-home h1 { margin:18px 0 10px; font-size:clamp(30px,5vw,48px); }
-    .ai-home p { color:#8a94a6; margin-bottom:28px; }
-    .ai-home__form { display:flex; gap:10px; align-items:flex-end; padding:10px; border:1px solid #d9dee8; border-radius:18px; background:#fff; box-shadow:0 8px 30px rgba(30,45,70,.08); }
-    .ai-home textarea { flex:1; resize:none; border:0; outline:0; padding:10px; font:inherit; background:transparent; }
-    .ai-home button { border:0; border-radius:12px; padding:11px 16px; color:#fff; background:#222; cursor:pointer; }
-    .ai-home button:disabled { opacity:.55; cursor:wait; }
-    .ai-home__status { min-height:24px; margin-top:12px; color:#8a94a6; font-size:13px; }
-    .ai-home__answer { margin-top:16px; padding:20px; border-radius:14px; text-align:left; white-space:pre-wrap; background:#f6f8fb; line-height:1.7; }
-    @media (max-width:600px) { .ai-home { margin-top:5vh; } .ai-home__form { align-items:stretch; flex-direction:column; } .ai-home button { align-self:flex-end; } }
+    .ai-home { position:relative; max-width:820px; margin:7vh auto 72px; padding:54px 30px 32px; overflow:hidden; text-align:center; color:#dbeafe; background:radial-gradient(circle at 50% 0%,rgba(38,113,190,.25),transparent 45%),linear-gradient(145deg,#08111f,#101c31 60%,#0b1425); border:1px solid rgba(117,178,255,.24); border-radius:28px; box-shadow:0 18px 60px rgba(8,17,31,.28), inset 0 1px rgba(255,255,255,.08); }
+    .ai-home:before { content:""; position:absolute; inset:0; pointer-events:none; opacity:.18; background-image:linear-gradient(rgba(117,178,255,.18) 1px,transparent 1px),linear-gradient(90deg,rgba(117,178,255,.18) 1px,transparent 1px); background-size:34px 34px; mask-image:linear-gradient(to bottom,#000,transparent 75%); }
+    .ai-home > * { position:relative; z-index:1; }
+    .ai-home__orb { width:78px; height:78px; margin:0 auto 22px; border:1px solid rgba(99,190,255,.65); border-radius:50%; box-shadow:0 0 20px #268be0,0 0 65px rgba(38,139,224,.5),inset 0 0 22px rgba(99,190,255,.5); animation:ai-pulse 3s ease-in-out infinite; }
+    .ai-home__orb span,.ai-home__orb i { display:block; width:7px; height:7px; margin:23px auto 0; border-radius:50%; background:#b9efff; box-shadow:0 0 18px #64d9ff; }
+    .ai-home__orb i { margin-top:8px; width:3px; height:3px; opacity:.65; }
+    .ai-home__eyebrow { color:#6ed9ff; font-size:10px; letter-spacing:.2em; }
+    .ai-home h1 { margin:16px 0 10px; color:#f5fbff; font-size:clamp(32px,5vw,52px); letter-spacing:.02em; }
+    .ai-home p { color:#9cb5d1; margin:0 auto 27px; }
+    .ai-home__suggestions { display:flex; flex-wrap:wrap; justify-content:center; gap:9px; margin:0 auto 23px; max-width:700px; }
+    .ai-home__suggestions button { border:1px solid rgba(109,191,255,.28); border-radius:999px; padding:8px 13px; color:#b8d8f5; background:rgba(27,64,101,.36); cursor:pointer; transition:.2s ease; }
+    .ai-home__suggestions button:hover { color:#fff; border-color:#65d7ff; background:rgba(37,112,172,.48); box-shadow:0 0 16px rgba(56,185,255,.25); transform:translateY(-1px); }
+    .ai-home__form { display:flex; gap:10px; align-items:flex-end; padding:10px; border:1px solid rgba(113,201,255,.44); border-radius:18px; background:rgba(5,14,28,.72); box-shadow:0 0 25px rgba(42,153,224,.12),inset 0 0 14px rgba(55,133,192,.08); }
+    .ai-home textarea { flex:1; resize:none; border:0; outline:0; padding:10px; color:#e5f4ff; font:inherit; background:transparent; }
+    .ai-home textarea::placeholder { color:#6685a3; }
+    .ai-home__form > button { width:44px; height:44px; border:1px solid #65d7ff; border-radius:12px; color:#06111f; font-size:22px; background:linear-gradient(135deg,#9df0ff,#4ca7ff); cursor:pointer; box-shadow:0 0 18px rgba(77,196,255,.35); }
+    .ai-home__form > button:disabled { opacity:.55; cursor:wait; }
+    .ai-home__status { min-height:24px; margin-top:12px; color:#79a5c9; font-size:13px; }
+    .ai-home__answer { margin-top:16px; padding:20px; border:1px solid rgba(113,201,255,.2); border-radius:14px; text-align:left; color:#d9ecff; background:rgba(5,14,28,.76); line-height:1.7; }
+    .ai-home__answer-label { display:block; margin-bottom:9px; color:#61d5ff; font-size:10px; letter-spacing:.16em; }
+    .ai-home__markdown p { margin:0 0 12px; }
+    .ai-home__markdown p:last-child { margin-bottom:0; }
+    .ai-home__markdown strong { color:#f0f6fc; font-weight:600; }
+    .ai-home__markdown em { color:#c9d1d9; }
+    .ai-home__markdown ul, .ai-home__markdown ol { margin:8px 0 12px 22px; }
+    .ai-home__markdown li { margin:4px 0; }
+    .ai-home__markdown a { color:#58a6ff; }
+    .ai-home__markdown code { padding:2px 5px; border:1px solid #30363d; border-radius:4px; color:#f2cc60; background:#161b22; }
+    .ai-home__markdown pre { overflow:auto; padding:12px; border:1px solid #30363d; border-radius:6px; background:#0d1117; }
+    .ai-home__markdown pre code { padding:0; border:0; color:#c9d1d9; }
+    @keyframes ai-pulse { 50% { transform:scale(1.05); box-shadow:0 0 28px #268be0,0 0 80px rgba(38,139,224,.55),inset 0 0 22px rgba(99,190,255,.5); } }
+    @media (max-width:600px) { .ai-home { margin-top:3vh; padding:40px 16px 22px; } .ai-home__form { align-items:stretch; } }
   </style>
   <script>
   (() => {
-    const form=document.querySelector('#ai-chat-form'), input=document.querySelector('#ai-chat-input'), button=form.querySelector('button'), status=document.querySelector('#ai-chat-status'), answer=document.querySelector('#ai-chat-answer');
+    const form=document.querySelector('#ai-chat-form'), input=document.querySelector('#ai-chat-input'), button=form.querySelector('button'), status=document.querySelector('#ai-chat-status'), answer=document.querySelector('#ai-chat-answer'), answerText=document.querySelector('#ai-chat-answer-text');
     const api='https://bot.antseek.xyz/api/chat', key='tallate-ai-session-id';
     const sessionId=localStorage.getItem(key)||(crypto.randomUUID?crypto.randomUUID():`web-${Date.now()}`); localStorage.setItem(key,sessionId);
+    document.querySelectorAll('[data-question]').forEach(item=>item.addEventListener('click',()=>{input.value=item.dataset.question;input.focus();}));
     input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
+    const escapeHtml = value => value.replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    const renderMarkdown = value => {
+      let html = escapeHtml(value.trim()).replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+      html = html.replace(/^### (.+)$/gm, '<h4>$1</h4>').replace(/^## (.+)$/gm, '<h3>$1</h3>').replace(/^# (.+)$/gm, '<h2>$1</h2>');
+      html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+      html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').replace(/\*([^*]+)\*/g, '<em>$1</em>').replace(/`([^`]+)`/g, '<code>$1</code>');
+      html = html.replace(/(?:^|\n)((?:[-*] .+(?:\n|$))+)/g, (_, block) => `<ul>${block.trim().split(/\n/).map(item => `<li>${item.replace(/^[-*] /, '')}</li>`).join('')}</ul>`);
+      return html.split(/\n{2,}/).map(block => /^<(h[234]|ul|pre)/.test(block.trim()) ? block : `<p>${block.replace(/\n/g, '<br>')}</p>`).join('');
+    };
     form.addEventListener('submit',async e=>{e.preventDefault();const message=input.value.trim();if(!message)return;button.disabled=input.disabled=true;status.textContent='正在思考…';answer.hidden=true;
-      try{const r=await fetch(api,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,session_id:sessionId})});const d=await r.json();if(!r.ok)throw new Error(d.detail||'请求失败');answer.textContent=d.reply;answer.hidden=false;status.textContent='';input.value='';}catch(err){status.textContent=err.message||'连接机器人失败，请稍后重试';}finally{button.disabled=input.disabled=false;input.focus();}});
+      try{const r=await fetch(api,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message,session_id:sessionId})});const d=await r.json();if(!r.ok)throw new Error(d.detail||'请求失败');answerText.innerHTML=renderMarkdown(d.reply);answer.hidden=false;status.textContent='';input.value='';}catch(err){status.textContent=err.message||'连接机器人失败，请稍后重试';}finally{button.disabled=input.disabled=false;input.focus();}});
   })();
   </script>
     
@@ -1049,6 +1090,98 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e913f4bd.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/e913f4bd.html" class="post-title-link" itemprop="url">JVM 与动态内存管理</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-21 15:26:49" itemprop="dateCreated datePublished" datetime="2019-09-21T15:26:49+08:00">2019-09-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-08-15 20:02:19" itemprop="dateModified" datetime="2026-08-15T20:02:19+08:00">2026-08-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>在 Java 体系中，提到并发就不得不提到 JMM，因为所有并发安全都是围绕内存来展开的，可以说不懂内存结构就不懂并发。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/e913f4bd.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://tallate.github.io/b27f4a82.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1583,7 +1716,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/e913f4bd.html">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/3e0c4ce6.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1601,7 +1734,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/e913f4bd.html" class="post-title-link" itemprop="url">JVM 与动态内存管理</a>
+          <a href="/3e0c4ce6.html" class="post-title-link" itemprop="url">Spring 总结</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1612,7 +1745,7 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2019-09-21 15:26:49" itemprop="dateCreated datePublished" datetime="2019-09-21T15:26:49+08:00">2019-09-21</time>
+      <time title="创建时间：2019-09-21 13:09:11" itemprop="dateCreated datePublished" datetime="2019-09-21T13:09:11+08:00">2019-09-21</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1627,7 +1760,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+          <a href="/categories/%E6%8A%80%E6%9C%AF%E7%82%B9%E6%80%BB%E7%BB%93/" itemprop="url" rel="index"><span itemprop="name">技术点总结</span></a>
         </span>
     </span>
 
@@ -1641,15 +1774,34 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>在 Java 体系中，提到并发就不得不提到 JMM，因为所有并发安全都是围绕内存来展开的，可以说不懂内存结构就不懂并发。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/e913f4bd.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+          <span id="more"></span>
+
+
+<h1 id="Spring-如何加载注解"><a href="#Spring-如何加载注解" class="headerlink" title="Spring 如何加载注解"></a>Spring 如何加载注解</h1><p>很多注解本身只是提供了一个标识，要实现注解所表示的功能，必然还会有一个扫描器扫描这个注解，然后将必须的Bean注入到Spring容器内，而且很多时候会<strong>为被注解的对象生成一个动态代理</strong>，以实现日志记录、接口幂等、限流等功能。<br>要自己实现一个注解，关键是如何扫描及如何生成代理并注入到Spring容器这两个步骤，具体的实现可以参考<code>MapperScannerConfigurer</code>，大体逻辑是：</p>
+<ol>
+<li>在Spring容器加载完毕后，再对指定包下的类进行一次扫描；</li>
+<li></li>
+</ol>
+<h1 id="Spring-三级缓存"><a href="#Spring-三级缓存" class="headerlink" title="Spring 三级缓存"></a>Spring 三级缓存</h1><h2 id="Spring-中产生循环依赖的三种情况"><a href="#Spring-中产生循环依赖的三种情况" class="headerlink" title="Spring 中产生循环依赖的三种情况"></a>Spring 中产生循环依赖的三种情况</h2><ol>
+<li>构造器注入循环依赖 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@Service</span><br><span class="line">public class A &#123;</span><br><span class="line">    public A(B b) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">@Service</span><br><span class="line">public class B &#123;</span><br><span class="line">    public B(A a) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+构造器注入构成的循环依赖，此种循环依赖方式是无法解决的，只能抛出 BeanCurrentlyInCreationException 异常表示循环依赖。<br>不能解决的原因是：Spring 解决循环依赖的原理是实例化 Bean 后先把引用存到一个 Map 中，之后初始化成员变量时，可以直接从这个 Map 中取。但是构造器注入相当于<strong>实例化和初始化是同时进行的</strong>，因此无法解决。</li>
+<li>singleton 模式 field 属性注入循环依赖 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@Service</span><br><span class="line">public class A &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private B b;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">@Service</span><br><span class="line">public class B &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private A a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>prototype 模式 field 属性注入循环依赖 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)</span><br><span class="line">@Service</span><br><span class="line">public class A &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private B b;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)</span><br><span class="line">@Service</span><br><span class="line">public class B &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private A a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="Spring-创建-Bean-的流程"><a href="#Spring-创建-Bean-的流程" class="headerlink" title="Spring 创建 Bean 的流程"></a>Spring 创建 Bean 的流程</h2><ol>
+<li>createBeanInstance：实例化，其实也就是调用对象的构造方法实例化对象</li>
+<li>populateBean：填充属性，这一步主要是对 bean 的依赖属性进行注入(@Autowired)</li>
+<li>initializeBean：回到一些形如 initMethod、InitializingBean 等方法</li>
+</ol>
+<p>其中，循环依赖可能发生在第一步和第二步，其中第一步是因为构造方法中可能会需要传入其他 Bean。</p>
+<h2 id="Spring-三级缓存如何解决循环依赖"><a href="#Spring-三级缓存如何解决循环依赖" class="headerlink" title="Spring 三级缓存如何解决循环依赖"></a>Spring 三级缓存如何解决循环依赖</h2><h3 id="缓存生效时间"><a href="#缓存生效时间" class="headerlink" title="缓存生效时间"></a>缓存生效时间</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry &#123;</span><br><span class="line"></span><br><span class="line">    // 用于存放完全初始化好的 bean，从该缓存中取出的 bean 可以直接使用</span><br><span class="line">	/** Cache of singleton objects: bean name --&gt; bean instance */</span><br><span class="line">	private final Map&lt;String, Object&gt; singletonObjects = new ConcurrentHashMap&lt;String, Object&gt;(256);</span><br><span class="line"></span><br><span class="line">    // 提前曝光的单例对象的cache，存放原始的 bean 对象（尚未填充属性），用于解决循环依赖</span><br><span class="line">	/** Cache of early singleton objects: bean name --&gt; bean instance */</span><br><span class="line">	private final Map&lt;String, Object&gt; earlySingletonObjects = new HashMap&lt;String, Object&gt;(16);</span><br><span class="line">	</span><br><span class="line">	// 单例对象工厂的cache，存放 bean 工厂对象，用于解决循环依赖</span><br><span class="line">	/** Cache of singleton factories: bean name --&gt; ObjectFactory */</span><br><span class="line">    private final Map&lt;String, ObjectFactory&lt;?&gt;&gt; singletonFactories = new HashMap&lt;String, ObjectFactory&lt;?&gt;&gt;(16);</span><br></pre></td></tr></table></figure>
+<h3 id="获取单例-Bean-的过程"><a href="#获取单例-Bean-的过程" class="headerlink" title="获取单例 Bean 的过程"></a>获取单例 Bean 的过程</h3><p><code>org.springframework.beans.factory.support.DefaultSingletonBeanRegistry#getSingleton(java.lang.String)</code></p>
+<ol>
+<li>先从一级缓存 singletonObjects 中去获取，如果获取到就直接 return。</li>
+<li>如果获取不到或者对象正在创建中（isSingletonCurrentlyInCreation()），那就再从二级缓存 earlySingletonObjects 中获取，如果获取到就直接 return。</li>
+<li>如果还是获取不到，且允许 singletonFactories（allowEarlyReference&#x3D;true）通过 getObject()获取。就从三级缓存 singletonFactory.getObject()获取，如果获取到了就从 singletonFactories 中移除，并且放进 earlySingletonObjects，其实也就是从三级缓存移动到了二级缓存。</li>
+</ol>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
 
@@ -1742,117 +1894,6 @@
             </div>
           <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/3e0c4ce6.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/3e0c4ce6.html" class="post-title-link" itemprop="url">Spring 总结</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-09-21 13:09:11" itemprop="dateCreated datePublished" datetime="2019-09-21T13:09:11+08:00">2019-09-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-08-15 20:02:19" itemprop="dateModified" datetime="2026-08-15T20:02:19+08:00">2026-08-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E6%8A%80%E6%9C%AF%E7%82%B9%E6%80%BB%E7%BB%93/" itemprop="url" rel="index"><span itemprop="name">技术点总结</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-
-<h1 id="Spring-如何加载注解"><a href="#Spring-如何加载注解" class="headerlink" title="Spring 如何加载注解"></a>Spring 如何加载注解</h1><p>很多注解本身只是提供了一个标识，要实现注解所表示的功能，必然还会有一个扫描器扫描这个注解，然后将必须的Bean注入到Spring容器内，而且很多时候会<strong>为被注解的对象生成一个动态代理</strong>，以实现日志记录、接口幂等、限流等功能。<br>要自己实现一个注解，关键是如何扫描及如何生成代理并注入到Spring容器这两个步骤，具体的实现可以参考<code>MapperScannerConfigurer</code>，大体逻辑是：</p>
-<ol>
-<li>在Spring容器加载完毕后，再对指定包下的类进行一次扫描；</li>
-<li></li>
-</ol>
-<h1 id="Spring-三级缓存"><a href="#Spring-三级缓存" class="headerlink" title="Spring 三级缓存"></a>Spring 三级缓存</h1><h2 id="Spring-中产生循环依赖的三种情况"><a href="#Spring-中产生循环依赖的三种情况" class="headerlink" title="Spring 中产生循环依赖的三种情况"></a>Spring 中产生循环依赖的三种情况</h2><ol>
-<li>构造器注入循环依赖 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">@Service</span><br><span class="line">public class A &#123;</span><br><span class="line">    public A(B b) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">@Service</span><br><span class="line">public class B &#123;</span><br><span class="line">    public B(A a) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-构造器注入构成的循环依赖，此种循环依赖方式是无法解决的，只能抛出 BeanCurrentlyInCreationException 异常表示循环依赖。<br>不能解决的原因是：Spring 解决循环依赖的原理是实例化 Bean 后先把引用存到一个 Map 中，之后初始化成员变量时，可以直接从这个 Map 中取。但是构造器注入相当于<strong>实例化和初始化是同时进行的</strong>，因此无法解决。</li>
-<li>singleton 模式 field 属性注入循环依赖 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@Service</span><br><span class="line">public class A &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private B b;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">@Service</span><br><span class="line">public class B &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private A a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>prototype 模式 field 属性注入循环依赖 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)</span><br><span class="line">@Service</span><br><span class="line">public class A &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private B b;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)</span><br><span class="line">@Service</span><br><span class="line">public class B &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private A a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-</ol>
-<h2 id="Spring-创建-Bean-的流程"><a href="#Spring-创建-Bean-的流程" class="headerlink" title="Spring 创建 Bean 的流程"></a>Spring 创建 Bean 的流程</h2><ol>
-<li>createBeanInstance：实例化，其实也就是调用对象的构造方法实例化对象</li>
-<li>populateBean：填充属性，这一步主要是对 bean 的依赖属性进行注入(@Autowired)</li>
-<li>initializeBean：回到一些形如 initMethod、InitializingBean 等方法</li>
-</ol>
-<p>其中，循环依赖可能发生在第一步和第二步，其中第一步是因为构造方法中可能会需要传入其他 Bean。</p>
-<h2 id="Spring-三级缓存如何解决循环依赖"><a href="#Spring-三级缓存如何解决循环依赖" class="headerlink" title="Spring 三级缓存如何解决循环依赖"></a>Spring 三级缓存如何解决循环依赖</h2><h3 id="缓存生效时间"><a href="#缓存生效时间" class="headerlink" title="缓存生效时间"></a>缓存生效时间</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry &#123;</span><br><span class="line"></span><br><span class="line">    // 用于存放完全初始化好的 bean，从该缓存中取出的 bean 可以直接使用</span><br><span class="line">	/** Cache of singleton objects: bean name --&gt; bean instance */</span><br><span class="line">	private final Map&lt;String, Object&gt; singletonObjects = new ConcurrentHashMap&lt;String, Object&gt;(256);</span><br><span class="line"></span><br><span class="line">    // 提前曝光的单例对象的cache，存放原始的 bean 对象（尚未填充属性），用于解决循环依赖</span><br><span class="line">	/** Cache of early singleton objects: bean name --&gt; bean instance */</span><br><span class="line">	private final Map&lt;String, Object&gt; earlySingletonObjects = new HashMap&lt;String, Object&gt;(16);</span><br><span class="line">	</span><br><span class="line">	// 单例对象工厂的cache，存放 bean 工厂对象，用于解决循环依赖</span><br><span class="line">	/** Cache of singleton factories: bean name --&gt; ObjectFactory */</span><br><span class="line">    private final Map&lt;String, ObjectFactory&lt;?&gt;&gt; singletonFactories = new HashMap&lt;String, ObjectFactory&lt;?&gt;&gt;(16);</span><br></pre></td></tr></table></figure>
-<h3 id="获取单例-Bean-的过程"><a href="#获取单例-Bean-的过程" class="headerlink" title="获取单例 Bean 的过程"></a>获取单例 Bean 的过程</h3><p><code>org.springframework.beans.factory.support.DefaultSingletonBeanRegistry#getSingleton(java.lang.String)</code></p>
-<ol>
-<li>先从一级缓存 singletonObjects 中去获取，如果获取到就直接 return。</li>
-<li>如果获取不到或者对象正在创建中（isSingletonCurrentlyInCreation()），那就再从二级缓存 earlySingletonObjects 中获取，如果获取到就直接 return。</li>
-<li>如果还是获取不到，且允许 singletonFactories（allowEarlyReference&#x3D;true）通过 getObject()获取。就从三级缓存 singletonFactory.getObject()获取，如果获取到了就从 singletonFactories 中移除，并且放进 earlySingletonObjects，其实也就是从三级缓存移动到了二级缓存。</li>
-</ol>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
 
