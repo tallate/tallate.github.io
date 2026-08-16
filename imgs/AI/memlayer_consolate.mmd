@@ -1,0 +1,51 @@
+flowchart TD
+    Start([开始 consolidate]) --> MarkProgress[标记 consolidation 为进行中<br/>_consolidation_complete.clear]
+    MarkProgress --> StartThread[启动后台线程<br/>threading.Thread]
+    StartThread --> ThreadStart[后台线程开始执行]
+    
+    ThreadStart --> CheckSalience{检查重要性<br/>salience_gate.is_worth_saving}
+    CheckSalience -->|不重要| SetComplete1[标记完成<br/>_consolidation_complete.set]
+    SetComplete1 --> Exit1([退出线程])
+    
+    CheckSalience -->|重要| ExtractKnowledge[提取知识<br/>llm_client.analyze_and_extract_knowledge]
+    ExtractKnowledge --> ParseResults[解析提取结果<br/>facts, entities, relationships]
+    
+    ParseResults --> CheckFacts{是否有 facts?}
+    CheckFacts -->|有| CheckLightweight{是否为<br/>LIGHTWEIGHT 模式?}
+    CheckFacts -->|无| ProcessEntities
+    
+    CheckLightweight -->|否| PrepareFacts[准备 facts 数据<br/>提取文本、过期时间、重要性分数]
+    CheckLightweight -->|是| SkipFacts[跳过保存 facts<br/>LIGHTWEIGHT 模式]
+    
+    PrepareFacts --> GenerateEmbeddings[生成 embeddings<br/>embedding_model.get_embeddings]
+    GenerateEmbeddings --> SaveFacts[保存到向量存储<br/>storage.add_memory]
+    SaveFacts --> ProcessEntities
+    
+    SkipFacts --> ProcessEntities{是否有 entities?}
+    
+    ProcessEntities -->|有| ProcessEachEntity[遍历每个 entity<br/>处理 dict/string 格式]
+    ProcessEachEntity --> AddEntity[添加到图存储<br/>graph_storage.add_entity]
+    AddEntity --> ProcessRelationships
+    
+    ProcessEntities -->|无| ProcessRelationships{是否有 relationships?}
+    
+    ProcessRelationships -->|有| ProcessEachRel[遍历每个 relationship<br/>提取 subject, predicate, object]
+    ProcessEachRel --> AddRelationship[添加到图存储<br/>graph_storage.add_relationship]
+    AddRelationship --> Complete
+    
+    ProcessRelationships -->|无| Complete[标记完成<br/>_consolidation_complete.set]
+    
+    Complete --> End([结束])
+    
+    style Start fill:#e1f5ff
+    style End fill:#e1f5ff
+    style CheckSalience fill:#fff4e6
+    style CheckLightweight fill:#fff4e6
+    style CheckFacts fill:#fff4e6
+    style ProcessEntities fill:#fff4e6
+    style ProcessRelationships fill:#fff4e6
+    style ExtractKnowledge fill:#e8f5e9
+    style SaveFacts fill:#e8f5e9
+    style AddEntity fill:#e8f5e9
+    style AddRelationship fill:#e8f5e9
+    style Exit1 fill:#ffebee

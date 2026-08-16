@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="多 Agent 通信与唤醒机制多 Agent 系统的难点不在「能跑多个 Agent」，而在异步协作时的消息投递与唤醒时机——何时只排队通知、何时触发目标 Agent 开新 turn、子 Agent 完成后如何回传父 Agent。下面分别梳理 Codex（Cursor Agent Runtime）与 AWorld 的实现，并做对照。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多 Agent 通信与唤醒机制">
+<meta property="og:url" content="https://tallate.github.io/multi-agent-wakeup.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="多 Agent 通信与唤醒机制多 Agent 系统的难点不在「能跑多个 Agent」，而在异步协作时的消息投递与唤醒时机——何时只排队通知、何时触发目标 Agent 开新 turn、子 Agent 完成后如何回传父 Agent。下面分别梳理 Codex（Cursor Agent Runtime）与 AWorld 的实现，并做对照。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-05-20T02:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-15T12:02:19.029Z">
+<meta property="article:author" content="tallate">
+<meta property="article:tag" content="Multi-Agent">
+<meta property="article:tag" content="Agent Runtime">
+<meta property="article:tag" content="AWorld">
+<meta property="article:tag" content="Codex">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tallate.github.io/multi-agent-wakeup.html">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/multi-agent-wakeup.html","path":"/multi-agent-wakeup.html","title":"多 Agent 通信与唤醒机制"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>多 Agent 通信与唤醒机制 | Tallate</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">100</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">199</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A-Agent-%E9%80%9A%E4%BF%A1%E4%B8%8E%E5%94%A4%E9%86%92%E6%9C%BA%E5%88%B6"><span class="nav-number">1.</span> <span class="nav-text">多 Agent 通信与唤醒机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">1.1.</span> <span class="nav-text">结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Codex%EF%BC%9AMailbox-trigger-turn"><span class="nav-number">1.2.</span> <span class="nav-text">Codex：Mailbox + trigger_turn</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E4%BF%A1%E5%8D%8F%E8%AE%AE%EF%BC%88InterAgentCommunication-envelope%EF%BC%89"><span class="nav-number">1.2.1.</span> <span class="nav-text">通信协议（InterAgentCommunication envelope）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E4%B9%89%E5%8C%BA%E5%88%86"><span class="nav-number">1.2.2.</span> <span class="nav-text">语义区分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%94%A4%E9%86%92%E6%B5%81%E7%A8%8B"><span class="nav-number">1.2.3.</span> <span class="nav-text">唤醒流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%88%90%E9%80%9A%E7%9F%A5%E5%9B%9E%E4%BC%A0"><span class="nav-number">1.2.4.</span> <span class="nav-text">完成通知回传</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWorld%EF%BC%9AEvent-Bus-Swarm-Handler"><span class="nav-number">1.3.</span> <span class="nav-text">AWorld：Event Bus + Swarm Handler</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E5%88%86%E5%B7%A5"><span class="nav-number">1.3.1.</span> <span class="nav-text">架构分工</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Message-%E5%8D%8F%E8%AE%AE%EF%BC%88%E6%A0%B8%E5%BF%83-envelope%EF%BC%89"><span class="nav-number">1.3.2.</span> <span class="nav-text">Message 协议（核心 envelope）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E7%A7%8D-Swarm-%E6%8B%93%E6%89%91%E7%9A%84%E5%94%A4%E9%86%92%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.3.3.</span> <span class="nav-text">三种 Swarm 拓扑的唤醒模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E5%AD%90-Agent-%E6%89%A7%E8%A1%8C%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.3.4.</span> <span class="nav-text">两种子 Agent 执行模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Background-Task-%E7%9A%84%E5%BB%B6%E8%BF%9F%E5%94%A4%E9%86%92"><span class="nav-number">1.3.5.</span> <span class="nav-text">Background Task 的延迟唤醒</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pending-%E6%B6%88%E6%81%AF%E5%8A%A0%E8%BD%BD%EF%BC%88llm-agent-async-policy%EF%BC%89"><span class="nav-number">1.3.6.</span> <span class="nav-text">pending 消息加载（llm_agent.async_policy）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E7%85%A7%E4%B8%8E%E8%AE%BE%E8%AE%A1%E5%90%AF%E7%A4%BA"><span class="nav-number">1.4.</span> <span class="nav-text">对照与设计启示</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B1%E5%90%8C%E7%82%B9"><span class="nav-number">1.4.1.</span> <span class="nav-text">共同点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%AE%E5%BC%82%E7%82%B9"><span class="nav-number">1.4.2.</span> <span class="nav-text">差异点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AWorld-%E8%AE%A1%E5%88%92%E6%96%B9%E5%90%91"><span class="nav-number">1.4.3.</span> <span class="nav-text">AWorld 计划方向</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">199</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">100</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/multi-agent-wakeup.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="多 Agent 通信与唤醒机制 | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          多 Agent 通信与唤醒机制
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2026-05-20 10:00:00" itemprop="dateCreated datePublished" datetime="2026-05-20T10:00:00+08:00">2026-05-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-08-15 20:02:19" itemprop="dateModified" datetime="2026-08-15T20:02:19+08:00">2026-08-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="多-Agent-通信与唤醒机制"><a href="#多-Agent-通信与唤醒机制" class="headerlink" title="多 Agent 通信与唤醒机制"></a>多 Agent 通信与唤醒机制</h1><p>多 Agent 系统的难点不在「能跑多个 Agent」，而在<strong>异步协作时的消息投递与唤醒时机</strong>——何时只排队通知、何时触发目标 Agent 开新 turn、子 Agent 完成后如何回传父 Agent。下面分别梳理 Codex（Cursor Agent Runtime）与 AWorld 的实现，并做对照。</p>
+<span id="more"></span>
+
+<h2 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h2><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Codex（Cursor Agent Runtime）</th>
+<th>AWorld</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>调度载体</td>
+<td><code>AgentControl + Session(InputQueue) + Task Lifecycle</code></td>
+<td><code>TaskEventRunner + EventManager + InMemoryEventbus</code></td>
+</tr>
+<tr>
+<td>核心控制位</td>
+<td><code>InterAgentCommunication.trigger_turn</code></td>
+<td><code>Message.category/receiver</code> + Swarm 拓扑 Handler</td>
+</tr>
+<tr>
+<td>消息缓存</td>
+<td><code>InputQueue.mailbox_pending_mails</code></td>
+<td><code>PriorityQueue</code>（按 task_id）+ Memory <code>pending</code> 类型</td>
+</tr>
+<tr>
+<td>唤醒语义</td>
+<td>显式区分 <code>send_message</code>（不唤醒）与 <code>followup_task</code>（唤醒）</td>
+<td>显式 <code>AgentMessage</code> 入队即唤醒；或 <code>pending</code> 内存延迟投递</td>
+</tr>
+<tr>
+<td>完成回传</td>
+<td>Completion Watcher → 父 mailbox（<code>trigger_turn=false</code>）</td>
+<td>Team&#x2F;Handoff Handler → 向 root&#x2F;caller 发 <code>AgentMessage</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="Codex：Mailbox-trigger-turn"><a href="#Codex：Mailbox-trigger-turn" class="headerlink" title="Codex：Mailbox + trigger_turn"></a>Codex：Mailbox + trigger_turn</h2><p>Codex 的子 Agent 唤醒<strong>不是</strong>独立调度器进程，而是由运行时三件套协同完成：</p>
+<ol>
+<li><strong>AgentControl</strong>：解析目标 Agent、路由消息、维护父子 thread 关系</li>
+<li><strong>Session &#x2F; InputQueue</strong>：接收并缓存 Agent 间消息（mailbox），发布 mailbox activity</li>
+<li><strong>Task Lifecycle</strong>：目标 Agent 空闲且存在 <code>trigger_turn=true</code> 的邮件时，创建新 turn 并启动执行</li>
+<li><strong>Completion Watcher</strong>：监听子 Agent 终态（Completed &#x2F; Errored &#x2F; Shutdown），把完成消息回写父 Agent mailbox</li>
+</ol>
+<h3 id="通信协议（InterAgentCommunication-envelope）"><a href="#通信协议（InterAgentCommunication-envelope）" class="headerlink" title="通信协议（InterAgentCommunication envelope）"></a>通信协议（InterAgentCommunication envelope）</h3><table>
+<thead>
+<tr>
+<th>字段</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>author</code></td>
+<td>发送方 <code>AgentPath</code></td>
+</tr>
+<tr>
+<td><code>recipient</code></td>
+<td>接收方 <code>AgentPath</code></td>
+</tr>
+<tr>
+<td><code>content</code></td>
+<td>消息正文</td>
+</tr>
+<tr>
+<td><code>trigger_turn</code></td>
+<td>是否触发目标 Agent 开新 turn</td>
+</tr>
+</tbody></table>
+<h3 id="语义区分"><a href="#语义区分" class="headerlink" title="语义区分"></a>语义区分</h3><ul>
+<li><code>send_message</code>：<code>trigger_turn=false</code>，仅入队，不主动唤醒</li>
+<li><code>followup_task</code>：<code>trigger_turn=true</code>，目标 idle 时触发新 turn</li>
+<li>目标忙碌时不并发开第二个 turn，消息在 turn 边界点投递</li>
+</ul>
+<h3 id="唤醒流程"><a href="#唤醒流程" class="headerlink" title="唤醒流程"></a>唤醒流程</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">父 Agent 发消息（工具 → AgentControl）</span><br><span class="line">  → 目标 Session 写入 InputQueue.mailbox_pending_mails</span><br><span class="line">  → 若 trigger_turn=true 且目标无 active_turn</span><br><span class="line">     → maybe_start_turn_for_pending_work → 创建 regular turn</span><br><span class="line">  → 模型处理 mailbox 消息并产出结果</span><br></pre></td></tr></table></figure>
+
+<h3 id="完成通知回传"><a href="#完成通知回传" class="headerlink" title="完成通知回传"></a>完成通知回传</h3><ol>
+<li>子 Agent 到达终态 → Completion Watcher 构造 <code>FINAL_ANSWER</code> envelope</li>
+<li>通过 <code>InterAgentCommunication(trigger_turn=false)</code> 写回父 thread mailbox</li>
+<li>父 Agent 通过 <code>wait_agent</code> 或后续 turn 读取</li>
+<li>默认<strong>不强制打断</strong>父 Agent 当前执行</li>
+</ol>
+<p><strong>设计价值</strong>：显式区分「通知排队」与「任务唤醒」；父子异步协作、避免无谓抢占；completion 统一走 mailbox，链路可追踪。</p>
+<hr>
+<h2 id="AWorld：Event-Bus-Swarm-Handler"><a href="#AWorld：Event-Bus-Swarm-Handler" class="headerlink" title="AWorld：Event Bus + Swarm Handler"></a>AWorld：Event Bus + Swarm Handler</h2><p>AWorld 的多 Agent 协作建立在 <strong>Event-Driven Runtime</strong> 之上，没有单独的 mailbox 进程，而是由 <code>TaskEventRunner</code> 的事件循环统一调度。</p>
+<h3 id="架构分工"><a href="#架构分工" class="headerlink" title="架构分工"></a>架构分工</h3><pre class="mermaid">flowchart TB
+    subgraph Producer["消息生产者"]
+        Parent["父 Agent policy"]
+        Tool["Tool Handler"]
+        BG["BackgroundTask Handler"]
+        Runner["TaskEventRunner\ninit AgentMessage"]
+    end
+    subgraph Bus["EventManager + InMemoryEventbus"]
+        Queue["PriorityQueue\n按 task_id 隔离"]
+    end
+    subgraph Consumer["消息消费者"]
+        RunnerLoop["TaskEventRunner._do_run\nconsume → _common_process"]
+        AgentH["DefaultAgentHandler\n路由 Agent / Tool"]
+        AgentRun["agent.run / async_run\n注册为 category=agent 的 handler"]
+    end
+    Parent -->|"AgentMessage\nreceiver=子Agent"| Queue
+    Tool -->|"AgentMessage / ToolMessage"| Queue
+    BG -->|"trigger_agent=true → AgentMessage\n否则 → Memory pending"| Queue
+    Runner --> Queue
+    Queue --> RunnerLoop --> AgentH --> AgentRun</pre>
+
+<ol>
+<li><strong>EventManager</strong>：封装 <code>emit_message</code> &#x2F; <code>consume</code>，消息持久化到 InmemoryStorage 便于重放与观测</li>
+<li><strong>InMemoryEventbus</strong>：按 <code>task_id</code> 维护 <code>PriorityQueue</code>，<code>publish</code> 入队、<code>consume</code> 阻塞取消息</li>
+<li><strong>TaskEventRunner</strong>：主循环 <code>while True: message = await consume() → _common_process()</code>，注册各 Agent 的 <code>run</code> 为 handler</li>
+<li><strong>DefaultAgentHandler</strong>：根据 Swarm 拓扑（Team &#x2F; Handoff &#x2F; Workflow）决定下一步向谁发 <code>AgentMessage</code></li>
+</ol>
+<h3 id="Message-协议（核心-envelope）"><a href="#Message-协议（核心-envelope）" class="headerlink" title="Message 协议（核心 envelope）"></a>Message 协议（核心 envelope）</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@dataclass</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Message</span>:</span><br><span class="line">    session_id: <span class="built_in">str</span></span><br><span class="line">    payload: <span class="type">Any</span>          <span class="comment"># Observation | List[ActionModel] | TaskResponse ...</span></span><br><span class="line">    sender: <span class="built_in">str</span>           <span class="comment"># 发送方 agent/tool id</span></span><br><span class="line">    receiver: <span class="built_in">str</span>         <span class="comment"># 接收方（p2p 路由）</span></span><br><span class="line">    caller: <span class="built_in">str</span>           <span class="comment"># 上一跳调用方（handoff 回传链）</span></span><br><span class="line">    category: <span class="built_in">str</span>         <span class="comment"># &quot;agent&quot; | &quot;tool&quot; | &quot;task&quot; | &quot;background_task&quot; ...</span></span><br><span class="line">    topic: <span class="built_in">str</span>            <span class="comment"># FINISHED | RERUN | GROUP_ACTIONS ...</span></span><br><span class="line">    headers: <span class="type">Dict</span>         <span class="comment"># context / agent_as_tool / trigger_agent ...</span></span><br></pre></td></tr></table></figure>
+
+<p>路由规则：<code>get_handlers(category)</code> → 按 <code>message.receiver</code> 或 <code>message.topic</code> 匹配已注册的 Agent &#x2F; Tool handler。</p>
+<h3 id="三种-Swarm-拓扑的唤醒模式"><a href="#三种-Swarm-拓扑的唤醒模式" class="headerlink" title="三种 Swarm 拓扑的唤醒模式"></a>三种 Swarm 拓扑的唤醒模式</h3><table>
+<thead>
+<tr>
+<th>拓扑</th>
+<th>类</th>
+<th>唤醒方式</th>
+<th>完成回传</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Coordination（Team）</strong></td>
+<td><code>TeamSwarm</code></td>
+<td>Orchestrator 通过 <code>handoffs</code> 把子 Agent 当工具调用；<code>_agent()</code> 向 <code>receiver=子Agent</code> 发 <code>AgentMessage(Observation)</code></td>
+<td>子 Agent <code>finished</code> → <code>_team_stop_check</code> 向 <code>root_agent</code> 发 Observation</td>
+</tr>
+<tr>
+<td><strong>Collaborative（Handoff）</strong></td>
+<td><code>HandoffSwarm</code></td>
+<td>Agent 决策 handoff → <code>_agent()</code> 唤醒目标 Agent</td>
+<td>执行完成 → <code>_handoff_stop_check</code> 向 <code>caller</code> 或 <code>communicate_agent</code> 回传</td>
+</tr>
+<tr>
+<td><strong>Workflow</strong></td>
+<td><code>WorkflowSwarm</code></td>
+<td>前驱 Agent 完成 → <code>_workflow_stop_check</code> 检查 DAG 前驱全部 finished 后唤醒后继</td>
+<td>无后继且 swarm finished → <code>TopicType.FINISHED</code></td>
+</tr>
+</tbody></table>
+<p>Team 模式关键代码路径（<code>DefaultAgentHandler._agent</code>）：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">cur_agent._finished = <span class="literal">False</span></span><br><span class="line">observation = Observation(content=con, observer=agent.<span class="built_in">id</span>(), from_agent_name=agent.<span class="built_in">id</span>())</span><br><span class="line"><span class="keyword">yield</span> Message(</span><br><span class="line">    category=Constants.AGENT,</span><br><span class="line">    payload=observation,</span><br><span class="line">    sender=action.agent_name,</span><br><span class="line">    receiver=action.tool_name,   <span class="comment"># 目标子 Agent</span></span><br><span class="line">    headers=headers,</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="两种子-Agent-执行模式"><a href="#两种子-Agent-执行模式" class="headerlink" title="两种子 Agent 执行模式"></a>两种子 Agent 执行模式</h3><table>
+<thead>
+<tr>
+<th>模式</th>
+<th>触发条件</th>
+<th>行为</th>
+<th>类比 Codex</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>同步 sub_task</strong></td>
+<td><code>wait_tool_result=True</code>（Team 默认）</td>
+<td><code>exec_agent(sub_task=True)</code> 阻塞等待子 Task 完成，结果 inline 返回父 Agent</td>
+<td>类似父 Agent 同步 <code>wait_agent</code></td>
+</tr>
+<tr>
+<td><strong>异步 Event 唤醒</strong></td>
+<td>Handoff &#x2F; Workflow &#x2F; 普通 AgentMessage</td>
+<td>消息入 Event Queue，Runner 循环 dispatch</td>
+<td>类似 <code>followup_task(trigger_turn=true)</code></td>
+</tr>
+</tbody></table>
+<h3 id="Background-Task-的延迟唤醒"><a href="#Background-Task-的延迟唤醒" class="headerlink" title="Background Task 的延迟唤醒"></a>Background Task 的延迟唤醒</h3><p>后台任务完成时，<code>DefaultBackgroundTaskHandler</code> 支持两种合并策略：</p>
+<ul>
+<li><code>headers[&quot;trigger_agent&quot;]=True</code>：<strong>Hot-Merge + 立即唤醒</strong>，直接 <code>send_message(AgentMessage(receiver=agent_id))</code></li>
+<li>默认：结果写入 Memory，<code>memory_type=&quot;pending&quot;</code>；目标 Agent 在 <code>async_post_run</code> &#x2F; <code>async_policy</code> 开头检测 pending 项，<strong>hold 住 finished 状态</strong>，下一轮 turn 加载 pending 消息后继续</li>
+</ul>
+<p>这与 Codex 的 <code>send_message(trigger_turn=false)</code> + 后续 turn 读取 mailbox 语义接近。</p>
+<h3 id="pending-消息加载（llm-agent-async-policy）"><a href="#pending-消息加载（llm-agent-async-policy）" class="headerlink" title="pending 消息加载（llm_agent.async_policy）"></a>pending 消息加载（llm_agent.async_policy）</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pending_filters = <span class="variable language_">self</span>._build_memory_filters(message.context)</span><br><span class="line">pending_filters[<span class="string">&#x27;memory_type&#x27;</span>] = <span class="string">&#x27;pending&#x27;</span></span><br><span class="line">pending_items = memory.memory_store.get_all(pending_filters)</span><br><span class="line"><span class="keyword">if</span> pending_items:</span><br><span class="line">    <span class="comment"># 转为 message 类型，注入当前 turn 上下文</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="对照与设计启示"><a href="#对照与设计启示" class="headerlink" title="对照与设计启示"></a>对照与设计启示</h2><h3 id="共同点"><a href="#共同点" class="headerlink" title="共同点"></a>共同点</h3><ul>
+<li>都区分「仅通知」与「主动唤醒」两种语义</li>
+<li>子 Agent 完成结果都通过统一消息通道回传父 Agent，而非共享可变状态</li>
+<li>目标 Agent 忙碌时避免并发 turn（Codex 显式 <code>active_turn</code> 检查；AWorld 单 Task 单 Runner 循环顺序消费）</li>
+</ul>
+<h3 id="差异点"><a href="#差异点" class="headerlink" title="差异点"></a>差异点</h3><table>
+<thead>
+<tr>
+<th>点</th>
+<th>Codex</th>
+<th>AWorld</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>控制粒度</td>
+<td>单一 <code>trigger_turn</code> 布尔位</td>
+<td>多种机制：<code>AgentMessage</code> 入队、<code>trigger_agent</code> header、<code>pending</code> Memory</td>
+</tr>
+<tr>
+<td>拓扑表达</td>
+<td>Thread 树 + AgentPath</td>
+<td>Swarm Graph（Team &#x2F; Handoff &#x2F; Workflow）+ <code>handoffs</code> 列表</td>
+</tr>
+<tr>
+<td>同步等待</td>
+<td><code>wait_agent</code> 工具</td>
+<td><code>wait_tool_result</code> + <code>exec_agent(sub_task=True)</code></td>
+</tr>
+<tr>
+<td>可观测性</td>
+<td>mailbox + thread 路径</td>
+<td>EventManager 存储 + Trajectory + Trace</td>
+</tr>
+</tbody></table>
+<h3 id="AWorld-计划方向"><a href="#AWorld-计划方向" class="headerlink" title="AWorld 计划方向"></a>AWorld 计划方向</h3><p>完善 Runtime 模块间 Event 机制——当前 Background Task 的 <code>trigger_agent</code> 与 Memory <code>pending</code> 双路径可进一步统一为显式 <code>trigger_turn</code> 语义，与 Codex 对齐后可降低多 Agent 协作的心智负担。</p>
+<p>相关阅读：<a href="/multi_agent_run_mode.html">多智能体运行模式</a>、<a href="/claude_code_multi_agent_context_engineering.html">Claude Code Multi-Agent Context Engineering</a></p>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Multi-Agent/" rel="tag"># Multi-Agent</a>
+              <a href="/tags/Agent-Runtime/" rel="tag"># Agent Runtime</a>
+              <a href="/tags/AWorld/" rel="tag"># AWorld</a>
+              <a href="/tags/Codex/" rel="tag"># Codex</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/agent-harness-report.html" rel="prev" title="Agent Harness 深度报告">
+                  <i class="fa fa-angle-left"></i> Agent Harness 深度报告
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/7c4e2a91.html" rel="next" title="Browser Use — agent-browser 接入 MCP 链路方案">
+                  Browser Use — agent-browser 接入 MCP 链路方案 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
