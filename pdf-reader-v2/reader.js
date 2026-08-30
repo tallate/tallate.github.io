@@ -23,10 +23,10 @@ try {
   }
 
   const pdfjsLib = await Promise.race([
-    import('/lib/pdf/pdf.mjs?v=20260830-legacy'),
+    import('/lib/pdf-legacy/pdf.mjs?v=20260830-legacy'),
     timeoutAfter(10000, 'PDF.js 初始化')
   ]);
-  pdfjsLib.GlobalWorkerOptions.workerSrc = '/lib/pdf/pdf.worker.mjs?v=20260830-legacy';
+  pdfjsLib.GlobalWorkerOptions.workerSrc = '/lib/pdf-legacy/pdf.worker.mjs?v=20260830-legacy';
 
   const loadingTask = pdfjsLib.getDocument({
     url: file,

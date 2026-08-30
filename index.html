@@ -1198,7 +1198,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/a31a76f2.html">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/241930bf.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1216,7 +1216,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/a31a76f2.html" class="post-title-link" itemprop="url">为Agent集成长期记忆</a>
+          <a href="/241930bf.html" class="post-title-link" itemprop="url">Human in Loop的几种实现方式</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1256,183 +1256,18 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><ul>
-<li>长期记忆是上下文中关键组成部分，长期记忆一般是短期记忆的沉淀，从过去的经验中学习，让用户可以记忆多轮对话的关键信息，得到处理问题的一般模式，<blockquote>
-<p>Without proper memory systems, AI applications would treat each interaction as completely new, losing valuable context and personalization opportunities.</p>
-</blockquote>
-</li>
-<li>长期记忆作为RAG的一部分，长期记忆的抽取和检索一般是通过RAG来实现，增强大模型回答领域问题的能力，而预训练专注于一般性问题的回答性能，例如langextract,LightRAG这样的框架</li>
-<li>使用文件存储长期记忆，按需召回，可以避免上下文超长的问题，例如manus的做法</li>
-<li>长期记忆又可以分为Semantic、Factual、Episodic，实践中一般会按抽取主体不同，按需建立不同的索引，例如mem0</li>
-<li>使用ReAct模式的Agent来管理Memory可以提供一些自主性，让Agent根据上下文和多轮的任务来自我进化，例如LangGraph MemoryAgent, QwenAgent, A-Mem, MemU</li>
-</ul>
-<h2 id="从短期记忆加工长期记忆"><a href="#从短期记忆加工长期记忆" class="headerlink" title="从短期记忆加工长期记忆"></a>从短期记忆加工长期记忆</h2><p><img src="/imgs/AI/long_term_process.png" alt="long_term_process"></p>
-<h3 id="LangGraph-MemoryTemplate"><a href="#LangGraph-MemoryTemplate" class="headerlink" title="LangGraph - MemoryTemplate"></a>LangGraph - MemoryTemplate</h3><p><img src="/imgs/AI/memory_template_process.png" alt="memory_template_process.png" title="memory_template_process"><br>MemoryTemplate是LangChain AI提供的长期记忆服务模板，用于构建和部署可连接到任何LangGraph代理的长期记忆服务，实现用户范围的记忆管理。</p>
-<ul>
-<li>使用 @functools.lru_cache 定义长期记忆的过期机制</li>
-<li>使用State定义长期记忆的入参，可见本质上是对短期记忆的持久化处理<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">class State(TypedDict):</span><br><span class="line">    &quot;&quot;&quot;Main graph state.&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">    messages: Annotated[list[AnyMessage], add_messages]</span><br><span class="line">    &quot;&quot;&quot;The messages in the conversation.&quot;&quot;&quot;</span><br></pre></td></tr></table></figure></li>
-<li>memory_graph被标记成一个入口点，相当于一个接口</li>
-</ul>
-<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://github.com/langchain-ai/memory-template">https://github.com/langchain-ai/memory-template</a></p>
-<h2 id="长期记忆的提取是一个RAG模式的实现"><a href="#长期记忆的提取是一个RAG模式的实现" class="headerlink" title="长期记忆的提取是一个RAG模式的实现"></a>长期记忆的提取是一个RAG模式的实现</h2><h3 id="langextract"><a href="#langextract" class="headerlink" title="langextract"></a>langextract</h3><p>LangExtract是一个Python库，使用LLM从非结构化文本文档中提取结构化信息，基于用户定义的指令。它能够处理各种材料，如临床文本、法律文件、学术论文等，并输出结构化的JSON数据。</p>
-<p><strong>核心特性</strong></p>
-<ul>
-<li><strong>精确源定位</strong>：每个提取的实体都包含精确的源文本引用</li>
-<li><strong>可扩展性</strong>：支持处理长文档和并行处理</li>
-<li><strong>自定义提取</strong>：通过提示词和示例控制提取行为，从非结构化文本中提取实体、关系和属性</li>
-</ul>
-<p><strong>技术架构</strong></p>
-<ul>
-<li>基于LLM的信息提取</li>
-<li>支持自定义模型提供商</li>
-<li>提供插件系统扩展功能</li>
-<li>支持本地和云端模型部署</li>
-</ul>
-<p><strong>引用链接</strong></p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://github.com/google/langextract/blob/main/docs/examples/longer_text_example.md">https://github.com/google/langextract/blob/main/docs/examples/longer_text_example.md</a></li>
-</ul>
-<h3 id="MemoryScope"><a href="#MemoryScope" class="headerlink" title="MemoryScope"></a>MemoryScope</h3><p>定义一个pipeline来处理记忆<br><a target="_blank" rel="noopener" href="https://github.com/modelscope/MemoryScope">https://github.com/modelscope/MemoryScope</a></p>
-<h3 id="LightRAG"><a href="#LightRAG" class="headerlink" title="LightRAG"></a>LightRAG</h3><p><strong>定义</strong><br>LightRAG是一个简单且快速的检索增强生成（Retrieval-Augmented Generation）系统，专注于提供高效的知识检索和生成能力。</p>
+          <p>human-in-loop是指将人类当成一个tool，在agent的循环执行中，agent可以调用人这个tool来实现输入密码、授予权限等操作。<br>实现human-in-loop主要取决于两个能力：</p>
 <ol>
-<li><strong>智能检索</strong>：基于语义相似度的文档检索</li>
-<li><strong>上下文增强</strong>：为LLM提供相关上下文信息</li>
-<li><strong>知识图谱</strong>：利用图结构增强检索效果</li>
-<li><strong>实时查询</strong>：支持实时文档查询和生成</li>
-</ol>
-<h3 id="为Memory建立索引和检索"><a href="#为Memory建立索引和检索" class="headerlink" title="为Memory建立索引和检索"></a>为Memory建立索引和检索</h3><p><a target="_blank" rel="noopener" href="https://blog.langchain.com/semantic-search-for-langgraph-memory/">https://blog.langchain.com/semantic-search-for-langgraph-memory/</a></p>
-<h2 id="文件系统作为长期记忆的载体"><a href="#文件系统作为长期记忆的载体" class="headerlink" title="文件系统作为长期记忆的载体"></a>文件系统作为长期记忆的载体</h2><h3 id="Manus-使用文件系统作为终极上下文"><a href="#Manus-使用文件系统作为终极上下文" class="headerlink" title="Manus - 使用文件系统作为终极上下文"></a>Manus - 使用文件系统作为终极上下文</h3><p>现代前沿LLM虽然提供128K+令牌的上下文窗口，但在真实代理场景中仍面临三个痛点：<strong>观察结果庞大容易超出限制</strong>、<strong>长上下文导致性能下降</strong>、<strong>以及高昂的计算成本</strong>。<br>传统压缩策略虽然能缩短上下文，但<strong>过度压缩会导致信息丢失</strong>。代理需要根据所有先前状态预测动作，无法预测哪个观察结果在后续步骤中变得重要，因此任何不可逆的压缩都带有风险。<br><strong>文件系统</strong>作为终极上下文解决了这些问题：大小不受限制、天然持久化、代理可直接操作。模型学会按需写入和读取文件，不仅用作存储，还作为结构化的外部记忆。<br>我们的压缩策略设计为可恢复的：保留URL可移除网页内容，保留文档路径可省略文档内容。这样既能缩短上下文长度，又不会永久丢失信息。<br>这种基于文件的记忆方式也为状态空间模型(SSM)在智能体中的应用开辟了新可能。SSM虽然缺乏完整注意力机制，但通过将长期状态外部化而非保存在上下文中，其速度和效率可能开启新型智能体时代。</p>
-<p><img src="/imgs/AI/use_file_system_as_context.png" alt="use_file_system_as_context.png" title="use_file_system_as_context"></p>
-<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://manus.im/zh-cn/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus">https://manus.im/zh-cn/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus</a></p>
-<h2 id="构建不同的长期记忆索引"><a href="#构建不同的长期记忆索引" class="headerlink" title="构建不同的长期记忆索引"></a>构建不同的长期记忆索引</h2><h3 id="Mem0"><a href="#Mem0" class="headerlink" title="Mem0"></a>Mem0</h3><p>Mem0将长期记忆划分为不同的类型，并通过api上增加agent_id, user_id, run_id进行索引</p>
-<p><strong>记忆类型分类：</strong></p>
-<p><strong>短期记忆 (Short-Term Memory)</strong></p>
-<ul>
-<li><strong>对话历史</strong>: 最近的对话消息及其顺序</li>
-<li><strong>工作记忆</strong>: 临时变量和状态信息</li>
-<li><strong>注意力上下文</strong>: 当前对话的焦点</li>
-</ul>
-<p><strong>长期记忆 (Long-Term Memory)</strong></p>
-<ul>
-<li><strong>事实记忆 (Factual Memory)</strong>: 存储用户信息、偏好和领域特定知识</li>
-<li><strong>情节记忆 (Episodic Memory)</strong>: 过去的交互和体验</li>
-<li><strong>语义记忆 (Semantic Memory)</strong>: 概念理解及其关系</li>
-</ul>
-<p><strong>记忆特征对比：</strong></p>
-<table>
-<thead>
-<tr>
-<th>类型</th>
-<th>持久性</th>
-<th>访问速度</th>
-<th>使用场景</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>短期记忆</td>
-<td>临时性</td>
-<td>即时</td>
-<td>活跃对话</td>
-</tr>
-<tr>
-<td>长期记忆</td>
-<td>持久性</td>
-<td>快速</td>
-<td>用户偏好和历史</td>
-</tr>
-</tbody></table>
-<p><strong>Mem0长期记忆实现方式：</strong></p>
-<ol>
-<li>使用向量嵌入存储和检索语义信息</li>
-<li>跨会话维护用户特定上下文</li>
-<li>实现高效的相关历史交互检索机制</li>
-</ol>
-<p><strong>核心价值：</strong><br>AI系统需要记忆系统实现三个关键目标：</p>
-<ul>
-<li>在对话中维持上下文</li>
-<li>从过去的交互中学习</li>
-<li>随时间构建个性化体验</li>
-</ul>
-<p><strong>参考</strong><br><a target="_blank" rel="noopener" href="https://docs.mem0.ai/core-concepts/memory-types">https://docs.mem0.ai/core-concepts/memory-types</a><br><a target="_blank" rel="noopener" href="https://docs.mem0.ai/open-source/graph_memory/overview#add-memories">https://docs.mem0.ai/open-source/graph_memory/overview#add-memories</a></p>
-<h2 id="进化的记忆"><a href="#进化的记忆" class="headerlink" title="进化的记忆"></a>进化的记忆</h2><p>结合Agent的ReAct范式，实现Agentic RAG，由Agent自主判断记忆的抽取和持久化</p>
-<h3 id="MemoryAgent"><a href="#MemoryAgent" class="headerlink" title="MemoryAgent"></a>MemoryAgent</h3><p><img src="/imgs/AI/memory_agent_process.png" alt="memory_agent_process.png" title="memory_agent_process"></p>
-<p><strong>LangGraph ReAct Memory Agent</strong> - 一个具有记忆保存工具的ReAct风格智能体示例。</p>
-<p><strong>核心特性：</strong></p>
-<ul>
-<li>基于ReAct范式的智能体，能够自主判断记忆的抽取和持久化</li>
-<li>提供<code>store_memory</code>工具，让智能体保存重要信息供后续使用</li>
-<li>记忆按<code>user_id</code>作用域隔离，支持跨对话线程学习用户偏好</li>
-<li>集成LangGraph Cloud部署，支持API交互</li>
-</ul>
-<p><strong>工作原理：</strong></p>
-<ul>
-<li>智能体从记忆图的<code>Store</code>读取已保存的记忆</li>
-<li>调用工具时自动路由到<code>store_memory</code>节点保存信息</li>
-<li>支持自定义记忆结构（content + context）</li>
-<li>可配置不同的LLM模型（默认Claude-3.5-Sonnet）</li>
-</ul>
-<p><strong>应用场景：</strong></p>
-<ul>
-<li>跨会话保持用户偏好记忆</li>
-<li>重要信息的持久化存储</li>
-<li>智能体学习能力的增强</li>
-</ul>
-<p><strong>参考</strong><br><a target="_blank" rel="noopener" href="https://github.com/langchain-ai/memory-agent?ref=blog.langchain.com">https://github.com/langchain-ai/memory-agent?ref=blog.langchain.com</a></p>
-<h3 id="A-mem"><a href="#A-mem" class="headerlink" title="A-mem"></a>A-mem</h3><p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2508.08997">https://arxiv.org/pdf/2508.08997</a><br><a target="_blank" rel="noopener" href="https://github.com/agiresearch/A-mem">https://github.com/agiresearch/A-mem</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/1888290059859514793">https://zhuanlan.zhihu.com/p/1888290059859514793</a><br><a target="_blank" rel="noopener" href="https://github.com/landing-ai/agentic-doc">https://github.com/landing-ai/agentic-doc</a></p>
-<h3 id="QwenAgent"><a href="#QwenAgent" class="headerlink" title="QwenAgent"></a>QwenAgent</h3><p>Qwen-Agent采用三级处理框架，先通过BM25检索关键词定位核心段落，再评估分块相关性，最后逐步生成答案，实现百万字级上下文处理。</p>
-<h4 id="1-上下文截断机制"><a href="#1-上下文截断机制" class="headerlink" title="1. 上下文截断机制"></a>1. 上下文截断机制</h4><p><code>qwen_agent/llm/base.py#_truncate_input_messages_roughly</code> 中实现了基础的上下文长度管理，根据最大长度来截断messages：</p>
-<ul>
-<li>默认最大输入token数为58000（可通过<code>DEFAULT_MAX_INPUT_TOKENS</code>配置）</li>
-<li>使用<code>tokenizer.count_tokens</code>和<code>truncate</code>实时统计token数并按最大token数阈值截断</li>
-<li>保留系统消息和最新的用户消息</li>
-<li>从旧消息开始截断，确保最重要的上下文保留</li>
-</ul>
-<h4 id="2-Memory对话记忆管理"><a href="#2-Memory对话记忆管理" class="headerlink" title="2. Memory对话记忆管理"></a>2. Memory对话记忆管理</h4><p><code>qwen_agent/agents/memo_assistant.py</code> 实现了对话记忆功能：</p>
-<ul>
-<li>使用storage工具存储重要信息</li>
-<li>在对话过程中，你可以随时使用storage工具来存储你认为需要记住的信息，同时也随时可以读取曾经可能存储了的历史信息</li>
-<li>这将有助于你在和用户的长对话中，记住某些重要的信息，比如用户的喜好、特殊信息、或重大事件等</li>
-</ul>
-<p>关于数据存取，有以下两点建议：</p>
-<ol>
-<li>存一条数据的key尽量简洁易懂，可以用所记录内容的关键词</li>
-<li>如果忘记存过什么数据，可以使用scan查看记录过哪些数据</li>
-</ol>
-<p>此处展示当前你存入的所有信息，因此你可以省去专门读取数据的操作：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;info&gt;</span><br><span class="line">&#123;storage_info&#125;</span><br><span class="line">&lt;/info&gt;</span><br></pre></td></tr></table></figure>
-
-<p>你的记忆很短暂，请频繁的调用工具存储或读取重要对话内容。</p>
-<ul>
-<li>自动截断对话历史，保留最近的对话</li>
-<li>将存储的信息嵌入系统提示中</li>
-</ul>
-<h4 id="3-RAG文件知识库管理"><a href="#3-RAG文件知识库管理" class="headerlink" title="3. RAG文件知识库管理"></a>3. RAG文件知识库管理</h4><p><code>qwen_agent/memory/memory.py#_run</code>，messages中的文件会被保存在知识库中，检索和query最相关的部分内容，而不是将整个文件抛给llm：</p>
-<ul>
-<li>支持多种文件格式（PDF、Word、Excel、TXT等）</li>
-<li>使用RAG（检索增强生成）技术</li>
-<li>可配置的检索策略和关键词生成</li>
-</ul>
-<h4 id="4-DialogueRetrievalAgent-超长对话管理"><a href="#4-DialogueRetrievalAgent-超长对话管理" class="headerlink" title="4. DialogueRetrievalAgent - 超长对话管理"></a>4. DialogueRetrievalAgent - 超长对话管理</h4><p><code>qwen_agent/agents/dialogue_retrieval_agent.py</code>：</p>
-<ul>
-<li>将长对话存储为文件</li>
-<li>基于检索的历史对话查询</li>
-<li>会话级别的历史管理</li>
-</ul>
-<p><img src="/imgs/AI/qwenagent_rag.png" alt="qwenagent_rag.png" title="qwenagent_rag"></p>
-<h4 id="5-VirtualMemoryAgent-虚拟内存管理"><a href="#5-VirtualMemoryAgent-虚拟内存管理" class="headerlink" title="5. VirtualMemoryAgent - 虚拟内存管理"></a>5. VirtualMemoryAgent - 虚拟内存管理</h4><p><code>qwen_agent/agents/virtual_memory_agent.py</code> 针对messages中出现的文件名，自动通过deepsearch的方式来检索：</p>
-<ul>
-<li>先由llm来决定使用什么工具处理这些文件，然后调用这些工具</li>
-<li>直到达到最大调用次数20次，或不再产生新的toolcall</li>
-<li>自动检索外部资源</li>
-<li>动态更新上下文知识</li>
-<li>智能工具调用</li>
-</ul>
-<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://qwenlm.github.io/zh/blog/qwen-agent-2405/">https://qwenlm.github.io/zh/blog/qwen-agent-2405/</a><br><a target="_blank" rel="noopener" href="https://github.com/QwenLM/Qwen-Agent">https://github.com/QwenLM/Qwen-Agent</a><br><a target="_blank" rel="noopener" href="https://community.modelscope.cn/682d45a3870cef736060aaef.html">https://community.modelscope.cn/682d45a3870cef736060aaef.html</a></p>
-<h3 id="MemU"><a href="#MemU" class="headerlink" title="MemU"></a>MemU</h3><p>MemU采用背景进程对记忆进行加工和抽取，并建立联系存储到图库中，形成自我进化</p>
-<p><strong>参考</strong><br><a target="_blank" rel="noopener" href="https://github.com/NevaMind-AI/memU">https://github.com/NevaMind-AI/memU</a></p>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+<li>阻塞通知能力，原地阻塞，等待用户输入，用户输入将通过事件通知的方式来触发流程的继续执行，例如：LlamaIndex和ADK的实现</li>
+<li>中断恢复能力，在关键执行节点保存执行上下文，让任务能恢复执行，例如：LangGraph的实现
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/241930bf.html#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
