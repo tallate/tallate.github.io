@@ -5,6 +5,8 @@ const next = document.querySelector('#next');
 const file = new URLSearchParams(location.search).get('file');
 const key = 'pdf-reader:' + (file || 'default');
 
+info.textContent = '初始化…';
+
 function showError(error) {
   const message = error && error.message ? error.message : String(error);
   info.textContent = '加载失败';
@@ -17,6 +19,7 @@ function timeoutAfter(ms, label) {
   });
 }
 
+(async () => {
 try {
   if (!file) {
     throw new Error('缺少 file 参数');
@@ -85,3 +88,4 @@ try {
 } catch (error) {
   showError(error);
 }
+})();

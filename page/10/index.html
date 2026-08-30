@@ -530,6 +530,117 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/5961a39a.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="tallate">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Tallate">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Tallate">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/5961a39a.html" class="post-title-link" itemprop="url">MySQL5_2分库分表和Sharding</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-10-19 12:21:48" itemprop="dateCreated datePublished" datetime="2019-10-19T12:21:48+08:00">2019-10-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2026-08-15 20:02:19" itemprop="dateModified" datetime="2026-08-15T20:02:19+08:00">2026-08-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <span id="more"></span>
+
+<h1 id="分库分表"><a href="#分库分表" class="headerlink" title="分库分表"></a>分库分表</h1><h2 id="为什么需要分库分表"><a href="#为什么需要分库分表" class="headerlink" title="为什么需要分库分表"></a>为什么需要分库分表</h2><ul>
+<li>MySQL单表超过容量上限<br>这一上限的推荐值是2kw行，但实际情况需要综合考虑单库的CPU、磁盘、内存压力、具体业务，如果硬件无法继续垂直扩容了、且业务也无法优化了，就会选择分库分表、或者在原来分库分表基础上水平伸缩。</li>
+</ul>
+<h2 id="以什么维度分库分表？"><a href="#以什么维度分库分表？" class="headerlink" title="以什么维度分库分表？"></a>以什么维度分库分表？</h2><p>分表键需要考虑实际的业务场景，比如TO C的业务一般可以uid作为分表键，TO B业务常用orgId。<br>还有一些场景需要支持多种方式查询，可以采用叫“基因法”的方式来分表[1]。</p>
+<h1 id="ShardingJDBC"><a href="#ShardingJDBC" class="headerlink" title="ShardingJDBC"></a>ShardingJDBC</h1><h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><h3 id="柔性事务"><a href="#柔性事务" class="headerlink" title="柔性事务"></a>柔性事务</h3><p>2.0 后提供柔性事务支持，执行事务前先发消息给一个 EventBus，失败后由 EventBus 负责重试。</p>
+<h3 id="TCC-模式"><a href="#TCC-模式" class="headerlink" title="TCC 模式"></a>TCC 模式</h3><p>3.0 后借助 Seata 提供 TCC 模式的分布式事务。</p>
+<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><ol>
+<li>数据源元数据信息和表元数据信息的收集</li>
+<li>表分库分表策略和算法的配置信息收集</li>
+</ol>
+<p>ShardingDataSourceFactory#createDataSource 创建数据源 ShardingDataSource 实例<br>-&gt; ShardingDataSource#ShardingDataSource 创建 ShardingContext，其持有<strong>ShardingRule</strong>、<strong>ShardingMetaData</strong>两个属性，根据一个表以及这个表的列可以从 ShardingRule 中获取这个表的分库分表策略和算法，ShardingMetaData 则维护了数据源和表的元数据信息</p>
+<h3 id="ShardingJDBC-如何嵌入-MyBatis"><a href="#ShardingJDBC-如何嵌入-MyBatis" class="headerlink" title="ShardingJDBC 如何嵌入 MyBatis"></a>ShardingJDBC 如何嵌入 MyBatis</h3><p>ShardingJDBC 接入 MyBatis 的原理是 DataSource 的替换，调用链如下：<br>org.apache.ibatis.executor.SimpleExecutor#prepareStatement<br>-&gt; SimpleExecutor#getConnection 从 transaction 获取连接<br>-&gt; SpringManagedTransaction#getConnection 可以看到成员变量 dataSource 是 ShardingDataSource<br>-&gt; ShardingDataSource#getConnection 得到 ShardingConnection<br>-&gt; ShardingConnection#prepareStatment 得到 ShardingPreparedStatement</p>
+<h3 id="路由及改写引擎"><a href="#路由及改写引擎" class="headerlink" title="路由及改写引擎"></a>路由及改写引擎</h3><p>ShardingPreparedStatement#executeQuery、executeUpdate、execute<br>-&gt; ShardingPreparedStatement#shard<br>-&gt; BaseShardingEngine#shard<br>    -&gt; PreparedQueryShardingEngine#route<br>    -&gt; PreparedStatementRoutingEngine#route ParsingSQLRouter 使用<strong>四个引擎</strong>对 sql 进行解析和重写<br>        -&gt; ParsingSQLRouter#parse<br>            -&gt; SQLParsingEngine#parse 使用<strong>SQLParsingEngine</strong>解析 sql，返回 SQLStatement 作为解析的结果<br>            -&gt; SQLParserFactory#newInstance 获取 SQLParser 实例，如果是在 MySQL 中执行一个 DML 语句会匹配到 AntlrParsingEngine（Antlr 是一个开源语法分析器）<br>            -&gt; AntlrParsingEngine.parse 分析 SQL，返回 SQLStatement<br>                -&gt; <strong>SQLParserEngine</strong>#parse 解析 SQL 语法，生成 AST（抽象语法树）<br>                -&gt; <strong>SQLSegmentsExtractorEngine</strong>#extract<br>                -&gt; <strong>SQLStatementFillerEngine</strong>#fill<br>                -&gt; <strong>SQLStatementOptimizerEngine</strong>#optimize<br>        -&gt; ParsingSQLRouter#route<br>            -&gt; OptimizeEngine#optimize 使用<strong>OptimizeEngine</strong>对 SQLStatement 进行优化，返回 ShardingConditions 对象<br>            -&gt; RoutingEngine#route 使用<strong>RoutingEngine</strong>根据库表分片配置以及 ShardingConditions 找到目标库表，返回 RoutingResult 对象<br>        -&gt; ShardingMasterSlaveRouter#route(SQLRouteResult sqlRouteResult)<br>    -&gt; BaseShardingEngine#rewriteAndConvert<br>        -&gt; SQLRewriteEngine#rewrite 使用<strong>SQLRewriteEngine</strong>根据路由结果重写 sql</p>
+<h3 id="执行引擎"><a href="#执行引擎" class="headerlink" title="执行引擎"></a>执行引擎</h3><p>ShardingPreparedStatement#executeQuery、executeUpdate、execute<br>-&gt; …<br>-&gt; ShardingPreparedStatement#initPreparedStatementExecutor<br>-&gt; PreparedStatementExecutor#init 把 SQLRouteResult 中的 RouteUnit 对象转换为 ShardingExecuteGroup<StatementExecuteUnit>对象集合并从数据源获取连接和 PreparedStatement<br>    -&gt; PreparedStatementExecutor#obtainExecuteGroups 根据路由的结果 SQLRouteResult 中的 RouteUnit 集合创建 StatementExecuteUnit 集合对象<br>    -&gt; AbstractConnectionAdapter#getConnections 获取数据源连接<br>        -&gt; getDataSourceMap().get(dataSourceName) 根据逻辑数据源名称获取真实数据源 DataSource<br>        -&gt; AbstractConnectionAdapter#createConnections 从数据源获取连接 Connection<br>    -&gt; getExecuteGroups().addAll() 将 StatementExecuteUnit 集合保存在 AbstractStatementExecutor 的属性 executeGroups 中<br>    -&gt; AbstractStatementExecutor#cacheStatements 从连接获取 Statement 并缓存<br>-&gt; PreparedStatementExecutor#executeQuery、executeUpdate、execute<br>    -&gt; AbstractStatementExecutor#executeCallback<br>    -&gt; SQLExecuteTemplate#executeGroup<br>    -&gt; ShardingExecuteEngine#groupExecute 使用<strong>ShardingExecuteEngine</strong>执行，执行 ShardingExecuteGroup<br>    -&gt; ShardingExecuteEngine#parallelExecute 异步执行，如果 inputGroups 集合不止一个，则第一个同步执行、其他的异步执行</p>
+<h3 id="归并引擎"><a href="#归并引擎" class="headerlink" title="归并引擎"></a>归并引擎</h3><p>ShardingPreparedStatement#executeQuery、executeUpdate、execute<br>-&gt; …<br>-&gt; ShardingPreparedStatement#getResultSet(MergeEngine mergeEngine)<br>    -&gt; AbstractStatementExecutor#getResultSets<br>    -&gt; ShardingPreparedStatement#getCurrentResultSet 合并结果，返回 ShardingResultSet<br>        -&gt; MergeEngine#merge 使用<strong>MergeEngine</strong>对结果进行合并，executeQuery()返回的是一个 List<QueryResult>集合，此时需要对 QueryResult 集合进行合并，MergeEngine 接口有两个实现类 DQLMergeEngine 和 DALMergeEngine，这两个实现类分别负责数据查询 sql 的合并和数据库管理 sql 的合并</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><h2 id="分库分表-1"><a href="#分库分表-1" class="headerlink" title="分库分表"></a>分库分表</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/40uJBsgFWhcrJ3Xvkraulg">帖子中心，1亿数据，架构如何设计？</a><br>提到给帖子中心设计数据库结构时将tid（帖子ID）还是uid（用户ID）作为分表key，因为实际业务中既包含根据tid查询的场景又包含根据uid查询的场景，因此最终方案是采用所谓的“基因法”。</li>
+</ol>
+<h2 id="ShardingJDBC-1"><a href="#ShardingJDBC-1" class="headerlink" title="ShardingJDBC"></a>ShardingJDBC</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://yq.aliyun.com/articles/658786">张亮：Sharding-Sphere 成长记</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/sharding-sphere/ShardingSphereDemo">sharding-sphere&#x2F;ShardingSphereDemo</a></li>
+<li><a target="_blank" rel="noopener" href="https://shardingsphere.apache.org/document/current/en/overview/">Document</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/4cb5b2b68f8e">Sharding-JDBC 源码解析</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/25028169">antlr 解析语法树的使用</a></li>
+</ol>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://tallate.github.io/6577ef90.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -986,117 +1097,6 @@ application-peer2.properties： <figure class="highlight plaintext"><table><tr><
 </ol>
 <h3 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h3><ol>
 <li><a target="_blank" rel="noopener" href="https://github.com/fangjian0423/springboot-analysis">fangjian0423&#x2F;springboot-analysis</a></li>
-</ol>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/5961a39a.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="tallate">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Tallate">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Tallate">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/5961a39a.html" class="post-title-link" itemprop="url">MySQL5_2分库分表和Sharding</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2019-10-19 12:21:48" itemprop="dateCreated datePublished" datetime="2019-10-19T12:21:48+08:00">2019-10-19</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-08-15 20:02:19" itemprop="dateModified" datetime="2026-08-15T20:02:19+08:00">2026-08-15</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/MySQL/" itemprop="url" rel="index"><span itemprop="name">MySQL</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <span id="more"></span>
-
-<h1 id="分库分表"><a href="#分库分表" class="headerlink" title="分库分表"></a>分库分表</h1><h2 id="为什么需要分库分表"><a href="#为什么需要分库分表" class="headerlink" title="为什么需要分库分表"></a>为什么需要分库分表</h2><ul>
-<li>MySQL单表超过容量上限<br>这一上限的推荐值是2kw行，但实际情况需要综合考虑单库的CPU、磁盘、内存压力、具体业务，如果硬件无法继续垂直扩容了、且业务也无法优化了，就会选择分库分表、或者在原来分库分表基础上水平伸缩。</li>
-</ul>
-<h2 id="以什么维度分库分表？"><a href="#以什么维度分库分表？" class="headerlink" title="以什么维度分库分表？"></a>以什么维度分库分表？</h2><p>分表键需要考虑实际的业务场景，比如TO C的业务一般可以uid作为分表键，TO B业务常用orgId。<br>还有一些场景需要支持多种方式查询，可以采用叫“基因法”的方式来分表[1]。</p>
-<h1 id="ShardingJDBC"><a href="#ShardingJDBC" class="headerlink" title="ShardingJDBC"></a>ShardingJDBC</h1><h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><h3 id="柔性事务"><a href="#柔性事务" class="headerlink" title="柔性事务"></a>柔性事务</h3><p>2.0 后提供柔性事务支持，执行事务前先发消息给一个 EventBus，失败后由 EventBus 负责重试。</p>
-<h3 id="TCC-模式"><a href="#TCC-模式" class="headerlink" title="TCC 模式"></a>TCC 模式</h3><p>3.0 后借助 Seata 提供 TCC 模式的分布式事务。</p>
-<h2 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h2><h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><ol>
-<li>数据源元数据信息和表元数据信息的收集</li>
-<li>表分库分表策略和算法的配置信息收集</li>
-</ol>
-<p>ShardingDataSourceFactory#createDataSource 创建数据源 ShardingDataSource 实例<br>-&gt; ShardingDataSource#ShardingDataSource 创建 ShardingContext，其持有<strong>ShardingRule</strong>、<strong>ShardingMetaData</strong>两个属性，根据一个表以及这个表的列可以从 ShardingRule 中获取这个表的分库分表策略和算法，ShardingMetaData 则维护了数据源和表的元数据信息</p>
-<h3 id="ShardingJDBC-如何嵌入-MyBatis"><a href="#ShardingJDBC-如何嵌入-MyBatis" class="headerlink" title="ShardingJDBC 如何嵌入 MyBatis"></a>ShardingJDBC 如何嵌入 MyBatis</h3><p>ShardingJDBC 接入 MyBatis 的原理是 DataSource 的替换，调用链如下：<br>org.apache.ibatis.executor.SimpleExecutor#prepareStatement<br>-&gt; SimpleExecutor#getConnection 从 transaction 获取连接<br>-&gt; SpringManagedTransaction#getConnection 可以看到成员变量 dataSource 是 ShardingDataSource<br>-&gt; ShardingDataSource#getConnection 得到 ShardingConnection<br>-&gt; ShardingConnection#prepareStatment 得到 ShardingPreparedStatement</p>
-<h3 id="路由及改写引擎"><a href="#路由及改写引擎" class="headerlink" title="路由及改写引擎"></a>路由及改写引擎</h3><p>ShardingPreparedStatement#executeQuery、executeUpdate、execute<br>-&gt; ShardingPreparedStatement#shard<br>-&gt; BaseShardingEngine#shard<br>    -&gt; PreparedQueryShardingEngine#route<br>    -&gt; PreparedStatementRoutingEngine#route ParsingSQLRouter 使用<strong>四个引擎</strong>对 sql 进行解析和重写<br>        -&gt; ParsingSQLRouter#parse<br>            -&gt; SQLParsingEngine#parse 使用<strong>SQLParsingEngine</strong>解析 sql，返回 SQLStatement 作为解析的结果<br>            -&gt; SQLParserFactory#newInstance 获取 SQLParser 实例，如果是在 MySQL 中执行一个 DML 语句会匹配到 AntlrParsingEngine（Antlr 是一个开源语法分析器）<br>            -&gt; AntlrParsingEngine.parse 分析 SQL，返回 SQLStatement<br>                -&gt; <strong>SQLParserEngine</strong>#parse 解析 SQL 语法，生成 AST（抽象语法树）<br>                -&gt; <strong>SQLSegmentsExtractorEngine</strong>#extract<br>                -&gt; <strong>SQLStatementFillerEngine</strong>#fill<br>                -&gt; <strong>SQLStatementOptimizerEngine</strong>#optimize<br>        -&gt; ParsingSQLRouter#route<br>            -&gt; OptimizeEngine#optimize 使用<strong>OptimizeEngine</strong>对 SQLStatement 进行优化，返回 ShardingConditions 对象<br>            -&gt; RoutingEngine#route 使用<strong>RoutingEngine</strong>根据库表分片配置以及 ShardingConditions 找到目标库表，返回 RoutingResult 对象<br>        -&gt; ShardingMasterSlaveRouter#route(SQLRouteResult sqlRouteResult)<br>    -&gt; BaseShardingEngine#rewriteAndConvert<br>        -&gt; SQLRewriteEngine#rewrite 使用<strong>SQLRewriteEngine</strong>根据路由结果重写 sql</p>
-<h3 id="执行引擎"><a href="#执行引擎" class="headerlink" title="执行引擎"></a>执行引擎</h3><p>ShardingPreparedStatement#executeQuery、executeUpdate、execute<br>-&gt; …<br>-&gt; ShardingPreparedStatement#initPreparedStatementExecutor<br>-&gt; PreparedStatementExecutor#init 把 SQLRouteResult 中的 RouteUnit 对象转换为 ShardingExecuteGroup<StatementExecuteUnit>对象集合并从数据源获取连接和 PreparedStatement<br>    -&gt; PreparedStatementExecutor#obtainExecuteGroups 根据路由的结果 SQLRouteResult 中的 RouteUnit 集合创建 StatementExecuteUnit 集合对象<br>    -&gt; AbstractConnectionAdapter#getConnections 获取数据源连接<br>        -&gt; getDataSourceMap().get(dataSourceName) 根据逻辑数据源名称获取真实数据源 DataSource<br>        -&gt; AbstractConnectionAdapter#createConnections 从数据源获取连接 Connection<br>    -&gt; getExecuteGroups().addAll() 将 StatementExecuteUnit 集合保存在 AbstractStatementExecutor 的属性 executeGroups 中<br>    -&gt; AbstractStatementExecutor#cacheStatements 从连接获取 Statement 并缓存<br>-&gt; PreparedStatementExecutor#executeQuery、executeUpdate、execute<br>    -&gt; AbstractStatementExecutor#executeCallback<br>    -&gt; SQLExecuteTemplate#executeGroup<br>    -&gt; ShardingExecuteEngine#groupExecute 使用<strong>ShardingExecuteEngine</strong>执行，执行 ShardingExecuteGroup<br>    -&gt; ShardingExecuteEngine#parallelExecute 异步执行，如果 inputGroups 集合不止一个，则第一个同步执行、其他的异步执行</p>
-<h3 id="归并引擎"><a href="#归并引擎" class="headerlink" title="归并引擎"></a>归并引擎</h3><p>ShardingPreparedStatement#executeQuery、executeUpdate、execute<br>-&gt; …<br>-&gt; ShardingPreparedStatement#getResultSet(MergeEngine mergeEngine)<br>    -&gt; AbstractStatementExecutor#getResultSets<br>    -&gt; ShardingPreparedStatement#getCurrentResultSet 合并结果，返回 ShardingResultSet<br>        -&gt; MergeEngine#merge 使用<strong>MergeEngine</strong>对结果进行合并，executeQuery()返回的是一个 List<QueryResult>集合，此时需要对 QueryResult 集合进行合并，MergeEngine 接口有两个实现类 DQLMergeEngine 和 DALMergeEngine，这两个实现类分别负责数据查询 sql 的合并和数据库管理 sql 的合并</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><h2 id="分库分表-1"><a href="#分库分表-1" class="headerlink" title="分库分表"></a>分库分表</h2><ol>
-<li><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/40uJBsgFWhcrJ3Xvkraulg">帖子中心，1亿数据，架构如何设计？</a><br>提到给帖子中心设计数据库结构时将tid（帖子ID）还是uid（用户ID）作为分表key，因为实际业务中既包含根据tid查询的场景又包含根据uid查询的场景，因此最终方案是采用所谓的“基因法”。</li>
-</ol>
-<h2 id="ShardingJDBC-1"><a href="#ShardingJDBC-1" class="headerlink" title="ShardingJDBC"></a>ShardingJDBC</h2><ol>
-<li><a target="_blank" rel="noopener" href="https://yq.aliyun.com/articles/658786">张亮：Sharding-Sphere 成长记</a></li>
-<li><a target="_blank" rel="noopener" href="https://github.com/sharding-sphere/ShardingSphereDemo">sharding-sphere&#x2F;ShardingSphereDemo</a></li>
-<li><a target="_blank" rel="noopener" href="https://shardingsphere.apache.org/document/current/en/overview/">Document</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/4cb5b2b68f8e">Sharding-JDBC 源码解析</a></li>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/25028169">antlr 解析语法树的使用</a></li>
 </ol>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
