@@ -48,7 +48,7 @@ try {
 
   const pdf = await Promise.race([
     loadingTask.promise,
-    timeoutAfter(120000, 'PDF 文档加载')
+    timeoutAfter(600000, 'PDF 文档加载')
   ]);
   let pageNum = Math.min(Math.max(parseInt(localStorage.getItem(key) || '1', 10), 1), pdf.numPages);
 
