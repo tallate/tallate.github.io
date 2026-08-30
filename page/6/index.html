@@ -235,7 +235,7 @@
   <script>
   (() => {
     const form=document.querySelector('#ai-chat-form'), input=document.querySelector('#ai-chat-input'), button=form.querySelector('button'), status=document.querySelector('#ai-chat-status'), answer=document.querySelector('#ai-chat-answer'), answerText=document.querySelector('#ai-chat-answer-text');
-    const api='https://bot.antseek.xyz/api/chat', key='tallate-ai-session-id';
+    const api='http://118.178.230.24/api/chat', key='tallate-ai-session-id';
     const sessionId=localStorage.getItem(key)||(crypto.randomUUID?crypto.randomUUID():`web-${Date.now()}`); localStorage.setItem(key,sessionId);
     document.querySelectorAll('[data-question]').forEach(item=>item.addEventListener('click',()=>{input.value=item.dataset.question;input.focus();}));
     input.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();form.requestSubmit();}});
