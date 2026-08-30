@@ -1,5 +1,3 @@
-import * as pdfjsLib from '/lib/pdf/pdf.mjs';
-
 const info = document.querySelector('#info');
 const pages = document.querySelector('#pages');
 const prev = document.querySelector('#prev');
@@ -7,12 +5,16 @@ const next = document.querySelector('#next');
 const file = new URLSearchParams(location.search).get('file');
 const key = 'pdf-reader:' + (file || 'default');
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = '/lib/pdf/pdf.worker.mjs';
-
 function showError(error) {
   const message = error && error.message ? error.message : String(error);
   info.textContent = '加载失败';
   pages.textContent = `PDF 加载失败：${message}`;
+}
+
+function timeoutAfter(ms, label) {
+  return new Promise((_, reject) => {
+    setTimeout(() => reject(new Error(`${label} 超时`)), ms);
+  });
 }
 
 try {
@@ -20,11 +22,30 @@ try {
     throw new Error('缺少 file 参数');
   }
 
-  const pdf = await pdfjsLib.getDocument({
+  const pdfjsLib = await Promise.race([
+    import('/lib/pdf/pdf.mjs?v=20260830-legacy'),
+    timeoutAfter(10000, 'PDF.js 初始化')
+  ]);
+  pdfjsLib.GlobalWorkerOptions.workerSrc = '/lib/pdf/pdf.worker.mjs?v=20260830-legacy';
+
+  const loadingTask = pdfjsLib.getDocument({
     url: file,
     rangeChunkSize: 1024 * 1024,
-    disableAutoFetch: false
-  }).promise;
+    disableAutoFetch: false,
+    disableStream: false,
+    disableRange: false
+  });
+  loadingTask.onProgress = progress => {
+    if (progress && progress.loaded) {
+      const total = progress.total ? ` / ${(progress.total / 1024 / 1024).toFixed(1)} MB` : '';
+      info.textContent = `加载中 ${(progress.loaded / 1024 / 1024).toFixed(1)} MB${total}`;
+    }
+  };
+
+  const pdf = await Promise.race([
+    loadingTask.promise,
+    timeoutAfter(30000, 'PDF 文档加载')
+  ]);
   let pageNum = Math.min(Math.max(parseInt(localStorage.getItem(key) || '1', 10), 1), pdf.numPages);
 
   async function render() {
