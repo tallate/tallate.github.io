@@ -1,0 +1,175 @@
+<mxfile host="65bd71144e">
+    <diagram name="Open Deep Research Architecture" id="open-deep-research">
+        <mxGraphModel dx="2272" dy="633" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="title" value="Open Deep Research - Main Graph" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=16;fontStyle=1;fontColor=#4a4a4a;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="20" width="1080" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="scope-title" value="Phase 1: Scope" style="text;html=1;strokeColor=#82b366;fillColor=#d5e8d4;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=12;fontStyle=1;fontColor=#2d5016;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="60" width="340" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="clarify-with-user" value="clarify_with_user&#10;&#10;• 检查是否需要用户澄清&#10;• 使用 ClarifyWithUser 结构化输出&#10;• 条件跳转: write_research_brief 或 END" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontColor=#8b6914;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="100" width="340" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="write-research-brief" value="write_research_brief&#10;&#10;• 生成研究简报&#10;• 使用 ResearchQuestion 结构化输出&#10;• 初始化 supervisor_messages" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontColor=#8b6914;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="210" width="340" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="research-title" value="Phase 2: Research (Supervisor Subgraph)" style="text;html=1;strokeColor=#6c8ebf;fillColor=#dae8fc;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=12;fontStyle=1;fontColor=#2e5984;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="60" width="340" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="supervisor" value="supervisor&#10;&#10;• 分析研究简报&#10;• 绑定工具: ConductResearch, ResearchComplete&#10;• 决定研究策略" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontColor=#5a4a6a;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="100" width="340" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="supervisor-tools" value="supervisor_tools&#10;&#10;• 执行 ConductResearch 工具调用&#10;• 并行启动 researcher_subgraph&#10;• 条件跳转: supervisor 或 END" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontColor=#5a4a6a;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="210" width="340" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="write-title" value="Phase 3: Write" style="text;html=1;strokeColor=#82b366;fillColor=#d5e8d4;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=12;fontStyle=1;fontColor=#2d5016;" parent="1" vertex="1">
+                    <mxGeometry x="780" y="60" width="320" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="final-report-generation" value="final_report_generation&#10;&#10;• 生成最终报告&#10;• 使用研究简报 + 所有发现&#10;• 单次LLM调用" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;fontColor=#8b6914;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="780" y="100" width="320" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="researcher-title" value="Researcher Subgraph (并行执行)" style="text;html=1;strokeColor=#b85450;fillColor=#f8cecc;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=12;fontStyle=1;fontColor=#8b2635;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="320" width="1020" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="researcher1" value="researcher&lt;br&gt;• 专注单一研究主题&lt;br&gt;• 绑定所有可用工具&lt;br&gt;• 执行工具调用循环" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontColor=#8b2635;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="360" width="320" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="researcher2" value="researcher (实例2)&lt;br&gt;• 专注单一研究主题&lt;br&gt;• 绑定所有可用工具&lt;br&gt;• 执行工具调用循环" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontColor=#8b2635;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="430" y="360" width="320" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="researcher3" value="researcher (实例3)&lt;br&gt;• 专注单一研究主题&lt;br&gt;• 绑定所有可用工具&lt;br&gt;• 执行工具调用循环" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontColor=#8b2635;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="780" y="360" width="320" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="researcher-tools" value="researcher_tools&lt;br&gt;• 执行工具调用&lt;br&gt;• 处理工具结果&lt;br&gt;• 条件跳转: researcher 或 compress_research" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontColor=#8b2635;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="450" width="320" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="compress-research" value="compress_research&lt;br&gt;• 压缩研究发现&lt;br&gt;• 清理无关内容&lt;br&gt;• 生成结构化输出" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontColor=#8b2635;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="540" width="320" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="tools-title" value="Tools &amp; External APIs" style="text;html=1;strokeColor=#d79b00;fillColor=#ffe6cc;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=12;fontStyle=1;fontColor=#8b5a2b;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="620" width="1020" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="supervisor-tools-list" value="Supervisor Tools:&#10;• ConductResearch&#10;• ResearchComplete" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;fontColor=#5a4a6a;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="660" width="320" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="researcher-tools-list" value="Researcher Tools:&#10;• Web Search APIs&#10;• MCP Tools&#10;• File Readers&#10;• Database Queries" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontColor=#8b2635;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="430" y="660" width="320" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="external-apis" value="External APIs:&#10;• Google Search&#10;• Bing Search&#10;• Google Scholar&#10;• arXiv&#10;• Custom APIs" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontColor=#8b5a2b;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="780" y="660" width="320" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="state-title" value="State Management" style="text;html=1;strokeColor=#666666;fillColor=#f5f5f5;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=12;fontStyle=1;fontColor=#4a4a4a;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="780" width="1020" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="agent-state" value="AgentState:&#10;• messages&#10;• research_brief&#10;• notes&#10;• final_report" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;fontColor=#4a4a4a;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="820" width="240" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="supervisor-state" value="SupervisorState:&#10;• supervisor_messages&#10;• research_iterations&#10;• raw_notes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;fontColor=#4a4a4a;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="820" width="240" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="researcher-state" value="ResearcherState:&#10;• researcher_messages&#10;• research_topic&#10;• tool_call_iterations" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;fontColor=#4a4a4a;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="820" width="240" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="researcher-output" value="ResearcherOutputState:&#10;• compressed_research&#10;• raw_notes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;fontColor=#4a4a4a;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="820" width="240" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge1" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#82b366;" parent="1" source="clarify-with-user" target="write-research-brief" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="450" y="350" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge2" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#6c8ebf;edgeStyle=orthogonalEdgeStyle;" parent="1" source="write-research-brief" target="supervisor" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="450" y="350" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge3" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#82b366;edgeStyle=orthogonalEdgeStyle;" parent="1" source="supervisor-tools" target="final-report-generation" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="450" y="350" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge4" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#6c8ebf;" parent="1" source="supervisor" target="supervisor-tools" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="450" y="350" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge6" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#b85450;" parent="1" source="researcher1" target="researcher-tools" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="450" y="350" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge8" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=#b85450;" parent="1" source="researcher-tools" target="compress-research" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="410" as="sourcePoint"/>
+                        <mxPoint x="450" y="360" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="parallel1" value="并行执行&#10;ConductResearch" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;strokeColor=#ff0000;strokeWidth=3;fontSize=10;fontColor=#ff0000;" parent="1" source="supervisor-tools" target="researcher1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="450" y="350" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="parallel2" value="并行执行" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;strokeColor=#ff0000;strokeWidth=2;" parent="1" source="supervisor-tools" target="researcher2" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="450" y="350" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="parallel3" value="并行执行" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;strokeColor=#ff0000;strokeWidth=2;" parent="1" source="supervisor-tools" target="researcher3" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="sourcePoint"/>
+                        <mxPoint x="450" y="350" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="legend-title" value="图例" style="text;html=1;strokeColor=#666666;fillColor=#f5f5f5;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=1;fontSize=12;fontStyle=1;fontColor=#4a4a4a;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="940" width="1020" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="legend1" target="legend2">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend1" value="Scope Phase - 范围确定" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontColor=#2d5016;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="980" width="160" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend2" value="Research Phase - 研究执行" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;fontColor=#2e5984;" parent="1" vertex="1">
+                    <mxGeometry x="510" y="980" width="160" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend3" value="Write Phase - 报告撰写" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;fontColor=#2d5016;" parent="1" vertex="1">
+                    <mxGeometry x="940" y="980" width="160" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend4" value="Researcher Subgraph - 子代理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=11;fontColor=#8b2635;" parent="1" vertex="1">
+                    <mxGeometry x="510" y="1040" width="160" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend5" value="Tools - 工具" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;fontSize=11;fontColor=#8b5a2b;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="1080" width="1020" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend6" value="State - 状态管理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontSize=11;fontColor=#4a4a4a;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="1120" width="1020" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend7" value="Conditional Edge - 条件边" style="endArrow=classic;html=1;rounded=0;dashed=1;strokeColor=#ff0000;strokeWidth=2;fontSize=10;fontColor=#ff0000;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" edge="1" target="legend3" source="legend2">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="600" y="1035" as="sourcePoint"/>
+                        <mxPoint x="650" y="1035" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="legend8" value="Parallel Edge - 并行边" style="endArrow=classic;html=1;rounded=0;dashed=1;strokeColor=#ff0000;strokeWidth=2;fontSize=10;fontColor=#ff0000;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" edge="1" target="legend4" source="legend2">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="860" y="1035" as="sourcePoint"/>
+                        <mxPoint x="910" y="1035" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="flow-note" value="流程说明:&#10;1. Scope阶段确定研究范围和简报&#10;2. Research阶段通过监督代理分解任务并并行执行&#10;3. Write阶段整合所有研究发现生成最终报告" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e8f4fd;strokeColor=#6c8ebf;fontSize=11;fontColor=#2e5984;shadow=1;" parent="1" vertex="1">
+                    <mxGeometry x="-320" y="30" width="330" height="80" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

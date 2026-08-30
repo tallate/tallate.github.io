@@ -1,0 +1,137 @@
+<mxfile host="65bd71144e">
+    <diagram name="LangGraph Human-in-the-Loop Process" id="langgraph-human-in-loop">
+        <mxGraphModel dx="473" dy="487" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="start" value="开始执行Graph" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="520" y="40" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="node-exec" value="节点执行中" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="140" width="160" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="check-interrupt" value="检查interrupt()调用" style="rhombus;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="480" y="240" width="200" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="continue" value="继续执行节点" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="790" y="260" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="interrupt" value="抛出GraphInterrupt异常" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="480" y="380" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="pause" value="Graph执行暂停" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="480" y="480" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="client" value="客户端接收interrupt值" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="480" y="580" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="human-input" value="人工输入/处理" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="480" y="680" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="command" value="发送Command(resume=value)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="480" y="780" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="resume" value="Graph恢复执行" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="480" y="880" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="re-exec" value="重新执行节点(从头开始)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="480" y="980" width="200" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="complete" value="Graph执行完成" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="520" y="1080" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="edge1" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" source="start" target="node-exec" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="580" y="110" as="sourcePoint"/>
+                        <mxPoint x="580" y="140" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge2" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" source="node-exec" target="check-interrupt" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="580" y="200" as="sourcePoint"/>
+                        <mxPoint x="580" y="240" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge3" value="无interrupt" style="endArrow=classic;html=1;rounded=0;" parent="1" source="check-interrupt" target="continue" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="680" y="290" as="sourcePoint"/>
+                        <mxPoint x="720" y="290" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge4" value="有interrupt" style="endArrow=classic;html=1;rounded=0;" parent="1" source="check-interrupt" target="interrupt" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="580" y="340" as="sourcePoint"/>
+                        <mxPoint x="580" y="380" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge5" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" source="interrupt" target="pause" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="580" y="440" as="sourcePoint"/>
+                        <mxPoint x="580" y="480" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge6" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" source="pause" target="client" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="580" y="540" as="sourcePoint"/>
+                        <mxPoint x="580" y="580" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge7" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" source="client" target="human-input" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="580" y="640" as="sourcePoint"/>
+                        <mxPoint x="580" y="680" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge8" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" source="human-input" target="command" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="580" y="740" as="sourcePoint"/>
+                        <mxPoint x="580" y="780" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge9" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" source="command" target="resume" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="580" y="840" as="sourcePoint"/>
+                        <mxPoint x="580" y="880" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge10" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" source="resume" target="re-exec" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="580" y="940" as="sourcePoint"/>
+                        <mxPoint x="580" y="980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge11" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" source="re-exec" target="complete" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="580" y="1040" as="sourcePoint"/>
+                        <mxPoint x="580" y="1080" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="edge12" value="" style="endArrow=classic;html=1;rounded=0;" parent="1" source="continue" target="check-interrupt" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="720" y="320" as="sourcePoint"/>
+                        <mxPoint x="680" y="320" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="720" y="320"/>
+                            <mxPoint x="680" y="320"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="note1" value="关键特性：&#10;• 需要启用checkpointer&#10;• 节点会重新执行&#10;• 支持多个interrupt调用&#10;• 按顺序匹配resume值" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="480" width="200" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="note2" value="interrupt()函数：&#10;• 第一次调用抛出异常&#10;• 后续调用返回resume值&#10;• 支持复杂的工作流控制" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#ffffff;strokeColor=#000000;" parent="1" vertex="1">
+                    <mxGeometry x="720" y="680" width="200" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" style="edgeStyle=elbowEdgeStyle;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="re-exec" target="check-interrupt">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="490" y="1020" as="sourcePoint"/>
+                        <mxPoint x="490" y="300" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="400" y="680"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

@@ -1,0 +1,54 @@
+flowchart TD
+    %% 定义节点样式
+    classDef startEnd fill:#e1f5fe,stroke:#0277bd,stroke-width:3px,color:#01579b
+    classDef init fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#4a148c
+    classDef runtime fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#1b5e20
+    classDef decision fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#e65100
+    classDef process fill:#e0f2f1,stroke:#00796b,stroke-width:2px,color:#004d40
+    classDef memory fill:#fce4ec,stroke:#c2185b,stroke-width:2px,color:#880e4f
+    classDef tool fill:#fff8e1,stroke:#ff8f00,stroke-width:2px,color:#e65100
+    classDef loop fill:#f1f8e9,stroke:#689f38,stroke-width:2px,color:#33691e
+    classDef endNode fill:#ffebee,stroke:#d32f2f,stroke-width:2px,color:#b71c1c
+
+    %% 初始化阶段
+    A[🚀 开始] --> B[🤖 初始化LLM模型<br/>init_chat_model]
+    B --> C[🏗️ 构建StateGraph<br/>StateGraphState, Context]
+    C --> D[🔧 添加节点和边<br/>• call_model<br/>• store_memory<br/>• 条件路由]
+    D --> E[⚙️ 编译图<br/>builder.compile]
+    E --> F[▶️ 运行时执行<br/>graph.invoke]
+    
+    %% 主要处理流程
+    F --> G[🧠 call_model节点<br/>• 检索相关记忆<br/>• 格式化系统提示<br/>• 调用LLM]
+    
+    %% 记忆处理子流程
+    G --> H[🔍 记忆检索<br/>store.asearch<br/>• 查询最近3条消息<br/>• 限制10条相关记忆<br/>• 计算相似度分数]
+    H --> I[📝 系统提示格式化<br/>• 嵌入用户记忆<br/>• 添加当前时间<br/>• 绑定工具schema]
+    I --> J[💬 LLM调用<br/>llm.bind_tools.ainvoke<br/>• 传入系统提示<br/>• 绑定upsert_memory工具<br/>• 生成响应和工具调用]
+    
+    %% 路由决策
+    J --> K{🔄 路由判断<br/>route_message}
+    K -->|🛠️ 有tool_calls| L[✅ 有工具调用]
+    K -->|❌ 无tool_calls| M[🚫 无工具调用<br/>返回END]
+    
+    %% 工具执行流程
+    L --> N[💾 store_memory节点<br/>• 提取工具调用<br/>• 并发执行记忆存储<br/>• 格式化结果]
+    N --> O[⚡ 工具执行<br/>• 提取tool_calls<br/>• asyncio.gather并发<br/>• 调用upsert_memory]
+    O --> P[🗄️ 记忆存储<br/>store.aput<br/>• 生成UUID<br/>• 存储content和context<br/>• 支持更新现有记忆]
+    
+    %% 循环处理
+    P --> Q[🔄 循环回到call_model<br/>继续处理]
+    Q --> G
+    
+    %% 结束流程
+    M --> R[🏁 结束]
+    
+    %% 应用样式
+    class A,R startEnd
+    class B,C,D,E init
+    class F runtime
+    class G,N process
+    class K decision
+    class H,I,J memory
+    class L,O tool
+    class Q loop
+    class M endNode
