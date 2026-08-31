@@ -1,11 +1,51 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PDF 阅读器</title><style>body{margin:0;background:#222;color:#eee;font:14px sans-serif}header{position:sticky;top:0;background:#333;padding:8px;z-index:2}button{margin:0 6px;padding:4px 10px}button:disabled{opacity:.45}#pages{max-width:900px;margin:auto;padding:12px}canvas{display:block;width:100%;height:auto;margin:0 auto 12px;background:#fff;box-shadow:0 1px 5px #000}</style></head><body><header><button id="prev">上一页</button><span id="info">加载中…</span><button id="next">下一页</button><button id="download">下载 PDF</button></header><main id="pages"></main><script src="/lib/pdfjs2/pdf.min.js?v=20260830-pdfjs2"></script><script>
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PDF 阅读器</title><style>
+body{margin:0;background:#222;color:#eee;font:14px sans-serif;display:flex;height:100vh;overflow:hidden}
+header{position:fixed;top:0;left:0;right:0;background:#333;padding:8px;z-index:3;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+button{margin:0 4px;padding:4px 10px;cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+input#pageInput{width:64px;padding:4px 6px;background:#222;color:#eee;border:1px solid #555;border-radius:3px;text-align:center}
+#outlineToggle{margin-left:auto}
+#layout{display:flex;width:100%;height:100vh;padding-top:48px;box-sizing:border-box}
+#sidebar{width:280px;background:#2a2a2a;border-right:1px solid #444;overflow-y:auto;padding:8px 0;flex-shrink:0;display:none}
+#sidebar.open{display:block}
+#sidebar .item{padding:5px 12px;cursor:pointer;color:#ccc;border-left:2px solid transparent}
+#sidebar .item:hover{background:#3a3a3a;color:#fff}
+#pagesWrap{flex:1;overflow-y:auto}
+#pages{max-width:900px;margin:auto;padding:12px}
+canvas{display:block;width:100%;height:auto;margin:0 auto 12px;background:#fff;box-shadow:0 1px 5px #000}
+#info{min-width:140px;display:inline-block;text-align:center}
+</style></head><body>
+<header>
+  <button id="prev">上一页</button>
+  <span id="info">加载中…</span>
+  <button id="next">下一页</button>
+  <span id="pageNumWrap" style="display:none">
+    <input id="pageInput" type="number" min="1" value="1"> / <span id="pageTotal"></span>
+  </span>
+  <button id="download">下载 PDF</button>
+  <button id="outlineToggle">大纲</button>
+</header>
+<div id="layout">
+  <nav id="sidebar"></nav>
+  <div id="pagesWrap"><main id="pages"></main></div>
+</div>
+<script src="/lib/pdfjs2/pdf.min.js?v=20260830-pdfjs2"></script>
+<script>
 const info = document.querySelector('#info');
 const pages = document.querySelector('#pages');
 const prev = document.querySelector('#prev');
 const next = document.querySelector('#next');
 const download = document.querySelector('#download');
+const pageInput = document.querySelector('#pageInput');
+const pageTotal = document.querySelector('#pageTotal');
+const pageNumWrap = document.querySelector('#pageNumWrap');
+const sidebar = document.querySelector('#sidebar');
+const outlineToggle = document.querySelector('#outlineToggle');
 const file = new URLSearchParams(location.search).get('file');
 const key = 'pdf-reader:' + (file || 'default');
+
+let pdf = null;
+let pageNum = 1;
 
 info.textContent = '初始化…';
 
@@ -22,6 +62,8 @@ if (file) {
   download.disabled = true;
 }
 
+outlineToggle.onclick = () => sidebar.classList.toggle('open');
+
 function showError(error) {
   const message = error && error.message ? error.message : String(error);
   info.textContent = '加载失败';
@@ -33,6 +75,144 @@ function timeoutAfter(ms, label) {
     setTimeout(() => reject(new Error(`${label} 超时`)), ms);
   });
 }
+
+async function goToDest(dest) {
+  try {
+    const explicit = typeof dest === 'string' ? await pdf.getDestination(dest) : dest;
+    if (!explicit || !explicit.length) return;
+    const index = await pdf.getPageIndex(explicit[0]);
+    pageNum = index + 1;
+    await render();
+  } catch (e) {
+    console.error('goToDest failed', e);
+  }
+}
+
+function buildOutline(items, depth) {
+  const frag = document.createDocumentFragment();
+  if (!items) return frag;
+  for (const item of items) {
+    const div = document.createElement('div');
+    div.className = 'item';
+    div.textContent = item.title || '(无标题)';
+    div.style.paddingLeft = (12 + depth * 14) + 'px';
+    if (item.dest !== undefined && item.dest !== null) {
+      div.onclick = () => goToDest(item.dest);
+    }
+    frag.append(div);
+    if (item.items && item.items.length) {
+      frag.append(buildOutline(item.items, depth + 1));
+    }
+  }
+  return frag;
+}
+
+async function loadOutline() {
+  // 1. try external TOC file (generated when the PDF has no embedded bookmarks)
+  try {
+    const tocUrl = file.replace(/\.pdf(\?.*)?$/, '.pdf.toc.json');
+    const res = await fetch(tocUrl);
+    if (res.ok) {
+      const toc = await res.json();
+      if (Array.isArray(toc) && toc.length) {
+        for (const entry of toc) {
+          const div = document.createElement('div');
+          div.className = 'item';
+          div.textContent = entry.title;
+          if (entry.page) {
+            div.onclick = () => {
+              pageNum = Math.min(Math.max(entry.page, 1), pdf.numPages);
+              render().catch(showError);
+            };
+          }
+          sidebar.append(div);
+        }
+        return;
+      }
+    }
+  } catch (e) { /* fall through to embedded outline */ }
+  // 2. fallback: embedded PDF outline
+  try {
+    const outline = await pdf.getOutline();
+    if (outline && outline.length) {
+      sidebar.append(buildOutline(outline, 0));
+    } else {
+      const div = document.createElement('div');
+      div.className = 'item';
+      div.textContent = '（本文档无大纲）';
+      sidebar.append(div);
+    }
+  } catch (e) {
+    console.error('outline failed', e);
+  }
+}
+
+async function render() {
+  pages.replaceChildren();
+  info.textContent = `第 ${pageNum} / ${pdf.numPages} 页`;
+  prev.disabled = pageNum <= 1;
+  next.disabled = pageNum >= pdf.numPages;
+  pageInput.value = pageNum;
+  pageInput.max = pdf.numPages;
+
+  const page = await pdf.getPage(pageNum);
+  const viewport = page.getViewport({ scale: 1.4 });
+  const canvas = document.createElement('canvas');
+  canvas.width = viewport.width;
+  canvas.height = viewport.height;
+  pages.append(canvas);
+
+  await page.render({
+    canvasContext: canvas.getContext('2d'),
+    viewport
+  }).promise;
+  localStorage.setItem(key, pageNum);
+  document.querySelector('#pagesWrap').scrollTop = 0;
+}
+
+function jumpTo(input) {
+  const target = parseInt(input, 10);
+  if (isNaN(target)) return;
+  const clamped = Math.min(Math.max(target, 1), pdf.numPages);
+  if (clamped !== pageNum) {
+    pageNum = clamped;
+    render().catch(showError);
+  } else {
+    pageInput.value = pageNum;
+  }
+}
+
+pageInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    jumpTo(pageInput.value);
+    pageInput.blur();
+  }
+});
+pageInput.addEventListener('blur', () => jumpTo(pageInput.value));
+
+prev.onclick = () => {
+  if (pageNum > 1) {
+    pageNum--;
+    render().catch(showError);
+  }
+};
+next.onclick = () => {
+  if (pageNum < pdf.numPages) {
+    pageNum++;
+    render().catch(showError);
+  }
+};
+
+document.addEventListener('keydown', e => {
+  if (e.target === pageInput) return;
+  if (e.key === 'ArrowLeft' && pageNum > 1) {
+    pageNum--;
+    render().catch(showError);
+  } else if (e.key === 'ArrowRight' && pageNum < pdf.numPages) {
+    pageNum++;
+    render().catch(showError);
+  }
+});
 
 (async () => {
 try {
@@ -60,45 +240,15 @@ try {
     }
   };
 
-  const pdf = await Promise.race([
+  pdf = await Promise.race([
     loadingTask.promise,
     timeoutAfter(600000, 'PDF 文档加载')
   ]);
-  let pageNum = Math.min(Math.max(parseInt(localStorage.getItem(key) || '1', 10), 1), pdf.numPages);
+  pageNum = Math.min(Math.max(parseInt(localStorage.getItem(key) || '1', 10), 1), pdf.numPages);
+  pageTotal.textContent = pdf.numPages;
+  pageNumWrap.style.display = 'inline';
 
-  async function render() {
-    pages.replaceChildren();
-    info.textContent = `${pageNum} / ${pdf.numPages}`;
-    prev.disabled = pageNum <= 1;
-    next.disabled = pageNum >= pdf.numPages;
-
-    const page = await pdf.getPage(pageNum);
-    const viewport = page.getViewport({ scale: 1.4 });
-    const canvas = document.createElement('canvas');
-    canvas.width = viewport.width;
-    canvas.height = viewport.height;
-    pages.append(canvas);
-
-    await page.render({
-      canvasContext: canvas.getContext('2d'),
-      viewport
-    }).promise;
-    localStorage.setItem(key, pageNum);
-  }
-
-  prev.onclick = () => {
-    if (pageNum > 1) {
-      pageNum--;
-      render().catch(showError);
-    }
-  };
-  next.onclick = () => {
-    if (pageNum < pdf.numPages) {
-      pageNum++;
-      render().catch(showError);
-    }
-  };
-
+  loadOutline();
   await render();
 } catch (error) {
   showError(error);
