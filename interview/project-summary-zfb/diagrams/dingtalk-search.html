@@ -20,24 +20,24 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="*{box-sizing:border-box}body{margin:0;padding:32px 20px;background:#fff;color:#2C2C2A;font:400 13px&#x2F;1.6 &quot;PingFang SC&quot;,&quot;Microsoft YaHei&quot;,sans-serif}.wrap{max-width:980px;margin:auto}h1{font-size:15px;">
+    <meta name="description" content="*{box-sizing:border-box}body{margin:0;padding:32px 20px;background:#fff;color:#2C2C2A;font:400 13px&#x2F;1.6 &quot;PingFang SC&quot;,&quot;Microsoft YaHei&quot;,sans-serif}.wrap{max-width:1020px;margin:auto}h1{font-size:15px">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Tallate">
-<meta property="og:url" content="https://tallate.github.io/interview/project-summary-zfb/diagrams/dingtalk-document-platform.html">
+<meta property="og:url" content="https://tallate.github.io/interview/project-summary-zfb/diagrams/dingtalk-search.html">
 <meta property="og:site_name" content="Tallate">
-<meta property="og:description" content="*{box-sizing:border-box}body{margin:0;padding:32px 20px;background:#fff;color:#2C2C2A;font:400 13px&#x2F;1.6 &quot;PingFang SC&quot;,&quot;Microsoft YaHei&quot;,sans-serif}.wrap{max-width:980px;margin:auto}h1{font-size:15px;">
+<meta property="og:description" content="*{box-sizing:border-box}body{margin:0;padding:32px 20px;background:#fff;color:#2C2C2A;font:400 13px&#x2F;1.6 &quot;PingFang SC&quot;,&quot;Microsoft YaHei&quot;,sans-serif}.wrap{max-width:1020px;margin:auto}h1{font-size:15px">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2026-09-01T16:44:14.967Z">
-<meta property="article:modified_time" content="2026-09-01T16:44:14.967Z">
+<meta property="article:published_time" content="2026-09-01T16:44:14.968Z">
+<meta property="article:modified_time" content="2026-09-01T16:44:14.968Z">
 <meta property="article:author" content="tallate">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://tallate.github.io/interview/project-summary-zfb/diagrams/dingtalk-document-platform.html">
+<link rel="canonical" href="https://tallate.github.io/interview/project-summary-zfb/diagrams/dingtalk-search.html">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/interview/project-summary-zfb/diagrams/dingtalk-document-platform.html","path":"interview/project-summary-zfb/diagrams/dingtalk-document-platform.html","title":""}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"zh-CN","comments":true,"permalink":"https://tallate.github.io/interview/project-summary-zfb/diagrams/dingtalk-search.html","path":"interview/project-summary-zfb/diagrams/dingtalk-search.html","title":""}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title> | Tallate
@@ -141,7 +141,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">钉钉文档知识库与稳定性治理</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">钉钉文档搜索与推荐</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -197,7 +197,7 @@
             <li><a href="/interview/">INTERVIEW</a></li>
             <li><a href="/interview/project-summary-zfb/">PROJECT-SUMMARY-ZFB</a></li>
             <li><a href="/interview/project-summary-zfb/diagrams/">DIAGRAMS</a></li>
-            <li>DINGTALK-DOCUMENT-PLATFORM</li>
+            <li>DINGTALK-SEARCH</li>
   </ul>
 </div>
 
@@ -207,52 +207,31 @@
       
       <div class="post-body">
           <style>
-*{box-sizing:border-box}body{margin:0;padding:32px 20px;background:#fff;color:#2C2C2A;font:400 13px/1.6 "PingFang SC","Microsoft YaHei",sans-serif}.wrap{max-width:980px;margin:auto}h1{font-size:15px;font-weight:500;margin:0 0 4px}.sub{color:#5F5E5A;margin-bottom:24px}.stage{border:.5px solid #B5D4F4;border-radius:12px;padding:14px;background:#fff}.title{font-weight:500;color:#0C447C;margin-bottom:9px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:8px}.node{min-height:62px;padding:9px;border:.5px solid #B5D4F4;border-radius:8px;background:#E6F1FB}.node b{display:block;font-weight:500;color:#0C447C}.node span{font-size:11px;color:#185FA5}.arrow{text-align:center;color:#5F5E5A;padding:5px}.support{border-color:#9FE1CB}.support .title{color:#085041}.support .node{background:#E1F5EE;border-color:#9FE1CB}.support .node b{color:#085041}.support .node span{color:#0F6E56}.metric{margin-top:16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.item{padding:10px;border-radius:8px;background:#E1F5EE;color:#085041}.item b{display:block;font-weight:500;font-size:14px}.item span{font-size:11px}.chain{margin-top:24px;border:.5px solid #D3D1C7;border-radius:12px;padding:14px}.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px}.step{position:relative;padding:10px 8px;border-radius:8px;background:#F1EFE8;text-align:center}.step:not(:last-child):after{content:"→";position:absolute;right:-15px;color:#888780}@media(max-width:700px){.steps,.metric{grid-template-columns:1fr;gap:8px}.step:not(:last-child):after{content:"↓";right:auto;left:50%;bottom:-12px}}
+*{box-sizing:border-box}body{margin:0;padding:32px 20px;background:#fff;color:#2C2C2A;font:400 13px/1.6 "PingFang SC","Microsoft YaHei",sans-serif}.wrap{max-width:1020px;margin:auto}h1{font-size:15px;font-weight:500;margin:0 0 4px}.sub{color:#5F5E5A;margin-bottom:24px}.flow{display:grid;grid-template-columns:repeat(6,minmax(110px,1fr));gap:18px}.node{position:relative;min-height:94px;padding:12px 10px;border:.5px solid #B5D4F4;border-radius:10px;background:#E6F1FB}.node:not(:last-child):after{content:"→";position:absolute;right:-15px;top:35px;color:#888780}.node b{display:block;font-weight:500;color:#0C447C;margin-bottom:4px}.node span{display:block;font-size:11px;color:#185FA5}.store{margin-top:16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.box{padding:11px;border:.5px solid #9FE1CB;border-radius:8px;background:#E1F5EE;color:#085041}.box b{display:block;font-weight:500}.box span{font-size:11px;color:#0F6E56}.issues{margin-top:24px;border:.5px solid #D3D1C7;border-radius:12px;padding:14px}.title{font-weight:500;color:#444441;margin-bottom:9px}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.card{padding:10px;border-radius:8px;background:#F1EFE8}.card b{display:block;font-weight:500}.card span{font-size:11px;color:#5F5E5A}@media(max-width:760px){.flow,.store,.cards{grid-template-columns:1fr}.node:not(:last-child):after{content:"↓";right:auto;left:50%;top:auto;bottom:-15px}}
 </style>
 <div class="wrap">
-  <h1>钉钉文档知识库与稳定性治理</h1>
-  <div class="sub">权限与公开能力建设，逐步演进为容量、一致性和容灾闭环</div>
-  <section class="stage">
-    <div class="title">业务能力层</div>
-    <div class="grid">
-      <div class="node"><b>知识库</b><span>目录树、RBAC、资源视图</span></div>
-      <div class="node"><b>全网公开</b><span>访客 UID 池、文档快照</span></div>
-      <div class="node"><b>运营活动</b><span>高并发外部访问</span></div>
-    </div>
+  <h1>钉钉文档搜索与推荐</h1>
+  <div class="sub">从文档事件到搜索召回、关系推荐和点击反馈的完整链路</div>
+  <section class="flow">
+    <div class="node"><b>文档行为</b><span>创建、编辑、访问、点击</span></div>
+    <div class="node"><b>异步治理</b><span>过滤、聚合、限流、幂等</span></div>
+    <div class="node"><b>数据同步</b><span>增量链路、离线全量</span></div>
+    <div class="node"><b>召回与推荐</b><span>HA3 文本召回、图关系</span></div>
+    <div class="node"><b>粗排与精排</b><span>行为权重、次数、时间衰减</span></div>
+    <div class="node"><b>效果反馈</b><span>点击埋点、规则迭代</span></div>
   </section>
-  <div class="arrow">↓</div>
-  <section class="stage">
-    <div class="title">权限、一致性与容量治理</div>
-    <div class="grid">
-      <div class="node"><b>权限扩散</b><span>读扩散、冗余视图、限流</span></div>
-      <div class="node"><b>最终一致性</b><span>幂等、重试、定时对账</span></div>
-      <div class="node"><b>分层缓存</b><span>请求、元数据、鉴权</span></div>
-      <div class="node"><b>缓存治理</b><span>大 Key、淘汰策略、成本</span></div>
-    </div>
+  <section class="store">
+    <div class="box"><b>搜索索引</b><span>二级分片解决长期数据倾斜</span></div>
+    <div class="box"><b>图关系存储</b><span>用户、文件、空间关系建模</span></div>
+    <div class="box"><b>消息队列</b><span>削峰解耦并保护下游写入</span></div>
   </section>
-  <div class="arrow">↓</div>
-  <section class="stage support">
-    <div class="title">稳定性闭环</div>
-    <div class="grid">
-      <div class="node"><b>事前</b><span>容量评估、压测、限流、灰度</span></div>
-      <div class="node"><b>事中</b><span>监控、降级、数据库切备</span></div>
-      <div class="node"><b>事后</b><span>对账、演练、故障复盘</span></div>
-      <div class="node"><b>网关治理</b><span>Sentinel、Nginx、502 排障</span></div>
-    </div>
-  </section>
-  <div class="metric">
-    <div class="item"><b>1000 QPS</b><span>公开文档打开链路</span></div>
-    <div class="item"><b>-40%</b><span>MySQL 核心负载</span></div>
-    <div class="item"><b>-20%</b><span>Redis 内存使用</span></div>
-  </div>
-  <section class="chain">
-    <div class="title" style="color:#444441">项目讲述逻辑</div>
-    <div class="steps">
-      <div class="step">建设业务能力</div>
-      <div class="step">规模问题暴露</div>
-      <div class="step">权限一致性治理</div>
-      <div class="step">容量成本优化</div>
-      <div class="step">稳定性体系化</div>
+  <section class="issues">
+    <div class="title">关键问题与对应方案</div>
+    <div class="cards">
+      <div class="card"><b>数据倾斜</b><span>二级分片与查询路由</span></div>
+      <div class="card"><b>无效写入</b><span>过滤无搜索价值的数据</span></div>
+      <div class="card"><b>重复事件</b><span>按文档维度聚合去重</span></div>
+      <div class="card"><b>查询稳定性</b><span>读写分离与定时清理</span></div>
     </div>
   </section>
 </div>
@@ -266,7 +245,7 @@
             <li><a href="/interview/">INTERVIEW</a></li>
             <li><a href="/interview/project-summary-zfb/">PROJECT-SUMMARY-ZFB</a></li>
             <li><a href="/interview/project-summary-zfb/diagrams/">DIAGRAMS</a></li>
-            <li>DINGTALK-DOCUMENT-PLATFORM</li>
+            <li>DINGTALK-SEARCH</li>
   </ul>
 
     
