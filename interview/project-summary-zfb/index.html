@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"tallate.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="目标职位Agent 应用研发工程师 个人总结具备后端研发背景，近年聚焦 Agent 应用与运行时工程，参与灵光任务 Agent、机票 Agent、支小宝及 AWorld 开源框架建设。具备任务调度、Multi-Agent、Memory、Sandbox、上下文工程、模型推理和可观测性实践，擅长从性能、稳定性、成本和工程落地角度解决复杂问题。此前在钉钉担任文档知识库核心模块 Owner，具备高并发系统">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Agent 应用研发项目总结">
+<meta property="og:url" content="https://tallate.github.io/interview/project-summary-zfb/index.html">
+<meta property="og:site_name" content="Tallate">
+<meta property="og:description" content="目标职位Agent 应用研发工程师 个人总结具备后端研发背景，近年聚焦 Agent 应用与运行时工程，参与灵光任务 Agent、机票 Agent、支小宝及 AWorld 开源框架建设。具备任务调度、Multi-Agent、Memory、Sandbox、上下文工程、模型推理和可观测性实践，擅长从性能、稳定性、成本和工程落地角度解决复杂问题。此前在钉钉担任文档知识库核心模块 Owner，具备高并发系统">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-09-01T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-01T16:31:48.741Z">
+<meta property="article:author" content="tallate">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://tallate.github.io/interview/project-summary-zfb/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"zh-CN","comments":"","permalink":"https://tallate.github.io/interview/project-summary-zfb/index.html","path":"/interview/project-summary-zfb/index.html","title":"Agent 应用研发项目总结"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Agent 应用研发项目总结 | Tallate
+</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Tallate</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">该吃吃该喝喝 啥事别往心里搁</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="user fa-fw"></i>关于</a></li><li class="menu-item menu-item-ebooks"><a href="/ebooks/" rel="section"><i class="book fa-fw"></i>电子书</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="tags fa-fw"></i>标签<span class="badge">103</span></a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="th fa-fw"></i>分类<span class="badge">25</span></a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="archive fa-fw"></i>归档<span class="badge">200</span></a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87%E8%81%8C%E4%BD%8D"><span class="nav-number">1.</span> <span class="nav-text">目标职位</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AA%E4%BA%BA%E6%80%BB%E7%BB%93"><span class="nav-number">2.</span> <span class="nav-text">个人总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E7%BB%8F%E5%8E%86"><span class="nav-number">3.</span> <span class="nav-text">工作经历</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E4%BB%98%E5%AE%9D"><span class="nav-number">3.1.</span> <span class="nav-text">支付宝</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%92%89%E9%92%89"><span class="nav-number">3.2.</span> <span class="nav-text">钉钉</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E7%BB%8F%E5%8E%86"><span class="nav-number">4.</span> <span class="nav-text">项目经历</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%81%B5%E5%85%89%E4%BB%BB%E5%8A%A1Agent-2026-02-%E8%87%B3%E4%BB%8A"><span class="nav-number">4.1.</span> <span class="nav-text">灵光任务Agent 2026.02-至今</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AWorld-CLI-2026-01-2026-03"><span class="nav-number">4.2.</span> <span class="nav-text">AWorld CLI 2026.01-2026.03</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%BA%E7%A5%A8Agent-2025-11-2025-12"><span class="nav-number">4.3.</span> <span class="nav-text">机票Agent 2025.11-2025.12</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Gaia-Agent-2025-03-2025-10"><span class="nav-number">4.4.</span> <span class="nav-text">Gaia Agent 2025.03-2025.10</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E5%B0%8F%E5%AE%9D-2024-09-2025-02"><span class="nav-number">4.5.</span> <span class="nav-text">支小宝 2024.09-2025.02</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%92%89%E9%92%89%E6%96%87%E6%A1%A3%E5%B9%B3%E5%8F%B0%E5%BB%BA%E8%AE%BE%E4%B8%8E%E7%A8%B3%E5%AE%9A%E6%80%A7%E6%B2%BB%E7%90%86-2021-2024-08"><span class="nav-number">4.6.</span> <span class="nav-text">钉钉文档平台建设与稳定性治理 2021-2024.08</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">tallate</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">200</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">25</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">103</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="zh-CN"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">Agent 应用研发项目总结
+</h1>
+
+<div class="post-meta-container">
+  <ul class="breadcrumb">
+            <li><a href="//"></a></li>
+            <li><a target="_blank" rel="noopener" href="//interview/">INTERVIEW</a></li>
+          <li>PROJECT-SUMMARY-ZFB</li>
+  </ul>
+</div>
+
+</header>
+
+      
+      
+      <div class="post-body">
+          <h2 id="目标职位"><a href="#目标职位" class="headerlink" title="目标职位"></a>目标职位</h2><p>Agent 应用研发工程师</p>
+<h2 id="个人总结"><a href="#个人总结" class="headerlink" title="个人总结"></a>个人总结</h2><p>具备后端研发背景，近年聚焦 Agent 应用与运行时工程，参与灵光任务 Agent、机票 Agent、支小宝及 AWorld 开源框架建设。具备任务调度、Multi-Agent、Memory、Sandbox、上下文工程、模型推理和可观测性实践，擅长从性能、稳定性、成本和工程落地角度解决复杂问题。此前在钉钉担任文档知识库核心模块 Owner，具备高并发系统和稳定性治理经验。</p>
+<p>补充荣誉：钉钉任职期间两次获得 3.75 绩效。</p>
+<h2 id="工作经历"><a href="#工作经历" class="headerlink" title="工作经历"></a>工作经历</h2><h3 id="支付宝"><a href="#支付宝" class="headerlink" title="支付宝"></a>支付宝</h3><p>负责 Agent 应用与运行时工程研发，参与灵光任务 Agent、机票 Agent、支小宝及蚂蚁 AWorld 开源框架建设，覆盖产物生成、任务调度、Memory、Sandbox、上下文工程、CLI Harness 和推理优化等方向。通过限流、优先级调度、重试和 Watchdog 等机制，显著提升长任务执行成功率；通过模型微调与框架性能优化，将机票搜索耗时降低 50%，并完成 100 并发基准压测；作为 AWorld CLI 核心贡献者参与开源建设及社区大会技术演示。</p>
+<h3 id="钉钉"><a href="#钉钉" class="headerlink" title="钉钉"></a>钉钉</h3><p>负责文档搜索、公开发布、知识库权限及稳定性治理，承担核心模块 Owner 职责。通过链路缓存和 Redis 大 Key 治理降低数据库与缓存成本；参与优化搜索粗排、精排规则，使首屏召回效果提升约 5%～10%；通过压测和缓存优化将公开文档打开链路提升至 1000 QPS。</p>
+<h2 id="项目经历"><a href="#项目经历" class="headerlink" title="项目经历"></a>项目经历</h2><p>说明：带 <code>*</code> 的“职责”条目为简历候选内容；“面试模拟重点”中带 ⭐ 的条目表示当前资料不足、指标口径不清或需要进一步确认，投递前应优先补齐。</p>
+<h3 id="灵光任务Agent-2026-02-至今"><a href="#灵光任务Agent-2026-02-至今" class="headerlink" title="灵光任务Agent 2026.02-至今"></a>灵光任务Agent 2026.02-至今</h3><p>项目介绍：面向主对话难以承载的长耗时复杂任务，建设支持定时任务、产物生成的后台任务 Agent，并兼容自研 Runtime 与 OpenClaw Runtime。<br>职责：</p>
+<ul>
+<li>产物生成：负责端到端文件产物生成及预览，集成多种生成 Skill 并优化效果；引入 Spec 驱动的 Multi-Agent Coding 流程，约束前后端 Agent 协同，提升代码产物可用性和约 10% 的生成效率。</li>
+<li>Runtime 兼容与演进：参与自研 Runtime 和 OpenClaw Runtime 的接入与适配，抽象任务状态、工具调用、文件产物、Skill管理等共性能力，降低业务层对底层执行环境的依赖。</li>
+<li>任务调度与稳定性：设计 Redis 限流、优先级调度、随机偏移、重试和 Watchdog 机制，将任务成功率提升至 95% 以上。</li>
+<li>Memory 与可观测性：设计长期记忆的增量抽取与检索方案，建立任务调度、端到端链路、首 Token、异常 Trace 分析和定时巡检能力。</li>
+</ul>
+<p>面试模拟重点：</p>
+<ul>
+<li>如何优化产物生成效率：先统计各阶段耗时和剩余预算，在接近超时时插入 user message 约束 Agent 收尾；将上下文压缩阈值从 70% 调整至 50%，提前压缩以减少末段集中处理耗时；为 PublishFlashApp 工具补充报错堆栈，加快 Coding Agent 定位和修复代码。</li>
+<li>如何提升产物可用性：在编码前由 Agent 生成 spec.md，再由 Backend Agent 和 Frontend Agent 按统一规格实现；服务化闪应用在交付前调用服务端接口完成验证。</li>
+<li>压缩阈值调低有什么代价：压缩更频繁，可能增加模型调用成本并丢失细节；通过 spec.md、Workspace 产物和结构化 Todo 保存关键约束，降低上下文压缩风险。</li>
+<li>Memory 如何提升抽取性能：对 Transcript 分段抽取并记录抽取位点，仅处理新增内容；重新发起会话时根据位点识别未抽取区间。</li>
+<li>为什么单容器并发过高会降低任务成功率：长任务占用会话和运行资源的时间较长，如果任务结束后资源没有及时释放，资源会持续累积，引起容器内资源争抢、任务排队和执行超时，并进一步触发重试和 Watchdog。通过清理无效会话与任务资源、限制单容器并发、调优队列和完善任务结束后的资源释放，降低资源争抢并提升任务成功率。</li>
+<li>⭐ “生成效率提升约 10%”的具体口径是什么：端到端耗时、单位时间完成数、一次生成成功率，还是人工返工时间？需要统一基线、样本量和统计周期。</li>
+<li>⭐ “任务成功率提升至 95% 以上”如何定义成功？需要准备统计范围、样本量、失败类型分布，以及限流、重试、Watchdog 各自贡献了多少。</li>
+<li>⭐ 具体清理了哪些单容器资源，分别在什么生命周期节点触发？需要确认是否包括会话状态、临时文件、Sandbox、连接、缓存或执行进程，避免面试时泛化描述。</li>
+<li>⭐ 自研 Runtime 与 OpenClaw Runtime 的统一接口、差异点和切换边界是什么？至少准备任务状态、工具协议、文件产物、Sandbox 生命周期四个方面。</li>
+<li>⭐ Memory 如何降低抽取成本，为什么没有直接采用 OpenViking？需要准备数据规模、增量策略、检索评测和自研&#x2F;开源方案对比。</li>
+<li>⭐ Agent 可观测性如何设计？需要能说明 Trace&#x2F;Span 模型、模型与工具耗时、Token&#x2F;成本、状态迁移、错误分类、告警和单任务回放。</li>
+</ul>
+<p>逻辑链：</p>
+<p>灵光任务 Agent 将主对话中受时长、上下文和资源限制的复杂需求转成可调度、可恢复、可评测的后台任务：主对话负责识别和委派；Scheduler、Dispatcher 与 TaskRunner 通过队列、优先级、限流、重试和 Watchdog 管理 Job&#x2F;Plan 生命周期；Goal 控制线程级持续执行，Plan&#x2F;Todo 表达步骤和进度；任务 Agent 再通过 Multi-Agent 将 Coding、File&#x2F;PPT 等工作委派给专业 Agent。运行过程中，Session Checkpoint 与 Context Snapshot 恢复模型上下文，Memory 保存跨 Session 信息，Skill&#x2F;Plugin 与 Sandbox 提供能力和隔离环境，Workspace 保存真实中间成果。最后由 Artifact 完成交付，Reward、Verify、稳定性和 TTFT 观测形成反馈闭环。</p>
+<p>需要注意：当前 Checkpoint 是 Session&#x2F;Context 恢复机制，不是步骤级长程任务状态；默认未启用 TaskGraph，失败后由调度器重新触发，Agent 根据恢复后的上下文、Todo 和 Workspace 自检继续执行。</p>
+<p>图示：<a href="/interview/project-summary-zfb/diagrams/task-agent.html">灵光任务 Agent 架构与逻辑链</a></p>
+<p>合并后的专题文档：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/%E4%BB%BB%E5%8A%A1agent/%E4%BB%BB%E5%8A%A1Agent%E6%80%BB%E8%A7%88.md">任务 Agent 总览</a>：项目定位、总体架构、完整逻辑链、核心指标和专题导航</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/%E4%BB%BB%E5%8A%A1agent/%E4%BB%BB%E5%8A%A1%E8%B0%83%E5%BA%A6%E4%B8%8E%E9%95%BF%E7%A8%8B%E6%89%A7%E8%A1%8C.md">任务调度与长程执行</a>：主对话委派、Job&#x2F;Plan&#x2F;Run、Goal、Plan&#x2F;Todo、生命周期、幂等、重试与恢复</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/%E4%BB%BB%E5%8A%A1agent/%E4%BB%BB%E5%8A%A1Agent%E4%B8%8E%E5%A4%9AAgent%E4%BA%A7%E7%89%A9%E7%94%9F%E6%88%90.md">任务 Agent 与多 Agent 产物生成</a>：Task&#x2F;Workflow 委派、Spec 驱动、XCode Agent、File&#x2F;PPT Agent 和 Verify</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/%E4%BB%BB%E5%8A%A1agent/%E4%BA%A7%E7%89%A9%E4%BA%A4%E4%BB%98%E3%80%81%E8%AF%84%E6%B5%8B%E4%B8%8E%E7%A8%B3%E5%AE%9A%E6%80%A7.md">产物交付、评测与稳定性</a>：Artifact、Reward Server、质量评测、稳定性治理、TTFT 与 Sandbox 并发观测</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/%E4%BB%BB%E5%8A%A1agent/%E4%B8%8A%E4%B8%8B%E6%96%87%E3%80%81%E8%AE%B0%E5%BF%86%E4%B8%8E%E8%BF%90%E8%A1%8C%E7%8E%AF%E5%A2%83.md">上下文、记忆与运行环境</a>：Transcript、Context、Checkpoint、Memory、Skill&#x2F;Plugin、Sandbox 与 Workspace</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/%E4%BB%BB%E5%8A%A1agent/%E6%97%A0%E6%8D%9F%E5%90%88%E5%B9%B6%E6%B8%85%E5%8D%95.md">无损合并清单</a>：24 份源文档的唯一归属、原路径、归档路径、字节数和 SHA-256；<code>design.md</code> 已全文并入总览</li>
+</ul>
+<h3 id="AWorld-CLI-2026-01-2026-03"><a href="#AWorld-CLI-2026-01-2026-03" class="headerlink" title="AWorld CLI 2026.01-2026.03"></a>AWorld CLI 2026.01-2026.03</h3><p>项目介绍：面向蚂蚁开源 Agent 框架 AWorld 建设 CLI Harness，以命令行形态提供代码编辑、终端、Skill、Subagent、上下文管理和多模态能力。<br>职责：</p>
+<ul>
+<li>设计多层级 Skill 管理和自定义 Subagent，实现基于文件的 Memory 存储与压缩、终端流式输出及 Token Cost 统计，提升长任务的上下文管理和执行体验。</li>
+<li>优化代码编辑和回滚工具，使用 Tree-sitter 构建 AST 分析与代码搜索能力，解决大代码库搜索卡死和代码替换不准问题。</li>
+<li>接入多模态模型协议并支持视频理解与按剧本生成视频；通过优化模型网关 Keepalive，提升大段代码和长响应输出的稳定性。</li>
+<li>作为 AWorld CLI 核心贡献者参加南京魔搭社区大会，负责 Agent Harness、代码工具、Skill、Subagent 和上下文管理等能力的现场演示与技术讲解。</li>
+</ul>
+<p>面试模拟重点：</p>
+<ul>
+<li>AWorld、Agent Runtime 和 CLI Harness 的关系是什么：AWorld 提供底层运行时，CLI 将上下文、工具、Subagent 和交互能力组装为可直接使用的开发者产品。</li>
+<li>为什么使用文件保存 Memory：便于人和 Agent 共同读写、版本管理、按需加载和跨 Session 恢复，同时需要处理文件膨胀、检索效率和敏感信息隔离问题。</li>
+<li>为什么使用 Tree-sitter：相较纯文本搜索，AST 能识别语言结构和符号边界，适合定义、引用和局部代码块检索；同时保留文本搜索作为未知语言和非代码文件的兜底。</li>
+<li>代码替换失败如何处理：替换前校验目标片段唯一性和文件版本，执行后检查结果；失败时缩小编辑范围或改用结构化定位，并保留快照支持回滚。</li>
+<li>⭐ CAST 系统的三层索引分别是什么、如何构建、如何增量更新？需要从实际实现中整理完整调用链。</li>
+<li>⭐ AST 搜索、代码编辑和 Keepalive 优化分别提升了多少？至少补充搜索耗时、卡死率、编辑成功率或长输出失败率中的一项指标。</li>
+<li>⭐ 文件 Memory 在什么时候压缩、压缩哪些内容、如何防止关键信息丢失？需要准备触发阈值、摘要格式和恢复机制。</li>
+<li>⭐ 视频理解为什么能够降低 Token Usage？需要说明帧采样、内容压缩、模型协议适配和优化前后口径。</li>
+</ul>
+<p>逻辑链：</p>
+<p>AWorld CLI 这个项目，本质上是把 AWorld 从底层 Agent Runtime 产品化为<strong>开箱即用的 Agent Harness</strong>：底层通过 AmniContext 上下文治理（基于文件的 memory 存储与压缩、多层级 skill 管理、自定义 subagent）解决长程任务的上下文腐烂问题；中层通过 CAST &#x2F; tree-sitter 三层索引与代码编辑工具（代码替换不准修复、代码回滚、AST 搜索提速避免搜索卡死）解决大代码库理解与编辑的可靠性问题；上层通过 CLI 形态（终端流式输出、token cost 统计、多模态模型协议集成）把能力低成本交付并支持管道组合；最后通过南京魔搭大会现场演示验证开源影响力与落地效果。</p>
+<p>图示：<a href="/interview/project-summary-zfb/diagrams/aworld-cli.html">AWorld CLI 框架可视化</a></p>
+<p>关联博客（已发布，按主题分组）：</p>
+<p>上下文工程系列：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/context_engineering.md">上下文工程的实现路径</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/context_filesystem.md">使用文件系统实现Multi Agent间的协作</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/claude_code_multi_agent_context_engineering.md">claude code构建长期运行Multi-Agent系统的Context-Engineering经验</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/deepresearch_with_context_engineering.md">LangGraph - Open Deep Research</a></li>
+</ul>
+<p>多Agent系列：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/multi_agent_run_mode.md">多智能体运行模式</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/multi_agent_wakeup.md">多 Agent 通信与唤醒机制</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/sub_task.md">使用task调度多agent解决复杂问题</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/human_in_loop.md">Human in Loop的几种实现方式</a></li>
+</ul>
+<p>Agent工程系列：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/agent_harness_report.md">Agent Harness 深度报告</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/long_task_agent_engineering.md">长任务 Agent 的工程化思考</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/long_memory.md">为Agent集成长期记忆</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/react_agent.md">ReAct 机制是 Agent 框架的基础</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/code_agent.md">Code Agent — 自进化代码编辑方案</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/terminal_tool.md">Terminal Tool — Agent 安全命令执行设计分析</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/browser_use.md">Browser Use — agent-browser 接入 MCP 链路方案</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/claw.md">OpenClaw — 架构分析</a></li>
+</ul>
+<h3 id="机票Agent-2025-11-2025-12"><a href="#机票Agent-2025-11-2025-12" class="headerlink" title="机票Agent 2025.11-2025.12"></a>机票Agent 2025.11-2025.12</h3><p>项目介绍：探索灵光主对话集成垂直领域 Agent 的工程方案，通过 Sandbox 中的浏览器 Agent 实时搜索、交互和验证机票信息。<br>职责：</p>
+<ul>
+<li>设计基于 Sandbox 的浏览器 Agent，完成浏览器方案选型和稳定性测试，通过调整温度参数、ReAct 结束条件及接入 IP 池提升实时搜索稳定性。</li>
+<li>设计批量轨迹采集与事实依据评测 Pipeline，配合算法团队使用 538 条分难度轨迹数据微调 GLM-4.5-Air，减少推理轮数并将搜索耗时降低 50%。</li>
+<li>使用火焰图和分层埋点定位框架异步空转，结合容器预热、MCP Server 合并和容量治理，将对话整体耗时缩短 40%～50%，并完成 100 并发基准压测。</li>
+</ul>
+<p>面试模拟重点：</p>
+<ul>
+<li>如何分析性能：将 ReAct 拆为模型调用和工具调用循环；第一层记录每轮模型、工具起止时间，第二层记录模型 Client 和 MCP Client 的起止时间，用总耗时减去有效调用耗时定位框架空转，最终发现固定 5 秒状态等待及会话历史异步转同步等额外开销。</li>
+<li>并发阶段遇到了什么问题：Sandbox 已启动但容器内 MCP Server 尚未就绪；服务器容量不足导致拉起容器超时。通过健康检查、容器预热、容量治理及合并多个 MCP Server 缩短启动链路。</li>
+<li>浏览器方案如何选型：从控制协议、页面理解、登录态、风控自然度、Sandbox 集成成本和可观测性等维度，对比 Playwright、Agent Browser 等方案。</li>
+<li>模型与部署：GLM-4.5-Air MoE 模型，训练侧使用 Swift 和 32×H200，数据集包含 538 条分难度轨迹；推理侧使用 SGLang 和 8×H200，最大上下文 262144，并使用 EAGLE 投机解码（num-steps&#x3D;3、eagle-topk&#x3D;1、num-draft-tokens&#x3D;4）。</li>
+<li>⭐ 100 并发压测使用什么模型和资源配置？需要准备 QPS、P95&#x2F;P99、错误率、持续时间，以及“并发会话”还是“并发请求”的准确定义。</li>
+<li>⭐ 搜索耗时降低 50% 与整体耗时降低 40%～50%是否来自同一批测试？需要区分推理轮数优化、框架空转优化和容器冷启动优化的贡献。</li>
+<li>⭐ 轨迹评测如何判断答案正确？需要说明事实依据、价格时效、航班一致性、任务成功率和人工&#x2F;自动评测规则。</li>
+<li>⭐ 538 条数据如何划分训练集和验证集，如何避免过拟合？你在数据、训练、部署和评测中的个人责任边界是什么？</li>
+<li>⭐ EAGLE 的实际接受率、输出速度提升和质量变化是多少？目前只有参数，没有收益数据。</li>
+</ul>
+<p>逻辑链：</p>
+<p>机票 Agent 这个项目，本质上是验证「主对话集成垂直领域 Agent」的完整工程闭环：底层通过 MCP Gateway + sandbox 执行平面（agent-browser CLI 经 CDP 控制真实浏览器）解决实时信息获取能力，让 Agent 从”读网页”升级到”能搜索、能点击、能抓取、能验证结果”；中层通过 Harness 手段（温度参数、ReAct 结束条件、ip 池）解决搜索稳定性问题，再通过批量轨迹采集 pipeline + 轨迹和事实依据评测驱动算法侧微调 GLM-4.5-Air（538 条分难度数据、Swift 框架）减少推理轮数；上层通过火焰图 + 两层埋点定位框架异步空转（状态等待固定 5 秒、异步转同步写会话历史），配合容器预热、多 MCP Server 合并一个等手段压缩冷启动与空转开销；推理侧用 sglang + EAGLE 投机解码（num-steps&#x3D;3 &#x2F; eagle-topk&#x3D;1 &#x2F; num-draft-tokens&#x3D;4）压低解码延迟，最终对话整体耗时缩短 40%-50%、搜索耗时降低 50%，完成 100 并发压测。</p>
+<p>图示：<a href="/interview/project-summary-zfb/diagrams/flight-agent.html">机票 Agent 工程架构与优化闭环</a></p>
+<p>相关文档：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/browser_use.md">Browser Use — agent-browser 接入 MCP 链路方案</a>：MCP Gateway &#x2F; sandbox &#x2F; agent-browser 三层架构与请求时序，P0&#x2F;P1 能力划分（prepare&#x2F;navigate&#x2F;snapshot&#x2F;click 最小闭环），BrowseComp-ZH benchmark 方案</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/%E4%BB%BB%E5%8A%A1agent/%E5%B7%B2%E8%A2%AB%E5%90%88%E5%B9%B6/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/sandbox.md">FR Agent Sandbox 链路</a>：sandbox 懒加载机制、容器内 MCP Server 拉起链路、Session 粘性路由与容器复用，对应”sandbox 拉起后 mcp server 没起来”等并发问题</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/aworld.md">AWorld 项目总结</a>：MCP Gateway 架构章节；机票 Agent 被列为 AWorld 落地场景（Reward 设计为遗留 TODO）</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/%E4%BB%BB%E5%8A%A1agent/%E5%B7%B2%E8%A2%AB%E5%90%88%E5%B9%B6/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/lingguang.md">浏览器方案选型对比</a>：kimi-webbridge &#x2F; agent-browser &#x2F; Playwright 三框架对比（架构、控制协议、登录态、风控自然度），对应”对浏览器方案进行技术选型”</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/gaia_agent/speculative_decoding_survey.md">推测解码调研</a>：EAGLE&#x2F;Speculative Decoding&#x2F;Medusa&#x2F;Lookahead&#x2F;MTP 技术族谱、加速比与部署挑战，对应 EAGLE 投机解码参数选型</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/react_agent.md">ReAct 机制是 Agent 框架的基础</a>：ReAct 循环理论基础，对应”调整 ReAct 结束条件”与火焰图分析中的模型&#x2F;工具循环模型</li>
+</ul>
+<h3 id="Gaia-Agent-2025-03-2025-10"><a href="#Gaia-Agent-2025-03-2025-10" class="headerlink" title="Gaia Agent 2025.03-2025.10"></a>Gaia Agent 2025.03-2025.10</h3><p>项目介绍：基于 AWorld 构建 Gaia Agent、推理服务和 Sandbox 执行环境，通过 Benchmark 排名和技术报告验证开源框架在复杂推理与工具使用任务中的工程能力。<br>职责：</p>
+<ul>
+<li>负责打榜推理服务部署与性能评测，调研并验证量化、投机解码等方案，优化模型服务吞吐和响应速度。</li>
+<li>为 Agent 框架设计 Prompt 模板和上下文能力，实现长期历史召回，并通过 Benchmark 迭代上下文召回效果。</li>
+<li>设计 Sandbox 文件挂载能力，建立 Docker、OSS 与 Agent Workspace 的路径映射，实现 Agent 文件读写和产物持久化。</li>
+</ul>
+<p>面试模拟重点：</p>
+<ul>
+<li>Gaia Agent 的工程逻辑：推理层解决模型服务性能，上下文层解决长任务历史管理，执行环境层解决工具运行和文件持久化，最后由 Benchmark 和打榜结果验证整体方案。</li>
+<li>Sandbox 文件找不到如何排查：确认 Workspace 实际路径包含 SID，检查宿主机、容器和 Agent 看到的路径是否一致；通过写入测试文件逐层验证挂载点和路径映射。</li>
+<li>OSS 挂载延迟如何处理：区分对象存储和本地文件系统语义，识别约 10 分钟同步延迟，通过后台快速同步改善时效；对强一致、高频小文件场景评估 NAS 或本地 Workspace。</li>
+<li>⭐ 推理服务使用什么模型、框架、GPU和并行配置？需要给出吞吐、首 Token、P95延迟和显存占用等基线数据。</li>
+<li>⭐ 量化和投机解码分别提升多少，是否影响 Gaia 分数？需要补充优化前后数据及最终采用&#x2F;放弃某方案的原因。</li>
+<li>⭐ Gaia&#x2F;XBench 的最终分数、排名和主要失败类型是什么？目前只有“参与打榜”，缺少结果证据。</li>
+<li>⭐ Prompt 模板和长期历史召回具体如何实现？需要说明信息分类、召回策略、上下文预算、Rerank 和冲突处理。</li>
+<li>⭐ 上下文 Benchmark 如何构建，优化前后准确率是多少？需要准备样本来源、评价指标和典型错误案例。</li>
+<li>⭐ OSS、NAS 和本地盘的选型边界是什么？需要从一致性、延迟、吞吐、成本、共享范围和故障恢复方面回答。</li>
+</ul>
+<p>逻辑链：<br>Gaia Agent 这个项目，本质上是在 AWorld 上验证一套 Agent 生产能力闭环：底层通过推理优化解决模型服务的性能问题，中层通过 AmniContext 解决长任务的上下文管理问题，上层通过沙箱挂载和文件系统协作解决工具执行与产物持久化问题，最后通过 benchmark 和打榜结果反向验证整套方案。</p>
+<p>图示：<a href="/interview/project-summary-zfb/diagrams/gaia-agent.html">Gaia Agent 工程闭环图</a></p>
+<p>相关文档：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/gaia_agent/qwen2.5-14b_inference_benchmark.md">Qwen2.5-14B 推理性能评测</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/gaia_agent/speculative_decoding_survey.md">推测解码调研</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/gaia_agent/amni_context.md">AmniContext 技术文档</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/AI/context_filesystem.md">使用文件系统实现Multi Agent间的协作</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/%E4%BB%BB%E5%8A%A1agent/%E5%B7%B2%E8%A2%AB%E5%90%88%E5%B9%B6/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/lingguang.md">灵光项目总结：NAS&#x2F;OSS&#x2F;挂载方案补充</a></li>
+</ul>
+<h3 id="支小宝-2024-09-2025-02"><a href="#支小宝-2024-09-2025-02" class="headerlink" title="支小宝 2024.09-2025.02"></a>支小宝 2024.09-2025.02</h3><p>项目介绍：面向支付宝生活服务场景建设多 Agent 对话能力，通过意图识别和领域 Agent 完成天气、账单、点咖啡等任务，并提供跨轮上下文连续性和内容安全治理。<br>职责：</p>
+<ul>
+<li>设计事件驱动的 Memory 抽取与上下文注入系统，从对话历史中抽取已返回的视频链接等业务特征，供领域 Agent 感知历史结果并减少多轮重复推荐。</li>
+<li>对接安全 Agent，定义拦截、提示和异步撤回策略，在流式输出性能与违规内容暴露窗口之间进行权衡。</li>
+</ul>
+<p>面试模拟重点：</p>
+<ul>
+<li>为什么需要 Memory：Base Agent 无法获取主对话完整历史，搜索结果中的视频可能在多轮对话中重复出现；通过异步抽取已展示的视频链接并在后续请求中注入，使领域 Agent 感知历史结果。</li>
+<li>JSON 抽取不稳定怎么处理：在 Prompt 中增加多组 Few-shot，约束字段类型和输出格式；工程侧还应增加 Schema 校验、解析失败重试和降级策略。</li>
+<li>异步撤回有什么风险：流式响应每若干 Chunk 检查一次，异步方式减少首 Token 和输出延迟，但违规内容可能在撤回前已被用户看到或截图，需要通过更小检测窗口、前置高风险分类和分级策略降低风险。</li>
+<li>⭐ Memory 抽取和上下文注入后，重复推荐率或用户体验指标改善多少？目前缺少结果数据。</li>
+<li>⭐ Memory 的事件来源、存储模型、幂等机制和查询链路是什么？需要能画出写入、加工、召回、注入的完整时序。</li>
+<li>⭐ 安全 Agent 的误杀率、漏检率和响应耗时是多少？同步检查与异步撤回的适用边界是什么？</li>
+<li>⭐ Few-shot 之外是否使用 JSON Schema、约束解码或自动修复？需要解释当时为何选择 Prompt 方案及其局限。</li>
+</ul>
+<p>逻辑链：</p>
+<p>支小宝这个项目，本质上是为多 Agent 生活服务对话建立一套“上下文连续性 + Prompt 治理 + 安全治理”的工程闭环：主对话和领域 Agent 在执行过程中将 Session、Dialog、Agent 结果等信息增量写入 Memory；事件驱动的实时&#x2F;旁路 Pipeline 与离线任务进一步完成对话总结、事实和特征抽取，并写入 Lindorm 等存储与检索系统；查询侧通过完整 Memory 或按元数据定义的 MemoryView 召回历史上下文，再由 Prompt Select 将上下文参数注入统一管理的 Prompt，供模型直出、RAG、Policy 和后续 Memory 加工消费。以视频搜索为例，这条链路让拿不到完整主对话历史的 Base Agent 感知已返回的视频结果，避免多轮重复推荐；同时通过 Few-shot 提升 JSON 结构化抽取的稳定性。安全侧以流式分段检测和异步撤回作为旁路，在响应性能与违规内容暴露窗口之间做权衡，最终形成“对话执行 → 记忆写入 → 事件加工 → 检索注入 → 业务消费与安全反馈”的闭环。</p>
+<p>图示：<a href="/interview/project-summary-zfb/diagrams/zhixiaobao.html">支小宝上下文工程架构</a></p>
+<p>参考文档：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/%E6%94%AF%E5%B0%8F%E5%AE%9D/zhixiaobao.md">支小宝 Memory、Prompt 与安全治理补充</a>：Memory 整体架构、存储与查询链路、实时&#x2F;旁路&#x2F;离线加工、Prompt 注入与接入规划，以及安全异步撤回的背景说明</li>
+</ul>
+<h3 id="钉钉文档平台建设与稳定性治理-2021-2024-08"><a href="#钉钉文档平台建设与稳定性治理-2021-2024-08" class="headerlink" title="钉钉文档平台建设与稳定性治理 2021-2024.08"></a>钉钉文档平台建设与稳定性治理 2021-2024.08</h3><p>项目介绍：围绕钉钉文档搜索、知识库和全网公开能力持续建设文档平台，并在业务规模扩大后进一步治理搜索数据倾斜、权限一致性、高并发访问、容量成本和系统稳定性问题。<br>职责：</p>
+<ul>
+<li>作为知识库核心模块 Owner 推动项目交付，基于 RBAC 管理目录树资源权限，通过限流、读扩散、冗余数据和定时对账解决大部门高并发赋权与最终一致性问题。</li>
+<li>为文档搜索设计二级分片键，解决长期数据倾斜；建设快照数据的增量与离线全量同步链路接入搜索服务，并参与精排规则优化，使首屏召回效果提升约 5%～10%；通过消息队列限流、无效数据过滤和事件聚合降低图库写入压力。</li>
+<li>参与设计全网公开访客 UID 池和文档快照发布能力，通过压测和缓存优化将打开链路提升至 1000 QPS，支撑约 3 万 DAU、4.5 万 PV 的运营活动。</li>
+<li>通过监控埋点定位热点链路，在请求、元数据查询和鉴权链路增加分层缓存，使 MySQL 核心负载降低约 40%；治理 Redis 大 Key 并调整内存淘汰配置，使 Redis 内存使用降低约 20%。</li>
+<li>主导核心场景压测与有损演练，设计数据库切备快速恢复和异步消息限流削峰方案；配置 Sentinel 限流、改造 Nginx 灰度发布，并定位解决 Upstream 重复失败导致的 502 问题。</li>
+</ul>
+<p>面试模拟重点：</p>
+<ul>
+<li><p>稳定性治理如何分层：事前通过容量评估、压测、限流和预案降低风险；事中通过监控告警、降级和切备止损；事后通过复盘、对账和演练验证改进。</p>
+</li>
+<li><p>为什么在请求、元数据和鉴权链路分层加缓存：不同数据的更新频率、一致性要求和热点模式不同，需要分别设计 Key、TTL、失效通知和降级逻辑。</p>
+</li>
+<li><p>Nginx 502 如何排查：从客户端、Nginx、Upstream 服务和网络四层核对错误日志、连接状态、超时与重试行为，最终定位重复失败节点未及时摘除的问题。</p>
+</li>
+<li><p>⭐ MySQL“核心负载降低 40%”具体指 CPU、查询量、连接数还是实例水位？Redis“降低 20%”是已用内存还是峰值水位？简历前必须统一指标定义。</p>
+</li>
+<li><p>⭐ Redis 大 Key 如何发现、删除和预防？需要准备扫描方式、业务访问模式、渐进式删除、过期&#x2F;淘汰配置和拆分方案。</p>
+</li>
+<li><p>⭐ 切备方案的 RTO&#x2F;RPO、切换条件和数据一致性风险是什么？“有效提升可用性”需要补充可验证结果。</p>
+</li>
+<li><p>⭐ Sentinel 限流采用什么规则，阈值如何确定，触发后如何降级？需要说明活动流量估算和压测过程。</p>
+</li>
+<li><p>高并发权限写入为什么使用读扩散：对超大部门或群体，如果写时为每个成员展开权限，会产生大量写放大和脏数据；改为查询时结合组织关系计算，并用冗余数据和缓存控制读取成本。</p>
+</li>
+<li><p>数据扩散产生脏数据如何解决：异步链路失败或成员关系变化会导致权限副本不一致，通过幂等消费、失败重试、定时对账和差异修复保证最终一致性。</p>
+</li>
+<li><p>图库如何减少数据压力：过滤不支持搜索的快捷方式、单聊文件等无效数据，约减少 50% 写入；对同一文档短时间连续编辑产生的事件按文档维度聚合去重。</p>
+</li>
+<li><p>搜索排序规则：根据用户行为类型设置基础权重，结合操作次数和最近一次行为时间衰减计算得分；规则方案可解释、上线快，但需要通过线上实验验证，并逐步补充算法排序和实时同步。</p>
+</li>
+<li><p>访客 UID 池如何工作：预生成有限访客身份，通过哈希桶定位分片、队列完成租借和回收，避免每次访问同步创建账号；需要处理幂等、耗尽、重复分配和回收失败。</p>
+</li>
+<li><p>⭐ 搜索指标究竟是召回率、准确率、首屏点击率还是 NDCG？当前统一写作“首屏召回效果提升 5%～10%”，投递前需要确认真实指标和实验口径。</p>
+</li>
+<li><p>⭐ 为什么选择 GDB&#x2F;iGraph，图模型相较 MySQL&#x2F;ES 有什么优势，迁移时如何保证双写和数据一致性？这部分目前准备不足。</p>
+</li>
+<li><p>⭐ Kafka&#x2F;消息队列的分区键、顺序性、消费限流、重复消费和积压处理怎么设计？需要结合文档事件链路回答。</p>
+</li>
+<li><p>⭐ HA3 的全量与增量同步如何避免丢数据或覆盖新数据？需要准备版本号、时间戳、切换和校验机制。</p>
+</li>
+<li><p>⭐ 分布式事务具体采用什么方案？如果实际是本地事务加消息、Saga 或最终一致性，不能笼统写“分布式事务”。</p>
+</li>
+<li><p>⭐ 项目起止时间需要补齐，保证与钉钉工作经历和其他项目不冲突。</p>
+</li>
+</ul>
+<p>逻辑链：</p>
+<p>这段经历适合按“业务能力建设 → 规模问题暴露 → 数据与权限治理 → 稳定性体系化”来讲。早期先建设文档搜索、知识库和全网公开等业务能力：搜索侧通过 HA3&#x2F;ES 承担索引与召回，图库维护用户、文件和空间关系，知识库使用 RBAC 和资源视图管理目录树权限，公开发布通过访客 UID 池和快照链路承接外部访问。随着数据量、组织规模和运营流量增长，系统逐渐出现搜索分片倾斜、权限写扩散、异步数据不一致、热点消息和公开链路容量问题，因此进一步通过二级分片、读写扩散切换、冗余视图、MQ 限流聚合、定时对账和分层缓存治理性能与一致性。最后把单点优化沉淀为稳定性体系：事前进行容量评估、压测、限流和灰度验证，事中通过监控、Sentinel、降级和数据库切备快速止损，事后通过对账、演练和复盘验证恢复能力，形成从业务交付到平台治理的完整闭环。</p>
+<p>图示：<a href="/interview/project-summary-zfb/diagrams/dingtalk-document-platform.html">钉钉文档平台建设与稳定性治理逻辑图</a></p>
+<p>相关文档：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93-wd.md">钉钉项目原始总结</a>：稳定性、知识库、搜索、公开发布及相关中间件面试素材</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93_wd/%E6%90%9C%E7%B4%A2/03-%E6%96%87%E6%A1%A3%E6%90%9C%E7%B4%A2.md">文档搜索项目总结</a>：文档搜索链路、数据同步和业务问题</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93_wd/%E6%90%9C%E7%B4%A2/04-%E6%90%9C%E7%B4%A2.md">搜索方案总结</a>：搜索召回、排序和推荐相关方案</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/draft/%E9%9D%A2%E8%AF%95/%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93_wd/%E6%90%9C%E7%B4%A2/06-%E7%9F%A5%E8%AF%86%E5%BA%93%E5%85%A8%E6%96%87%E6%90%9C%E7%B4%A2%E6%8A%80%E6%9C%AF%E6%96%B9%E6%A1%88.md">知识库全文搜索技术方案</a>：知识库搜索与权限过滤方案</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/%E7%A8%B3%E5%AE%9A%E6%80%A7%E8%AE%BE%E8%AE%A1.md">分布式系统稳定性设计</a>：消息队列、缓存、限流、压测和容灾方法</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/%E6%9C%8D%E5%8A%A1%E6%B2%BB%E7%90%86%E2%80%94%E2%80%94%E9%99%90%E6%B5%81.md">服务治理——限流</a>：限流算法、容量评估和服务治理</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/%E7%BC%93%E5%AD%98/Redis%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98.md">Redis 性能调优</a>：大 Key、内存、延迟和高可用治理</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/tallate/tallate.github.io_src/blob/master/source/_posts/pages/Nginx/Nginx%E5%8E%9F%E7%90%86%E6%80%BB%E7%BB%93.md">Nginx 原理总结</a>：Upstream、负载均衡和网关问题排查</li>
+</ul>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
+      </div>
+      
+      
+      
+    </div>
+  <ul class="breadcrumb">
+            <li><a href="//"></a></li>
+            <li><a target="_blank" rel="noopener" href="//interview/">INTERVIEW</a></li>
+          <li>PROJECT-SUMMARY-ZFB</li>
+  </ul>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">tallate</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/tallate" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+  <script class="next-config" data-name="pdf" type="application/json">{"object_url":{"url":"https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.12/pdfobject.min.js","integrity":"sha256-g2xji1rlE3KsGVClvuxTbcR0Kn2+wtQADSff2Tbb4zA="},"url":"/lib/pdf/web/viewer.html"}</script>
+  <script src="/js/third-party/tags/pdf.js"></script>
+
+  <script class="next-config" data-name="mermaid" type="application/json">{"enable":true,"version":"7.1.2","options":null,"js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.3.0/mermaid.min.js","integrity":"sha256-9y71g5Lz/KLsHjB8uXwnkuWDtAMDSzD/HdIbqhJfTAI="}}</script>
+  <script src="/js/third-party/tags/mermaid.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

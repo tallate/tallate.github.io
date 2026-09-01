@@ -260,7 +260,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/46410c24.html">
+    <link itemprop="mainEntityOfPage" href="https://tallate.github.io/a31a76f2.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -278,7 +278,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/46410c24.html" class="post-title-link" itemprop="url">claude code构建长期运行Multi-Agent系统的Context-Engineering经验</a>
+          <a href="/a31a76f2.html" class="post-title-link" itemprop="url">为Agent集成长期记忆</a>
         </h2>
 
         <div class="post-meta-container">
@@ -320,112 +320,180 @@
     <div class="post-body" itemprop="articleBody">
           <span id="more"></span>
 
-<h2 id="构建智能体"><a href="#构建智能体" class="headerlink" title="构建智能体"></a>构建智能体</h2><h3 id="什么时候需要智能体"><a href="#什么时候需要智能体" class="headerlink" title="什么时候需要智能体"></a>什么时候需要智能体</h3><ol>
-<li>对任务成功率要求低时采用智能体，否则采用工作流<br>当前普遍的Agent架构，一般都无法做到比较高的成功率，有时平均成功率低到40、50%，所以Agent结果无法直接应用于业务，而是需要人来干预结果，人来参与进结果的生成，比如编程、写PPT等。</li>
-<li>任务比较复杂时采用智能体（需要多步推理），否则采用工作流</li>
-<li>需要解决的任务是复杂而有价值的则使用智能体，否则采用工作流</li>
-<li>任务异常恢复的代价很低则使用智能体，否则采用Agent的只读模式（不会进行实际上的文件读写或支付等操作）、或采用human in loop模式让人介入进来</li>
+<h2 id="摘要"><a href="#摘要" class="headerlink" title="摘要"></a>摘要</h2><ul>
+<li>长期记忆是上下文中关键组成部分，长期记忆一般是短期记忆的沉淀，从过去的经验中学习，让用户可以记忆多轮对话的关键信息，得到处理问题的一般模式，<blockquote>
+<p>Without proper memory systems, AI applications would treat each interaction as completely new, losing valuable context and personalization opportunities.</p>
+</blockquote>
+</li>
+<li>长期记忆作为RAG的一部分，长期记忆的抽取和检索一般是通过RAG来实现，增强大模型回答领域问题的能力，而预训练专注于一般性问题的回答性能，例如langextract,LightRAG这样的框架</li>
+<li>使用文件存储长期记忆，按需召回，可以避免上下文超长的问题，例如manus的做法</li>
+<li>长期记忆又可以分为Semantic、Factual、Episodic，实践中一般会按抽取主体不同，按需建立不同的索引，例如mem0</li>
+<li>使用ReAct模式的Agent来管理Memory可以提供一些自主性，让Agent根据上下文和多轮的任务来自我进化，例如LangGraph MemoryAgent, QwenAgent, A-Mem, MemU</li>
+</ul>
+<h2 id="从短期记忆加工长期记忆"><a href="#从短期记忆加工长期记忆" class="headerlink" title="从短期记忆加工长期记忆"></a>从短期记忆加工长期记忆</h2><p><img src="/imgs/AI/long_term_process.png" alt="long_term_process"></p>
+<h3 id="LangGraph-MemoryTemplate"><a href="#LangGraph-MemoryTemplate" class="headerlink" title="LangGraph - MemoryTemplate"></a>LangGraph - MemoryTemplate</h3><p><img src="/imgs/AI/memory_template_process.png" alt="memory_template_process.png" title="memory_template_process"><br>MemoryTemplate是LangChain AI提供的长期记忆服务模板，用于构建和部署可连接到任何LangGraph代理的长期记忆服务，实现用户范围的记忆管理。</p>
+<ul>
+<li>使用 @functools.lru_cache 定义长期记忆的过期机制</li>
+<li>使用State定义长期记忆的入参，可见本质上是对短期记忆的持久化处理<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">class State(TypedDict):</span><br><span class="line">    &quot;&quot;&quot;Main graph state.&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line">    messages: Annotated[list[AnyMessage], add_messages]</span><br><span class="line">    &quot;&quot;&quot;The messages in the conversation.&quot;&quot;&quot;</span><br></pre></td></tr></table></figure></li>
+<li>memory_graph被标记成一个入口点，相当于一个接口</li>
+</ul>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://github.com/langchain-ai/memory-template">https://github.com/langchain-ai/memory-template</a></p>
+<h2 id="长期记忆的提取是一个RAG模式的实现"><a href="#长期记忆的提取是一个RAG模式的实现" class="headerlink" title="长期记忆的提取是一个RAG模式的实现"></a>长期记忆的提取是一个RAG模式的实现</h2><h3 id="langextract"><a href="#langextract" class="headerlink" title="langextract"></a>langextract</h3><p>LangExtract是一个Python库，使用LLM从非结构化文本文档中提取结构化信息，基于用户定义的指令。它能够处理各种材料，如临床文本、法律文件、学术论文等，并输出结构化的JSON数据。</p>
+<p><strong>核心特性</strong></p>
+<ul>
+<li><strong>精确源定位</strong>：每个提取的实体都包含精确的源文本引用</li>
+<li><strong>可扩展性</strong>：支持处理长文档和并行处理</li>
+<li><strong>自定义提取</strong>：通过提示词和示例控制提取行为，从非结构化文本中提取实体、关系和属性</li>
+</ul>
+<p><strong>技术架构</strong></p>
+<ul>
+<li>基于LLM的信息提取</li>
+<li>支持自定义模型提供商</li>
+<li>提供插件系统扩展功能</li>
+<li>支持本地和云端模型部署</li>
+</ul>
+<p><strong>引用链接</strong></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/google/langextract/blob/main/docs/examples/longer_text_example.md">https://github.com/google/langextract/blob/main/docs/examples/longer_text_example.md</a></li>
+</ul>
+<h3 id="MemoryScope"><a href="#MemoryScope" class="headerlink" title="MemoryScope"></a>MemoryScope</h3><p>定义一个pipeline来处理记忆<br><a target="_blank" rel="noopener" href="https://github.com/modelscope/MemoryScope">https://github.com/modelscope/MemoryScope</a></p>
+<h3 id="LightRAG"><a href="#LightRAG" class="headerlink" title="LightRAG"></a>LightRAG</h3><p><strong>定义</strong><br>LightRAG是一个简单且快速的检索增强生成（Retrieval-Augmented Generation）系统，专注于提供高效的知识检索和生成能力。</p>
+<ol>
+<li><strong>智能检索</strong>：基于语义相似度的文档检索</li>
+<li><strong>上下文增强</strong>：为LLM提供相关上下文信息</li>
+<li><strong>知识图谱</strong>：利用图结构增强检索效果</li>
+<li><strong>实时查询</strong>：支持实时文档查询和生成</li>
 </ol>
-<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://blog.crewai.com/build-agents-to-be-dependable/">https://blog.crewai.com/build-agents-to-be-dependable/</a><br><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=XSZP9GhhuAc">https://www.youtube.com/watch?v=XSZP9GhhuAc</a></p>
-<h3 id="构建智能体系统的要素"><a href="#构建智能体系统的要素" class="headerlink" title="构建智能体系统的要素"></a>构建智能体系统的要素</h3><p>智能体是一个循环决策的工作流，它自主地或在人类参与的情况下，朝着既定目标进行规划、行动和学习。</p>
+<h3 id="为Memory建立索引和检索"><a href="#为Memory建立索引和检索" class="headerlink" title="为Memory建立索引和检索"></a>为Memory建立索引和检索</h3><p><a target="_blank" rel="noopener" href="https://blog.langchain.com/semantic-search-for-langgraph-memory/">https://blog.langchain.com/semantic-search-for-langgraph-memory/</a></p>
+<h2 id="文件系统作为长期记忆的载体"><a href="#文件系统作为长期记忆的载体" class="headerlink" title="文件系统作为长期记忆的载体"></a>文件系统作为长期记忆的载体</h2><h3 id="Manus-使用文件系统作为终极上下文"><a href="#Manus-使用文件系统作为终极上下文" class="headerlink" title="Manus - 使用文件系统作为终极上下文"></a>Manus - 使用文件系统作为终极上下文</h3><p>现代前沿LLM虽然提供128K+令牌的上下文窗口，但在真实代理场景中仍面临三个痛点：<strong>观察结果庞大容易超出限制</strong>、<strong>长上下文导致性能下降</strong>、<strong>以及高昂的计算成本</strong>。<br>传统压缩策略虽然能缩短上下文，但<strong>过度压缩会导致信息丢失</strong>。代理需要根据所有先前状态预测动作，无法预测哪个观察结果在后续步骤中变得重要，因此任何不可逆的压缩都带有风险。<br><strong>文件系统</strong>作为终极上下文解决了这些问题：大小不受限制、天然持久化、代理可直接操作。模型学会按需写入和读取文件，不仅用作存储，还作为结构化的外部记忆。<br>我们的压缩策略设计为可恢复的：保留URL可移除网页内容，保留文档路径可省略文档内容。这样既能缩短上下文长度，又不会永久丢失信息。<br>这种基于文件的记忆方式也为状态空间模型(SSM)在智能体中的应用开辟了新可能。SSM虽然缺乏完整注意力机制，但通过将长期状态外部化而非保存在上下文中，其速度和效率可能开启新型智能体时代。</p>
+<p><img src="/imgs/AI/use_file_system_as_context.png" alt="use_file_system_as_context.png" title="use_file_system_as_context"></p>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://manus.im/zh-cn/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus">https://manus.im/zh-cn/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus</a></p>
+<h2 id="构建不同的长期记忆索引"><a href="#构建不同的长期记忆索引" class="headerlink" title="构建不同的长期记忆索引"></a>构建不同的长期记忆索引</h2><h3 id="Mem0"><a href="#Mem0" class="headerlink" title="Mem0"></a>Mem0</h3><p>Mem0将长期记忆划分为不同的类型，并通过api上增加agent_id, user_id, run_id进行索引</p>
+<p><strong>记忆类型分类：</strong></p>
+<p><strong>短期记忆 (Short-Term Memory)</strong></p>
 <ul>
-<li>对所发生事件的记忆</li>
-<li>影响世界的工具</li>
-<li>执行审计、约束</li>
-<li>需要实现的目标</li>
+<li><strong>对话历史</strong>: 最近的对话消息及其顺序</li>
+<li><strong>工作记忆</strong>: 临时变量和状态信息</li>
+<li><strong>注意力上下文</strong>: 当前对话的焦点</li>
 </ul>
-<h3 id="12-Factor-Agents-构建可靠LLM应用的原则"><a href="#12-Factor-Agents-构建可靠LLM应用的原则" class="headerlink" title="12 Factor Agents - 构建可靠LLM应用的原则"></a>12 Factor Agents - 构建可靠LLM应用的原则</h3><p>基于<a target="_blank" rel="noopener" href="https://github.com/humanlayer/12-factor-agents">12 Factor Agents</a>框架，以下是构建生产级智能体系统的12个核心原则：</p>
-<h4 id="Factor-1-自然语言到工具调用-Natural-Language-to-Tool-Calls"><a href="#Factor-1-自然语言到工具调用-Natural-Language-to-Tool-Calls" class="headerlink" title="Factor 1: 自然语言到工具调用 (Natural Language to Tool Calls)"></a>Factor 1: 自然语言到工具调用 (Natural Language to Tool Calls)</h4><p>将自然语言输入转换为结构化的工具调用，确保LLM能够准确理解和执行用户意图。</p>
-<h4 id="Factor-2-拥有你的提示词-Own-your-prompts"><a href="#Factor-2-拥有你的提示词-Own-your-prompts" class="headerlink" title="Factor 2: 拥有你的提示词 (Own your prompts)"></a>Factor 2: 拥有你的提示词 (Own your prompts)</h4><p>不要依赖框架的默认提示词，要完全控制和管理你的提示词，确保它们符合你的具体需求。</p>
-<h4 id="Factor-3-拥有你的上下文窗口-Own-your-context-window"><a href="#Factor-3-拥有你的上下文窗口-Own-your-context-window" class="headerlink" title="Factor 3: 拥有你的上下文窗口 (Own your context window)"></a>Factor 3: 拥有你的上下文窗口 (Own your context window)</h4><p>主动管理上下文窗口，包括记忆、状态和相关信息，而不是让框架自动处理。</p>
-<h4 id="Factor-4-工具就是结构化输出-Tools-are-just-structured-outputs"><a href="#Factor-4-工具就是结构化输出-Tools-are-just-structured-outputs" class="headerlink" title="Factor 4: 工具就是结构化输出 (Tools are just structured outputs)"></a>Factor 4: 工具就是结构化输出 (Tools are just structured outputs)</h4><p>将工具调用视为结构化输出，使用模式验证和类型安全来确保输出质量。</p>
-<h4 id="Factor-5-统一执行状态和业务状态-Unify-execution-state-and-business-state"><a href="#Factor-5-统一执行状态和业务状态-Unify-execution-state-and-business-state" class="headerlink" title="Factor 5: 统一执行状态和业务状态 (Unify execution state and business state)"></a>Factor 5: 统一执行状态和业务状态 (Unify execution state and business state)</h4><p>将智能体的执行状态与业务状态统一管理，避免状态不一致的问题。</p>
-<h4 id="Factor-6-启动-暂停-恢复的简单API-Launch-Pause-Resume-with-simple-APIs"><a href="#Factor-6-启动-暂停-恢复的简单API-Launch-Pause-Resume-with-simple-APIs" class="headerlink" title="Factor 6: 启动&#x2F;暂停&#x2F;恢复的简单API (Launch&#x2F;Pause&#x2F;Resume with simple APIs)"></a>Factor 6: 启动&#x2F;暂停&#x2F;恢复的简单API (Launch&#x2F;Pause&#x2F;Resume with simple APIs)</h4><p>设计简单的API来管理智能体的生命周期，支持启动、暂停和恢复操作。</p>
-<h4 id="Factor-7-通过工具调用联系人类-Contact-humans-with-tool-calls"><a href="#Factor-7-通过工具调用联系人类-Contact-humans-with-tool-calls" class="headerlink" title="Factor 7: 通过工具调用联系人类 (Contact humans with tool calls)"></a>Factor 7: 通过工具调用联系人类 (Contact humans with tool calls)</h4><p>当需要人类干预时，通过工具调用的方式优雅地请求人类帮助。</p>
-<h4 id="Factor-8-拥有你的控制流-Own-your-control-flow"><a href="#Factor-8-拥有你的控制流-Own-your-control-flow" class="headerlink" title="Factor 8: 拥有你的控制流 (Own your control flow)"></a>Factor 8: 拥有你的控制流 (Own your control flow)</h4><p>完全控制智能体的决策流程，而不是依赖框架的默认行为。</p>
-<h4 id="Factor-9-将错误压缩到上下文窗口-Compact-Errors-into-Context-Window"><a href="#Factor-9-将错误压缩到上下文窗口-Compact-Errors-into-Context-Window" class="headerlink" title="Factor 9: 将错误压缩到上下文窗口 (Compact Errors into Context Window)"></a>Factor 9: 将错误压缩到上下文窗口 (Compact Errors into Context Window)</h4><p>将错误信息压缩并整合到上下文窗口中，帮助智能体更好地理解和处理错误。</p>
-<h4 id="Factor-10-小型、专注的智能体-Small-Focused-Agents"><a href="#Factor-10-小型、专注的智能体-Small-Focused-Agents" class="headerlink" title="Factor 10: 小型、专注的智能体 (Small, Focused Agents)"></a>Factor 10: 小型、专注的智能体 (Small, Focused Agents)</h4><p>构建小型、专注的智能体，每个智能体负责特定的任务，而不是构建大型通用智能体。</p>
-<h4 id="Factor-11-从任何地方触发，在用户所在的地方见面-Trigger-from-anywhere-meet-users-where-they-are"><a href="#Factor-11-从任何地方触发，在用户所在的地方见面-Trigger-from-anywhere-meet-users-where-they-are" class="headerlink" title="Factor 11: 从任何地方触发，在用户所在的地方见面 (Trigger from anywhere, meet users where they are)"></a>Factor 11: 从任何地方触发，在用户所在的地方见面 (Trigger from anywhere, meet users where they are)</h4><p>支持多种触发方式，让智能体能够在用户需要的地方出现。</p>
-<h4 id="Factor-12-让你的智能体成为无状态归约器-Make-your-agent-a-stateless-reducer"><a href="#Factor-12-让你的智能体成为无状态归约器-Make-your-agent-a-stateless-reducer" class="headerlink" title="Factor 12: 让你的智能体成为无状态归约器 (Make your agent a stateless reducer)"></a>Factor 12: 让你的智能体成为无状态归约器 (Make your agent a stateless reducer)</h4><p>将智能体设计为无状态的归约器，通过纯函数处理状态转换，提高可靠性和可测试性。</p>
-<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://github.com/humanlayer/12-factor-agents">https://github.com/humanlayer/12-factor-agents</a></p>
-<h2 id="构建多智能体系统"><a href="#构建多智能体系统" class="headerlink" title="构建多智能体系统"></a>构建多智能体系统</h2><p>some problems are too complex, too parallel, or too specialized for one agent to handle alone.<br>如果单agent的职责过多（比如既需要做PPT、又要通过browser-use实现浏览器检索、又需要使用terminal来写一些脚本来进行复杂运算），每次使用prompt来reasoning时，大模型都需要进行复杂的推理、并在很多工具中进行决策，随着agent的运行，上下文会变得非常复杂不可控。</p>
-<h3 id="多智能体系统的难点"><a href="#多智能体系统的难点" class="headerlink" title="多智能体系统的难点"></a>多智能体系统的难点</h3><p>多智能系统的难点不在于运行多智能体，而是协同多智能体，如果希望构建一个长期运行的多智能体系统，关键是：</p>
+<p><strong>长期记忆 (Long-Term Memory)</strong></p>
 <ul>
-<li>任务复杂度过高，需要分解和专业化处理</li>
-<li>需要并行处理多个子任务</li>
-<li>要求错误隔离和容错机制<br>代理是有状态的，错误会累积，，在长时间的执行过程中，Agent会在多次工具调用中保持状态，需要持续处理过程中的错误，然后在出错时，具备中断恢复的能力。</li>
-<li>需要动态上下文管理和状态协调</li>
+<li><strong>事实记忆 (Factual Memory)</strong>: 存储用户信息、偏好和领域特定知识</li>
+<li><strong>情节记忆 (Episodic Memory)</strong>: 过去的交互和体验</li>
+<li><strong>语义记忆 (Semantic Memory)</strong>: 概念理解及其关系</li>
 </ul>
-<p>核心是上下文工程（Context Engineering）和错误传播控制。<br><img src="/imgs/AI/context_engineering.png" alt="context_engineering"></p>
+<p><strong>记忆特征对比：</strong></p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>持久性</th>
+<th>访问速度</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>短期记忆</td>
+<td>临时性</td>
+<td>即时</td>
+<td>活跃对话</td>
+</tr>
+<tr>
+<td>长期记忆</td>
+<td>持久性</td>
+<td>快速</td>
+<td>用户偏好和历史</td>
+</tr>
+</tbody></table>
+<p><strong>Mem0长期记忆实现方式：</strong></p>
+<ol>
+<li>使用向量嵌入存储和检索语义信息</li>
+<li>跨会话维护用户特定上下文</li>
+<li>实现高效的相关历史交互检索机制</li>
+</ol>
+<p><strong>核心价值：</strong><br>AI系统需要记忆系统实现三个关键目标：</p>
 <ul>
-<li>上下文压缩：agent运行过程中对历史上下文做summary或prune，去除冗余信息，比如一些<code>&lt;think&gt;</code>块</li>
-<li>上下文卸载：将占据大量空间的工具结果存储到外部空间，在需要时加入到上下文中</li>
-<li>上下文隔离：为多个agent创建相互隔离的上下文，互相之间不会共享窗口</li>
+<li>在对话中维持上下文</li>
+<li>从过去的交互中学习</li>
+<li>随时间构建个性化体验</li>
 </ul>
-<h3 id="上下文压缩"><a href="#上下文压缩" class="headerlink" title="上下文压缩"></a>上下文压缩</h3><p><strong>压缩（Compaction）</strong>：当对话接近上下文窗口限制时，总结内容并重新初始化新的上下文窗口。</p>
-<p><strong>核心原则</strong>：</p>
+<p><strong>参考</strong><br><a target="_blank" rel="noopener" href="https://docs.mem0.ai/core-concepts/memory-types">https://docs.mem0.ai/core-concepts/memory-types</a><br><a target="_blank" rel="noopener" href="https://docs.mem0.ai/open-source/graph_memory/overview#add-memories">https://docs.mem0.ai/open-source/graph_memory/overview#add-memories</a></p>
+<h2 id="进化的记忆"><a href="#进化的记忆" class="headerlink" title="进化的记忆"></a>进化的记忆</h2><p>结合Agent的ReAct范式，实现Agentic RAG，由Agent自主判断记忆的抽取和持久化</p>
+<h3 id="MemoryAgent"><a href="#MemoryAgent" class="headerlink" title="MemoryAgent"></a>MemoryAgent</h3><p><img src="/imgs/AI/memory_agent_process.png" alt="memory_agent_process.png" title="memory_agent_process"></p>
+<p><strong>LangGraph ReAct Memory Agent</strong> - 一个具有记忆保存工具的ReAct风格智能体示例。</p>
+<p><strong>核心特性：</strong></p>
 <ul>
-<li>保留关键信息（架构决策、未解决的bug、实现细节）</li>
-<li>清理冗余内容（工具输出、重复消息）</li>
-<li>维持最小性能损失</li>
+<li>基于ReAct范式的智能体，能够自主判断记忆的抽取和持久化</li>
+<li>提供<code>store_memory</code>工具，让智能体保存重要信息供后续使用</li>
+<li>记忆按<code>user_id</code>作用域隔离，支持跨对话线程学习用户偏好</li>
+<li>集成LangGraph Cloud部署，支持API交互</li>
 </ul>
-<p><strong>实现方式</strong>：</p>
+<p><strong>工作原理：</strong></p>
 <ul>
-<li>Claude Code：压缩消息历史 + 保留最近访问的5个文件</li>
-<li>工具结果清理：最安全的轻量级压缩方式</li>
+<li>智能体从记忆图的<code>Store</code>读取已保存的记忆</li>
+<li>调用工具时自动路由到<code>store_memory</code>节点保存信息</li>
+<li>支持自定义记忆结构（content + context）</li>
+<li>可配置不同的LLM模型（默认Claude-3.5-Sonnet）</li>
 </ul>
-<p><strong>挑战</strong>：在保留与丢弃之间平衡，避免过度压缩导致关键信息丢失。</p>
-<h3 id="上下文卸载"><a href="#上下文卸载" class="headerlink" title="上下文卸载"></a>上下文卸载</h3><p><strong>结构化笔记（Structured Note-taking）</strong>：智能体定期将笔记持久化到上下文窗口外的存储中，需要时再拉回上下文。</p>
-<p><strong>核心优势</strong>：</p>
+<p><strong>应用场景：</strong></p>
 <ul>
-<li>提供持久化记忆，开销最小</li>
-<li>跟踪复杂任务进度，维护关键上下文和依赖关系</li>
-<li>支持跨工具调用的长期连贯性</li>
+<li>跨会话保持用户偏好记忆</li>
+<li>重要信息的持久化存储</li>
+<li>智能体学习能力的增强</li>
 </ul>
-<p><strong>实现方式</strong>：</p>
+<p><strong>参考</strong><br><a target="_blank" rel="noopener" href="https://github.com/langchain-ai/memory-agent?ref=blog.langchain.com">https://github.com/langchain-ai/memory-agent?ref=blog.langchain.com</a></p>
+<h3 id="A-mem"><a href="#A-mem" class="headerlink" title="A-mem"></a>A-mem</h3><p><a target="_blank" rel="noopener" href="https://arxiv.org/pdf/2508.08997">https://arxiv.org/pdf/2508.08997</a><br><a target="_blank" rel="noopener" href="https://github.com/agiresearch/A-mem">https://github.com/agiresearch/A-mem</a><br><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/1888290059859514793">https://zhuanlan.zhihu.com/p/1888290059859514793</a><br><a target="_blank" rel="noopener" href="https://github.com/landing-ai/agentic-doc">https://github.com/landing-ai/agentic-doc</a></p>
+<h3 id="QwenAgent"><a href="#QwenAgent" class="headerlink" title="QwenAgent"></a>QwenAgent</h3><p>Qwen-Agent采用三级处理框架，先通过BM25检索关键词定位核心段落，再评估分块相关性，最后逐步生成答案，实现百万字级上下文处理。</p>
+<h4 id="1-上下文截断机制"><a href="#1-上下文截断机制" class="headerlink" title="1. 上下文截断机制"></a>1. 上下文截断机制</h4><p><code>qwen_agent/llm/base.py#_truncate_input_messages_roughly</code> 中实现了基础的上下文长度管理，根据最大长度来截断messages：</p>
 <ul>
-<li>Claude Code：创建待办事项列表</li>
-<li>自定义智能体：维护NOTES.md文件</li>
-<li>Claude Developer Platform：基于文件系统的记忆工具</li>
+<li>默认最大输入token数为58000（可通过<code>DEFAULT_MAX_INPUT_TOKENS</code>配置）</li>
+<li>使用<code>tokenizer.count_tokens</code>和<code>truncate</code>实时统计token数并按最大token数阈值截断</li>
+<li>保留系统消息和最新的用户消息</li>
+<li>从旧消息开始截断，确保最重要的上下文保留</li>
 </ul>
-<p><strong>应用场景</strong>：长期任务中保持状态连续性，避免上下文重置导致的信息丢失。</p>
-<h4 id="混合策略（Hybrid-Strategy）"><a href="#混合策略（Hybrid-Strategy）" class="headerlink" title="混合策略（Hybrid Strategy）"></a>混合策略（Hybrid Strategy）</h4><p>在某些场景下，最有效的智能体可能采用混合策略：预先检索一些数据以提高速度，同时根据任务需要自主探索更多信息。决策边界取决于具体任务的特点。</p>
-<p><strong>Claude Code的混合模式示例：</strong></p>
+<h4 id="2-Memory对话记忆管理"><a href="#2-Memory对话记忆管理" class="headerlink" title="2. Memory对话记忆管理"></a>2. Memory对话记忆管理</h4><p><code>qwen_agent/agents/memo_assistant.py</code> 实现了对话记忆功能：</p>
 <ul>
-<li>预先将CLAUDE.md文件直接放入上下文，提供快速访问</li>
-<li>使用glob和grep等基础工具进行实时环境导航和文件检索</li>
-<li>有效避免了过时索引和复杂语法树的问题</li>
+<li>使用storage工具存储重要信息</li>
+<li>在对话过程中，你可以随时使用storage工具来存储你认为需要记住的信息，同时也随时可以读取曾经可能存储了的历史信息</li>
+<li>这将有助于你在和用户的长对话中，记住某些重要的信息，比如用户的喜好、特殊信息、或重大事件等</li>
 </ul>
-<p><strong>适用场景：</strong></p>
+<p>关于数据存取，有以下两点建议：</p>
+<ol>
+<li>存一条数据的key尽量简洁易懂，可以用所记录内容的关键词</li>
+<li>如果忘记存过什么数据，可以使用scan查看记录过哪些数据</li>
+</ol>
+<p>此处展示当前你存入的所有信息，因此你可以省去专门读取数据的操作：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;info&gt;</span><br><span class="line">&#123;storage_info&#125;</span><br><span class="line">&lt;/info&gt;</span><br></pre></td></tr></table></figure>
+
+<p>你的记忆很短暂，请频繁的调用工具存储或读取重要对话内容。</p>
 <ul>
-<li>混合策略更适合内容变化较少的场景，如法律或金融工作</li>
-<li>随着模型能力提升，智能体设计将趋向于让智能模型更自主地行动</li>
-<li>人工策划的需求将逐渐减少</li>
+<li>自动截断对话历史，保留最近的对话</li>
+<li>将存储的信息嵌入系统提示中</li>
 </ul>
-<h3 id="上下文隔离-sub-agent"><a href="#上下文隔离-sub-agent" class="headerlink" title="上下文隔离 - sub-agent"></a>上下文隔离 - sub-agent</h3><p><strong>子智能体架构（Sub-agent Architectures）</strong>：通过专门的子智能体处理专注任务，避免单一智能体维护整个项目状态。</p>
-<p><strong>核心设计</strong>：</p>
+<h4 id="3-RAG文件知识库管理"><a href="#3-RAG文件知识库管理" class="headerlink" title="3. RAG文件知识库管理"></a>3. RAG文件知识库管理</h4><p><code>qwen_agent/memory/memory.py#_run</code>，messages中的文件会被保存在知识库中，检索和query最相关的部分内容，而不是将整个文件抛给llm：</p>
 <ul>
-<li>主智能体：协调高级计划，专注于结果综合和分析</li>
-<li>子智能体：执行深度技术工作，使用工具查找相关信息</li>
-<li>上下文隔离：详细搜索上下文保持在子智能体内，避免污染主智能体</li>
+<li>支持多种文件格式（PDF、Word、Excel、TXT等）</li>
+<li>使用RAG（检索增强生成）技术</li>
+<li>可配置的检索策略和关键词生成</li>
 </ul>
-<p><strong>工作流程</strong>：</p>
+<h4 id="4-DialogueRetrievalAgent-超长对话管理"><a href="#4-DialogueRetrievalAgent-超长对话管理" class="headerlink" title="4. DialogueRetrievalAgent - 超长对话管理"></a>4. DialogueRetrievalAgent - 超长对话管理</h4><p><code>qwen_agent/agents/dialogue_retrieval_agent.py</code>：</p>
 <ul>
-<li>子智能体可能使用数万token进行广泛探索</li>
-<li>返回压缩、精炼的工作总结（通常1,000-2,000 tokens）</li>
-<li>实现关注点分离，提高系统效率</li>
+<li>将长对话存储为文件</li>
+<li>基于检索的历史对话查询</li>
+<li>会话级别的历史管理</li>
 </ul>
-<p><strong>适用场景</strong>：</p>
+<p><img src="/imgs/AI/qwenagent_rag.png" alt="qwenagent_rag.png" title="qwenagent_rag"></p>
+<h4 id="5-VirtualMemoryAgent-虚拟内存管理"><a href="#5-VirtualMemoryAgent-虚拟内存管理" class="headerlink" title="5. VirtualMemoryAgent - 虚拟内存管理"></a>5. VirtualMemoryAgent - 虚拟内存管理</h4><p><code>qwen_agent/agents/virtual_memory_agent.py</code> 针对messages中出现的文件名，自动通过deepsearch的方式来检索：</p>
 <ul>
-<li>复杂研究和分析任务</li>
-<li>需要并行探索的场景</li>
-<li>相比单智能体系统有显著改进</li>
+<li>先由llm来决定使用什么工具处理这些文件，然后调用这些工具</li>
+<li>直到达到最大调用次数20次，或不再产生新的toolcall</li>
+<li>自动检索外部资源</li>
+<li>动态更新上下文知识</li>
+<li>智能工具调用</li>
 </ul>
-<p><strong>架构示例</strong>：<br><img src="/imgs/AI/multiagent_longrunningtask.png" alt="multiagent_longrunningtask"></p>
-<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/multi-agent-research-system?ref=blog.langchain.com">https://www.anthropic.com/engineering/multi-agent-research-system?ref=blog.langchain.com</a><br><a target="_blank" rel="noopener" href="https://cognition.ai/blog/dont-build-multi-agents">https://cognition.ai/blog/dont-build-multi-agents</a><br><a target="_blank" rel="noopener" href="https://blog.langchain.com/how-and-when-to-build-multi-agent-systems/">https://blog.langchain.com/how-and-when-to-build-multi-agent-systems/</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.xiaohongshu.com/explore/6882005d000000001d00d53a?app_platform=android&ignoreEngage=true&app_version=8.92.0&share_from_user_hidden=true&xsec_source=app_share&type=normal&xsec_token=CBIAt7FwVT3rmjUCxeIUs-9z3euUYE-PTih9HgqFRJcJE=&author_share=1&xhsshare=CopyLink&shareRedId=ODc4Rjc2PDs2NzUyOTgwNjY1OTk4Rj1C&apptime=1753439829&share_id=c6e6707db94640ef8bd24b59ea1b466e&share_channel=copy_link">https://www.xiaohongshu.com/explore/6882005d000000001d00d53a?app_platform=android&amp;ignoreEngage=true&amp;app_version=8.92.0&amp;share_from_user_hidden=true&amp;xsec_source=app_share&amp;type=normal&amp;xsec_token=CBIAt7FwVT3rmjUCxeIUs-9z3euUYE-PTih9HgqFRJcJE=&amp;author_share=1&amp;xhsshare=CopyLink&amp;shareRedId=ODc4Rjc2PDs2NzUyOTgwNjY1OTk4Rj1C&amp;apptime=1753439829&amp;share_id=c6e6707db94640ef8bd24b59ea1b466e&amp;share_channel=copy_link</a><br><a target="_blank" rel="noopener" href="https://github.com/zilliztech/claude-context/blob/master/packages/core/src/context.ts">https://github.com/zilliztech/claude-context/blob/master/packages/core/src/context.ts</a><br><a target="_blank" rel="noopener" href="https://github.com/shareAI-lab/analysis_claude_code/blob/main/claude_code_v_1.0.33/stage1_analysis_workspace/docs/ana_docs/task_agent_analysis.md">https://github.com/shareAI-lab/analysis_claude_code/blob/main/claude_code_v_1.0.33/stage1_analysis_workspace/docs/ana_docs/task_agent_analysis.md</a><br><a target="_blank" rel="noopener" href="https://baoyu.io/translations/decoding-claude-code">https://baoyu.io/translations/decoding-claude-code</a></p>
-<h3 id="多智能体系统的一些范例"><a href="#多智能体系统的一些范例" class="headerlink" title="多智能体系统的一些范例"></a>多智能体系统的一些范例</h3><p><a target="_blank" rel="noopener" href="https://blog.langchain.com/langgraph-multi-agent-workflows/">https://blog.langchain.com/langgraph-multi-agent-workflows/</a><br><a target="_blank" rel="noopener" href="https://langchain-ai.github.io/langgraph/concepts/multi_agent/?h=scratchpad">https://langchain-ai.github.io/langgraph/concepts/multi_agent/?h=scratchpad</a></p>
+<p><strong>参考文档</strong><br><a target="_blank" rel="noopener" href="https://qwenlm.github.io/zh/blog/qwen-agent-2405/">https://qwenlm.github.io/zh/blog/qwen-agent-2405/</a><br><a target="_blank" rel="noopener" href="https://github.com/QwenLM/Qwen-Agent">https://github.com/QwenLM/Qwen-Agent</a><br><a target="_blank" rel="noopener" href="https://community.modelscope.cn/682d45a3870cef736060aaef.html">https://community.modelscope.cn/682d45a3870cef736060aaef.html</a></p>
+<h3 id="MemU"><a href="#MemU" class="headerlink" title="MemU"></a>MemU</h3><p>MemU采用背景进程对记忆进行加工和抽取，并建立联系存储到图库中，形成自我进化</p>
+<p><strong>参考</strong><br><a target="_blank" rel="noopener" href="https://github.com/NevaMind-AI/memU">https://github.com/NevaMind-AI/memU</a></p>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.6.0/dist/mindmap.min.css">
       
     </div>
